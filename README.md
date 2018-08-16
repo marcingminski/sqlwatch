@@ -5,5 +5,5 @@ The SQLServer-Performance-Poster.pdf is a very good Performance Counter referenc
 
 details: https://marcin.gminski.net/goodies/sql-server-performance-dashboard-using-powerbi/
 
-## Installtion
+## Installation
 By default, the script will create tables in tempdb. Please be aware that tempdb gets cleared down on server restart so you will lose your monitoring data. You may wish to install it in your own dedicated database.
