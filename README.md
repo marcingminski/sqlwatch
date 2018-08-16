@@ -1,4 +1,4 @@
-# sql-performance-monitor
+# SQLWATCH
 Yet another SQL Server performance monitor with a PowerBI dashboard
 
 The SQLServer-Performance-Poster.pdf is a very good Performance Counter reference from Quest Software.
