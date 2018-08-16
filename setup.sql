@@ -1139,6 +1139,30 @@ declare @sql nvarchar(4000)
 		from sys.dm_os_wait_stats;
 go
 
+--retention procedure
+if not exists (select * from information_schema.routines where routine_name = 'sp_sql_perf_mon_retention')
+exec ('create proc [dbo].[sp_sql_perf_mon_retention] as select ''sp_sql_perf_mon_retention placeholder''')
+go
+
+alter procedure [dbo].[sp_sql_perf_mon_retention] (
+	@retention_period_days smallint = 7,
+	@batch_size smallint = 500
+	)
+as
+set nocount on;
+declare @row_count int = 1
+
+while @row_count > 0
+	begin
+		begin tran
+		delete top (@batch_size) 
+		from dbo.sql_perf_mon_snapshot_header with (readpast)
+		where datediff(day,snapshot_time,getdate()) > @retention_period_days
+		set @row_count = @@ROWCOUNT
+		commit tran
+	end
+go
+
 --setup jobs
 --we have to switch database to msdb but we also need to know which db jobs should run in so have to capture current database:
 declare @database varchar(255)
