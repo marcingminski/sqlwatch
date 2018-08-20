@@ -19,3 +19,5 @@ I would like to implement the following:
 1. Query store analysis
 1. Errorlog analysis
 1. Alerts. It would be good to have but may be difficult to implement.
+1. dedicated SQLWATCH database
+1. Ability to handle reboots.
