@@ -1,0 +1,7 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/SQLWATCHDB/obj/Debug
+/SQLWATCHDB/.vs/SQLWATCHDB/v15
+/.vs
