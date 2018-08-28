@@ -765,7 +765,7 @@ if (select name from sysjobs where name = 'DBA-PERF-AUTO-CONFIG') is  null
 			@notify_email_operator_name=N'', 
 			@notify_page_operator_name=N''
 
-	DECLARE @schedule_id int
+	set @schedule_id = null
 	EXEC msdb.dbo.sp_add_jobschedule @job_name=N'DBA-PERF-AUTO-CONFIG', @name=N'DBA-PERF-AUTO-CONFIG', 
 			@enabled=1, 
 			@freq_type=4, 
