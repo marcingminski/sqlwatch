@@ -19,15 +19,7 @@ if (select count(*) from [dbo].[sql_perf_mon_config_who_is_active_age]) = 0
 --------------------------------------------------------------------------------------
 --
 --------------------------------------------------------------------------------------
-if (select count(*) from [dbo].[sql_perf_mon_database]) = 0
-	begin
-		insert into [dbo].[sql_perf_mon_database]
-		select name from sys.Databases
-		union all
-		/* mssqlsystemresource database appears in the performance counters
-		so we need it as a dimensions to be able to filter in the report */
-		select 'mssqlsystemresource'
-	end
+exec [dbo].[sp_sql_perf_mon_add_database]
 
 --------------------------------------------------------------------------------------
 --
