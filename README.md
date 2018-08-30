@@ -1,8 +1,8 @@
 # Project's homepage
 https://sqlwatch.io
 
-# Project Progress
+# Current Progress
 Please check GitHub Project and milestones
 
-# Projects Slack Channel
+# Project's Slack Channel
 #sqlwatch on https://sqlcommunity.slack.com/
