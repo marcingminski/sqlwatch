@@ -54,7 +54,7 @@ declare @sql nvarchar(4000)
 		
 		set @date_snapshot_current = getdate();
 		insert into [dbo].[sql_perf_mon_snapshot_header]
-		values (@date_snapshot_current)
+		values (@date_snapshot_current, 1)
 
 		
 		--------------------------------------------------------------------------------------------------------------
@@ -98,6 +98,7 @@ declare @sql nvarchar(4000)
 			,base_cntr_value=bc.cntr_value
 			,pc.cntr_type
 			,snapshot_time=@date_snapshot_current
+			, 1
 		from (
 			select * from sys.dm_os_performance_counters
 			union all
@@ -150,7 +151,7 @@ declare @sql nvarchar(4000)
 		-- get process memory
 		--------------------------------------------------------------------------------------------------------------
 		insert into dbo.sql_perf_mon_os_process_memory
-		select snapshot_time=@date_snapshot_current, * 
+		select snapshot_time=@date_snapshot_current, * , 1
 		from sys.dm_os_process_memory
 
 		--------------------------------------------------------------------------------------------------------------
@@ -245,6 +246,7 @@ declare @sql nvarchar(4000)
 			-- there are many memory clerks. we'll chart any that make up 5% of sql memory or more; less significant clerks will be lumped into an "other" bucket
 			graph_type=case when mc.total_kb / convert(decimal, ta.total_kb_all_clerks) > 0.05 then mc.[type] else N'other' end
 			,memory_available=@memory_available
+			, 1
 		from @memory_clerks as mc
 		-- use a self-join to calculate the total memory allocated for each time interval
 		join 
@@ -277,13 +279,14 @@ declare @sql nvarchar(4000)
 			fs.num_of_reads, fs.num_of_bytes_read, fs.io_stall_read_ms, fs.num_of_writes, fs.num_of_bytes_written, 
 			fs.io_stall_write_ms, fs.size_on_disk_bytes,
 			snapshot_time=@date_snapshot_current
+			, 1
 		from sys.dm_io_virtual_file_stats (default, default) as fs
 		inner join sys.master_files as f on fs.database_id = f.database_id and fs.[file_id] = f.[file_id]
 		--------------------------------------------------------------------------------------------------------------
 		-- wait stats snapshot
 		--------------------------------------------------------------------------------------------------------------
 		insert into [dbo].[sql_perf_mon_wait_stats]
-		select [wait_type], [waiting_tasks_count], [wait_time_ms],[max_wait_time_ms], [signal_wait_time_ms], [snapshot_time]=@date_snapshot_current
+		select [wait_type], [waiting_tasks_count], [wait_time_ms],[max_wait_time_ms], [signal_wait_time_ms], [snapshot_time]=@date_snapshot_current, 1
 		from sys.dm_os_wait_stats;
 		--------------------------------------------------------------------------------------------------------------
 		-- sp_whoisactive
@@ -312,7 +315,7 @@ declare @sql nvarchar(4000)
 						,[database_name],[program_name],[sql_text],[sql_command],[login_name]
 						,[open_tran_count],[wait_info],[blocking_session_id],[blocked_session_count]
 						,[CPU],[used_memory],[tempdb_current],[tempdb_allocations],[reads]
-						,[writes],[physical_reads],[login_time]
+						,[writes],[physical_reads],[login_time], 1
 				from [dbo].[sql_perf_mon_who_is_active_tmp]
 				-- exclude anything that has been running for less that the desired age in seconds (default 60)
 				-- this parameterised so feel free to change it to your liking. To change parameter:

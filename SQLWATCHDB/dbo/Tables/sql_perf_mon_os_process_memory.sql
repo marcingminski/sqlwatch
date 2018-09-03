@@ -13,15 +13,10 @@
 	[available_commit_limit_kb] [bigint] NOT NULL,
 	[process_physical_memory_low] [bit] NOT NULL,
 	[process_virtual_memory_low] [bit] NOT NULL,
-PRIMARY KEY CLUSTERED 
-(
-	[snapshot_time] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-ALTER TABLE [dbo].[sql_perf_mon_os_process_memory]  WITH CHECK ADD  CONSTRAINT [fk_sql_perf_mon_os_process_memory] FOREIGN KEY([snapshot_time])
-REFERENCES [dbo].[sql_perf_mon_snapshot_header] ([snapshot_time])
-ON DELETE CASCADE
-GO
-ALTER TABLE [dbo].[sql_perf_mon_os_process_memory] CHECK CONSTRAINT [fk_sql_perf_mon_os_process_memory]
+	[snapshot_type_id] tinyint not null default 1 ,
+	constraint fk_sql_perf_mon_os_process_memory_snapshot_header foreign key ([snapshot_time],[snapshot_type_id]) references [dbo].[sql_perf_mon_snapshot_header]([snapshot_time],[snapshot_type_id]) on delete cascade ,
+	constraint pk_sql_perf_mon_os_process_memory primary key clustered (
+		[snapshot_time] ASC
+	)
+) 
 GO
