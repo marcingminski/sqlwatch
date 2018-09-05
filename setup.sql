@@ -869,7 +869,7 @@ alter view [dbo].[vw_sql_perf_mon_rep_perf_counter] as
 				pc.cntr_type in (65792,272696576,537003264,1073874176)
 go
 
-if not exists (select * from information_schema.routines where routine_name = 'sp_sql_perf_mon_logger')
+if not exists (select * from INFORMATION_SCHEMA.ROUTINES where routine_name = 'sp_sql_perf_mon_logger')
 	exec ('create proc [dbo].[sp_sql_perf_mon_logger] as select ''sp_sql_perf_mon_logger placeholder''')
 go
 
@@ -939,7 +939,7 @@ declare @sql nvarchar(4000)
 		--------------------------------------------------------------------------------------------------------------
 		select 
 				@percent_processor_time=processutilization
-			,	@percent_idle_time=systemidle
+			,	@percent_idle_time=SystemIdle
 		FROM ( 
 				SELECT SystemIdle=record.value('(./Record/SchedulerMonitorEvent/SystemHealth/SystemIdle)[1]', 'int'), 
 					ProcessUtilization=record.value('(./Record/SchedulerMonitorEvent/SystemHealth/ProcessUtilization)[1]', 'int')
@@ -1209,7 +1209,7 @@ declare @sql nvarchar(4000)
 go
 
 --retention procedure
-if not exists (select * from information_schema.routines where routine_name = 'sp_sql_perf_mon_retention')
+if not exists (select * from INFORMATION_SCHEMA.ROUTINES where routine_name = 'sp_sql_perf_mon_retention')
 exec ('create proc [dbo].[sp_sql_perf_mon_retention] as select ''sp_sql_perf_mon_retention placeholder''')
 go
 
