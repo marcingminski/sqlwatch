@@ -30,5 +30,8 @@ If applicable, add screenshots to help explain your problem.
 **SQL Server Management Studio (SSMS -> about -> copy info):**
  - paste "about" info here:
  
+**SQLWATCH version (from DACPAC or from sysinstances)**
+ - 1.0.0.0
+ 
 **Additional context**
 Add any other context about the problem here.
