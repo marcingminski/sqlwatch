@@ -19,6 +19,17 @@ if (select count(*) from [dbo].[sql_perf_mon_config_who_is_active_age]) = 0
 --------------------------------------------------------------------------------------
 --
 --------------------------------------------------------------------------------------
+/*	databases with create_date = '1970-01-01' are from previous 
+versions of SQLWATCH and we will now update create_date to the actual
+create_date (this will only apply to upgrades) */
+update swd
+	set [database_create_date] = db.[create_date]
+from [dbo].[sql_perf_mon_database] swd
+inner join sys.databases db
+	on db.[name] = swd.[database_name]
+	and swd.[database_create_date] = '1970-01-01'
+
+/* now add new databases */
 exec [dbo].[sp_sql_perf_mon_add_database]
 
 --------------------------------------------------------------------------------------
@@ -50,7 +61,7 @@ create nonclustered index tmp_idx_sql_perf_mon_perf_counters_types on #sql_perf_
 /* based on https://blogs.msdn.microsoft.com/dfurman/2015/04/02/collecting-performance-counter-values-from-a-sql-azure-database/ */	
 insert into #sql_perf_mon_config_perf_counters([collect],[object_name],[counter_name], [instance_name],[base_counter_name]) 
 	values
-			(0,'Access Methods','Forwarded Records/sec','',NULL)
+		 (0,'Access Methods','Forwarded Records/sec','',NULL)
 		,(1,'Access Methods','Full Scans/sec','',NULL)
 		,(1,'Access Methods','Page Splits/sec','',NULL)
 		,(1,'Access Methods','Pages Allocated/sec','',NULL)

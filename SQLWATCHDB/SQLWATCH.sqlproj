@@ -91,6 +91,7 @@
     <Build Include="dbo\Procedures\sp_sql_perf_mon_retention.sql" />
     <Build Include="dbo\Procedures\sp_sql_perf_mon_add_database.sql" />
     <Build Include="dbo\Tables\sql_perf_mon_config_snapshot_header_type.sql" />
+    <Build Include="dbo\Tables\sql_perf_mon_master_files.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
