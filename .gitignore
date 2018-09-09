@@ -5,3 +5,8 @@
 /SQLWATCHDB/obj/Debug
 /SQLWATCHDB/.vs/SQLWATCHDB/v15
 /.vs
+*.txt
+*.pdb
+/SQLWATCHDB/bin/Debug
+*.dbmdl
+*.jfm
