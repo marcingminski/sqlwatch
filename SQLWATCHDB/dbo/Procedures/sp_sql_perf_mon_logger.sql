@@ -51,6 +51,7 @@ declare @sql nvarchar(4000)
 		--------------------------------------------------------------------------------------------------------------
 		select @date_snapshot_previous = max([snapshot_time])
 		from [dbo].[sql_perf_mon_snapshot_header]
+		where snapshot_type_id = 1
 		
 		set @date_snapshot_current = getdate();
 		insert into [dbo].[sql_perf_mon_snapshot_header]
