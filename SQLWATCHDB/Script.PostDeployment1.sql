@@ -823,7 +823,7 @@ if (select name from sysjobs where name = 'SQLWATCH-LOGGER-DISK-UTILISATION') is
 					@delete_level=0, 
 					@category_name=N'Data Collector', 
 					@owner_login_name=N'sa', @job_id = @jobId OUTPUT
-		EXEC msdb.dbo.sp_add_jobserver @job_name=N'SQLWATCH-LOGGER-DISK-UTILISATION', @server_name = N'SQL-1'
+		EXEC msdb.dbo.sp_add_jobserver @job_name=N'SQLWATCH-LOGGER-DISK-UTILISATION', @server_name = @server;
 		EXEC msdb.dbo.sp_add_jobstep @job_name=N'SQLWATCH-LOGGER-DISK-UTILISATION', @step_name=N'exec dbo.usp_logger_disk_utilisation', 
 			@step_id=1, 
 			@cmdexec_success_code=0, 
