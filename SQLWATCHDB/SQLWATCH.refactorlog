@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Operations Version="1.0" xmlns="http://schemas.microsoft.com/sqlserver/dac/Serialization/2012/02">
+  <Operation Name="Rename Refactor" Key="c534c532-3535-4583-b656-4313fd610487" ChangeDateTime="09/10/2018 00:44:04">
+    <Property Name="ElementName" Value="[dbo].[logger_disk_utilisation_database].[database_size_mb]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[logger_disk_utilisation_database]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[database_size_bytes]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="cd735168-9dc3-4663-ab30-0dc80b6b0299" ChangeDateTime="09/10/2018 00:44:22">
+    <Property Name="ElementName" Value="[dbo].[logger_disk_utilisation_database].[unallocated_space_mb]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[logger_disk_utilisation_database]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[unallocated_space_bytes]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="273db7fd-a1aa-4037-8f92-591d2ce83321" ChangeDateTime="09/10/2018 00:44:37">
+    <Property Name="ElementName" Value="[dbo].[logger_disk_utilisation_database].[reserved_kb]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[logger_disk_utilisation_database]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[reserved_bytes]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="8081db13-e048-4c18-acf2-42c777f82979" ChangeDateTime="09/10/2018 00:44:44">
+    <Property Name="ElementName" Value="[dbo].[logger_disk_utilisation_database].[data_kb]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[logger_disk_utilisation_database]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[data_bytes]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="76b6643e-0886-492b-b6c5-3b3922613175" ChangeDateTime="09/10/2018 00:44:55">
+    <Property Name="ElementName" Value="[dbo].[logger_disk_utilisation_database].[index_size_kb]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[logger_disk_utilisation_database]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[index_size_bytes]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="98d2b180-f8d9-466a-ae84-e61b01395f6e" ChangeDateTime="09/10/2018 00:45:02">
+    <Property Name="ElementName" Value="[dbo].[logger_disk_utilisation_database].[unused_kb]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[logger_disk_utilisation_database]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[unused_bytes]" />
+  </Operation>
+</Operations>

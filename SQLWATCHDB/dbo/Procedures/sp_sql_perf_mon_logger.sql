@@ -19,7 +19,7 @@ declare @sql nvarchar(4000)
 		--------------------------------------------------------------------------------------------------------------
 		-- detect which version of sql we are running as some dmvs are different in different versions of sql
 		--------------------------------------------------------------------------------------------------------------
-		set @product_version = convert(nvarchar(128),serverproperty('productversioN'));
+		set @product_version = convert(nvarchar(128),serverproperty('productversion'));
 
 		select 
 			 @product_version_major = substring(@product_version, 1,charindex('.', @product_version) + 1 )
