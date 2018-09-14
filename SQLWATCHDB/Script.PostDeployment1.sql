@@ -621,6 +621,17 @@ if (select count(*) from [dbo].[sql_perf_mon_config_report_time_interval]) = 0
 --------------------------------------------------------------------------------------
 --
 --------------------------------------------------------------------------------------
+if (select count(*) from [dbo].[sql_perf_mon_config_snapshot_type]) = 0
+	begin
+		insert into [dbo].[sql_perf_mon_config_snapshot_type]
+		values	(1, 'Performance', 7),
+				(2, 'Growth', 365)		
+	end
+
+--------------------------------------------------------------------------------------
+--
+--------------------------------------------------------------------------------------
+
 
 --setup jobs
 --we have to switch database to msdb but we also need to know which db jobs should run in so have to capture current database:

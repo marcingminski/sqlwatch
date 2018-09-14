@@ -11,7 +11,9 @@
 	[num_of_bytes_written] bigint not null,
 	[io_stall_write_ms] bigint not null,
 	[size_on_disk_bytes] bigint not null,
-	[snapshot_time] datetime foreign key references [dbo].[sql_perf_mon_snapshot_header]([snapshot_time]) on delete cascade not null,
+	[snapshot_time] datetime not null,
+	[snapshot_type_id] tinyint not null default 1 ,
+	constraint fk_sql_perf_mon_file_stats_snapshot_header foreign key ([snapshot_time],[snapshot_type_id]) references [dbo].[sql_perf_mon_snapshot_header]([snapshot_time],[snapshot_type_id]) on delete cascade ,
 	constraint pk_sql_perf_mon_file_stats primary key clustered (
 		[snapshot_time], [database_name], [logical_file_name], [type_desc]
 	)
