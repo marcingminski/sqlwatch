@@ -19,6 +19,17 @@ if (select count(*) from [dbo].[sql_perf_mon_config_who_is_active_age]) = 0
 --------------------------------------------------------------------------------------
 --
 --------------------------------------------------------------------------------------
+/*	databases with create_date = '1970-01-01' are from previous 
+versions of SQLWATCH and we will now update create_date to the actual
+create_date (this will only apply to upgrades) */
+update swd
+	set [database_create_date] = db.[create_date]
+from [dbo].[sql_perf_mon_database] swd
+inner join sys.databases db
+	on db.[name] = swd.[database_name]
+	and swd.[database_create_date] = '1970-01-01'
+
+/* now add new databases */
 exec [dbo].[sp_sql_perf_mon_add_database]
 
 --------------------------------------------------------------------------------------
@@ -50,7 +61,7 @@ create nonclustered index tmp_idx_sql_perf_mon_perf_counters_types on #sql_perf_
 /* based on https://blogs.msdn.microsoft.com/dfurman/2015/04/02/collecting-performance-counter-values-from-a-sql-azure-database/ */	
 insert into #sql_perf_mon_config_perf_counters([collect],[object_name],[counter_name], [instance_name],[base_counter_name]) 
 	values
-			(0,'Access Methods','Forwarded Records/sec','',NULL)
+		 (0,'Access Methods','Forwarded Records/sec','',NULL)
 		,(1,'Access Methods','Full Scans/sec','',NULL)
 		,(1,'Access Methods','Page Splits/sec','',NULL)
 		,(1,'Access Methods','Pages Allocated/sec','',NULL)
@@ -619,14 +630,23 @@ if (select count(*) from [dbo].[sql_perf_mon_config_report_time_interval]) = 0
 	end
 
 --------------------------------------------------------------------------------------
---
+-- add snapshot types
 --------------------------------------------------------------------------------------
-if (select count(*) from [dbo].[sql_perf_mon_config_snapshot_type]) = 0
-	begin
-		insert into [dbo].[sql_perf_mon_config_snapshot_type]
-		values	(1, 'Performance', 7),
-				(2, 'Growth', 365)		
-	end
+;merge [dbo].[sql_perf_mon_config_snapshot_type] as target
+using (
+	/* performance data logger */
+	select [snapshot_type_id] = 1, [snapshot_type_desc] = 'Performance', [snapshot_retention_days] = 7
+	union 
+	/* size data logger */
+	select [snapshot_type_id] = 2, [snapshot_type_desc] = 'Disk Utilisation', [snapshot_retention_days] = 365
+) as source
+on (source.[snapshot_type_id] = target.[snapshot_type_id])
+when matched and source.[snapshot_type_desc] <> target.[snapshot_type_desc] then
+	update set [snapshot_type_desc] = source.[snapshot_type_desc]
+when not matched then
+	insert ([snapshot_type_id],[snapshot_type_desc],[snapshot_retention_days])
+	values (source.[snapshot_type_id],source.[snapshot_type_desc],source.[snapshot_retention_days])
+;
 
 --------------------------------------------------------------------------------------
 --
@@ -791,3 +811,53 @@ if (select name from sysjobs where name = 'DBA-PERF-AUTO-CONFIG') is  null
 			@active_end_time=235959, @schedule_id = @schedule_id OUTPUT
 	select @schedule_id
 end
+
+if (select name from sysjobs where name = 'SQLWATCH-LOGGER-DISK-UTILISATION') is  null
+	begin
+		set @jobId = null
+		EXEC  msdb.dbo.sp_add_job @job_name=N'SQLWATCH-LOGGER-DISK-UTILISATION', 
+					@enabled=1, 
+					@notify_level_eventlog=0, 
+					@notify_level_email=2, 
+					@notify_level_page=2, 
+					@delete_level=0, 
+					@category_name=N'Data Collector', 
+					@owner_login_name=N'sa', @job_id = @jobId OUTPUT
+		EXEC msdb.dbo.sp_add_jobserver @job_name=N'SQLWATCH-LOGGER-DISK-UTILISATION', @server_name = @server;
+		EXEC msdb.dbo.sp_add_jobstep @job_name=N'SQLWATCH-LOGGER-DISK-UTILISATION', @step_name=N'exec dbo.usp_logger_disk_utilisation', 
+			@step_id=1, 
+			@cmdexec_success_code=0, 
+			@on_success_action=1, 
+			@on_fail_action=2, 
+			@retry_attempts=0, 
+			@retry_interval=0, 
+			@os_run_priority=0, @subsystem=N'TSQL', 
+			@command=N'exec [dbo].[usp_logger_disk_utilisation]', 
+			@database_name=@database, 
+			@flags=0
+		EXEC msdb.dbo.sp_update_job @job_name=N'SQLWATCH-LOGGER-DISK-UTILISATION', 
+				@enabled=1, 
+				@start_step_id=1, 
+				@notify_level_eventlog=0, 
+				@notify_level_email=2, 
+				@notify_level_page=2, 
+				@delete_level=0, 
+				@description=N'', 
+				@category_name=N'Data Collector', 
+				@owner_login_name=N'sa', 
+				@notify_email_operator_name=N'', 
+				@notify_page_operator_name=N''
+		set @schedule_id = null
+		EXEC msdb.dbo.sp_add_jobschedule @job_name=N'SQLWATCH-LOGGER-DISK-UTILISATION', @name=N'SQLWATCH-LOGGER-DISK-UTILISATION', 
+				@enabled=1, 
+				@freq_type=4, 
+				@freq_interval=1, 
+				@freq_subday_type=8, 
+				@freq_subday_interval=1, 
+				@freq_relative_interval=0, 
+				@freq_recurrence_factor=1, 
+				@active_start_date=20180909, 
+				@active_end_date=99991231, 
+				@active_start_time=437, 
+				@active_end_time=235959, @schedule_id = @schedule_id OUTPUT
+	end

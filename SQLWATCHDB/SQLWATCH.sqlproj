@@ -52,6 +52,7 @@
     <DefineTrace>true</DefineTrace>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <RunSqlCodeAnalysis>False</RunSqlCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
@@ -90,7 +91,10 @@
     <Build Include="dbo\Procedures\sp_sql_perf_mon_logger.sql" />
     <Build Include="dbo\Procedures\sp_sql_perf_mon_retention.sql" />
     <Build Include="dbo\Procedures\sp_sql_perf_mon_add_database.sql" />
-    <Build Include="dbo\Tables\sql_perf_mon_config_snapshot_header_type.sql" />
+    <Build Include="dbo\Tables\sql_perf_mon_config_snapshot_type.sql" />
+    <Build Include="dbo\Tables\sql_perf_mon_master_files.sql" />
+    <Build Include="dbo\Tables\logger_disk_utilisation_database.sql" />
+    <Build Include="dbo\Procedures\usp_logger_disk_utilisation.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
@@ -107,4 +111,24 @@
       <DatabaseVariableLiteralValue>msdb</DatabaseVariableLiteralValue>
     </ArtifactReference>
   </ItemGroup>
+  <ItemGroup>
+    <RefactorLog Include="SQLWATCH.refactorlog" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <Target Name="SetDacVersionToAssemblyVersion" AfterTargets="CoreCompile">
+    <GetAssemblyIdentity AssemblyFiles="$(IntermediateTargetFullFileName)">
+      <Output TaskParameter="Assemblies" PropertyName="IntermediateTargetAssembly" />
+    </GetAssemblyIdentity>
+    <PropertyGroup>
+      <DacVersion>
+        $(IntermediateTargetAssembly.Split(',')[1].Split('=')[1])
+      </DacVersion>
+    </PropertyGroup>
+    <Message Text="DacVersion set to $(DacVersion)" Importance="high" />
+  </Target>
 </Project>
