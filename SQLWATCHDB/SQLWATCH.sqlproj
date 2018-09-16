@@ -29,6 +29,7 @@
     <PageVerify>CHECKSUM</PageVerify>
     <AllowSnapshotIsolation>True</AllowSnapshotIsolation>
     <ReadCommittedSnapshot>True</ReadCommittedSnapshot>
+    <DacVersion>1.1.0.0</DacVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -95,6 +96,8 @@
     <Build Include="dbo\Tables\sql_perf_mon_master_files.sql" />
     <Build Include="dbo\Tables\logger_disk_utilisation_database.sql" />
     <Build Include="dbo\Procedures\usp_logger_disk_utilisation.sql" />
+    <Build Include="dbo\ufn_time_intervals.sql" />
+    <Build Include="dbo\Tables\logger_disk_utilisation_volume.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />

@@ -6,6 +6,7 @@ declare @snapshot_type tinyint = 2
 declare	@product_version nvarchar(128)
 declare @product_version_major decimal(10,2)
 declare @product_version_minor decimal(10,2)
+declare @sql varchar(max)
 
 set @product_version = convert(nvarchar(128),serverproperty('productversion'));
 select @product_version_major = substring(@product_version, 1,charindex('.', @product_version) + 1 )
@@ -21,16 +22,71 @@ values (@snapshot_time, @snapshot_type)
 -- get sp_spaceused
 --------------------------------------------------------------------------------------------------------------
 declare @spaceused table (
-     [database_name] nvarchar(128),
-     [database_size] varchar(18),
-     [unallocated_space] varchar(18),
-     [reserved] varchar(18),
-     [data] varchar(18),
-     [index_size] varchar(18),
-     [unused] varchar(18)
+		[database_name] nvarchar(128),
+		[database_size] varchar(18),
+		[unallocated_space] varchar(18),
+		[reserved] varchar(18),
+		[data] varchar(18),
+		[index_size] varchar(18),
+		[unused] varchar(18)
 )
-insert into @spaceused
-    exec sp_MSforeachdb 'use [?]; exec sp_spaceused @oneresultset = 1;'
+
+if @product_version_major >= 13
+/*	since SQL 2016 Microsoft have improved sp_spaceused which now returns one recordset making it easier
+	to insert into tables */
+	begin
+		insert into @spaceused
+			exec sp_MSforeachdb 'use [?]; exec sp_spaceused @oneresultset = 1;'
+	end
+else
+	begin
+	/*	pre 2016 however is not all that easy. sp_spaceused will return multiple resultsets making it impossible
+		to insert into a table. The below is more or less what sp_spaceused is doing */
+		insert into @spaceused
+		exec sp_MSforeachdb 'USE [?];
+		declare  @id	int			
+				,@type	character(2) 
+				,@pages	bigint
+				,@dbname sysname
+				,@dbsize bigint
+				,@logsize bigint
+				,@reservedpages  bigint
+				,@usedpages  bigint
+				,@rowCount bigint
+
+			select 
+				  @dbsize = sum(convert(bigint,case when status & 64 = 0 then size else 0 end))
+				, @logsize = sum(convert(bigint,case when status & 64 <> 0 then size else 0 end))
+				from dbo.sysfiles
+
+			select 
+				@reservedpages = sum(a.total_pages),
+				@usedpages = sum(a.used_pages),
+				@pages = sum(
+						case
+							-- XML-Index and FT-Index and semantic index internal tables are not considered "data", but is part of "index_size"
+							when it.internal_type IN (202,204,207,211,212,213,214,215,216,221,222,236) then 0
+							when a.type <> 1 and p.index_id < 2 then a.used_pages
+							when p.index_id < 2 then a.data_pages
+							else 0
+						end
+					)
+			from sys.partitions p join sys.allocation_units a on p.partition_id = a.container_id
+				left join sys.internal_tables it on p.object_id = it.object_id
+
+			select 
+				database_name = db_name(),
+				database_size = ltrim(str((convert (dec (15,2),@dbsize) + convert (dec (15,2),@logsize)) 
+					* 8192 / 1048576,15,2) + '' MB''),
+				''unallocated space'' = ltrim(str((case when @dbsize >= @reservedpages then
+					(convert (dec (15,2),@dbsize) - convert (dec (15,2),@reservedpages)) 
+					* 8192 / 1048576 else 0 end),15,2) + '' MB''),
+				reserved = ltrim(str(@reservedpages * 8192 / 1024.,15,0) + '' KB''),
+				data = ltrim(str(@pages * 8192 / 1024.,15,0) + '' KB''),
+				index_size = ltrim(str((@usedpages - @pages) * 8192 / 1024.,15,0) + '' KB''),
+				unused = ltrim(str((@reservedpages - @usedpages) * 8192 / 1024.,15,0) + '' KB'')
+				'
+	end
 
 --------------------------------------------------------------------------------------------------------------
 -- get log usage
