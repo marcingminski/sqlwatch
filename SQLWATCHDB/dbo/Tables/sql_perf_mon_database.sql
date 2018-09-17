@@ -7,3 +7,5 @@
 	 [database_name],[database_create_date]
 	 )
 )
+GO
+CREATE NONCLUSTERED INDEX idx_perf_mon_database_current ON [dbo].[sql_perf_mon_database]([database_current])
