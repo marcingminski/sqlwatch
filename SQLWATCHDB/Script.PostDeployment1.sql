@@ -835,6 +835,7 @@ if (select name from sysjobs where name = 'SQLWATCH-LOGGER-DISK-UTILISATION') is
 			@command=N'exec [dbo].[usp_logger_disk_utilisation]', 
 			@database_name=@database, 
 			@flags=0
+		
 		EXEC msdb.dbo.sp_update_job @job_name=N'SQLWATCH-LOGGER-DISK-UTILISATION', 
 				@enabled=1, 
 				@start_step_id=1, 
@@ -861,3 +862,55 @@ if (select name from sysjobs where name = 'SQLWATCH-LOGGER-DISK-UTILISATION') is
 				@active_start_time=437, 
 				@active_end_time=235959, @schedule_id = @schedule_id OUTPUT
 	end
+
+set @jobId = null
+declare @command nvarchar(4000)
+set @command = N'
+[datetime]$snapshot_time = (Invoke-SqlCmd -ServerInstance "' + @server + '" -Database ' + @database + ' -Query "select [snapshot_time]=max([snapshot_time]) 
+from [dbo].[sql_perf_mon_snapshot_header]
+where snapshot_type_id = 2").snapshot_time
+
+#https://msdn.microsoft.com/en-us/library/aa394515(v=vs.85).aspx
+#driveType 3 = Local disk
+Get-WMIObject Win32_Volume | ?{$_.DriveType -eq 3} | %{
+    $VolumeName = $_.Name
+    $VolumeLabel = $_.Label
+    $FileSystem = $_.Filesystem
+    $BlockSize = $_.BlockSize
+    $FreeSpace = $_.Freespace
+    $Capacity = $_.Capacity
+    $SnapshotTime = Get-Date $snapshot_time -format "yyyy-MM-dd HH:mm:ss.fff"
+    Invoke-SqlCmd -ServerInstance "' + @server + '" -Database ' + @database + ' -Query "
+     insert into [dbo].[logger_disk_utilisation_volume](
+            [volume_name]
+           ,[volume_label]
+           ,[volume_fs]
+           ,[volume_block_size_bytes]
+           ,[volume_free_space_bytes]
+           ,[volume_total_space_bytes]
+           ,[snapshot_type_id]
+           ,[snapshot_time])
+    values (''$VolumeName'',''$VolumeLabel'',''$FileSystem'',$BlockSize,$FreeSpace,$Capacity,2,''$SnapshotTime'')
+    " 
+}'
+select @jobId = job_id from msdb.dbo.sysjobs where name = 'SQLWATCH-LOGGER-DISK-UTILISATION'
+if (select step_name from msdb.dbo.sysjobsteps
+where job_id = @jobId and step_name = 'Get-WMIObject Win32_Volume') is null
+	begin
+		EXEC msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'Get-WMIObject Win32_Volume', 
+			@step_id=2, 
+			@cmdexec_success_code=0, 
+			@on_success_action=1, 
+			@on_success_step_id=0, 
+			@on_fail_action=2, 
+			@on_fail_step_id=0, 
+			@retry_attempts=0, 
+			@retry_interval=0, 
+			@os_run_priority=0, @subsystem=N'PowerShell', 
+			@command=@command, 
+		@database_name=@database, 
+		@flags=0
+		EXEC msdb.dbo.sp_update_job @job_id = @jobId, @start_step_id = 1
+	end
+		EXEC msdb.dbo.sp_update_jobstep @job_id=@jobId, @step_id=1 ,@on_success_action=3
+
