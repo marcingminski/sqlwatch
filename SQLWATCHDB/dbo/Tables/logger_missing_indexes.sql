@@ -21,10 +21,10 @@ PRIMARY KEY CLUSTERED
 
 GO
 
-ALTER TABLE [dbo].[missing_indexes]  WITH CHECK ADD  CONSTRAINT [fk_sql_perf_mon_missing_indexes] FOREIGN KEY([snapshot_time])
+ALTER TABLE [dbo].[logger_missing_indexes]  WITH CHECK ADD  CONSTRAINT [fk_sql_perf_mon_missing_indexes] FOREIGN KEY([snapshot_time])
 REFERENCES [dbo].[sql_perf_mon_snapshot_header] ([snapshot_time])
 ON DELETE CASCADE
 GO
 
-ALTER TABLE [dbo].[missing_indexes] CHECK CONSTRAINT [fk_sql_perf_mon_missing_indexes]
+ALTER TABLE [dbo].[logger_missing_indexes] CHECK CONSTRAINT [fk_sql_perf_mon_missing_indexes]
 GO
