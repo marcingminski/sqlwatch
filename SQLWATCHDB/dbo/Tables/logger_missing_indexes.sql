@@ -13,18 +13,8 @@
 	[last_user_scan] [datetime] NULL,
 	[unique_compiles] [bigint] NULL,
 	[create_tsql] [nvarchar](max) NULL,
-PRIMARY KEY CLUSTERED 
-(
-	[snapshot_time] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+	[snapshot_type_id] TINYINT NULL DEFAULT 1
+)
 
-GO
 
-ALTER TABLE [dbo].[logger_missing_indexes]  WITH CHECK ADD  CONSTRAINT [fk_sql_perf_mon_missing_indexes] FOREIGN KEY([snapshot_time])
-REFERENCES [dbo].[sql_perf_mon_snapshot_header] ([snapshot_time])
-ON DELETE CASCADE
-GO
-
-ALTER TABLE [dbo].[logger_missing_indexes] CHECK CONSTRAINT [fk_sql_perf_mon_missing_indexes]
 GO
