@@ -98,6 +98,8 @@
     <Build Include="dbo\Procedures\usp_logger_disk_utilisation.sql" />
     <Build Include="dbo\ufn_time_intervals.sql" />
     <Build Include="dbo\Tables\logger_disk_utilisation_volume.sql" />
+    <Build Include="dbo\Tables\logger_missing_indexes.sql" />
+    <Build Include="dbo\Procedures\usp_logger_missing_indexes.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
