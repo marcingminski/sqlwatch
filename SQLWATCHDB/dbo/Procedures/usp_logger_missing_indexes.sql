@@ -38,7 +38,7 @@
 --			10. I am going to create necessary PKs and FKs
 --			11. I am going to rename @date_snapshot_current to @snapshot_type to
 --				make it consistent with other procedures. The snapshot _current and
---				_previous only apply to cumulative snapshots where we calcualate
+--				_previous only apply to cumulative snapshots where we calculate
 --				deltas.
 --			12. I am going to change CAST(avg_user_impact as nvarchar) + '%' [Impact]
 --				to simply avg_user_impact as it is much more efficient to store raw
