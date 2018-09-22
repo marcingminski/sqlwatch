@@ -2,6 +2,53 @@
 -- Author: Colin Douglas
 -- Create date: 09/20/2018
 -- Description: Captures Missing Indexes
+--
+-- Changes:
+--		Marcin Gminski 22/09/2018:
+--			1. If we remove table_name from the [create_tsql]
+--				we will also be able to remove sc.[name], so.[name]
+--				from the cursor.
+--			2. as we no longer need to join on:
+--					   JOIN ' + QUOTENAME(@database_name) + N'.sys.objects so on 
+--						  id.object_id=so.object_id
+--					   JOIN ' + QUOTENAME(@database_name) + N'.sys.schemas sc on 
+--						  so.schema_id=sc.schema_id
+--				we can remove the cursor entirely. This will improve the execution
+--				time on servers with large number of dbs and simplify the code.
+--			3. as we no longer need a cursor, we also do not need #database_list
+--			4. for the sake of simplicity, we also do not need #missing_indexes,
+--				we can insert directly into the target table
+--			5. even though I originally suggested it, I am going to remove
+--				column [benefit] as it is a simple calculation based on
+--				existing columns which can be done during reporting (PowerBI)
+--			6. the final table [dbo].[logger_missing_indexes] does not have
+--				some of the useful columns that #missing_indexes had so I am 
+--				going to bring them in
+--			7. the CREATE INDEX statement has ONLINE=? which only works in
+--				the Enterprise edition so I am going to add a check for it
+--			8. the CREATE INDEX contains table name and column lists in the name
+--				I am not against it but something it can create long names.
+--				as I have removed table_name for the sake of simplicity
+--				I am happy to make a compromise and remove table and column list
+--				entirely but add index_id, timestamp and "SQLWATCH" into the name
+--				so we know where the index has come from and when.
+--			9. I am also going to modify table [dbo].[logger_missing_indexes]
+--				and remove [snapshot_type_id] TINYINT NULL DEFAULT 1 and
+--				give it its own snapshot_id with its own retention and schedule
+--			10. I am going to create necessary PKs and FKs
+--			11. I am going to rename @date_snapshot_current to @snapshot_type to
+--				make it consistent with other procedures. The snapshot _current and
+--				_previous only apply to cumulative snapshots where we calcualate
+--				deltas.
+--			12. I am going to change CAST(avg_user_impact as nvarchar) + '%' [Impact]
+--				to simply avg_user_impact as it is much more efficient to store raw
+--				numerical value in the databases and format in the presentation tier.
+--			13. I am going to add servername in preparation for the future central repo.
+--			14. I am also goint to NOT exclude SQLWATCH from the database list because why 
+--				would we not capture missing indexes in SQLWATCH :)
+--			15. I am going to remove FILLFACTOR=100 as this is the default anyway. 
+--				Some DBAs may have different preference and different default FILLFACTOR 
+--				and I wouldnt want to force any config different to what they prefer.
 -- =============================================
 CREATE PROCEDURE [dbo].[usp_logger_missing_indexes]
 AS
@@ -10,124 +57,67 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
     
-    /* Variables */
-    declare @sql nvarchar(max);
-    declare @database_id int;
-    declare @database_name nvarchar(128);
-    declare @date_snapshot_current datetime = GETDATE()
+	--------------------------------------------------------------------------------------------------------------
+    -- variables
+	--------------------------------------------------------------------------------------------------------------
+	declare @snapshot_time datetime = getdate();
+	declare @snapshot_type tinyint = 3
+	insert into [dbo].[sql_perf_mon_snapshot_header]
+	values (@snapshot_time, @snapshot_type)
 
-    /* Temp Tables */
-    create table #database_list (
-	    database_name NVARCHAR(256)
-    )
+	--only enterprise and developer will allow online index build/rebuild
+	declare @allows_online_index bit
+	select @allows_online_index = case 
+			when 
+					convert(varchar(4000),serverproperty('Edition')) like 'Enterprise%' 
+				or	convert(varchar(4000),serverproperty('Edition')) like 'Developer%'
+			then 1
+			else 0
+		end
 
-    create table #missing_indexes
-	   (
-		  [database_name] nvarchar(128) not null,
-		  [schema_name] nvarchar(128) not null,
-		  [table_name] nvarchar(128),
-		  [statement] nvarchar(512) not null,
-		  [benefit] as (( user_seeks + user_scans ) * avg_total_user_cost * (avg_user_impact * .01)),
-		  [avg_total_user_cost] numeric(29,4) not null,
-		  [avg_user_impact] numeric(29,1) not null,
-		  [user_seeks] bigint not null,
-		  [user_scans] bigint not null,
-		  [last_user_seek] datetime null,
-		  [last_user_scan] datetime null,
-		  [unique_compiles] bigint null,
-		  [equality_columns] nvarchar(4000), 
-		  [inequality_columns] nvarchar(4000),
-		  [included_columns] nvarchar(4000),
-		  [create_tsql] AS N'CREATE INDEX [ix_' + table_name + N'_' 
-				    + REPLACE(REPLACE(REPLACE(REPLACE(
-					   ISNULL(equality_columns,N'')+ 
-					   CASE WHEN equality_columns IS NOT NULL AND inequality_columns IS NOT NULL THEN N'_' ELSE N'' END
-					   + ISNULL(inequality_columns,''),',','')
-					   ,'[',''),']',''),' ','_') 
-				    + CASE WHEN included_columns IS NOT NULL THEN N'_includes' ELSE N'' END + N'] ON ' 
-				    + [statement] + N' (' + ISNULL(equality_columns,N'')
-				    + CASE WHEN equality_columns IS NOT NULL AND inequality_columns IS NOT NULL THEN N', ' ELSE N'' END
-				    + CASE WHEN inequality_columns IS NOT NULL THEN inequality_columns ELSE N'' END + 
-				    ') ' + CASE WHEN included_columns IS NOT NULL THEN N' INCLUDE (' + included_columns + N')' ELSE N'' END
-				    + N' WITH (' 
-					   + N'FILLFACTOR=100, ONLINE=?, SORT_IN_TEMPDB=?' 
-				    + N')'
-				    + N';'
-	   )
+	--------------------------------------------------------------------------------------------------------------
+	-- get missing indexes
+	--------------------------------------------------------------------------------------------------------------
+	insert into [dbo].[logger_missing_indexes]
+	select 
+		[server_name] = @@servername ,
+		[database_name] = db.[database_name], 
+		[database_create_date] = db.[database_create_date],
+		[object_name] = parsename(mi.[statement],2) + '.' + parsename(mi.[statement],1), 
+		[snapshot_time] = @snapshot_time,
+		mi.[index_handle], 
+		igs.[last_user_seek],
+		igs.[unique_compiles], 
+		igs.[user_seeks], 
+		igs.[user_scans], 
+		igs.[avg_total_user_cost], 
+		igs.[avg_user_impact], 
+		[index_tsql] = 'CREATE INDEX SQLWATCH_AUTOIDX_' + rtrim(convert(char(100),mi.[index_handle])) + 
+			'_' + convert(varchar(10),getutcdate(),112) + ' ON ' + mi.statement + ' (' + 
+			case when [equality_columns] is not null then [equality_columns] else '' end + 
+			case when [equality_columns] is not null and [inequality_columns] is not null then ', ' else '' end + 
+			case when [inequality_columns] is not null then [inequality_columns] else '' end + ') ' + 
+			case when [included_columns] is not null then 'INCLUDE (' + [included_columns] + ')' else '' end
+			+ N' WITH (' 
+				+ case when @allows_online_index = 1 then N'ONLINE=ON,' else N'' end + N'SORT_IN_TEMPDB=ON' 
+			+ N')',
+		[snapshot_type_id] = @snapshot_type
+	from sys.dm_db_missing_index_groups ig 
 
+		inner join sys.dm_db_missing_index_group_stats igs 
+		on igs.group_handle = ig.index_group_handle 
 
-    insert into #database_list (database_name)
-    select  DB_NAME(database_id)
-    from	   sys.databases
-    where   user_access_desc='MULTI_USER'
-		  and state_desc = 'ONLINE'
-		  and database_id > 4
-		  and is_distributor = 0
-		  and DB_NAME(database_id) NOT LIKE 'ReportServer%'
-		  and DB_NAME(database_id) <> 'SQLWATCH';
+		inner join sys.dm_db_missing_index_details mi 
+		on ig.index_handle = mi.index_handle
 
+		inner join sys.databases sdb
+		on sdb.[name] = db_name(mi.[database_id])
+		and sdb.database_id > 4
+		and sdb.[name] not like '%ReportServer%'
 
-    declare c1 cursor
-    local fast_forward 
-    for 
-    select database_name 
-    from #database_list 
-    order by database_name
-
-    open c1
-    fetch next from c1 into @database_name
-
-    while @@FETCH_STATUS = 0
-    begin
-   
-	   select  @database_id = [database_id]
-	   from	  sys.databases
-	   where	  [name] = @database_name
-
-	   set @sql=N'SELECT  ' + QUOTENAME(@database_name,'''') + N', sc.[name], so.[name], id.statement , gs.avg_total_user_cost, 
-					   gs.avg_user_impact, gs.user_seeks, gs.user_scans, gs.last_user_seek, gs.last_user_scan, gs.unique_compiles,id.equality_columns, 
-					   id.inequality_columns,id.included_columns
-				FROM    sys.dm_db_missing_index_groups ig
-					   JOIN sys.dm_db_missing_index_details id ON ig.index_handle = id.index_handle
-					   JOIN sys.dm_db_missing_index_group_stats gs ON ig.index_group_handle = gs.group_handle
-					   JOIN ' + QUOTENAME(@database_name) + N'.sys.objects so on 
-						  id.object_id=so.object_id
-					   JOIN ' + QUOTENAME(@database_name) + N'.sys.schemas sc on 
-						  so.schema_id=sc.schema_id
-				WHERE    id.database_id = ' + CAST(@database_id AS NVARCHAR(30)) +
-				N'OPTION (RECOMPILE);'
-
-        
-	   insert  #missing_indexes (  [database_name], [schema_name], [table_name], [statement], [avg_total_user_cost], 
-							 [avg_user_impact], [user_seeks], [user_scans], [last_user_seek], [last_user_scan], [unique_compiles], [equality_columns], 
-							 [inequality_columns], [included_columns])
-	   exec sp_executesql @sql;
-
-	   fetch next from c1 into @database_name
-
-    end
-                        
-
-    insert into [dbo].[logger_missing_indexes]
-    select 
-		  @date_snapshot_current [Snapshot Time],
-		  database_name [Database Name],
-		  mi.statement [Statement],
-		  mi.benefit [Benefit],
-		  equality_columns [Equality Columns],
-		  inequality_columns [Inequality Columns],
-		  included_columns [Included Columns],
-		  (user_seeks + user_scans) [Usage],
-		  CAST(avg_user_impact as nvarchar) + '%' [Impact],
-		  avg_total_user_cost [Average Query Cost],
-		  last_user_seek [Last User Seek],
-		  last_user_scan [Last User Scan],
-		  unique_compiles [Unique Compiles],
-		  create_tsql [Create TSQL]
-    from    #missing_indexes mi
-    order by benefit desc
-
-
+		inner join [dbo].[sql_perf_mon_database] db
+		on db.[database_name] = db_name(mi.[database_id])
+		and db.[database_create_date] = sdb.[create_date]
 END
 
 GO

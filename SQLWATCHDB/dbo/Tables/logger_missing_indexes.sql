@@ -1,20 +1,28 @@
-﻿CREATE TABLE [dbo].[logger_missing_indexes](
-	[snapshot_time] [datetime] NOT NULL,
-	[database_name] [nvarchar](128) NOT NULL,
-	[statement] [nvarchar](512) NULL,
-	[benefit] [numeric](38, 6) NULL,
-	[equality_columns] [nvarchar](4000) NULL,
-	[inequality_columns] [nvarchar](4000) NULL,
-	[included_columns] [nvarchar](4000) NULL,
-	[usage] [bigint] NULL,
-	[impact] [nvarchar](31) NULL,
-	[average_query_cost] [numeric](29, 4) NULL,
-	[last_user_seek] [datetime] NULL,
-	[last_user_scan] [datetime] NULL,
-	[unique_compiles] [bigint] NULL,
-	[create_tsql] [nvarchar](max) NULL,
-	[snapshot_type_id] TINYINT NULL DEFAULT 1
+﻿CREATE TABLE [dbo].[logger_missing_indexes]
+(
+	[servername] sysname,
+	[database_name] sysname,
+	[database_create_date] datetime,
+	[object_name] nvarchar(256),
+	[snapshot_time] datetime,
+	[index_handle] int,
+	[last_user_seek] datetime,
+	[unique_compiles] bigint,
+	[user_seeks] bigint,
+	[user_scans] bigint,
+	[avg_total_user_cost] float,
+	[avg_user_impact] float,
+	[missing_index_def] nvarchar(4000),
+	[snapshot_type_id] tinyint
+	constraint pk_logger_missing_indexes primary key clustered (
+		[snapshot_time], [database_name], [index_handle]
+	),
+	constraint fk_logger_missing_indexes_database 
+		foreign key ([database_name],[database_create_date])
+		references [dbo].[sql_perf_mon_database] ([database_name],[database_create_date])
+		on delete cascade,
+	constraint fk_logger_missing_indexes_snapshot_header
+		foreign key ([snapshot_time],[snapshot_type_id])
+		references [dbo].[sql_perf_mon_snapshot_header] ([snapshot_time],[snapshot_type_id])
+		on delete cascade
 )
-
-
-GO
