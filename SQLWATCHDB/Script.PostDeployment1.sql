@@ -639,6 +639,10 @@ using (
 	union 
 	/* size data logger */
 	select [snapshot_type_id] = 2, [snapshot_type_desc] = 'Disk Utilisation', [snapshot_retention_days] = 365
+	union 
+	/* indexes */
+	select [snapshot_type_id] = 3, [snapshot_type_desc] = 'Index Advisor', [snapshot_retention_days] = 30
+
 ) as source
 on (source.[snapshot_type_id] = target.[snapshot_type_id])
 when matched and source.[snapshot_type_desc] <> target.[snapshot_type_desc] then
@@ -655,9 +659,7 @@ when not matched then
 
 --setup jobs
 --we have to switch database to msdb but we also need to know which db jobs should run in so have to capture current database:
-declare @database varchar(255)
 declare @server nvarchar(255)
-set @database = DB_NAME()
 set @server = @@SERVERNAME
 USE [msdb]
 DECLARE @jobId BINARY(16)
@@ -682,7 +684,7 @@ if (select name from sysjobs where name = 'DBA-PERF-LOGGER') is null
 				@retry_interval=0, 
 				@os_run_priority=0, @subsystem=N'TSQL', 
 				@command=N'exec [dbo].[sp_sql_perf_mon_logger]', 
-				@database_name=@database, 
+				@database_name='$(DatabaseName)', 
 				@flags=0;
 		EXEC msdb.dbo.sp_update_job @job_name=N'DBA-PERF-LOGGER', 
 				@enabled=1, 
@@ -730,7 +732,7 @@ if (select name from sysjobs where name = 'DBA-PERF-LOGGER-RETENTION') is  null
 				@retry_interval=0, 
 				@os_run_priority=0, @subsystem=N'TSQL', 
 				@command=N'exec dbo.sp_sql_perf_mon_retention', 
-				@database_name=@database, 
+				@database_name='$(DatabaseName)',
 				@flags=0;
 		EXEC msdb.dbo.sp_update_job @job_name=N'DBA-PERF-LOGGER-RETENTION', 
 				@enabled=1, 
@@ -780,7 +782,7 @@ if (select name from sysjobs where name = 'DBA-PERF-AUTO-CONFIG') is  null
 			@retry_interval=0, 
 			@os_run_priority=0, @subsystem=N'TSQL', 
 			@command=N'EXEC dbo.sp_sql_perf_mon_add_database', 
-			@database_name=@database, 
+			@database_name='$(DatabaseName)', 
 			@flags=0
 
 	EXEC msdb.dbo.sp_update_job @job_name=N'DBA-PERF-AUTO-CONFIG', 
@@ -837,7 +839,7 @@ if (select name from sysjobs where name = 'SQLWATCH-LOGGER-MISSING-INDEXES') is 
 				@retry_interval=0, 
 				@os_run_priority=0, @subsystem=N'TSQL', 
 				@command=N'exec [dbo].[usp_logger_missing_indexes]', 
-				@database_name=N'SQLWATCH', 
+				@database_name='$(DatabaseName)', 
 				@flags=0
 
 		EXEC msdb.dbo.sp_update_job @job_id = @jobId, @start_step_id = 1
@@ -882,7 +884,7 @@ if (select name from sysjobs where name = 'SQLWATCH-LOGGER-DISK-UTILISATION') is
 			@retry_interval=0, 
 			@os_run_priority=0, @subsystem=N'TSQL', 
 			@command=N'exec [dbo].[usp_logger_disk_utilisation]', 
-			@database_name=@database, 
+			@database_name='$(DatabaseName)', 
 			@flags=0
 		
 		EXEC msdb.dbo.sp_update_job @job_name=N'SQLWATCH-LOGGER-DISK-UTILISATION', 
@@ -915,7 +917,7 @@ if (select name from sysjobs where name = 'SQLWATCH-LOGGER-DISK-UTILISATION') is
 set @jobId = null
 declare @command nvarchar(4000)
 set @command = N'
-[datetime]$snapshot_time = (Invoke-SqlCmd -ServerInstance "' + @server + '" -Database ' + @database + ' -Query "select [snapshot_time]=max([snapshot_time]) 
+[datetime]$snapshot_time = (Invoke-SqlCmd -ServerInstance "' + @server + '" -Database ' + '$(DatabaseName)' + ' -Query "select [snapshot_time]=max([snapshot_time]) 
 from [dbo].[sql_perf_mon_snapshot_header]
 where snapshot_type_id = 2").snapshot_time
 
@@ -929,7 +931,7 @@ Get-WMIObject Win32_Volume | ?{$_.DriveType -eq 3} | %{
     $FreeSpace = $_.Freespace
     $Capacity = $_.Capacity
     $SnapshotTime = Get-Date $snapshot_time -format "yyyy-MM-dd HH:mm:ss.fff"
-    Invoke-SqlCmd -ServerInstance "' + @server + '" -Database ' + @database + ' -Query "
+    Invoke-SqlCmd -ServerInstance "' + @server + '" -Database ' + '$(DatabaseName)' + ' -Query "
      insert into [dbo].[logger_disk_utilisation_volume](
             [volume_name]
            ,[volume_label]
@@ -957,7 +959,7 @@ where job_id = @jobId and step_name = 'Get-WMIObject Win32_Volume') is null
 			@retry_interval=0, 
 			@os_run_priority=0, @subsystem=N'PowerShell', 
 			@command=@command, 
-		@database_name=@database, 
+		@database_name='$(DatabaseName)', 
 		@flags=0
 		EXEC msdb.dbo.sp_update_job @job_id = @jobId, @start_step_id = 1
 	end
