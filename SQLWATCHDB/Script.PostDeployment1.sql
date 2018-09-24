@@ -639,6 +639,10 @@ using (
 	union 
 	/* size data logger */
 	select [snapshot_type_id] = 2, [snapshot_type_desc] = 'Disk Utilisation', [snapshot_retention_days] = 365
+	union 
+	/* indexes */
+	select [snapshot_type_id] = 3, [snapshot_type_desc] = 'Index Advisor', [snapshot_retention_days] = 30
+
 ) as source
 on (source.[snapshot_type_id] = target.[snapshot_type_id])
 when matched and source.[snapshot_type_desc] <> target.[snapshot_type_desc] then
