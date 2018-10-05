@@ -100,6 +100,7 @@
     <Build Include="dbo\Tables\logger_disk_utilisation_volume.sql" />
     <Build Include="dbo\Tables\logger_missing_indexes.sql" />
     <Build Include="dbo\Procedures\usp_logger_missing_indexes.sql" />
+    <Build Include="dbo\Tables\logger_xes_waits.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />

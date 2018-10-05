@@ -55,8 +55,7 @@ declare @sql nvarchar(4000)
 		
 		set @date_snapshot_current = getdate();
 		insert into [dbo].[sql_perf_mon_snapshot_header]
-		values (@date_snapshot_current, 1)
-		
+		values (@date_snapshot_current, 1)		
 		--------------------------------------------------------------------------------------------------------------
 		-- 1. get cpu
 		--------------------------------------------------------------------------------------------------------------
@@ -288,6 +287,57 @@ declare @sql nvarchar(4000)
 		insert into [dbo].[sql_perf_mon_wait_stats]
 		select [wait_type], [waiting_tasks_count], [wait_time_ms],[max_wait_time_ms], [signal_wait_time_ms], [snapshot_time]=@date_snapshot_current, 1
 		from sys.dm_os_wait_stats;
+
+		--------------------------------------------------------------------------------------------------------------
+		-- XE waits
+		-- https://docs.microsoft.com/en-us/sql/relational-databases/extended-events/use-the-system-health-session
+		-- by default, the following WAITS are logged into the default system_health session:
+		--
+		--	The callstack, sql_text, and session_id for any sessions that have waited on latches (or other interesting resources) for > 15 seconds.
+		--	The callstack, sql_text, and session_id for any sessions that have waited on locks for > 30 seconds.
+		--	The callstack, sql_text, and session_id for any sessions that have waited for a long time for preemptive waits. The duration varies by wait type. A preemptive wait is where SQL Server is waiting for external API calls. 
+		--
+		--------------------------------------------------------------------------------------------------------------
+		if @product_version_major >= 11
+			begin
+				insert into [dbo].[sql_perf_mon_snapshot_header]
+				values (@date_snapshot_current, 6)		
+
+				declare @filename varchar(8000)
+				declare @utc_datediff int = datediff(minute,getutcdate(),@date_snapshot_current);
+
+				select @filename= convert(xml,[target_data]).value('(/EventFileTarget/File/@name)[1]', 'varchar(8000)')
+				from sys.dm_xe_session_targets
+				where [target_name] = 'event_file' 
+				and [event_session_address] = (
+					select [address]
+					from sys.dm_xe_sessions 
+					where [name] = 'system_health'
+					);
+
+				select [event_xml] = convert(xml,[event_data])
+				, [utc_event_time] = dateadd(mi,@utc_datediff,convert(xml,[event_data]).value('(/event/@timestamp)[1]', 'datetime'))
+				, [object_name]
+				into #xe 
+				from sys.fn_xe_file_target_read_file(@filename, null, null, null)
+				where [object_name] = 'wait_info'
+				and dateadd(mi,@utc_datediff,dateadd(mi,@utc_datediff,convert(xml,[event_data]).value('(/event/@timestamp)[1]', 'datetime'))) > @date_snapshot_previous
+	
+				insert into [dbo].[logger_xes_waits]
+				select
+					[utc_event_time] = event_xml.value('(/event/@timestamp)[1]', 'datetime'),
+					[session_id] = event_xml.value('(/event/action[@name="session_id"]/value)[1]', 'int'),
+					[wait_type] = event_xml.value('(/event/data/text)[1]', 'varchar(255)'), 
+					[duration] = event_xml.value('(/event/data/value)[3]', 'bigint'), 
+					[signal_duration] = event_xml.value('(/event/data/value)[4]', 'bigint'), 
+					[wait_resource]	= event_xml.value('(/event/data/value)[5]', 'varchar(255)'), 
+					[query]	= event_xml.value('(/event/action[@name="sql_text"]/value)[1]', 'varchar(max)'),
+					[snapshot_time] = @date_snapshot_current,
+					[snapshot_type_id] = 6
+				from #xe t
+				where [object_name] = 'wait_info'
+			end
+
 		--------------------------------------------------------------------------------------------------------------
 		-- sp_whoisactive
 		-- Please download and install The Great sp_whoisactive from http://whoisactive.com/ and thank Adam Machanic 

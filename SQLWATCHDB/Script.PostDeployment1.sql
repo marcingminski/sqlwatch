@@ -642,6 +642,9 @@ using (
 	union 
 	/* indexes */
 	select [snapshot_type_id] = 3, [snapshot_type_desc] = 'Index Advisor', [snapshot_retention_days] = 30
+	union 
+	/* XE Health Session */
+	select [snapshot_type_id] = 6, [snapshot_type_desc] = 'XE-SH Waits', [snapshot_retention_days] = 7
 
 ) as source
 on (source.[snapshot_type_id] = target.[snapshot_type_id])
