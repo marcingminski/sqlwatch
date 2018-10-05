@@ -369,8 +369,6 @@ declare @sql nvarchar(4000)
 				where [object_name] = 'sp_server_diagnostics_component_result'
 				and [event_time] > (select isnull(max([event_time]),'1970-01-01') from [dbo].[logger_perf_xes_iosubsystem])
 				and convert(xml, [event_xml]).value('(/event/data/text)[1]','varchar(255)') = 'IO_SUBSYSTEM'
-
-
 			end
 
 		--------------------------------------------------------------------------------------------------------------
