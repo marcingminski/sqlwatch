@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[logger_xes_waits]
+﻿CREATE TABLE [dbo].[logger_perf_xes_waits]
 (
 	[event_time] datetime,
 	[session_id] int,
