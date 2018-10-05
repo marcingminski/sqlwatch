@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[logger_xes_waits]
 (
-	[utc_event_time] datetime,
+	[event_time] datetime,
 	[session_id] int,
 	[wait_type] varchar(255),
 	[duration] bigint,
@@ -11,6 +11,6 @@
 	[snapshot_type_id] tinyint not null default 6 ,
 	constraint fk_logger_xes_waits_snapshot_header foreign key ([snapshot_time],[snapshot_type_id]) references [dbo].[sql_perf_mon_snapshot_header]([snapshot_time],[snapshot_type_id]) on delete cascade ,
 	constraint [pk_logger_xes_waits] primary key (
-		[snapshot_time] asc, [wait_type] asc, [session_id], [utc_event_time]
+		[snapshot_time] asc, [event_time], [wait_type] asc, [session_id]
 		)
 )

@@ -300,12 +300,12 @@ declare @sql nvarchar(4000)
 		--------------------------------------------------------------------------------------------------------------
 		if @product_version_major >= 11
 			begin
-				insert into [dbo].[sql_perf_mon_snapshot_header]
-				values (@date_snapshot_current, 6)		
+	
 
 				declare @filename varchar(8000)
-				declare @utc_datediff int = datediff(minute,getutcdate(),@date_snapshot_current);
-
+				declare @utcdatediff int = datediff(minute,getutcdate(),getdate())
+				declare @rowcount int = 0
+	
 				select @filename= convert(xml,[target_data]).value('(/EventFileTarget/File/@name)[1]', 'varchar(8000)')
 				from sys.dm_xe_session_targets
 				where [target_name] = 'event_file' 
@@ -316,26 +316,35 @@ declare @sql nvarchar(4000)
 					);
 
 				select [event_xml] = convert(xml,[event_data])
-				, [utc_event_time] = dateadd(mi,@utc_datediff,convert(xml,[event_data]).value('(/event/@timestamp)[1]', 'datetime'))
+				, [event_time] = dateadd(mi,@utcdatediff,convert(xml,[event_data]).value('(/event/@timestamp)[1]', 'datetime'))
 				, [object_name]
 				into #xe 
 				from sys.fn_xe_file_target_read_file(@filename, null, null, null)
 				where [object_name] = 'wait_info'
-				and dateadd(mi,@utc_datediff,dateadd(mi,@utc_datediff,convert(xml,[event_data]).value('(/event/@timestamp)[1]', 'datetime'))) > @date_snapshot_previous
+				and dateadd(mi,@utcdatediff,convert(xml,[event_data]).value('(/event/@timestamp)[1]', 'datetime')) > (
+					select isnull(max(snapshot_time),'1970-01-01') from [dbo].[logger_xes_waits]
+					)
+				set @rowcount = @@ROWCOUNT
 	
-				insert into [dbo].[logger_xes_waits]
-				select
-					[utc_event_time] = event_xml.value('(/event/@timestamp)[1]', 'datetime'),
-					[session_id] = event_xml.value('(/event/action[@name="session_id"]/value)[1]', 'int'),
-					[wait_type] = event_xml.value('(/event/data/text)[1]', 'varchar(255)'), 
-					[duration] = event_xml.value('(/event/data/value)[3]', 'bigint'), 
-					[signal_duration] = event_xml.value('(/event/data/value)[4]', 'bigint'), 
-					[wait_resource]	= event_xml.value('(/event/data/value)[5]', 'varchar(255)'), 
-					[query]	= event_xml.value('(/event/action[@name="sql_text"]/value)[1]', 'varchar(max)'),
-					[snapshot_time] = @date_snapshot_current,
-					[snapshot_type_id] = 6
-				from #xe t
-				where [object_name] = 'wait_info'
+				if (@rowcount > 0)
+					begin
+						insert into [dbo].[sql_perf_mon_snapshot_header]
+						values (@date_snapshot_current, 6)	
+
+						insert into [dbo].[logger_xes_waits]
+						select
+							[event_time],
+							[session_id] = event_xml.value('(/event/action[@name="session_id"]/value)[1]', 'int'),
+							[wait_type] = event_xml.value('(/event/data/text)[1]', 'varchar(255)'), 
+							[duration] = event_xml.value('(/event/data/value)[3]', 'bigint'), 
+							[signal_duration] = event_xml.value('(/event/data/value)[4]', 'bigint'), 
+							[wait_resource]	= event_xml.value('(/event/data/value)[5]', 'varchar(255)'), 
+							[query]	= event_xml.value('(/event/action[@name="sql_text"]/value)[1]', 'varchar(max)'),
+							[snapshot_time] = @date_snapshot_current,
+							[snapshot_type_id] = 6
+						from #xe t
+						where [object_name] = 'wait_info'
+					end
 			end
 
 		--------------------------------------------------------------------------------------------------------------
