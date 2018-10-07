@@ -29,7 +29,7 @@
     <PageVerify>CHECKSUM</PageVerify>
     <AllowSnapshotIsolation>True</AllowSnapshotIsolation>
     <ReadCommittedSnapshot>True</ReadCommittedSnapshot>
-    <DacVersion>1.2.0.0</DacVersion>
+    <DacVersion>1.3.0.0</DacVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -100,6 +100,9 @@
     <Build Include="dbo\Tables\logger_disk_utilisation_volume.sql" />
     <Build Include="dbo\Tables\logger_missing_indexes.sql" />
     <Build Include="dbo\Procedures\usp_logger_missing_indexes.sql" />
+    <Build Include="dbo\Tables\logger_perf_xes_waits.sql" />
+    <Build Include="dbo\Tables\logger_perf_xes_query_processing.sql" />
+    <Build Include="dbo\Tables\logger_perf_xes_iosubsystem.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />

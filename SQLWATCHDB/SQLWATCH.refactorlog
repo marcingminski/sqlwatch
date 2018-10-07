@@ -42,4 +42,46 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="[unused_bytes]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="4c95fc21-6a39-4946-abf5-2dfa762b6ada" ChangeDateTime="10/05/2018 17:25:08">
+    <Property Name="ElementName" Value="[dbo].[logger_xe_query_processing]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[logger_xes_query_processing]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="d0699231-e729-42f5-bd9e-fe9422ccbd76" ChangeDateTime="10/05/2018 18:46:21">
+    <Property Name="ElementName" Value="[dbo].[logger_xes_query_processing]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[logger_performance_xes_query_processing]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="d9dff7f5-915b-47d9-9240-a68524bf7834" ChangeDateTime="10/05/2018 18:46:51">
+    <Property Name="ElementName" Value="[dbo].[logger_xes_waits]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[logger_performance_xes_waits]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="86a81f8a-48e0-4e6c-9633-eaa52ae3904e" ChangeDateTime="10/05/2018 18:47:19">
+    <Property Name="ElementName" Value="[dbo].[logger_performance_xes_waits]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[logger_perf_xes_waits]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="96c5b866-50ed-4829-b3fc-ed21cb6a68f5" ChangeDateTime="10/05/2018 18:47:37">
+    <Property Name="ElementName" Value="[dbo].[logger_performance_xes_iosubsystem]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[logger_perf_xes_iosubsystem]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="85d2da9a-da9f-436b-abfd-47375d06069d" ChangeDateTime="10/05/2018 18:48:05">
+    <Property Name="ElementName" Value="[dbo].[logger_performance_xes_query_processing]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[logger_perf_xes_query_processing]" />
+  </Operation>
 </Operations>
