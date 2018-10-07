@@ -55,8 +55,7 @@ declare @sql nvarchar(4000)
 		
 		set @date_snapshot_current = getdate();
 		insert into [dbo].[sql_perf_mon_snapshot_header]
-		values (@date_snapshot_current, 1)
-		
+		values (@date_snapshot_current, 1)		
 		--------------------------------------------------------------------------------------------------------------
 		-- 1. get cpu
 		--------------------------------------------------------------------------------------------------------------
@@ -288,6 +287,90 @@ declare @sql nvarchar(4000)
 		insert into [dbo].[sql_perf_mon_wait_stats]
 		select [wait_type], [waiting_tasks_count], [wait_time_ms],[max_wait_time_ms], [signal_wait_time_ms], [snapshot_time]=@date_snapshot_current, 1
 		from sys.dm_os_wait_stats;
+
+		--------------------------------------------------------------------------------------------------------------
+		-- XE waits
+		-- https://docs.microsoft.com/en-us/sql/relational-databases/extended-events/use-the-system-health-session
+		-- by default, the following WAITS are logged into the default system_health session:
+		--
+		--	The callstack, sql_text, and session_id for any sessions that have waited on latches (or other interesting resources) for > 15 seconds.
+		--	The callstack, sql_text, and session_id for any sessions that have waited on locks for > 30 seconds.
+		--	The callstack, sql_text, and session_id for any sessions that have waited for a long time for preemptive waits. The duration varies by wait type. A preemptive wait is where SQL Server is waiting for external API calls. 
+		--
+		--------------------------------------------------------------------------------------------------------------
+		if @product_version_major >= 11
+			begin
+	
+
+				declare @filename varchar(8000)
+				declare @utcdatediff int = datediff(minute,getutcdate(),getdate())
+				declare @rowcount int = 0
+	
+				select @filename= convert(xml,[target_data]).value('(/EventFileTarget/File/@name)[1]', 'varchar(8000)')
+				from sys.dm_xe_session_targets
+				where [target_name] = 'event_file' 
+				and [event_session_address] = (
+					select [address]
+					from sys.dm_xe_sessions 
+					where [name] = 'system_health'
+					);
+
+				select [event_xml] = convert(xml,[event_data])
+				, [event_time] = dateadd(mi,@utcdatediff,convert(xml,[event_data]).value('(/event/@timestamp)[1]', 'datetime'))
+				, [object_name]
+				into #xe 
+				from sys.fn_xe_file_target_read_file(@filename, null, null, null)
+				where [object_name] in ('wait_info','sp_server_diagnostics_component_result')
+
+				insert into [dbo].[sql_perf_mon_snapshot_header]
+				values (@date_snapshot_current, 6)	
+
+				insert into [dbo].[logger_perf_xes_waits]
+				select
+					[event_time],
+					[session_id] = event_xml.value('(/event/action[@name="session_id"]/value)[1]', 'int'),
+					[wait_type] = event_xml.value('(/event/data/text)[1]', 'varchar(255)'), 
+					[duration] = event_xml.value('(/event/data/value)[3]', 'bigint'), 
+					[signal_duration] = event_xml.value('(/event/data/value)[4]', 'bigint'), 
+					[wait_resource]	= event_xml.value('(/event/data/value)[5]', 'varchar(255)'), 
+					[query]	= event_xml.value('(/event/action[@name="sql_text"]/value)[1]', 'varchar(max)'),
+					[snapshot_time] = @date_snapshot_current,
+					[snapshot_type_id] = 6
+				from #xe t
+				where [object_name] = 'wait_info'
+				and [event_time] > (select isnull(max([event_time]),'1970-01-01') from [dbo].[logger_perf_xes_waits])
+
+				insert into [dbo].[logger_perf_xes_query_processing]
+				select 
+					[event_time],
+					[max_workers] = event_xml.value('(/event/data/value/queryProcessing/@maxWorkers)[1]','bigint'),
+					[workers_created] = event_xml.value('(/event/data/value/queryProcessing/@workersCreated)[1]','bigint'),
+					[idle_workers] = event_xml.value('(/event/data/value/queryProcessing/@workersIdle)[1]','bigint'),
+					[pending_tasks] = event_xml.value('(/event/data/value/queryProcessing/@pendingTasks)[1]','bigint'),
+					[unresolvable_deadlocks] = event_xml.value('(/event/data/value/queryProcessing/@hasUnresolvableDeadlockOccurred)[1]','int'),
+					[deadlocked_scheduler] = event_xml.value('(/event/data/value/queryProcessing/@hasDeadlockedSchedulersOccurred)[1]','int'),
+					[snapshot_time] = @date_snapshot_current,
+					[snapshot_type_id] = 1
+				from #xe 
+				where [object_name] = 'sp_server_diagnostics_component_result'
+				and [event_time] > (select isnull(max([event_time]),'1970-01-01') from [dbo].[logger_perf_xes_query_processing])
+				and convert(xml, [event_xml]).value('(/event/data/text)[1]','varchar(255)') = 'QUERY_PROCESSING'
+
+				insert into [dbo].[logger_perf_xes_iosubsystem]
+				select
+					[event_time],
+					[io_latch_timeouts] = event_xml.value('(/event/data/value/ioSubsystem/@ioLatchTimeouts)[1]','bigint'),
+					[total_long_ios] = event_xml.value('(/event/data/value/ioSubsystem/@totalLongIos)[1]','bigint'),
+					[longest_pending_request_file] = event_xml.value('(/event/data/value/ioSubsystem/longestPendingRequests/pendingRequest/@filePath)[1]','varchar(255)'),
+					[longest_pending_request_duration] = event_xml.value('(/event/data/value/ioSubsystem/longestPendingRequests/pendingRequest/@duration)[1]','bigint'),
+					[snapshot_time] = @date_snapshot_current,
+					[snapshot_type_id] = 1
+				from #xe 
+				where [object_name] = 'sp_server_diagnostics_component_result'
+				and [event_time] > (select isnull(max([event_time]),'1970-01-01') from [dbo].[logger_perf_xes_iosubsystem])
+				and convert(xml, [event_xml]).value('(/event/data/text)[1]','varchar(255)') = 'IO_SUBSYSTEM'
+			end
+
 		--------------------------------------------------------------------------------------------------------------
 		-- sp_whoisactive
 		-- Please download and install The Great sp_whoisactive from http://whoisactive.com/ and thank Adam Machanic 
