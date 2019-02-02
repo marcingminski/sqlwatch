@@ -103,6 +103,7 @@
     <Build Include="dbo\Tables\logger_perf_xes_waits.sql" />
     <Build Include="dbo\Tables\logger_perf_xes_query_processing.sql" />
     <Build Include="dbo\Tables\logger_perf_xes_iosubsystem.sql" />
+    <Build Include="dbo\Tables\logger_perf_os_schedulers.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />

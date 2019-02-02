@@ -147,6 +147,38 @@ declare @sql nvarchar(4000)
 		option (recompile)
 
 		--------------------------------------------------------------------------------------------------------------
+		-- get schedulers summary
+		--------------------------------------------------------------------------------------------------------------
+		insert into dbo.logger_perf_os_schedulers
+			select 
+				  snapshot_time = @date_snapshot_current
+				, snapshot_type_id = 1
+				, scheduler_count = sum(case when is_online = 1 then 1 else 0 end)
+				, [idle_scheduler_count] = sum(convert(int,is_idle))
+				, current_tasks_count = sum(current_tasks_count)
+				, runnable_tasks_count = sum(runnable_tasks_count)
+
+				, preemptive_switches_count = sum(convert(bigint,preemptive_switches_count))
+				, context_switches_count = sum(convert(bigint,context_switches_count))
+				, idle_switches_count = sum(convert(bigint,context_switches_count))
+
+				, current_workers_count = sum(current_workers_count)
+				, active_workers_count = sum(active_workers_count)
+				, work_queue_count = sum(work_queue_count)
+				, pending_disk_io_count = sum(pending_disk_io_count)
+				, load_factor = sum(load_factor)
+
+				, yield_count = sum(convert(bigint,yield_count))
+
+				, failed_to_create_worker = sum(convert(int,failed_to_create_worker))
+
+				, total_cpu_usage_ms = sum(convert(bigint,total_cpu_usage_ms))
+				, total_scheduler_delay_ms = sum(convert(bigint,total_scheduler_delay_ms))
+			from sys.dm_os_schedulers
+			where scheduler_id < 255
+			and status = 'VISIBLE ONLINE'
+
+		--------------------------------------------------------------------------------------------------------------
 		-- get process memory
 		--------------------------------------------------------------------------------------------------------------
 		insert into dbo.sql_perf_mon_os_process_memory
