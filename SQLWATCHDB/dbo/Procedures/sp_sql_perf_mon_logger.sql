@@ -172,8 +172,9 @@ declare @sql nvarchar(4000)
 
 				, failed_to_create_worker = sum(convert(int,failed_to_create_worker))
 
-				, total_cpu_usage_ms = sum(convert(bigint,total_cpu_usage_ms))
-				, total_scheduler_delay_ms = sum(convert(bigint,total_scheduler_delay_ms))
+				/* 2016 onwards only */
+				, total_cpu_usage_ms = null --sum(convert(bigint,total_cpu_usage_ms))
+				, total_scheduler_delay_ms = null --sum(convert(bigint,total_scheduler_delay_ms))
 			from sys.dm_os_schedulers
 			where scheduler_id < 255
 			and status = 'VISIBLE ONLINE'

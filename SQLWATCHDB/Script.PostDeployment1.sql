@@ -334,6 +334,8 @@ where t.[counter_name] is null
 --------------------------------------------------------------------------------------
 --
 --------------------------------------------------------------------------------------
+
+--TODO: THIS HAS BEEN MOVED TO POWERBI AND CAN BE REMOVED FROM SQL PROJECT
 CREATE TABLE #sql_perf_mon_config_wait_stats
 (
 	[category_name] [nvarchar](40) not null,
