@@ -84,4 +84,53 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[logger_perf_xes_query_processing]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="c8d37c63-fc15-41d0-a370-05c872a79177" ChangeDateTime="02/17/2019 19:34:55">
+    <Property Name="ElementName" Value="[dbo].[logger_perf_xes_waits].[query]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[logger_perf_xes_waits]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[sql_text]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="97f9912a-dc67-44d0-a8ef-3f166faa3fbf" ChangeDateTime="02/18/2019 00:54:26">
+    <Property Name="ElementName" Value="[dbo].[usp_logger_xes_long_queries]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_logger_xes_workload]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="a7ef6a3a-3c29-4caa-9795-ea877453ba19" ChangeDateTime="02/20/2019 02:24:53">
+    <Property Name="ElementName" Value="[dbo].[logger_perf_xes_blockers].[database name]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[logger_perf_xes_blockers]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[database_name]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="00e94e4f-b30c-4a63-9085-6c5b451a9ddc" ChangeDateTime="02/20/2019 02:25:06">
+    <Property Name="ElementName" Value="[dbo].[logger_perf_xes_blockers].[blocking_client app name]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[logger_perf_xes_blockers]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[blocking_client_app_name]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="033db253-7794-43d1-8b0c-b70b8ca1da18" ChangeDateTime="02/20/2019 02:25:19">
+    <Property Name="ElementName" Value="[dbo].[logger_perf_xes_blockers].[blocking_client hostname]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[logger_perf_xes_blockers]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[blocking_client_hostname]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="811ca778-e291-40bb-a55d-b04db3f3c080" ChangeDateTime="02/24/2019 21:13:16">
+    <Property Name="ElementName" Value="[dbo].[usp_logger_xes_workload]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_logger_xes_long_queries]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="bd12f7b7-ba22-4540-a29d-752146bd3c93" ChangeDateTime="03/03/2019 18:33:50">
+    <Property Name="ElementName" Value="[dbo].[logger_index_usage_stats].[index_enabled]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[logger_index_usage_stats]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[index_disabled]" />
+  </Operation>
 </Operations>

@@ -1,8 +1,8 @@
 ﻿CREATE TABLE [dbo].[sql_perf_mon_perf_counters]
 (
-	[object_name] varchar(4000) not null,
-	[instance_name] varchar(4000) not null,
-	[counter_name] varchar(4000) not null,
+	[object_name] nvarchar(4000) not null,
+	[instance_name] nvarchar(4000) not null,
+	[counter_name] nvarchar(4000) not null,
 	[cntr_value] bigint not null,
 	[base_cntr_value] bigint null,
 	[cntr_type] bigint not null,
