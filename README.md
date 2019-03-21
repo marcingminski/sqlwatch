@@ -14,6 +14,18 @@ SQLWATCH is a SQL Server Performance and capacity data collector with Power BI d
 # Architecture
 SQLWATCH uses SQL Agent Jobs to trigger data collection on a schedule which write results to a local database. For that reason each monitored SQL Server instance must have SQLWATCH deployed, however, the destination database can be an existing "dbatools" database, msdb or a dedicated SQLWATCH database. For performance reasons, it is advisable to deploy into a dedicated database as we're setting Read Committed Snapshot Isolation which will not be done if deployed to an existing database. The data can be consumed and analysed by the Power BI report. 
 
+# Requirements
+Tested on the following SQL Server versions:
+* 2008 R2 SP3
+* 2012
+* 2014
+* 2016
+* 2017
+
+SQL Server Express is not supported as there is no Agent to invoke data collection. Theoretically, data collection would be possible via SQLCMD triggered from the Windows Task Scheduler but we have not got that tested or even coded.
+
+>>Although Docker and Linux work, the Windows-only WMI basd disk utilisation collector will fail.
+
 # Installation
 The easiset way to install SQLWATCH is to use [dbatools](https://github.com/sqlcollaborative/dbatools):
 
