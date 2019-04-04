@@ -701,18 +701,22 @@ when not matched then
 --query processing has been split out into its own snapshot 10 from snapshot 1.
 --we have to backfill header first as there wont be any old records with id 10, it would violate fk reference
 --if we dont migrate, the old query processing records will not be available in dashboard.
-insert into [dbo].[sql_perf_mon_snapshot_header]
-select distinct s.[snapshot_time], [snapshot_type_id] = 10
-from [dbo].[logger_perf_xes_query_processing] s
-	left join [dbo].[sql_perf_mon_snapshot_header] t
-	on t.snapshot_time = s.snapshot_time
-	and t.snapshot_type_id = 1
-	and s.snapshot_type_id = 10
-where t.snapshot_time is null
+if (select count(*) from [dbo].[sql_perf_mon_snapshot_header]
+	where [snapshot_type_id] = 10) = 0
+		begin
+			insert into [dbo].[sql_perf_mon_snapshot_header]
+			select distinct s.[snapshot_time], [snapshot_type_id] = 10
+			from [dbo].[logger_perf_xes_query_processing] s
+				left join [dbo].[sql_perf_mon_snapshot_header] t
+				on t.snapshot_time = s.snapshot_time
+				and t.snapshot_type_id = 1
+				and s.snapshot_type_id = 10
+			where t.snapshot_time is null
 
-update [dbo].[logger_perf_xes_query_processing]
-	set  [snapshot_type_id] = 10
-	where [snapshot_type_id] = 1
+			update [dbo].[logger_perf_xes_query_processing]
+				set  [snapshot_type_id] = 10
+				where [snapshot_type_id] = 1
+		end
 
 
 --------------------------------------------------------------------------------------
@@ -744,11 +748,11 @@ insert into #jobrename
 			('DBA-PERF-LOGGER-RETENTION',		'SQLWATCH-INTERNAL-RETENTION'),
 			('SQLWATCH-LOGGER-MISSING-INDEXES',	'SQLWATCH-LOGGER-INDEXES')
 
-select @sql = @sql + ' if (select name from msdb.dbo.sysjobs where name = ''' + old_job + ''') is not null
+select @sql = @sql + convert(varchar(max),' if (select name from msdb.dbo.sysjobs where name = ''' + old_job + ''') is not null
 	and (select name from msdb.dbo.sysjobs where name = ''' + new_job + ''') is null
 	begin
 		exec msdb.dbo.sp_update_job @job_name=N''' + old_job + ''', @new_name=N''' + new_job + '''
-	end;'
+	end;')
 from #jobrename
 
 exec ( @sql )
@@ -771,7 +775,8 @@ create table #jobs (
 	active_start_date int, 
 	active_end_date int, 
 	active_start_time int, 
-	active_end_time int, 
+	active_end_time int,
+	job_enabled tinyint,
 	)
 
 create table #steps (
@@ -785,18 +790,24 @@ create table #steps (
 
 /* job definition */
 insert into #jobs
-	values	('SQLWATCH-LOGGER-WHOISACTIVE',		4, 1, 2, 15, 0, 0, 20190228, 99991231, 0,		235959),
-			('SQLWATCH-LOGGER-PERFORMANCE',		4, 1, 4, 1,  0, 1, 20180804, 99991231, 12,		235959),
-			('SQLWATCH-INTERNAL-RETENTION',		4, 1, 8, 1,  0, 1, 20180804, 99991231, 20,		235959),
-			('SQLWATCH-LOGGER-DISK-UTILISATION',4, 1, 8, 1,  0, 1, 20180909, 99991231, 437,		235959),
-			('SQLWATCH-LOGGER-INDEXES',			8, 64,1, 1,  0, 1, 20180919, 99991231, 60000,	235959),
-			('SQLWATCH-INTERNAL-CONFIG',		4, 1, 8, 1,  0, 1, 20180828, 99991231, 26,      235959)			
+	values	('SQLWATCH-LOGGER-WHOISACTIVE',		4, 1, 2, 15, 0, 0, 20180101, 99991231, 0,	235959, 0),
+			('SQLWATCH-LOGGER-PERFORMANCE',		4, 1, 4, 1,  0, 1, 20180101, 99991231, 12,	235959, 1),
+			('SQLWATCH-INTERNAL-RETENTION',		4, 1, 8, 1,  0, 1, 20180101, 99991231, 20,	235959, 1),
+			('SQLWATCH-LOGGER-DISK-UTILISATION',4, 1, 8, 1,  0, 1, 20180101, 99991231, 437,	235959, 1),
+			('SQLWATCH-LOGGER-INDEXES',			4, 1, 8, 6,  0, 1, 20180101, 99991231, 420,	235959, 1),
+			('SQLWATCH-INTERNAL-CONFIG',		4, 1, 8, 1,  0, 1, 20180101, 99991231, 26,  235959, 1)			
 
 /* step definition */
 insert into #steps
 	values	('dbo.usp_logger_whoisactive',		1, 'SQLWATCH-LOGGER-WHOISACTIVE',		'TSQL', 'exec dbo.usp_logger_whoisactive'),
+
 			('dbo.sp_sql_perf_mon_logger',		1, 'SQLWATCH-LOGGER-PERFORMANCE',		'TSQL', 'exec dbo.sp_sql_perf_mon_logger'),
+			('dbo.usp_logger_xes_waits',		2, 'SQLWATCH-LOGGER-PERFORMANCE',		'TSQL', 'exec dbo.usp_logger_xes_waits'),
+			('dbo.usp_logger_xes_blockers',		3, 'SQLWATCH-LOGGER-PERFORMANCE',		'TSQL', 'exec dbo.usp_logger_xes_blockers'),
+			('dbo.usp_logger_xes_diagnostics',	4, 'SQLWATCH-LOGGER-PERFORMANCE',		'TSQL', 'exec dbo.usp_logger_xes_diagnostics'),
+
 			('dbo.sp_sql_perf_mon_retention',	1, 'SQLWATCH-INTERNAL-RETENTION',		'TSQL', 'exec dbo.sp_sql_perf_mon_retention'),
+
 			('dbo.usp_logger_disk_utilisation',	1, 'SQLWATCH-LOGGER-DISK-UTILISATION',	'TSQL', 'exec dbo.usp_logger_disk_utilisation'),
 			('Get-WMIObject Win32_Volume',		2, 'SQLWATCH-LOGGER-DISK-UTILISATION',	'TSQL', N'[datetime]$snapshot_time = (Invoke-SqlCmd -ServerInstance "' + @server + '" -Database ' + '$(DatabaseName)' + ' -Query "select [snapshot_time]=max([snapshot_time]) 
 from [dbo].[sql_perf_mon_snapshot_header]
@@ -826,19 +837,21 @@ Get-WMIObject Win32_Volume | ?{$_.DriveType -eq 3} | %{
     " 
 }'),
 			('dbo.usp_logger_missing_indexes',		1, 'SQLWATCH-LOGGER-INDEXES',		'TSQL', 'exec dbo.usp_logger_missing_indexes'),
+			('dbo.usp_logger_index_usage_stats',	2, 'SQLWATCH-LOGGER-INDEXES',		'TSQL', 'exec dbo.usp_logger_index_usage_stats'),
 			('dbo.sp_sql_perf_mon_add_database',	1, 'SQLWATCH-INTERNAL-CONFIG',		'TSQL', 'exec dbo.sp_sql_perf_mon_add_database')
 
 
 /* create job and steps */
 select @sql = replace(replace(convert(nvarchar(max),(select ' if (select name from sysjobs where name = ''' + job_name + ''') is null 
 	begin
-		exec msdb.dbo.sp_add_job @job_name=N''' + job_name + ''',  @category_name=N''' + @job_category + ''', @description=''' + @job_description + ''';
+		exec msdb.dbo.sp_add_job @job_name=N''' + job_name + ''',  @category_name=N''' + @job_category + ''', @enabled=' + convert(char(1),job_enabled) + ',@description=''' + @job_description + ''';
 		exec msdb.dbo.sp_add_jobserver @job_name=N''' + job_name + ''', @server_name = ''' + @server + ''';
 		' + (select 
-				'exec msdb.dbo.sp_add_jobstep @job_name=N''' + job_name + ''', @step_name=N''' + step_name + ''',@step_id= ' + convert(varchar(10),step_id) + ',@subsystem=N''' + step_subsystem + ''',@command=''' + replace(step_command,'''','''''') + ''',@database_name=''' + @database_name + ''''
+				' exec msdb.dbo.sp_add_jobstep @job_name=N''' + job_name + ''', @step_name=N''' + step_name + ''',@step_id= ' + convert(varchar(10),step_id) + ',@subsystem=N''' + step_subsystem + ''',@command=''' + replace(step_command,'''','''''') + ''',@on_success_action=' + case when ROW_NUMBER() over (partition by job_name order by step_id desc) = 1 then '1' else '3' end +', @on_fail_action=' + case when ROW_NUMBER() over (partition by job_name order by step_id desc) = 1 then '2' else '3' end + ', @database_name=''' + @database_name + ''''
 
 			 from #steps 
 			 where #steps.job_name = #jobs.job_name 
+			 order by step_id asc
 			 for xml path ('')) + '
 		exec msdb.dbo.sp_update_job @job_name=N''' + job_name + ''', @start_step_id=1
 		exec msdb.dbo.sp_add_jobschedule @job_name=N''' + job_name + ''', @name=N''' + job_name + ''', @enabled=1,@freq_type=' + convert(varchar(10),freq_type) + ',@freq_interval=' + convert(varchar(10),freq_interval) + ',@freq_subday_type=' + convert(varchar(10),freq_subday_type) + ',@freq_subday_interval=' + convert(varchar(10),freq_subday_interval) + ',@freq_relative_interval=' + convert(varchar(10),freq_relative_interval) + ',@freq_recurrence_factor=' + convert(varchar(10),freq_recurrence_factor) + ',@active_start_date=' + convert(varchar(10),active_start_date) + ',@active_end_date=' + convert(varchar(10),active_end_date) + ',@active_start_time=' + convert(varchar(10),active_start_time) + ',@active_end_time=' + convert(varchar(10),active_end_time) + ';

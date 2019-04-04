@@ -1,4 +1,6 @@
-﻿CREATE PROCEDURE [dbo].[usp_logger_whoisactive]
+﻿CREATE PROCEDURE [dbo].[usp_logger_whoisactive] (
+	@min_session_duration_seconds smallint = 15
+	)
 AS
 
 	declare @sp_whoisactive_destination_table varchar(255)
@@ -64,12 +66,10 @@ AS
 					,[CPU],[used_memory],[tempdb_current],[tempdb_allocations],[reads]
 					,[writes],[physical_reads],[login_time], @snapshot_type_id
 			from [##SQLWATCH_7A2124DA-B485-4C43-AE04-65D61E6A157C]
-			-- exclude anything that has been running for less that the desired age in seconds (default 60)
-			-- this parameterised so feel free to change it to your liking. To change parameter:
-			-- update [dbo].[sql_perf_mon_config_who_is_active_age] set [seconds] = x
-			--where [start_time] < dateadd(s,(select [seconds]*-1.0 from [dbo].[sql_perf_mon_config_who_is_active_age]),getdate())
+			-- exclude anything that has been running for less that the desired duration in seconds (default 15)
+			where [start_time] < dateadd(s,@min_session_duration_seconds,getdate())
 			-- unless its being blocked or is a blocker
-			--where [blocking_session_id] is not null or [blocked_session_count] > 0
+			or [blocking_session_id] is not null or [blocked_session_count] > 0
 		end
 	else
 		begin

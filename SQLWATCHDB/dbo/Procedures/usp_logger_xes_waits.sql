@@ -58,6 +58,7 @@ if [dbo].[ufn_get_product_version]('major') >= 11
 			on x.activity_id = substring(tx.[activity_id],1,len(tx.[activity_id])-charindex('-',reverse(tx.[activity_id]))) 
 			and x.activity_sequence = right(tx.[activity_id],charindex('-',reverse(tx.[activity_id]))-1)
 		where x.activity_id is null
+		and tx.event_name = 'wait_info'
 		option (maxdop 1);
 
 	end

@@ -40,6 +40,8 @@ declare @sql nvarchar(4000)
 				exec sp_executesql N'select @osmemorymb=physical_memory_kb/1024 from sys.dm_os_sys_info', N'@osmemorymb int out', @os_memory_mb out
 			end
 
+		/* is this a bug? sql_memory_mb twice? and the os_memory_mb is not being used at all?
+			this shuould union sql_memory_mb and os_memory_mb but it does not */
 		select @memory_available=min(memory_available) from (
 			select memory_available=@sql_memory_mb
 			union all
