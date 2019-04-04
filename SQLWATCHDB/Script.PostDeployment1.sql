@@ -809,7 +809,7 @@ insert into #steps
 			('dbo.sp_sql_perf_mon_retention',	1, 'SQLWATCH-INTERNAL-RETENTION',		'TSQL', 'exec dbo.sp_sql_perf_mon_retention'),
 
 			('dbo.usp_logger_disk_utilisation',	1, 'SQLWATCH-LOGGER-DISK-UTILISATION',	'TSQL', 'exec dbo.usp_logger_disk_utilisation'),
-			('Get-WMIObject Win32_Volume',		2, 'SQLWATCH-LOGGER-DISK-UTILISATION',	'TSQL', N'[datetime]$snapshot_time = (Invoke-SqlCmd -ServerInstance "' + @server + '" -Database ' + '$(DatabaseName)' + ' -Query "select [snapshot_time]=max([snapshot_time]) 
+			('Get-WMIObject Win32_Volume',		2, 'SQLWATCH-LOGGER-DISK-UTILISATION',	'PowerShell', N'[datetime]$snapshot_time = (Invoke-SqlCmd -ServerInstance "' + @server + '" -Database ' + '$(DatabaseName)' + ' -Query "select [snapshot_time]=max([snapshot_time]) 
 from [dbo].[sql_perf_mon_snapshot_header]
 where snapshot_type_id = 2").snapshot_time
 
