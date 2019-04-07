@@ -149,7 +149,7 @@ deallocate c_index
 	insert into [dbo].[sql_perf_mon_snapshot_header]
 	values (@snapshot_time, @snapshot_type)
 
-	insert into [dbo].[logger_index_stats_histogram](
+	insert into [dbo].[sqlwatch_logger_index_stats_histogram](
 		 [database_name], [database_create_date], 
 		[object_name], [index_name], [index_id], 
 		RANGE_HI_KEY, RANGE_ROWS, EQ_ROWS, DISTINCT_RANGE_ROWS, AVG_RANGE_ROWS,

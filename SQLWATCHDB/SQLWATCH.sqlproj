@@ -121,7 +121,7 @@
     <Build Include="dbo\Extended Events\SQLWATCH_blockers.sql" />
     <Build Include="dbo\Tables\logger_index_usage_stats.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_logger_index_usage_stats.sql" />
-    <Build Include="dbo\Tables\logger_index_stats_histogram.sql" />
+    <Build Include="dbo\Tables\sqlwatch_logger_index_stats_histogram.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
