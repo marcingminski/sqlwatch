@@ -168,4 +168,11 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[usp_sqlwatch_logger_index_usage_stats]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="21f43525-59fe-4612-9abf-58ee4e2ecea6" ChangeDateTime="04/07/2019 23:07:05">
+    <Property Name="ElementName" Value="[dbo].[usp_logger_missing_indexes]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_logger_missing_indexes]" />
+  </Operation>
 </Operations>

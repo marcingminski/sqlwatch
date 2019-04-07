@@ -836,7 +836,7 @@ Get-WMIObject Win32_Volume | ?{$_.DriveType -eq 3} | %{
     values (''$VolumeName'',''$VolumeLabel'',''$FileSystem'',$BlockSize,$FreeSpace,$Capacity,2,''$SnapshotTime'')
     " 
 }'),
-			('dbo.usp_logger_missing_indexes',		1, 'SQLWATCH-LOGGER-INDEXES',		'TSQL', 'exec dbo.usp_logger_missing_indexes'),
+			('dbo.usp_sqlwatch_logger_missing_indexes',		1, 'SQLWATCH-LOGGER-INDEXES',		'TSQL', 'exec dbo.usp_sqlwatch_logger_missing_indexes'),
 			('dbo.usp_sqlwatch_logger_index_usage_stats',	2, 'SQLWATCH-LOGGER-INDEXES',		'TSQL', 'exec dbo.usp_sqlwatch_logger_index_usage_stats'),
 			('dbo.usp_sqlwatch_internal_add_database',	1, 'SQLWATCH-INTERNAL-CONFIG',		'TSQL', 'exec dbo.usp_sqlwatch_internal_add_database')
 

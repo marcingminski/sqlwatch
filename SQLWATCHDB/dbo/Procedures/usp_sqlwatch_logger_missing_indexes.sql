@@ -50,7 +50,7 @@
 --				Some DBAs may have different preference and different default FILLFACTOR 
 --				and I wouldnt want to force any config different to what they prefer.
 -- =============================================
-CREATE PROCEDURE [dbo].[usp_logger_missing_indexes]
+CREATE PROCEDURE [dbo].[usp_sqlwatch_logger_missing_indexes]
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
