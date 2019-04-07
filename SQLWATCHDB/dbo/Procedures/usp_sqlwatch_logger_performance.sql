@@ -151,7 +151,7 @@ declare @sql nvarchar(4000)
 		--------------------------------------------------------------------------------------------------------------
 		-- get schedulers summary
 		--------------------------------------------------------------------------------------------------------------
-		insert into dbo.logger_perf_os_schedulers
+		insert into dbo.[sqlwatch_logger_perf_os_schedulers]
 			select 
 				  snapshot_time = @date_snapshot_current
 				, snapshot_type_id = 1

@@ -266,4 +266,11 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[sqlwatch_logger_missing_indexes]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="bc01eff0-383a-4817-bf36-2393912c76bd" ChangeDateTime="04/07/2019 23:56:44">
+    <Property Name="ElementName" Value="[dbo].[logger_perf_os_schedulers]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[sqlwatch_logger_perf_os_schedulers]" />
+  </Operation>
 </Operations>

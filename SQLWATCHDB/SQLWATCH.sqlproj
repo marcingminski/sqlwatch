@@ -105,7 +105,7 @@
     <Build Include="dbo\Tables\logger_perf_xes_waits.sql" />
     <Build Include="dbo\Tables\logger_perf_xes_query_processing.sql" />
     <Build Include="dbo\Tables\logger_perf_xes_iosubsystem.sql" />
-    <Build Include="dbo\Tables\logger_perf_os_schedulers.sql" />
+    <Build Include="dbo\Tables\sqlwatch_logger_perf_os_schedulers.sql" />
     <Build Include="dbo\Tables\logger_perf_xes_long_queries.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_logger_xes_long_queries.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_time_intervals.sql" />
