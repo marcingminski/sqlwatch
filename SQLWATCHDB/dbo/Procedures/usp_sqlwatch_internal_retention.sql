@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[sp_sql_perf_mon_retention](
+﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_internal_retention](
 	--this is only kept for backward compatibility so we dont have to change existing jobs for now:
 	@retention_period_days smallint = 7, 
 	@batch_size smallint = 500

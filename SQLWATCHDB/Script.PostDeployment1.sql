@@ -806,7 +806,7 @@ insert into #steps
 			('dbo.usp_logger_xes_blockers',		3, 'SQLWATCH-LOGGER-PERFORMANCE',		'TSQL', 'exec dbo.usp_logger_xes_blockers'),
 			('dbo.usp_logger_xes_diagnostics',	4, 'SQLWATCH-LOGGER-PERFORMANCE',		'TSQL', 'exec dbo.usp_logger_xes_diagnostics'),
 
-			('dbo.sp_sql_perf_mon_retention',	1, 'SQLWATCH-INTERNAL-RETENTION',		'TSQL', 'exec dbo.sp_sql_perf_mon_retention'),
+			('dbo.usp_sqlwatch_internal_retention',		1, 'SQLWATCH-INTERNAL-RETENTION',		'TSQL', 'exec dbo.usp_sqlwatch_internal_retention'),
 
 			('dbo.usp_logger_disk_utilisation',	1, 'SQLWATCH-LOGGER-DISK-UTILISATION',	'TSQL', 'exec dbo.usp_logger_disk_utilisation'),
 			('Get-WMIObject Win32_Volume',		2, 'SQLWATCH-LOGGER-DISK-UTILISATION',	'PowerShell', N'[datetime]$snapshot_time = (Invoke-SqlCmd -ServerInstance "' + @server + '" -Database ' + '$(DatabaseName)' + ' -Query "select [snapshot_time]=max([snapshot_time]) 
