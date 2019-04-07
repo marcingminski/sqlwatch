@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[logger_missing_indexes]
+﻿CREATE TABLE [dbo].[sqlwatch_logger_missing_indexes]
 (
 	[servername] sysname,
 	[database_name] sysname,
