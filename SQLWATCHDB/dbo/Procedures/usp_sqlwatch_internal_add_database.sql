@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[sp_sql_perf_mon_add_database]
+﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_internal_add_database]
 as
 	/* this procedure adds databse to our "dimension" table:
 	[dbo].[sql_perf_mon_database]

@@ -45,7 +45,7 @@ inner join sys.databases db
 	and swd.[database_create_date] = '1970-01-01'
 
 /* now add new databases */
-exec [dbo].[sp_sql_perf_mon_add_database]
+exec [dbo].[usp_sqlwatch_internal_add_database]
 
 --------------------------------------------------------------------------------------
 --
@@ -838,7 +838,7 @@ Get-WMIObject Win32_Volume | ?{$_.DriveType -eq 3} | %{
 }'),
 			('dbo.usp_logger_missing_indexes',		1, 'SQLWATCH-LOGGER-INDEXES',		'TSQL', 'exec dbo.usp_logger_missing_indexes'),
 			('dbo.usp_logger_index_usage_stats',	2, 'SQLWATCH-LOGGER-INDEXES',		'TSQL', 'exec dbo.usp_logger_index_usage_stats'),
-			('dbo.sp_sql_perf_mon_add_database',	1, 'SQLWATCH-INTERNAL-CONFIG',		'TSQL', 'exec dbo.sp_sql_perf_mon_add_database')
+			('dbo.usp_sqlwatch_internal_add_database',	1, 'SQLWATCH-INTERNAL-CONFIG',		'TSQL', 'exec dbo.usp_sqlwatch_internal_add_database')
 
 
 /* create job and steps */

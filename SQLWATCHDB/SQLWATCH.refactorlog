@@ -133,4 +133,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="[index_disabled]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="77b18ab0-dd95-4799-9b50-7de8555576eb" ChangeDateTime="04/07/2019 22:51:15">
+    <Property Name="ElementName" Value="[dbo].[sp_sql_perf_mon_add_database]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_internal_add_database]" />
+  </Operation>
 </Operations>
