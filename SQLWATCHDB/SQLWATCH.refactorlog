@@ -252,4 +252,11 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[sqlwatch_logger_index_stats_histogram]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="da4eb052-713e-453b-92a4-e0854cff81c3" ChangeDateTime="04/07/2019 23:52:47">
+    <Property Name="ElementName" Value="[dbo].[logger_index_usage_stats]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[sqlwatch_logger_index_usage_stats]" />
+  </Operation>
 </Operations>

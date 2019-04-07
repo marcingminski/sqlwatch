@@ -119,7 +119,7 @@
     <Build Include="dbo\Extended Events\SQLWATCH_waits.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_logger_whoisactive.sql" />
     <Build Include="dbo\Extended Events\SQLWATCH_blockers.sql" />
-    <Build Include="dbo\Tables\logger_index_usage_stats.sql" />
+    <Build Include="dbo\Tables\sqlwatch_logger_index_usage_stats.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_logger_index_usage_stats.sql" />
     <Build Include="dbo\Tables\sqlwatch_logger_index_stats_histogram.sql" />
   </ItemGroup>

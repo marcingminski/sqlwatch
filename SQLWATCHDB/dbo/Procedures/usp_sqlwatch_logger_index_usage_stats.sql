@@ -112,7 +112,7 @@ set @snapshot_type = 15
 
 declare c_index cursor for
 select [database_name], table_name=object_name , index_name, index_id 
-from [dbo].[logger_index_usage_stats]
+from [dbo].[sqlwatch_logger_index_usage_stats]
 where [snapshot_time] = @snapshot_time
 
 open c_index
