@@ -231,4 +231,11 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[ufn_sqlwatch_time_intervals]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="81cab51e-9f0c-40b1-8076-07cf8b77f7d0" ChangeDateTime="04/07/2019 23:44:49">
+    <Property Name="ElementName" Value="[dbo].[logger_disk_utilisation_database]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[sqlwatch_logger_disk_utilisation_database]" />
+  </Operation>
 </Operations>

@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[logger_disk_utilisation_database]
+﻿CREATE TABLE [dbo].[sqlwatch_logger_disk_utilisation_database]
 (
 	[database_name] sysname,
 	[database_create_date] datetime,

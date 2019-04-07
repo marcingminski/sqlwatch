@@ -133,7 +133,7 @@ else
 --------------------------------------------------------------------------------------------------------------
 -- combine results and insert into the table
 --------------------------------------------------------------------------------------------------------------
-insert into [dbo].[logger_disk_utilisation_database]
+insert into [dbo].[sqlwatch_logger_disk_utilisation_database]
 select 
 	  su.[database_name]
 	, [database_create_date] = db.create_date
