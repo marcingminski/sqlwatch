@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[usp_logger_disk_utilisation]
+﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_logger_disk_utilisation]
 AS
 set nocount on;
 

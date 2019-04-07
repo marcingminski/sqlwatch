@@ -154,4 +154,11 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[usp_sqlwatch_internal_retention]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="debe43cc-b42a-4a9d-9f21-206a41b1cbfa" ChangeDateTime="04/07/2019 23:02:36">
+    <Property Name="ElementName" Value="[dbo].[usp_logger_disk_utilisation]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_logger_disk_utilisation]" />
+  </Operation>
 </Operations>
