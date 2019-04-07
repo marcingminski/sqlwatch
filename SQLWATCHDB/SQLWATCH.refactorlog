@@ -224,4 +224,11 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[ufn_sqlwatch_get_xes_target_file]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="654a21c7-8ea4-41d0-a769-9d89d8eebc04" ChangeDateTime="04/07/2019 23:36:36">
+    <Property Name="ElementName" Value="[dbo].[ufn_time_intervals]" />
+    <Property Name="ElementType" Value="SqlInlineTableValuedFunction" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[ufn_sqlwatch_time_intervals]" />
+  </Operation>
 </Operations>
