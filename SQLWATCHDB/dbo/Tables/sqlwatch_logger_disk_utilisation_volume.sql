@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[logger_disk_utilisation_volume]
+﻿CREATE TABLE [dbo].[sqlwatch_logger_disk_utilisation_volume]
 (
 	[volume_name] nvarchar(255) not null,
 	[volume_label] nvarchar(255),
