@@ -8,7 +8,7 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 		declare @filename varchar(8000)
 
 		/* using file target instead of ring buffer to have more resilient source as ring buffer can drop events if there are many */
-		select @filename= [dbo].[ufn_get_xes_target_file] ('system_health')
+		select @filename= [dbo].[ufn_sqlwatch_get_xes_target_file] ('system_health')
 
 		select cast(event_data as xml) AS target_data
 		into #t
