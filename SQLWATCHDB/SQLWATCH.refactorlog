@@ -196,4 +196,11 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[usp_sqlwatch_logger_xes_diagnostics]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="88826941-ceb7-409d-830b-5525a864205c" ChangeDateTime="04/07/2019 23:25:52">
+    <Property Name="ElementName" Value="[dbo].[usp_logger_xes_waits]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_logger_xes_waits]" />
+  </Operation>
 </Operations>

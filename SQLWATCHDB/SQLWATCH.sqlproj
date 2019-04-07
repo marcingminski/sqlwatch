@@ -115,7 +115,7 @@
     <Build Include="dbo\Tables\logger_perf_xes_blockers.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_logger_xes_diagnostics.sql" />
     <Build Include="dbo\Functions\ufn_get_xes_target_file.sql" />
-    <Build Include="dbo\Procedures\usp_logger_xes_waits.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_logger_xes_waits.sql" />
     <Build Include="dbo\Extended Events\SQLWATCH_waits.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_logger_whoisactive.sql" />
     <Build Include="dbo\Extended Events\SQLWATCH_blockers.sql" />
