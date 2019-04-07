@@ -801,7 +801,7 @@ insert into #jobs
 insert into #steps
 	values	('dbo.usp_logger_whoisactive',		1, 'SQLWATCH-LOGGER-WHOISACTIVE',		'TSQL', 'exec dbo.usp_logger_whoisactive'),
 
-			('dbo.sp_sql_perf_mon_logger',		1, 'SQLWATCH-LOGGER-PERFORMANCE',		'TSQL', 'exec dbo.sp_sql_perf_mon_logger'),
+			('dbo.usp_sqlwatch_logger_performance',		1, 'SQLWATCH-LOGGER-PERFORMANCE',		'TSQL', 'exec dbo.usp_sqlwatch_logger_performance'),
 			('dbo.usp_logger_xes_waits',		2, 'SQLWATCH-LOGGER-PERFORMANCE',		'TSQL', 'exec dbo.usp_logger_xes_waits'),
 			('dbo.usp_logger_xes_blockers',		3, 'SQLWATCH-LOGGER-PERFORMANCE',		'TSQL', 'exec dbo.usp_logger_xes_blockers'),
 			('dbo.usp_logger_xes_diagnostics',	4, 'SQLWATCH-LOGGER-PERFORMANCE',		'TSQL', 'exec dbo.usp_logger_xes_diagnostics'),

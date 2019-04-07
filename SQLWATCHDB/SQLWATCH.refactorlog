@@ -140,4 +140,11 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[usp_sqlwatch_internal_add_database]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="587d458f-578d-44bb-9706-e40c3130a5c3" ChangeDateTime="04/07/2019 22:56:56">
+    <Property Name="ElementName" Value="[dbo].[sp_sql_perf_mon_logger]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_logger_performance]" />
+  </Operation>
 </Operations>
