@@ -22,8 +22,8 @@ declare @sql nvarchar(4000)
 		set @product_version = convert(nvarchar(128),serverproperty('productversion')); --no longer needed
 
 		select 
-			 @product_version_major = [dbo].[ufn_get_product_version]('major')
-			,@product_version_minor = [dbo].[ufn_get_product_version]('minor')
+			 @product_version_major = [dbo].[ufn_sqlwatch_get_product_version]('major')
+			,@product_version_minor = [dbo].[ufn_sqlwatch_get_product_version]('minor')
 
 		--------------------------------------------------------------------------------------------------------------
 		-- get available memory on the server

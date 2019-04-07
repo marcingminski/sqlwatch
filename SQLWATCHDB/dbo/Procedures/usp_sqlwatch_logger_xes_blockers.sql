@@ -1,7 +1,7 @@
 ﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_logger_xes_blockers]
 AS
 
-if [dbo].[ufn_get_product_version]('major') >= 11
+if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 	begin
 		/* for this to work you must enable blocked process monitor */
 		--inspired by and based on Michael J Stewart http://michaeljswart.com/2016/02/look-at-blocked-process-reports-collected-with-extended-events/

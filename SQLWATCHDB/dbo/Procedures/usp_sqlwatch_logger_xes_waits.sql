@@ -1,7 +1,7 @@
 ﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_logger_xes_waits]
 AS
 
-if [dbo].[ufn_get_product_version]('major') >= 11
+if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 	begin
 		declare @snapshot_time datetime = getdate()
 		declare @snapshot_type_id tinyint

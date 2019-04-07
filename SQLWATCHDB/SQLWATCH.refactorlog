@@ -210,4 +210,11 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[usp_sqlwatch_logger_xes_long_queries]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="0eb263ad-06f7-4291-b130-c0d40ea033fd" ChangeDateTime="04/07/2019 23:32:55">
+    <Property Name="ElementName" Value="[dbo].[ufn_get_product_version]" />
+    <Property Name="ElementType" Value="SqlScalarFunction" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[ufn_sqlwatch_get_product_version]" />
+  </Operation>
 </Operations>
