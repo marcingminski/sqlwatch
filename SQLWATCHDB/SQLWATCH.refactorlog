@@ -161,4 +161,11 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[usp_sqlwatch_logger_disk_utilisation]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="c59f16b7-c8ce-448d-8632-09db4fc4275b" ChangeDateTime="04/07/2019 23:04:39">
+    <Property Name="ElementName" Value="[dbo].[usp_logger_index_usage_stats]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_logger_index_usage_stats]" />
+  </Operation>
 </Operations>
