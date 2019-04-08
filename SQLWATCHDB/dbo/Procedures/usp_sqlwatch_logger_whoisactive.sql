@@ -58,7 +58,7 @@ AS
 			insert into dbo.[sqlwatch_logger_snapshot_header]
 			select @snapshot_time, @snapshot_type_id
 
-			insert into [dbo].[sql_perf_mon_who_is_active]
+			insert into [dbo].[sqlwatch_logger_whoisactive]
 			select   [snapshot_time] = @snapshot_time
 					,[start_time],[session_id],[status],[percent_complete],[host_name]
 					,[database_name],[program_name],[sql_text],[sql_command],[login_name]
