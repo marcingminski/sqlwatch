@@ -14,7 +14,7 @@
 						when pc.cntr_type = 1073874176 then isnull(case when pc.cntr_value > fsc.cntr_value then isnull((pc.cntr_value - fsc.cntr_value) / nullif(bc.cntr_value - fsc.base_cntr_value, 0) / cast(datediff(second,s.first_snapshot_time,s.last_snapshot_time) as real), 0) else 0 end,0) -- delta ratio
 						end))
 				,s.[report_time_interval_minutes]
-		from dbo.sql_perf_mon_perf_counters as pc
+		from dbo.[sqlwatch_logger_perf_os_performance_counters] as pc
 		inner join [dbo].[vw_sql_perf_mon_time_intervals] s
 			on pc.snapshot_time = s.last_snapshot_time 
 
@@ -32,7 +32,7 @@
 									fsc.base_cntr_value
 					from (
 						select * 
-						from [dbo].[sql_perf_mon_perf_counters] 
+						from [dbo].[sqlwatch_logger_perf_os_performance_counters] 
 						where snapshot_time = s.first_snapshot_time
 						) as fsc
 					where fsc.[object_name] = rtrim(pc.[object_name])
@@ -41,7 +41,7 @@
 					) as fsc
 		outer apply (
 					select top (1) pc2.cntr_value
-					from [dbo].[sql_perf_mon_perf_counters] as pc2 
+					from [dbo].[sqlwatch_logger_perf_os_performance_counters] as pc2 
 					where snapshot_time = s.last_snapshot_time 
 						and pc2.cntr_type = 1073939712
 							and pc2.object_name = pc.object_name

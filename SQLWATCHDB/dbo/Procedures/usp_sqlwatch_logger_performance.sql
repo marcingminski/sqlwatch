@@ -90,7 +90,7 @@ declare @sql nvarchar(4000)
 		-- 537003264 and 1073939712 -> this is similar to the above 65792 but we must divide the results by the base
 		--------------------------------------------------------------------------------------------------------------
 
-		insert into dbo.sql_perf_mon_perf_counters
+		insert into dbo.[sqlwatch_logger_perf_os_performance_counters]
 		select
 			 pc.[object_name]
 			,pc.instance_name

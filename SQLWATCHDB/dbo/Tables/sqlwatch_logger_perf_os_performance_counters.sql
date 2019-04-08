@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[sql_perf_mon_perf_counters]
+﻿CREATE TABLE [dbo].[sqlwatch_logger_perf_os_performance_counters]
 (
 	[object_name] nvarchar(4000) not null,
 	[instance_name] nvarchar(4000) not null,
