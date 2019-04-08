@@ -44,7 +44,7 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 				cross apply targetdata.nodes('//RingBufferTarget/event') AS xed (event_data)
 			--where xed.event_data.value('(@name)[1]', 'varchar(255)') in ('wait_info','wait_info_external')
 		)
-		insert into [dbo].[logger_perf_xes_waits] (event_time, wait_type, [event_name], duration, signal_duration, username, sql_text, session_id, database_name,
+		insert into [dbo].[sqlwatch_logger_xes_waits_stats] (event_time, wait_type, [event_name], duration, signal_duration, username, sql_text, session_id, database_name,
 			client_hostname, client_app_name, activity_id, activity_sequence, [activity_id_xfer], [activity_seqeuence_xfer], snapshot_time, snapshot_type_id)
 		select tx.event_time, tx.wait_type, tx.[event_name], tx.duration, tx.signal_duration, tx.username, tx.sql_text, tx.session_id, tx.database_name,
 			tx.client_hostname, tx.client_app_name
@@ -54,7 +54,7 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 			, [activity_seqeuence_xfer]=right(tx.[activity_id_xfer],charindex('-',reverse(tx.[activity_id_xfer]))-1)
 			, tx.snapshot_time, tx.snapshot_type_id
 		from cte_xes_waits tx
-		left join [dbo].[logger_perf_xes_waits] x
+		left join [dbo].[sqlwatch_logger_xes_waits_stats] x
 			on x.activity_id = substring(tx.[activity_id],1,len(tx.[activity_id])-charindex('-',reverse(tx.[activity_id]))) 
 			and x.activity_sequence = right(tx.[activity_id],charindex('-',reverse(tx.[activity_id]))-1)
 		where x.activity_id is null

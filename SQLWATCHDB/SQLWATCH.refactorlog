@@ -315,4 +315,11 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[sqlwatch_logger_xes_query_processing]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="1a8bcd08-5941-4e8f-b1b1-196d3ffa16ed" ChangeDateTime="04/08/2019 00:13:29">
+    <Property Name="ElementName" Value="[dbo].[logger_perf_xes_waits]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[sqlwatch_logger_xes_waits_stats]" />
+  </Operation>
 </Operations>
