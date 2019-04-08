@@ -294,4 +294,11 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[sqlwatch_logger_xes_blockers]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="27a5d88c-53df-4127-a5e5-9b53db37bc56" ChangeDateTime="04/08/2019 00:08:07">
+    <Property Name="ElementName" Value="[dbo].[logger_perf_xes_iosubsystem]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[sqlwatch_logger_xes_iosubsystem]" />
+  </Operation>
 </Operations>

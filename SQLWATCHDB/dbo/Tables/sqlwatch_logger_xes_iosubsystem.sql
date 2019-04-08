@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[logger_perf_xes_iosubsystem]
+﻿CREATE TABLE [dbo].[sqlwatch_logger_xes_iosubsystem]
 (
 	[event_time] datetime,
 	[io_latch_timeouts] bigint,

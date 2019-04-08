@@ -40,7 +40,7 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 		--and xet.object_name = 'sp_server_diagnostics_component_result'
 		option (maxdop 1);
 
-		insert into [dbo].[logger_perf_xes_iosubsystem](event_time, io_latch_timeouts, total_long_ios, longest_pending_request_file, longest_pending_request_duration,
+		insert into [dbo].[sqlwatch_logger_xes_iosubsystem](event_time, io_latch_timeouts, total_long_ios, longest_pending_request_file, longest_pending_request_duration,
 			snapshot_time, snapshot_type_id
 		)
 		select
@@ -56,7 +56,7 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 		cross apply ( select cast(xet.target_data as xml) ) AS target_data ([xml])
 		cross apply target_data.[xml].nodes('/event[@name="sp_server_diagnostics_component_result"]') AS xml_nodes(xml_node)
 		cross apply xml_node.nodes('./data[@name="data"]/value/ioSubsystem') AS report_xml_nodes(report_xml_node)
-		where xml_node.value('(./@timestamp)[1]','datetime') > (select isnull(max(event_time),'1970-01-01') from [dbo].[logger_perf_xes_iosubsystem])
+		where xml_node.value('(./@timestamp)[1]','datetime') > (select isnull(max(event_time),'1970-01-01') from [dbo].[sqlwatch_logger_xes_iosubsystem])
 		--and xet.object_name = 'sp_server_diagnostics_component_result'
 		option (maxdop 1);
 	end
