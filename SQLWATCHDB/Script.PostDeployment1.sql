@@ -706,14 +706,14 @@ if (select count(*) from [dbo].[sql_perf_mon_snapshot_header]
 		begin
 			insert into [dbo].[sql_perf_mon_snapshot_header]
 			select distinct s.[snapshot_time], [snapshot_type_id] = 10
-			from [dbo].[logger_perf_xes_query_processing] s
+			from [dbo].[sqlwatch_logger_xes_query_processing] s
 				left join [dbo].[sql_perf_mon_snapshot_header] t
 				on t.snapshot_time = s.snapshot_time
 				and t.snapshot_type_id = 1
 				and s.snapshot_type_id = 10
 			where t.snapshot_time is null
 
-			update [dbo].[logger_perf_xes_query_processing]
+			update [dbo].[sqlwatch_logger_xes_query_processing]
 				set  [snapshot_type_id] = 10
 				where [snapshot_type_id] = 1
 		end

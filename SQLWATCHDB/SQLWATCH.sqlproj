@@ -103,7 +103,7 @@
     <Build Include="dbo\Tables\sqlwatch_logger_index_missing.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_logger_missing_indexes.sql" />
     <Build Include="dbo\Tables\logger_perf_xes_waits.sql" />
-    <Build Include="dbo\Tables\logger_perf_xes_query_processing.sql" />
+    <Build Include="dbo\Tables\sqlwatch_logger_xes_query_processing.sql" />
     <Build Include="dbo\Tables\sqlwatch_logger_xes_iosubsystem.sql" />
     <Build Include="dbo\Tables\sqlwatch_logger_perf_os_schedulers.sql" />
     <Build Include="dbo\Tables\sqlwatch_logger_xes_long_queries.sql" />

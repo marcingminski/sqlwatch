@@ -18,7 +18,7 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 		insert into dbo.sql_perf_mon_snapshot_header
 		select @snapshot_time, @snapshot_type_id
 
-		insert into [dbo].[logger_perf_xes_query_processing](event_time, max_workers, workers_created, idle_workers, pending_tasks
+		insert into [dbo].[sqlwatch_logger_xes_query_processing](event_time, max_workers, workers_created, idle_workers, pending_tasks
 			, unresolvable_deadlocks, deadlocked_scheduler, snapshot_time, snapshot_type_id
 		)
 		select 
@@ -36,7 +36,7 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 		cross apply ( select cast(xet.target_data as xml) ) AS target_data ([xml])
 		cross apply target_data.[xml].nodes('/event[@name="sp_server_diagnostics_component_result"]') AS xml_nodes(xml_node)
 		cross apply xml_node.nodes('./data[@name="data"]/value/queryProcessing') AS report_xml_nodes(report_xml_node)
-		where xml_node.value('(./@timestamp)[1]','datetime') > (select isnull(max(event_time),'1970-01-01') from [dbo].[logger_perf_xes_query_processing])
+		where xml_node.value('(./@timestamp)[1]','datetime') > (select isnull(max(event_time),'1970-01-01') from [dbo].[sqlwatch_logger_xes_query_processing])
 		--and xet.object_name = 'sp_server_diagnostics_component_result'
 		option (maxdop 1);
 

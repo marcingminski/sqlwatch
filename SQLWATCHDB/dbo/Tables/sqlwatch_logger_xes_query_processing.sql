@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[logger_perf_xes_query_processing]
+﻿CREATE TABLE [dbo].[sqlwatch_logger_xes_query_processing]
 (
 	[event_time] datetime,
 	[max_workers] bigint,
