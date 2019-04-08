@@ -35,7 +35,7 @@ into @database_name
 while @@FETCH_STATUS = 0
 	begin
 
-		set @sql = 'insert into [dbo].[logger_index_usage_stats] (
+		set @sql = 'insert into [dbo].[sqlwatch_logger_index_usage_stats] (
 	database_name, database_create_date, object_name, index_id, index_name, [used_pages_count],index_type,
 	user_seeks, user_scans, user_lookups, user_updates, last_user_seek, last_user_scan, last_user_lookup, last_user_update,
 	stats_date, snapshot_time, snapshot_type_id, index_disabled
