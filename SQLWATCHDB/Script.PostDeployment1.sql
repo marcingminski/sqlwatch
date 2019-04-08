@@ -649,7 +649,7 @@ if (select count(*) from [dbo].[sql_perf_mon_config_report_time_interval]) = 0
 --------------------------------------------------------------------------------------
 -- add snapshot types
 --------------------------------------------------------------------------------------
-;merge [dbo].[sql_perf_mon_config_snapshot_type] as target
+;merge [dbo].[sqlwatch_config_snapshot_type] as target
 using (
 	/* performance data logger */
 	select [snapshot_type_id] = 1, [snapshot_type_desc] = 'Performance', [snapshot_retention_days] = 7

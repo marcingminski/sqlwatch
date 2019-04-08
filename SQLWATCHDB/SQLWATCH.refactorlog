@@ -329,4 +329,11 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[sqlwatch_config_performance_counters]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="992fe996-e467-4ec9-80a0-9bc1e3978ad9" ChangeDateTime="04/08/2019 00:17:38">
+    <Property Name="ElementName" Value="[dbo].[sql_perf_mon_config_snapshot_type]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[sqlwatch_config_snapshot_type]" />
+  </Operation>
 </Operations>

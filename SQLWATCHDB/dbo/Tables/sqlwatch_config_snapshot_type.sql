@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[sql_perf_mon_config_snapshot_type]
+﻿CREATE TABLE [dbo].[sqlwatch_config_snapshot_type]
 (
 	[snapshot_type_id] tinyint NOT NULL PRIMARY KEY,
 	[snapshot_type_desc] varchar(255) not null,
