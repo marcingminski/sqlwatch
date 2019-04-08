@@ -28,8 +28,9 @@
 	--[deadlock_report] [xml] NULL,
 	[snapshot_time] datetime not null,
 	[snapshot_type_id] tinyint not null default 7,
-	constraint fk_logger_perf_xes_long_queries foreign key ([snapshot_time],[snapshot_type_id]) references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time],[snapshot_type_id]) on delete cascade ,
+	[sql_instance] nvarchar(25) not null default @@SERVERNAME,
+	constraint fk_logger_perf_xes_long_queries foreign key ([snapshot_time],[snapshot_type_id],[sql_instance]) references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time],[snapshot_type_id],[sql_instance]) on delete cascade ,
 	constraint pk_logger_perf_xes_long_queries primary key nonclustered (
-		[snapshot_time] ASC, [activity_id], [activity_sequence]
+		[snapshot_time] ASC, [activity_id], [activity_sequence],[sql_instance]
 	)
 ) ON [PRIMARY] 

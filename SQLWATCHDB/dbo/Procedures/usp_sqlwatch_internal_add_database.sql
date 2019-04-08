@@ -18,32 +18,34 @@ as
 	declare @databases table (
 		[database_name] sysname not null,
 		[database_create_date] datetime not null default '1970-01-01',
+		[sql_instance] nvarchar(25) not null
 		primary key clustered (
-		 [database_name],[database_create_date]
+		 [database_name],[database_create_date], [sql_instance]
 	 )
 )
 
 	insert into @databases
-	select [name], [create_date]
+	select [name], [create_date], [sql_instance] = @@SERVERNAME
 	from sys.databases
 	union all
 	/* mssqlsystemresource database appears in the performance counters
 	so we need it as a dimensions to be able to filter in the report */
-	select 'mssqlsystemresource', '1970-01-01'
+	select 'mssqlsystemresource', '1970-01-01', @@SERVERNAME
 	
 	;merge [dbo].[sqlwatch_meta_database] as target
 	using @databases as source
 		on (
 				source.[database_name] = target.[database_name]
 			and source.[database_create_date] = target.[database_create_date]
+			and source.[sql_instance] = target.[sql_instance]
 		)
 	/* dropped databases are going to be updated to current = 0 */
 	when not matched by source then
 		update set [database_current] = 0
 	/* new databases are going to be inserted */
 	when not matched by target then
-		insert ([database_name], [database_create_date])
-		values (source.[database_name], source.[database_create_date]);
+		insert ([database_name], [database_create_date], [sql_instance])
+		values (source.[database_name], source.[database_create_date], source.[sql_instance]);
 
 	/*	the above only accounts for databases that have been removed and re-added
 		if you rename database it will be treated as if it was removed and new

@@ -8,8 +8,9 @@
 	[volume_total_space_bytes] bigint,
 	[snapshot_time] datetime not null,
 	[snapshot_type_id] tinyint,
+	[sql_instance] nvarchar(25) not null default @@SERVERNAME,
 	constraint PK_disk_util_vol primary key clustered (
-		snapshot_time, volume_name
+		snapshot_time, volume_name, [sql_instance]
 		),
-	constraint FK_disk_util_vol_snapshot_header foreign key ([snapshot_time],[snapshot_type_id]) references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time],[snapshot_type_id]) on delete cascade
+	constraint FK_disk_util_vol_snapshot_header foreign key ([snapshot_time],[snapshot_type_id],[sql_instance]) references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time],[snapshot_type_id],[sql_instance]) on delete cascade
 )

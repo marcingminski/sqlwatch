@@ -55,7 +55,7 @@ AS
 			-- to apply any additional filtering:
 
 			set @snapshot_time = getdate()
-			insert into dbo.[sqlwatch_logger_snapshot_header]
+			insert into dbo.[sqlwatch_logger_snapshot_header] (snapshot_time, snapshot_type_id)
 			select @snapshot_time, @snapshot_type_id
 
 			insert into [dbo].[sqlwatch_logger_whoisactive]
@@ -64,7 +64,7 @@ AS
 					,[database_name],[program_name],[sql_text],[sql_command],[login_name]
 					,[open_tran_count],[wait_info],[blocking_session_id],[blocked_session_count]
 					,[CPU],[used_memory],[tempdb_current],[tempdb_allocations],[reads]
-					,[writes],[physical_reads],[login_time], @snapshot_type_id
+					,[writes],[physical_reads],[login_time], @snapshot_type_id, @@SERVERNAME
 			from [##SQLWATCH_7A2124DA-B485-4C43-AE04-65D61E6A157C]
 			-- exclude anything that has been running for less that the desired duration in seconds (default 15)
 			where [start_time] < dateadd(s,@min_session_duration_seconds,getdate())

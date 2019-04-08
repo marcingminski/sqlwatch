@@ -13,16 +13,17 @@
 	[avg_total_user_cost] float,
 	[avg_user_impact] float,
 	[missing_index_def] nvarchar(4000),
-	[snapshot_type_id] tinyint
+	[snapshot_type_id] tinyint,
+	[sql_instance] nvarchar(25) not null default @@SERVERNAME,
 	constraint pk_logger_missing_indexes primary key clustered (
-		[snapshot_time], [database_name], [index_handle]
+		[snapshot_time], [database_name], [index_handle], [sql_instance]
 	),
 	constraint fk_logger_missing_indexes_database 
-		foreign key ([database_name],[database_create_date])
-		references [dbo].[sqlwatch_meta_database] ([database_name],[database_create_date])
+		foreign key ([database_name],[database_create_date], [sql_instance])
+		references [dbo].[sqlwatch_meta_database] ([database_name],[database_create_date], [sql_instance])
 		on delete cascade,
 	constraint fk_logger_missing_indexes_snapshot_header
-		foreign key ([snapshot_time],[snapshot_type_id])
-		references [dbo].[sqlwatch_logger_snapshot_header] ([snapshot_time],[snapshot_type_id])
+		foreign key ([snapshot_time],[snapshot_type_id],[sql_instance])
+		references [dbo].[sqlwatch_logger_snapshot_header] ([snapshot_time],[snapshot_type_id],[sql_instance])
 		on delete cascade
 )

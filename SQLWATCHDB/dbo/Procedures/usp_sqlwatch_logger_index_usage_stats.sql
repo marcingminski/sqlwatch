@@ -18,7 +18,7 @@ set nocount on ;
    the timepstamp will not be 100% accureate but it does not matter much in this instance as
    we're not collecting very frequently and it will be enough to provide a common time anchor,
    to more accurately reflect the time when the index was collected we have [collection_time] */
-insert into [dbo].[sqlwatch_logger_snapshot_header]
+insert into [dbo].[sqlwatch_logger_snapshot_header] (snapshot_time, snapshot_type_id)
 values (@snapshot_time, @snapshot_type)
 
 /* step 1 , collect indexes from all databases */
@@ -114,6 +114,7 @@ declare c_index cursor for
 select [database_name], table_name=object_name , index_name, index_id 
 from [dbo].[sqlwatch_logger_index_usage_stats]
 where [snapshot_time] = @snapshot_time
+and [sql_instance] = @@SERVERNAME
 
 open c_index
 
@@ -146,7 +147,7 @@ dbcc show_statistics (''' + @object_name + ''',''' + @index_name + ''') with  HI
 close c_index
 deallocate c_index 
 
-	insert into [dbo].[sqlwatch_logger_snapshot_header]
+	insert into [dbo].[sqlwatch_logger_snapshot_header] (snapshot_time, snapshot_type_id)
 	values (@snapshot_time, @snapshot_type)
 
 	insert into [dbo].[sqlwatch_logger_index_usage_stats_histogram](

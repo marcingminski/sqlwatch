@@ -54,9 +54,10 @@ declare @sql nvarchar(4000)
 		select @date_snapshot_previous = max([snapshot_time])
 		from [dbo].[sqlwatch_logger_snapshot_header]
 		where snapshot_type_id = 1
+		and sql_instance = @@SERVERNAME
 		
 		set @date_snapshot_current = getdate();
-		insert into [dbo].[sqlwatch_logger_snapshot_header]
+		insert into [dbo].[sqlwatch_logger_snapshot_header] (snapshot_time, snapshot_type_id)
 		values (@date_snapshot_current, 1)		
 		--------------------------------------------------------------------------------------------------------------
 		-- 1. get cpu
@@ -100,6 +101,7 @@ declare @sql nvarchar(4000)
 			,pc.cntr_type
 			,snapshot_time=@date_snapshot_current
 			, 1
+			, @@SERVERNAME
 		from (
 			select * from sys.dm_os_performance_counters
 			union all
@@ -177,6 +179,8 @@ declare @sql nvarchar(4000)
 				/* 2016 onwards only */
 				, total_cpu_usage_ms = null --sum(convert(bigint,total_cpu_usage_ms))
 				, total_scheduler_delay_ms = null --sum(convert(bigint,total_scheduler_delay_ms))
+
+				, @@SERVERNAME
 			from sys.dm_os_schedulers
 			where scheduler_id < 255
 			and status = 'VISIBLE ONLINE' collate database_default
@@ -185,7 +189,7 @@ declare @sql nvarchar(4000)
 		-- get process memory
 		--------------------------------------------------------------------------------------------------------------
 		insert into dbo.[sqlwatch_logger_perf_os_process_memory]
-		select snapshot_time=@date_snapshot_current, * , 1
+		select snapshot_time=@date_snapshot_current, * , 1, @@SERVERNAME
 		from sys.dm_os_process_memory
 
 		--------------------------------------------------------------------------------------------------------------
@@ -281,6 +285,7 @@ declare @sql nvarchar(4000)
 			graph_type=case when mc.total_kb / convert(decimal, ta.total_kb_all_clerks) > 0.05 then mc.[type] else N'other' end
 			,memory_available=@memory_available
 			, 1
+			, @@SERVERNAME
 		from @memory_clerks as mc
 		-- use a self-join to calculate the total memory allocated for each time interval
 		join 
@@ -314,13 +319,14 @@ declare @sql nvarchar(4000)
 			fs.io_stall_write_ms, fs.size_on_disk_bytes,
 			snapshot_time=@date_snapshot_current
 			, 1
+			, @@SERVERNAME
 		from sys.dm_io_virtual_file_stats (default, default) as fs
 		inner join sys.master_files as f on fs.database_id = f.database_id and fs.[file_id] = f.[file_id]
 		--------------------------------------------------------------------------------------------------------------
 		-- wait stats snapshot
 		--------------------------------------------------------------------------------------------------------------
 		insert into [dbo].[sqlwatch_logger_perf_os_wait_stats]
-		select [wait_type], [waiting_tasks_count], [wait_time_ms],[max_wait_time_ms], [signal_wait_time_ms], [snapshot_time]=@date_snapshot_current, 1
+		select [wait_type], [waiting_tasks_count], [wait_time_ms],[max_wait_time_ms], [signal_wait_time_ms], [snapshot_time]=@date_snapshot_current, 1, @@SERVERNAME
 		from sys.dm_os_wait_stats
 		where waiting_tasks_count + wait_time_ms + max_wait_time_ms + signal_wait_time_ms > 0
 

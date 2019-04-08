@@ -15,7 +15,7 @@ select @product_version_major = substring(@product_version, 1,charindex('.', @pr
 -- set the basics
 --------------------------------------------------------------------------------------------------------------
 declare @snapshot_time datetime = getdate();
-insert into [dbo].[sqlwatch_logger_snapshot_header]
+insert into [dbo].[sqlwatch_logger_snapshot_header] (snapshot_time, snapshot_type_id)
 values (@snapshot_time, @snapshot_type)
 
 --------------------------------------------------------------------------------------------------------------
@@ -155,6 +155,7 @@ select
 	, ls.[used_log_space_in_bytes]
 	, [snapshot_time] = @snapshot_time
 	, [snapshot_type_id] = @snapshot_type
+	, @@SERVERNAME
 from @spaceused su
 inner join @logspace ls
 	on su.[database_name] = ls.[database_name] collate database_default

@@ -11,6 +11,14 @@ Post-Deployment Script Template
 */
 
 
+/* add local instance to server config so we can satify relations */
+merge dbo.sqlwatch_config_sql_instance as target
+using (select sql_instance = @@SERVERNAME) as source
+on target.sql_instance = source.sql_instance
+when not matched then
+	insert (sql_instance)
+	values (@@SERVERNAME);
+
 --/* start XE sessions */
 --declare @sqlstmt varchar(4000) = ''
 
@@ -43,6 +51,7 @@ from [dbo].[sqlwatch_meta_database] swd
 inner join sys.databases db
 	on db.[name] = swd.[database_name] collate database_default
 	and swd.[database_create_date] = '1970-01-01'
+	and swd.sql_instance = @@SERVERNAME
 
 /* now add new databases */
 exec [dbo].[usp_sqlwatch_internal_add_database]
@@ -705,17 +714,19 @@ if (select count(*) from [dbo].[sqlwatch_logger_snapshot_header]
 	where [snapshot_type_id] = 10) = 0
 		begin
 			insert into [dbo].[sqlwatch_logger_snapshot_header]
-			select distinct s.[snapshot_time], [snapshot_type_id] = 10
+			select distinct s.[snapshot_time], [snapshot_type_id] = 10, @@SERVERNAME
 			from [dbo].[sqlwatch_logger_xes_query_processing] s
 				left join [dbo].[sqlwatch_logger_snapshot_header] t
 				on t.snapshot_time = s.snapshot_time
 				and t.snapshot_type_id = 1
 				and s.snapshot_type_id = 10
+				and s.sql_instance = t.sql_instance
 			where t.snapshot_time is null
 
 			update [dbo].[sqlwatch_logger_xes_query_processing]
 				set  [snapshot_type_id] = 10
 				where [snapshot_type_id] = 1
+				and sql_instance = @@SERVERNAME
 		end
 
 

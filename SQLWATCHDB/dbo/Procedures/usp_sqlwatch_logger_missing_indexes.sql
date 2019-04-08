@@ -62,7 +62,7 @@ BEGIN
 	--------------------------------------------------------------------------------------------------------------
 	declare @snapshot_time datetime = getdate();
 	declare @snapshot_type tinyint = 3
-	insert into [dbo].[sqlwatch_logger_snapshot_header]
+	insert into [dbo].[sqlwatch_logger_snapshot_header] (snapshot_time, snapshot_type_id)
 	values (@snapshot_time, @snapshot_type)
 
 	--only enterprise and developer will allow online index build/rebuild
@@ -102,6 +102,7 @@ BEGIN
 				+ case when @allows_online_index = 1 then N'ONLINE=ON,' else N'' end + N'SORT_IN_TEMPDB=ON' 
 			+ N')',
 		[snapshot_type_id] = @snapshot_type
+		, @@SERVERNAME
 	from sys.dm_db_missing_index_groups ig 
 
 		inner join sys.dm_db_missing_index_group_stats igs 

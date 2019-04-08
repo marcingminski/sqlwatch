@@ -17,9 +17,10 @@
 	[failed_to_create_worker] int NULL,
 	[total_cpu_usage_ms] [bigint] NULL,
 	[total_scheduler_delay_ms] [bigint] NULL,
-	constraint fk_logger_perf_os_schedulers foreign key ([snapshot_time],[snapshot_type_id]) references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time],[snapshot_type_id]) on delete cascade ,
+	[sql_instance] nvarchar(25) not null default @@SERVERNAME,
+	constraint fk_logger_perf_os_schedulers foreign key ([snapshot_time],[snapshot_type_id],[sql_instance]) references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time],[snapshot_type_id],[sql_instance]) on delete cascade ,
 	constraint pk_logger_perf_os_schedulers primary key clustered (
-		[snapshot_time] ASC
+		[snapshot_time] ASC, [sql_instance]
 	)
 ) ON [PRIMARY]
 GO
