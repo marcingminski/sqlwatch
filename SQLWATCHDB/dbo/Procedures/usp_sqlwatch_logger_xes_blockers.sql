@@ -23,7 +23,7 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 		where xes.name = isnull((select name from sys.dm_xe_sessions where name = 'SQLWATCH_blockers'),'system_health')
 			and xet.target_name = 'ring_buffer'
 
-		insert into [dbo].[logger_perf_xes_blockers](
+		insert into [dbo].[sqlwatch_logger_xes_blockers](
 			attach_activity_id, attach_activity_sequence,
 			blocking_start_time, blocking_end_time,
 			blocked_ecid, blocked_spid, blocked_sql,
@@ -102,7 +102,7 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 					,[blocking_client hostname] = bp_report_xml_node.value('(./blocking-process/process/@hostname)[1]', 'nvarchar(128)')
 					,[attach_activity_id] = bp_node.value('(./action[@name="attach_activity_id"]/value )[1]', 'varchar(255)')
 				) AS bps
-			left join [dbo].[logger_perf_xes_blockers] t
+			left join [dbo].[sqlwatch_logger_xes_blockers] t
 				on t.attach_activity_id = substring(bps.[attach_activity_id],1,len(bps.[attach_activity_id])-charindex('-',reverse(bps.[attach_activity_id]))) 
 				and t.attach_activity_sequence = right(bps.[attach_activity_id],charindex('-',reverse(bps.[attach_activity_id]))-1)
 			where t.attach_activity_id is null

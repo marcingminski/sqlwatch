@@ -78,7 +78,7 @@ BEGIN
 	--------------------------------------------------------------------------------------------------------------
 	-- get missing indexes
 	--------------------------------------------------------------------------------------------------------------
-	insert into [dbo].[sqlwatch_logger_missing_indexes]
+	insert into [dbo].[sqlwatch_logger_index_missing]
 	select 
 		[server_name] = @@servername ,
 		[database_name] = db.[database_name], 
