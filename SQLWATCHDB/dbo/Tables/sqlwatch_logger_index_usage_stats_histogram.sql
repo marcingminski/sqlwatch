@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[sqlwatch_logger_index_stats_histogram] (
+﻿CREATE TABLE [dbo].[sqlwatch_logger_index_usage_stats_histogram] (
 	[database_name] [sysname] NOT NULL,
 	[database_create_date] [datetime] NULL,
 	[object_name] [nvarchar](256) NOT NULL,
