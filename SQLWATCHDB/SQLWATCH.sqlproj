@@ -96,7 +96,7 @@
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_retention.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_add_database.sql" />
     <Build Include="dbo\Tables\sqlwatch_config_snapshot_type.sql" />
-    <Build Include="dbo\Tables\sql_perf_mon_master_files.sql" />
+    <Build Include="dbo\Tables\sqlwatch_logger_perf_master_files.sql" />
     <Build Include="dbo\Tables\sqlwatch_logger_disk_utilisation_database.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_logger_disk_utilisation.sql" />
     <Build Include="dbo\Tables\sqlwatch_logger_disk_utilisation_volume.sql" />

@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[sql_perf_mon_master_files]
+﻿CREATE TABLE [dbo].[sqlwatch_logger_perf_master_files]
 (
 	[database_name] sysname,
 	[database_create_date] datetime,
