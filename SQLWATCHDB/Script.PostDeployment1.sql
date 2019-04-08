@@ -39,7 +39,7 @@ versions of SQLWATCH and we will now update create_date to the actual
 create_date (this will only apply to upgrades) */
 update swd
 	set [database_create_date] = db.[create_date]
-from [dbo].[sql_perf_mon_database] swd
+from [dbo].[sqlwatch_meta_database] swd
 inner join sys.databases db
 	on db.[name] = swd.[database_name] collate database_default
 	and swd.[database_create_date] = '1970-01-01'

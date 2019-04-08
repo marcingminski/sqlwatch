@@ -115,7 +115,7 @@ BEGIN
 		and sdb.database_id > 4
 		and sdb.[name] not like '%ReportServer%'
 
-		inner join [dbo].[sql_perf_mon_database] db
+		inner join [dbo].[sqlwatch_meta_database] db
 		on db.[database_name] = db_name(mi.[database_id])
 		and db.[database_create_date] = sdb.[create_date]
 END

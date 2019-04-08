@@ -16,7 +16,7 @@
 		primary key clustered ([snapshot_time], [database_name]),
 	constraint FK_logger_disk_util_database_database
 		foreign key ([database_name],[database_create_date])
-		references [dbo].[sql_perf_mon_database] ([database_name],[database_create_date])
+		references [dbo].[sqlwatch_meta_database] ([database_name],[database_create_date])
 		on delete cascade,
 	constraint FK_logger_disk_util_database_snapshot 
 		foreign key ([snapshot_time],[snapshot_type_id])

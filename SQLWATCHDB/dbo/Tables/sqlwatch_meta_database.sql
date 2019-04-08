@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[sql_perf_mon_database]
+﻿CREATE TABLE [dbo].[sqlwatch_meta_database]
 (
 	[database_name] sysname not null,
 	[database_create_date] datetime not null default '1970-01-01',
@@ -8,4 +8,4 @@
 	 )
 )
 GO
-CREATE NONCLUSTERED INDEX idx_perf_mon_database_current ON [dbo].[sql_perf_mon_database]([database_current])
+CREATE NONCLUSTERED INDEX idx_perf_mon_database_current ON [dbo].[sqlwatch_meta_database]([database_current])

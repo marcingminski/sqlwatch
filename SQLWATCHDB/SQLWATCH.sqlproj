@@ -76,7 +76,7 @@
   <ItemGroup>
     <Build Include="dbo\Tables\sql_perf_mon_snapshot_header.sql" />
     <Build Include="dbo\Tables\sql_perf_mon_config_who_is_active_age.sql" />
-    <Build Include="dbo\Tables\sql_perf_mon_database.sql" />
+    <Build Include="dbo\Tables\sqlwatch_meta_database.sql" />
     <Build Include="dbo\Tables\sql_perf_mon_server.sql" />
     <Build Include="dbo\Tables\sql_perf_mon_file_stats.sql" />
     <Build Include="dbo\Tables\sql_perf_mon_os_memory_clerks.sql" />

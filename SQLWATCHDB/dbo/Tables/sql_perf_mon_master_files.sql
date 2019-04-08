@@ -11,7 +11,7 @@
 		[snapshot_time], [database_name]
 		),
 	constraint FK_sql_perf_mon_master_files_db foreign key ([database_name], [database_create_date]) 
-		references [dbo].[sql_perf_mon_database](
+		references [dbo].[sqlwatch_meta_database](
 			[database_name], [database_create_date]
 		) on delete cascade,
 	constraint FK_sql_perf_mon_master_files_snapshot foreign key ([snapshot_time], [snapshot_type_id])

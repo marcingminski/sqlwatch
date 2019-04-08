@@ -162,6 +162,6 @@ inner join sys.databases db
 	on db.[name] = su.[database_name] collate database_default
 /*	join on sqlwatch database list otherwise it will fail
 	for newly created databases not yet added to the list */
-inner join [dbo].[sql_perf_mon_database] swd
+inner join [dbo].[sqlwatch_meta_database] swd
 	on swd.[database_name] = db.[name] collate database_default
 	and swd.[database_create_date] = db.[create_date]

@@ -31,7 +31,7 @@ as
 	so we need it as a dimensions to be able to filter in the report */
 	select 'mssqlsystemresource', '1970-01-01'
 	
-	;merge [dbo].[sql_perf_mon_database] as target
+	;merge [dbo].[sqlwatch_meta_database] as target
 	using @databases as source
 		on (
 				source.[database_name] = target.[database_name]
