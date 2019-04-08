@@ -127,7 +127,7 @@ declare @sql nvarchar(4000)
 				,[cntr_value] = (100-@percent_idle_time-@percent_processor_time)
 				,[cntr_type] = 65792
 			) pc
-		inner join dbo.sql_perf_mon_config_perf_counters sc
+		inner join dbo.[sqlwatch_config_performance_counters] sc
 		on rtrim(pc.[object_name]) like '%' + sc.[object_name] collate database_default
 			and pc.counter_name = sc.counter_name collate database_default
 			and (

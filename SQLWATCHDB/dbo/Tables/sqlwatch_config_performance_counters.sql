@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[sql_perf_mon_config_perf_counters]
+﻿CREATE TABLE [dbo].[sqlwatch_config_performance_counters]
 (
 			[object_name] nvarchar(256) not null,
 			[instance_name] nvarchar(256) not null,
@@ -11,5 +11,5 @@
 )
 
 go
-	create nonclustered index idx_sql_perf_mon_perf_counters_types on dbo.[sql_perf_mon_config_perf_counters] ([collect]) include ([object_name],[instance_name],[counter_name],[base_counter_name])
+	create nonclustered index idx_sql_perf_mon_perf_counters_types on dbo.[sqlwatch_config_performance_counters] ([collect]) include ([object_name],[instance_name],[counter_name],[base_counter_name])
 

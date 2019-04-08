@@ -84,7 +84,7 @@
     <Build Include="dbo\Tables\sql_perf_mon_perf_counters.sql" />
     <Build Include="dbo\Tables\sql_perf_mon_who_is_active.sql" />
     <Build Include="dbo\Tables\sql_perf_mon_who_is_active_tmp.sql" />
-    <Build Include="dbo\Tables\sql_perf_mon_config_perf_counters.sql" />
+    <Build Include="dbo\Tables\sqlwatch_config_performance_counters.sql" />
     <Build Include="dbo\Tables\sql_perf_mon_config_wait_stats.sql" />
     <Build Include="dbo\Tables\sql_perf_mon_config_report_time_interval.sql" />
     <Build Include="dbo\Views\vw_sql_perf_mon_time_intervals.sql" />

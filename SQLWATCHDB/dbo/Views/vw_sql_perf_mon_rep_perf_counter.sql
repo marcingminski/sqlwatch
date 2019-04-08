@@ -18,7 +18,7 @@
 		inner join [dbo].[vw_sql_perf_mon_time_intervals] s
 			on pc.snapshot_time = s.last_snapshot_time 
 
-		inner join dbo.sql_perf_mon_config_perf_counters as sc
+		inner join dbo.[sqlwatch_config_performance_counters] as sc
 		on rtrim(pc.object_name) like '%' + sc.object_name
 			and rtrim(pc.counter_name) = sc.counter_name
 			and (rtrim(pc.instance_name) = sc.instance_name 

@@ -338,9 +338,9 @@ insert into #sql_perf_mon_config_perf_counters([collect],[object_name],[counter_
 		,(1,'Win32_PerfFormattedData_PerfOS_Processor','Idle Time %','SQL',NULL)
 		,(1,'Win32_PerfFormattedData_PerfOS_Processor','Processor Time %','System',NULL)
 
-insert into [dbo].[sql_perf_mon_config_perf_counters]
+insert into [dbo].[sqlwatch_config_performance_counters]
 select s.* from #sql_perf_mon_config_perf_counters s
-left join [dbo].[sql_perf_mon_config_perf_counters] t
+left join [dbo].[sqlwatch_config_performance_counters] t
 on s.[object_name] = t.[object_name] collate database_default
 and s.[instance_name] = t.[instance_name] collate database_default
 and s.[counter_name] = t.[counter_name] collate database_default
