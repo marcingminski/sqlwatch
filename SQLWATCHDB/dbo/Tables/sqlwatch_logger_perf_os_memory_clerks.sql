@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[sql_perf_mon_os_memory_clerks]
+﻿CREATE TABLE [dbo].[sqlwatch_logger_perf_os_memory_clerks]
 (
 	[snapshot_time] datetime not null,
 	[total_kb] bigint,

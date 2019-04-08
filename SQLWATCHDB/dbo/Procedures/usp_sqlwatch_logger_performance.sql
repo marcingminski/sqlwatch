@@ -269,7 +269,7 @@ declare @sql nvarchar(4000)
 				+ mc.shared_memory_committed_kb as total_kb
 		from @dm_os_memory_clerks as mc
 
-		insert into dbo.sql_perf_mon_os_memory_clerks
+		insert into dbo.[sqlwatch_logger_perf_os_memory_clerks]
 		select 
 			snapshot_time =@date_snapshot_current,
 			total_kb=sum(mc.total_kb), 
