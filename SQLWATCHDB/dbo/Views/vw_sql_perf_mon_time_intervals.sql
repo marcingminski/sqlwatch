@@ -6,13 +6,13 @@ select
 	,	[last_snapshot_time]	= MAX(i.snapshot_time)
 	,	[snapshot_age_hours]	= datediff(hour,dateadd(mi, [report_time_interval_minutes], [spapshot_interval_start]),GETDATE())
 	,	[report_time_interval_minutes]
-from [dbo].[sql_perf_mon_snapshot_header] s
+from [dbo].[sqlwatch_logger_snapshot_header] s
 inner join (
 	select
 			[snapshot_time]
 		 ,	[spapshot_interval_start] = convert(datetime,dateadd(mi,(datediff(mi,0, [snapshot_time])/ ti.[report_time_interval_minutes]) * ti.[report_time_interval_minutes],0))
 		 ,	ti.[report_time_interval_minutes]
-	from [dbo].[sql_perf_mon_snapshot_header]
+	from [dbo].[sqlwatch_logger_snapshot_header]
 	cross apply (
 		select top 5 report_time_interval_minutes
 		from [dbo].[sql_perf_mon_config_report_time_interval]

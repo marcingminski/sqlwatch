@@ -52,11 +52,11 @@ declare @sql nvarchar(4000)
 		-- set the basics
 		--------------------------------------------------------------------------------------------------------------
 		select @date_snapshot_previous = max([snapshot_time])
-		from [dbo].[sql_perf_mon_snapshot_header]
+		from [dbo].[sqlwatch_logger_snapshot_header]
 		where snapshot_type_id = 1
 		
 		set @date_snapshot_current = getdate();
-		insert into [dbo].[sql_perf_mon_snapshot_header]
+		insert into [dbo].[sqlwatch_logger_snapshot_header]
 		values (@date_snapshot_current, 1)		
 		--------------------------------------------------------------------------------------------------------------
 		-- 1. get cpu

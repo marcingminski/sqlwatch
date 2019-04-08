@@ -15,7 +15,7 @@ select @product_version_major = substring(@product_version, 1,charindex('.', @pr
 -- set the basics
 --------------------------------------------------------------------------------------------------------------
 declare @snapshot_time datetime = getdate();
-insert into [dbo].[sql_perf_mon_snapshot_header]
+insert into [dbo].[sqlwatch_logger_snapshot_header]
 values (@snapshot_time, @snapshot_type)
 
 --------------------------------------------------------------------------------------------------------------

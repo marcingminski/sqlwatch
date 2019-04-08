@@ -701,13 +701,13 @@ when not matched then
 --query processing has been split out into its own snapshot 10 from snapshot 1.
 --we have to backfill header first as there wont be any old records with id 10, it would violate fk reference
 --if we dont migrate, the old query processing records will not be available in dashboard.
-if (select count(*) from [dbo].[sql_perf_mon_snapshot_header]
+if (select count(*) from [dbo].[sqlwatch_logger_snapshot_header]
 	where [snapshot_type_id] = 10) = 0
 		begin
-			insert into [dbo].[sql_perf_mon_snapshot_header]
+			insert into [dbo].[sqlwatch_logger_snapshot_header]
 			select distinct s.[snapshot_time], [snapshot_type_id] = 10
 			from [dbo].[sqlwatch_logger_xes_query_processing] s
-				left join [dbo].[sql_perf_mon_snapshot_header] t
+				left join [dbo].[sqlwatch_logger_snapshot_header] t
 				on t.snapshot_time = s.snapshot_time
 				and t.snapshot_type_id = 1
 				and s.snapshot_type_id = 10

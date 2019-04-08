@@ -20,7 +20,7 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 		-- waits
 		--------------------------------------------------------------------------------------------------------------------------------
 		set @snapshot_type_id = 6
-		insert into dbo.sql_perf_mon_snapshot_header
+		insert into dbo.[sqlwatch_logger_snapshot_header]
 		select @snapshot_time, @snapshot_type_id
 
 		;with cte_xes_waits as (

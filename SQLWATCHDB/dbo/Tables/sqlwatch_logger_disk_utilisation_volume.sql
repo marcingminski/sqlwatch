@@ -11,5 +11,5 @@
 	constraint PK_disk_util_vol primary key clustered (
 		snapshot_time, volume_name
 		),
-	constraint FK_disk_util_vol_snapshot_header foreign key ([snapshot_time],[snapshot_type_id]) references [dbo].[sql_perf_mon_snapshot_header]([snapshot_time],[snapshot_type_id]) on delete cascade
+	constraint FK_disk_util_vol_snapshot_header foreign key ([snapshot_time],[snapshot_type_id]) references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time],[snapshot_type_id]) on delete cascade
 )

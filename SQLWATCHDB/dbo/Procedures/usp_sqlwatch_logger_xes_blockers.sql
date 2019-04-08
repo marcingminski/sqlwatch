@@ -10,7 +10,7 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 		declare @snapshot_type_id tinyint = 9
 		declare @filename varchar(8000)
 
-		insert into dbo.sql_perf_mon_snapshot_header
+		insert into dbo.[sqlwatch_logger_snapshot_header]
 		select @snapshot_time, @snapshot_type_id
 
 		select cast(target_data as xml) AS target_data

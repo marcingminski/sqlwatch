@@ -18,7 +18,7 @@
 	[report_xml] xml,
 	[snapshot_time] datetime,
 	[snapshot_type_id] tinyint,
-	constraint fk_logger_perf_xes_blockers foreign key ([snapshot_time],[snapshot_type_id]) references [dbo].[sql_perf_mon_snapshot_header]([snapshot_time],[snapshot_type_id]) on delete cascade ,
+	constraint fk_logger_perf_xes_blockers foreign key ([snapshot_time],[snapshot_type_id]) references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time],[snapshot_type_id]) on delete cascade ,
 	constraint pk_logger_perf_xes_blockers primary key clustered (
 		[snapshot_time] ASC, [attach_activity_id], [attach_activity_sequence]
 	)

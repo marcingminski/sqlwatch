@@ -55,7 +55,7 @@ AS
 			-- to apply any additional filtering:
 
 			set @snapshot_time = getdate()
-			insert into dbo.sql_perf_mon_snapshot_header
+			insert into dbo.[sqlwatch_logger_snapshot_header]
 			select @snapshot_time, @snapshot_type_id
 
 			insert into [dbo].[sql_perf_mon_who_is_active]

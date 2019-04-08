@@ -62,7 +62,7 @@ BEGIN
 	--------------------------------------------------------------------------------------------------------------
 	declare @snapshot_time datetime = getdate();
 	declare @snapshot_type tinyint = 3
-	insert into [dbo].[sql_perf_mon_snapshot_header]
+	insert into [dbo].[sqlwatch_logger_snapshot_header]
 	values (@snapshot_time, @snapshot_type)
 
 	--only enterprise and developer will allow online index build/rebuild

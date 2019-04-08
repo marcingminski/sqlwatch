@@ -74,7 +74,7 @@
     <Folder Include="dbo\Functions" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="dbo\Tables\sql_perf_mon_snapshot_header.sql" />
+    <Build Include="dbo\Tables\sqlwatch_logger_snapshot_header.sql" />
     <Build Include="dbo\Tables\sql_perf_mon_config_who_is_active_age.sql" />
     <Build Include="dbo\Tables\sqlwatch_meta_database.sql" />
     <Build Include="dbo\Tables\sqlwatch_meta_server.sql" />
