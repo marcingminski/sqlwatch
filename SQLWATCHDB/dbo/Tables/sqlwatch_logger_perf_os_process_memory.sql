@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[sql_perf_mon_os_process_memory]
+﻿CREATE TABLE [dbo].[sqlwatch_logger_perf_os_process_memory]
 (
 	[snapshot_time] [datetime] NOT NULL,
 	[physical_memory_in_use_kb] [bigint] NOT NULL,

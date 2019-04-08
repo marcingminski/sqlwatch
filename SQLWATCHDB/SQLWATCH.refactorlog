@@ -364,4 +364,11 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[sqlwatch_logger_perf_os_memory_clerks]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="c64b5b40-a9ca-4873-8d07-dc527ce43556" ChangeDateTime="04/08/2019 00:28:51">
+    <Property Name="ElementName" Value="[dbo].[sql_perf_mon_os_process_memory]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[sqlwatch_logger_perf_os_process_memory]" />
+  </Operation>
 </Operations>

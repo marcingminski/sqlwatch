@@ -7,7 +7,7 @@
 		,[Page faults]=avg([page_fault_count])
 		,[Memory utilisation %]=avg([memory_utilization_percentage])
 		,s.[report_time_interval_minutes]
-	from [dbo].[sql_perf_mon_os_process_memory]  pm
+	from [dbo].[sqlwatch_logger_perf_os_process_memory]  pm
 	inner join [dbo].[vw_sql_perf_mon_time_intervals] s
 		on pm.snapshot_time >= s.first_snapshot_time
 		and pm.snapshot_time <= s.last_snapshot_time

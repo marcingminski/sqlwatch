@@ -184,7 +184,7 @@ declare @sql nvarchar(4000)
 		--------------------------------------------------------------------------------------------------------------
 		-- get process memory
 		--------------------------------------------------------------------------------------------------------------
-		insert into dbo.sql_perf_mon_os_process_memory
+		insert into dbo.[sqlwatch_logger_perf_os_process_memory]
 		select snapshot_time=@date_snapshot_current, * , 1
 		from sys.dm_os_process_memory
 
