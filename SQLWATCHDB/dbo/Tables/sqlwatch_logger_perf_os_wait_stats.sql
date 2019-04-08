@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[sql_perf_mon_wait_stats]
+﻿CREATE TABLE [dbo].[sqlwatch_logger_perf_os_wait_stats]
 (
 	[wait_type] nvarchar(60) not null,
 	[waiting_tasks_count] bigint not null,

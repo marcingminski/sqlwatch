@@ -392,4 +392,11 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[sqlwatch_logger_snapshot_header]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="ef23606a-1819-43ca-a255-fddabf2c05f6" ChangeDateTime="04/08/2019 00:39:10">
+    <Property Name="ElementName" Value="[dbo].[sql_perf_mon_wait_stats]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[sqlwatch_logger_perf_os_wait_stats]" />
+  </Operation>
 </Operations>

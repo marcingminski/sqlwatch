@@ -319,7 +319,7 @@ declare @sql nvarchar(4000)
 		--------------------------------------------------------------------------------------------------------------
 		-- wait stats snapshot
 		--------------------------------------------------------------------------------------------------------------
-		insert into [dbo].[sql_perf_mon_wait_stats]
+		insert into [dbo].[sqlwatch_logger_perf_os_wait_stats]
 		select [wait_type], [waiting_tasks_count], [wait_time_ms],[max_wait_time_ms], [signal_wait_time_ms], [snapshot_time]=@date_snapshot_current, 1
 		from sys.dm_os_wait_stats
 		where waiting_tasks_count + wait_time_ms + max_wait_time_ms + signal_wait_time_ms > 0
