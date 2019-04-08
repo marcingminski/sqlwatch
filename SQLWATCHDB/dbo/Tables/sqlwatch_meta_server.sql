@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[sql_perf_mon_server]
+﻿CREATE TABLE [dbo].[sqlwatch_meta_server]
 (
 	[physical_name] sysname,
 	[servername] sysname,

@@ -50,9 +50,9 @@ exec [dbo].[usp_sqlwatch_internal_add_database]
 --------------------------------------------------------------------------------------
 --
 --------------------------------------------------------------------------------------
-if (select count(*) from [dbo].[sql_perf_mon_server]) = 0
+if (select count(*) from [dbo].[sqlwatch_meta_server]) = 0
 	begin
-		insert into dbo.sql_perf_mon_server 
+		insert into dbo.[sqlwatch_meta_server] 
 		select convert(sysname,SERVERPROPERTY('ComputerNamePhysicalNetBIOS'))
 			, convert(sysname,@@SERVERNAME), convert(sysname,@@SERVICENAME), convert(varchar(50),local_net_address), convert(varchar(50),local_tcp_port)
 		from sys.dm_exec_connections where session_id = @@spid

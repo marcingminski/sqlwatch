@@ -378,4 +378,11 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[sqlwatch_logger_perf_os_performance_counters]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="6f8f369e-fc2b-4de2-9b61-a89624c21d14" ChangeDateTime="04/08/2019 00:33:56">
+    <Property Name="ElementName" Value="[dbo].[sql_perf_mon_server]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[sqlwatch_meta_server]" />
+  </Operation>
 </Operations>
