@@ -343,4 +343,11 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[sqlwatch_meta_database]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="6e8114b1-c274-4805-8742-739222708243" ChangeDateTime="04/08/2019 00:23:19">
+    <Property Name="ElementName" Value="[dbo].[sql_perf_mon_file_stats]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[sqlwatch_logger_perf_file_stats]" />
+  </Operation>
 </Operations>

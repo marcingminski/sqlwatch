@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[sql_perf_mon_file_stats]
+﻿CREATE TABLE [dbo].[sqlwatch_logger_perf_file_stats]
 (
 	[database_name] nvarchar(128) not null,
 	[logical_file_name] sysname not null,

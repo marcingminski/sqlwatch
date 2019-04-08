@@ -300,7 +300,7 @@ declare @sql nvarchar(4000)
 		--------------------------------------------------------------------------------------------------------------
 		-- file stats snapshot
 		--------------------------------------------------------------------------------------------------------------
-		insert into dbo.sql_perf_mon_file_stats
+		insert into dbo.[sqlwatch_logger_perf_file_stats]
 		select 
 			db_name (f.database_id) as [database_name], f.name as logical_file_name, f.type_desc, 
 			cast (case
