@@ -11,6 +11,35 @@ Post-Deployment Script Template
 */
 
 
+/* Since version beta 6 these objects are no longer required. They have been removed from the Project however,
+	as SQLWATCH can be installed in the existing database the dacpac deployment does not drop objects not in the Project.
+	This is to prevent removing any non-SQLWATCH objects. For this reason we have to handle objects removal manually */
+
+	if object_id ('[dbo].[vw_sql_perf_mon_rep_mem_proc]') is not null
+		drop view [dbo].[vw_sql_perf_mon_rep_mem_proc]
+
+	if object_id ('[dbo].[vw_sql_perf_mon_rep_perf_counter]') is not null
+		drop view [dbo].[vw_sql_perf_mon_rep_perf_counter]
+
+	if object_id ('[dbo].[vw_sql_perf_mon_time_intervals]') is not null
+		drop view [dbo].[vw_sql_perf_mon_time_intervals]
+
+	if object_id ('[dbo].[vw_sql_perf_mon_wait_stats_categorised]') is not null
+		drop view [dbo].[vw_sql_perf_mon_wait_stats_categorised]
+
+	if object_id ('[dbo].[sql_perf_mon_config_report_time_interval]') is not null
+		drop table [dbo].[sql_perf_mon_config_report_time_interval]
+
+	if object_id ('[dbo].[sql_perf_mon_config_wait_stats]') is not null
+		drop table [dbo].[sql_perf_mon_config_wait_stats]
+
+	if object_id ('[dbo].[sql_perf_mon_config_who_is_active_age]') is not null
+		drop table [dbo].[sql_perf_mon_config_who_is_active_age]
+
+	if object_id ('[dbo].[sql_perf_mon_who_is_active_tmp]') is not null
+		drop table [dbo].[sql_perf_mon_who_is_active_tmp]
+
+
 /* add local instance to server config so we can satify relations */
 merge dbo.sqlwatch_config_sql_instance as target
 using (select sql_instance = @@SERVERNAME) as source
@@ -30,14 +59,6 @@ when not matched then
 
 --exec (@sqlstmt)
 
-
-
-
-if (select count(*) from [dbo].[sql_perf_mon_config_who_is_active_age]) = 0
-	begin
-		insert into [dbo].[sql_perf_mon_config_who_is_active_age]
-		select 60
-	end
 
 --------------------------------------------------------------------------------------
 --
@@ -355,305 +376,6 @@ and s.[instance_name] = t.[instance_name] collate database_default
 and s.[counter_name] = t.[counter_name] collate database_default
 where t.[counter_name] is null
 
---------------------------------------------------------------------------------------
---
---------------------------------------------------------------------------------------
-
---TODO: THIS HAS BEEN MOVED TO POWERBI AND CAN BE REMOVED FROM SQL PROJECT
-CREATE TABLE #sql_perf_mon_config_wait_stats
-(
-	[category_name] [nvarchar](40) not null,
-	[wait_type] [nvarchar](45) primary key not null,
-	[ignore] [bit] not null
-)
-go
-
-create nonclustered index tmp_idx_wait_stats on #sql_perf_mon_config_wait_stats(wait_type)
-
-	insert into #sql_perf_mon_config_wait_stats
-	values
-		(N'Backup', N'BACKUP', 0)
-		,(N'Backup', N'BACKUP_CLIENTLOCK', 0)
-		,(N'Backup', N'BACKUP_OPERATOR', 0)
-		,(N'Backup', N'BACKUPBUFFER', 0)
-		,(N'Backup', N'BACKUPIO', 0)
-		,(N'Backup', N'BACKUPTHREAD', 0)
-		,(N'Backup', N'DISKIO_SUSPEND', 0)
-		,(N'Buffer I/O', N'ASYNC_DISKPOOL_LOCK', 0)
-		,(N'Buffer I/O', N'ASYNC_IO_COMPLETION', 0)
-		,(N'Buffer I/O', N'FCB_REPLICA_READ', 0)
-		,(N'Buffer I/O', N'FCB_REPLICA_WRITE', 0)
-		,(N'Buffer I/O', N'IO_COMPLETION', 0)
-		,(N'Buffer I/O', N'PAGEIOLATCH_DT', 0)
-		,(N'Buffer I/O', N'PAGEIOLATCH_EX', 0)
-		,(N'Buffer I/O', N'PAGEIOLATCH_KP', 0)
-		,(N'Buffer I/O', N'PAGEIOLATCH_NL', 0)
-		,(N'Buffer I/O', N'PAGEIOLATCH_SH', 0)
-		,(N'Buffer I/O', N'PAGEIOLATCH_UP', 0)
-		,(N'Buffer I/O', N'REPLICA_WRITES', 0)
-		,(N'Buffer Latch', N'PAGELATCH_DT', 0)
-		,(N'Buffer Latch', N'PAGELATCH_EX', 0)
-		,(N'Buffer Latch', N'PAGELATCH_KP', 0)
-		,(N'Buffer Latch', N'PAGELATCH_NL', 0)
-		,(N'Buffer Latch', N'PAGELATCH_SH', 0)
-		,(N'Buffer Latch', N'PAGELATCH_UP', 0)
-		,(N'Compilation', N'RESOURCE_SEMAPHORE_MUTEX', 0)
-		,(N'Compilation', N'RESOURCE_SEMAPHORE_QUERY_COMPILE', 0)
-		,(N'Compilation', N'RESOURCE_SEMAPHORE_SMALL_QUERY', 0)
-		,(N'Full Text Search', N'MSSEARCH', 0)
-		,(N'Full Text Search', N'SOAP_READ', 0)
-		,(N'Full Text Search', N'SOAP_WRITE', 0)
-		,(N'Idle', N'SERVER_IDLE_CHECK', 1)
-		,(N'Idle', N'ONDEMAND_TASK_QUEUE', 1)
-		,(N'Idle', N'SNI_HTTP_ACCEPT', 1)
-		,(N'Idle', N'SLEEP_BPOOL_FLUSH', 1)
-		,(N'Idle', N'SLEEP_DBSTARTUP', 1)
-		,(N'Idle', N'SLEEP_DCOMSTARTUP', 1)
-		,(N'Idle', N'SLEEP_MSDBSTARTUP', 1)
-		,(N'Idle', N'SLEEP_SYSTEMTASK', 1)
-		,(N'Idle', N'SLEEP_TASK', 1)
-		,(N'Idle', N'SLEEP_TEMPDBSTARTUP', 1)
-		,(N'Idle', N'WAIT_FOR_RESULTS', 1)
-		,(N'Idle', N'WAITFOR_TASKSHUTDOWN', 1)
-		,(N'Idle', N'SQLTRACE_BUFFER_FLUSH', 1)
-		,(N'Idle', N'TRACEWRITE', 1)
-		,(N'Idle', N'XE_DISPATCHER_WAIT', 1)
-		,(N'Idle', N'XE_TIMER_EVENT', 1)
-		,(N'Idle', N'REQUEST_FOR_DEADLOCK_SEARCH', 1)
-		,(N'Idle', N'RESOURCE_QUEUE', 1)
-		,(N'Idle', N'LOGMGR_QUEUE', 1)
-		,(N'Idle', N'KSOURCE_WAKEUP', 1)
-		,(N'Idle', N'LAZYWRITER_SLEEP', 1)
-		,(N'Idle', N'BROKER_EVENTHANDLER', 1)
-		,(N'Idle', N'BROKER_TRANSMITTER', 1)
-		,(N'Idle', N'CHECKPOINT_QUEUE', 1)
-		,(N'Idle', N'CHKPT', 1)
-		,(N'Idle', N'BROKER_RECEIVE_WAITFOR', 1)
-		,(N'Latch', N'DEADLOCK_ENUM_MUTEX', 0)
-		,(N'Latch', N'LATCH_DT', 0)
-		,(N'Latch', N'LATCH_EX', 0)
-		,(N'Latch', N'LATCH_KP', 0)
-		,(N'Latch', N'LATCH_NL', 0)
-		,(N'Latch', N'LATCH_SH', 0)
-		,(N'Latch', N'LATCH_UP', 0)
-		,(N'Latch', N'INDEX_USAGE_STATS_MUTEX', 0)
-		,(N'Latch', N'VIEW_DEFINITION_MUTEX', 0)
-		,(N'Lock', N'LCK_M_BU', 0)
-		,(N'Lock', N'LCK_M_IS', 0)
-		,(N'Lock', N'LCK_M_IU', 0)
-		,(N'Lock', N'LCK_M_IX', 0)
-		,(N'Lock', N'LCK_M_RIn_NL', 0)
-		,(N'Lock', N'LCK_M_RIn_S', 0)
-		,(N'Lock', N'LCK_M_RIn_U', 0)
-		,(N'Lock', N'LCK_M_RIn_X', 0)
-		,(N'Lock', N'LCK_M_RS_S', 0)
-		,(N'Lock', N'LCK_M_RS_U', 0)
-		,(N'Lock', N'LCK_M_RX_S', 0)
-		,(N'Lock', N'LCK_M_RX_U', 0)
-		,(N'Lock', N'LCK_M_RX_X', 0)
-		,(N'Lock', N'LCK_M_S', 0)
-		,(N'Lock', N'LCK_M_SCH_M', 0)
-		,(N'Lock', N'LCK_M_SCH_S', 0)
-		,(N'Lock', N'LCK_M_SIU', 0)
-		,(N'Lock', N'LCK_M_SIX', 0)
-		,(N'Lock', N'LCK_M_U', 0)
-		,(N'Lock', N'LCK_M_UIX', 0)
-		,(N'Lock', N'LCK_M_X', 0)
-		,(N'Logging', N'LOGBUFFER', 0)
-		,(N'Logging', N'LOGMGR', 0)
-		,(N'Logging', N'LOGMGR_FLUSH', 0)
-		,(N'Logging', N'LOGMGR_RESERVE_APPEND', 0)
-		,(N'Logging', N'WRITELOG', 0)
-		,(N'Memory', N'UTIL_PAGE_ALLOC', 0)
-		,(N'Memory', N'SOS_RESERVEDMEMBLOCKLIST', 0)
-		,(N'Memory', N'SOS_VIRTUALMEMORY_LOW', 0)
-		,(N'Memory', N'LOWFAIL_MEMMGR_QUEUE', 0)
-		,(N'Memory', N'RESOURCE_SEMAPHORE', 0)
-		,(N'Memory', N'CMEMTHREAD', 0)
-		,(N'Network I/O', N'NET_WAITFOR_PACKET', 0)
-		,(N'Network I/O', N'OLEDB', 0)
-		,(N'Network I/O', N'MSQL_DQ', 0)
-		,(N'Network I/O', N'DTC_STATE', 0)
-		,(N'Network I/O', N'DBMIRROR_SEND', 0)
-		,(N'Network I/O', N'ASYNC_NETWORK_IO', 0)
-		,(N'Other', N'ABR', 0)
-		,(N'Other', N'BROKER_REGISTERALLENDPOINTS', 0)
-		,(N'Other', N'BROKER_SHUTDOWN', 0)
-		,(N'Other', N'BROKER_TASK_STOP', 1)
-		,(N'Other', N'BAD_PAGE_PROCESS', 0)
-		,(N'Other', N'BROKER_CONNECTION_RECEIVE_TASK', 0)
-		,(N'Other', N'BROKER_ENDPOINT_STATE_MUTEX', 0)
-		,(N'Other', N'BUILTIN_HASHKEY_MUTEX', 0)
-		,(N'Other', N'CHECK_PRINT_RECORD', 0)
-		,(N'Other', N'BROKER_INIT', 0)
-		,(N'Other', N'BROKER_MASTERSTART', 0)
-		,(N'Other', N'CURSOR', 0)
-		,(N'Other', N'CURSOR_ASYNC', 0)
-		,(N'Other', N'DBMIRROR_WORKER_QUEUE', 0)
-		,(N'Other', N'DBMIRRORING_CMD', 0)
-		,(N'Other', N'DBTABLE', 0)
-		,(N'Other', N'DAC_INIT', 0)
-		,(N'Other', N'DBCC_COLUMN_TRANSLATION_CACHE', 0)
-		,(N'Other', N'DBMIRROR_DBM_EVENT', 0)
-		,(N'Other', N'DBMIRROR_DBM_MUTEX', 0)
-		,(N'Other', N'DBMIRROR_EVENTS_QUEUE', 0)
-		,(N'Other', N'DEADLOCK_TASK_SEARCH', 0)
-		,(N'Other', N'DEBUG', 0)
-		,(N'Other', N'DISABLE_VERSIONING', 0)
-		,(N'Other', N'DLL_LOADING_MUTEX', 0)
-		,(N'Other', N'DROPTEMP', 0)
-		,(N'Other', N'DUMP_LOG_COORDINATOR', 0)
-		,(N'Other', N'DUMP_LOG_COORDINATOR_QUEUE', 0)
-		,(N'Other', N'DUMPTRIGGER', 0)
-		,(N'Other', N'EC', 0)
-		,(N'Other', N'EE_PMOLOCK', 0)
-		,(N'Other', N'EE_SPECPROC_MAP_INIT', 0)
-		,(N'Other', N'ENABLE_VERSIONING', 0)
-		,(N'Other', N'ERROR_REPORTING_MANAGER', 0)
-		,(N'Other', N'FSAGENT', 1)
-		,(N'Other', N'FT_RESTART_CRAWL', 0)
-		,(N'Other', N'FT_RESUME_CRAWL', 0)
-		,(N'Other', N'FULLTEXT GATHERER', 0)
-		,(N'Other', N'GUARDIAN', 0)
-		,(N'Other', N'HTTP_ENDPOINT_COLLCREATE', 0)
-		,(N'Other', N'HTTP_ENUMERATION', 0)
-		,(N'Other', N'HTTP_START', 0)
-		,(N'Other', N'IMP_IMPORT_MUTEX', 0)
-		,(N'Other', N'IMPPROV_IOWAIT', 0)
-		,(N'Other', N'EXECUTION_PIPE_EVENT_INTERNAL', 0)
-		,(N'Other', N'FAILPOINT', 0)
-		,(N'Other', N'INTERNAL_TESTING', 0)
-		,(N'Other', N'IO_AUDIT_MUTEX', 0)
-		,(N'Other', N'KTM_ENLISTMENT', 0)
-		,(N'Other', N'KTM_RECOVERY_MANAGER', 0)
-		,(N'Other', N'KTM_RECOVERY_RESOLUTION', 0)
-		,(N'Other', N'MSQL_SYNC_PIPE', 0)
-		,(N'Other', N'MIRROR_SEND_MESSAGE', 0)
-		,(N'Other', N'MISCELLANEOUS', 0)
-		,(N'Other', N'MSQL_XP', 0)
-		,(N'Other', N'REQUEST_DISPENSER_PAUSE', 0)
-		,(N'Other', N'PARALLEL_BACKUP_QUEUE', 0)
-		,(N'Other', N'PRINT_ROLLBACK_PROGRESS', 0)
-		,(N'Other', N'QNMANAGER_ACQUIRE', 0)
-		,(N'Other', N'QPJOB_KILL', 0)
-		,(N'Other', N'QPJOB_WAITFOR_ABORT', 0)
-		,(N'Other', N'QRY_MEM_GRANT_INFO_MUTEX', 0)
-		,(N'Other', N'QUERY_ERRHDL_SERVICE_DONE', 0)
-		,(N'Other', N'QUERY_EXECUTION_INDEX_SORT_EVENT_OPEN', 0)
-		,(N'Other', N'QUERY_NOTIFICATION_MGR_MUTEX', 0)
-		,(N'Other', N'QUERY_NOTIFICATION_SUBSCRIPTION_MUTEX', 0)
-		,(N'Other', N'QUERY_NOTIFICATION_TABLE_MGR_MUTEX', 0)
-		,(N'Other', N'QUERY_NOTIFICATION_UNITTEST_MUTEX', 0)
-		,(N'Other', N'QUERY_OPTIMIZER_PRINT_MUTEX', 0)
-		,(N'Other', N'QUERY_REMOTE_BRICKS_DONE', 0)
-		,(N'Other', N'QUERY_TRACEOUT', 0)
-		,(N'Other', N'RECOVER_CHANGEDB', 0)
-		,(N'Other', N'REPL_CACHE_ACCESS', 0)
-		,(N'Other', N'REPL_SCHEMA_ACCESS', 0)
-		,(N'Other', N'SOSHOST_EVENT', 0)
-		,(N'Other', N'SOSHOST_INTERNAL', 0)
-		,(N'Other', N'SOSHOST_MUTEX', 0)
-		,(N'Other', N'SOSHOST_RWLOCK', 0)
-		,(N'Other', N'SOSHOST_SEMAPHORE', 0)
-		,(N'Other', N'SOSHOST_SLEEP', 0)
-		,(N'Other', N'SOSHOST_TRACELOCK', 0)
-		,(N'Other', N'SOSHOST_WAITFORDONE', 0)
-		,(N'Other', N'SHUTDOWN', 0)
-		,(N'Other', N'SOS_CALLBACK_REMOVAL', 0)
-		,(N'Other', N'SOS_DISPATCHER_MUTEX', 0)
-		,(N'Other', N'SOS_LOCALALLOCATORLIST', 0)
-		,(N'Other', N'SOS_OBJECT_STORE_DESTROY_MUTEX', 0)
-		,(N'Other', N'SOS_PROCESS_AFFINITY_MUTEX', 0)
-		,(N'Other', N'SNI_CRITICAL_SECTION', 0)
-		,(N'Other', N'SNI_HTTP_WAITFOR_0_DISCON', 0)
-		,(N'Other', N'SNI_LISTENER_ACCESS', 0)
-		,(N'Other', N'SNI_TASK_COMPLETION', 0)
-		,(N'Other', N'SEC_DROP_TEMP_KEY', 0)
-		,(N'Other', N'SEQUENTIAL_GUID', 0)
-		,(N'Other', N'VIA_ACCEPT', 0)
-		,(N'Other', N'SOS_STACKSTORE_INIT_MUTEX', 0)
-		,(N'Other', N'SOS_SYNC_TASK_ENQUEUE_EVENT', 0)
-		,(N'Other', N'SQLSORT_NORMMUTEX', 0)
-		,(N'Other', N'SQLSORT_SORTMUTEX', 0)
-		,(N'Other', N'WAITSTAT_MUTEX', 0)
-		,(N'Other', N'WCC', 0)
-		,(N'Other', N'WORKTBL_DROP', 0)
-		,(N'Other', N'SQLTRACE_LOCK', 0)
-		,(N'Other', N'SQLTRACE_SHUTDOWN', 0)
-		,(N'Other', N'SQLTRACE_WAIT_ENTRIES', 0)
-		,(N'Other', N'SRVPROC_SHUTDOWN', 0)
-		,(N'Other', N'TEMPOBJ', 0)
-		,(N'Other', N'THREADPOOL', 1)
-		,(N'Other', N'TIMEPRIV_TIMEPERIOD', 0)
-		,(N'Other', N'XE_TIMER_MUTEX', 0)
-		,(N'Other', N'XE_TIMER_TASK_DONE', 0)
-		,(N'Other', N'XE_BUFFERMGR_ALLPROCECESSED_EVENT', 0)
-		,(N'Other', N'XE_BUFFERMGR_FREEBUF_EVENT', 0)
-		,(N'Other', N'XE_DISPATCHER_JOIN', 0)
-		,(N'Other', N'XE_MODULEMGR_SYNC', 0)
-		,(N'Other', N'XE_OLS_LOCK', 0)
-		,(N'Other', N'XE_SERVICES_MUTEX', 0)
-		,(N'Other', N'XE_SESSION_CREATE_SYNC', 0)
-		,(N'Other', N'XE_SESSION_SYNC', 0)
-		,(N'Other', N'XE_STM_CREATE', 0)
-		,(N'Parallelism', N'EXCHANGE', 1)
-		,(N'Parallelism', N'EXECSYNC', 1)
-		,(N'Parallelism', N'CXPACKET', 1)
-		,(N'SQLCLR', N'CLR_AUTO_EVENT', 1)
-		,(N'SQLCLR', N'CLR_CRST', 0)
-		,(N'SQLCLR', N'CLR_JOIN', 0)
-		,(N'SQLCLR', N'CLR_MANUAL_EVENT', 1)
-		,(N'SQLCLR', N'CLR_MEMORY_SPY', 0)
-		,(N'SQLCLR', N'CLR_MONITOR', 0)
-		,(N'SQLCLR', N'CLR_RWLOCK_READER', 0)
-		,(N'SQLCLR', N'CLR_RWLOCK_WRITER', 0)
-		,(N'SQLCLR', N'CLR_SEMAPHORE', 0)
-		,(N'SQLCLR', N'CLR_TASK_START', 0)
-		,(N'SQLCLR', N'CLRHOST_STATE_ACCESS', 0)
-		,(N'SQLCLR', N'ASSEMBLY_LOAD', 0)
-		,(N'SQLCLR', N'FS_GARBAGE_COLLECTOR_SHUTDOWN', 0)
-		,(N'SQLCLR', N'SQLCLR_APPDOMAIN', 0)
-		,(N'SQLCLR', N'SQLCLR_ASSEMBLY', 0)
-		,(N'SQLCLR', N'SQLCLR_DEADLOCK_DETECTION', 0)
-		,(N'SQLCLR', N'SQLCLR_QUANTUM_PUNISHMENT', 0)
-		,(N'Transaction', N'TRAN_MARKLATCH_DT', 0)
-		,(N'Transaction', N'TRAN_MARKLATCH_EX', 0)
-		,(N'Transaction', N'TRAN_MARKLATCH_KP', 0)
-		,(N'Transaction', N'TRAN_MARKLATCH_NL', 0)
-		,(N'Transaction', N'TRAN_MARKLATCH_SH', 0)
-		,(N'Transaction', N'TRAN_MARKLATCH_UP', 0)
-		,(N'Transaction', N'TRANSACTION_MUTEX', 0)
-		,(N'Transaction', N'XACT_OWN_TRANSACTION', 0)
-		,(N'Transaction', N'XACT_RECLAIM_SESSION', 0)
-		,(N'Transaction', N'XACTLOCKINFO', 0)
-		,(N'Transaction', N'XACTWORKSPACE_MUTEX', 0)
-		,(N'Transaction', N'DTC_TMDOWN_REQUEST', 0)
-		,(N'Transaction', N'DTC_WAITFOR_OUTCOME', 0)
-		,(N'Transaction', N'MSQL_XACT_MGR_MUTEX', 0)
-		,(N'Transaction', N'MSQL_XACT_MUTEX', 0)
-		,(N'Transaction', N'DTC', 0)
-		,(N'Transaction', N'DTC_ABORT_REQUEST', 0)
-		,(N'Transaction', N'DTC_RESOLVE', 0)
-		,(N'User Waits', N'WAITFOR', 1)
-		,(N'Mirroring', N'DBMIRROR%', 1)
-		,(N'Availability Groups', N'HADR%', 1)
-		,(N'Replication', N'REPL%', 1);
-
-insert into [dbo].[sql_perf_mon_config_wait_stats]
-select s.* from #sql_perf_mon_config_wait_stats s
-left join [dbo].[sql_perf_mon_config_wait_stats] t
-on s.wait_type = t.wait_type collate database_default
-where t.wait_type is null
---------------------------------------------------------------------------------------
---
---------------------------------------------------------------------------------------
-if (select count(*) from [dbo].[sql_perf_mon_config_report_time_interval]) = 0
-	begin
-		insert into [dbo].[sql_perf_mon_config_report_time_interval]([report_time_interval_minutes])
-		select 5
-		union
-		select 15
-	end
 
 --------------------------------------------------------------------------------------
 -- add snapshot types
