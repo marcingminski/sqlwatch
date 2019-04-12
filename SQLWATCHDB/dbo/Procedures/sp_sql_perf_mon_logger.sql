@@ -60,8 +60,8 @@ declare @sql nvarchar(4000)
 		-- 1. get cpu
 		--------------------------------------------------------------------------------------------------------------
 		select 
-				@percent_processor_time=processutilization
-			,	@percent_idle_time=systemidle
+				@percent_processor_time=ProcessUtilization
+			,	@percent_idle_time=SystemIdle
 		FROM ( 
 				SELECT SystemIdle=record.value('(./Record/SchedulerMonitorEvent/SystemHealth/SystemIdle)[1]', 'int'), 
 					ProcessUtilization=record.value('(./Record/SchedulerMonitorEvent/SystemHealth/ProcessUtilization)[1]', 'int')
