@@ -63,8 +63,10 @@ declare @sql nvarchar(4000)
 		-- 1. get cpu
 		--------------------------------------------------------------------------------------------------------------
 		select 
-				@percent_processor_time=processutilization
-			,	@percent_idle_time=systemidle
+				--original PR https://github.com/marcingminski/sqlwatch/commit/b8a8a5bbaf134dcd6afb4d5b9fef13e052a5c164
+				--by https://github.com/marcingminski/sqlwatch/commits?author=sporri
+				@percent_processor_time=ProcessUtilization
+			,	@percent_idle_time=SystemIdle
 		FROM ( 
 				SELECT SystemIdle=record.value('(./Record/SchedulerMonitorEvent/SystemHealth/SystemIdle)[1]', 'int'), 
 					ProcessUtilization=record.value('(./Record/SchedulerMonitorEvent/SystemHealth/ProcessUtilization)[1]', 'int')
