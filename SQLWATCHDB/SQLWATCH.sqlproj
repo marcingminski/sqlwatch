@@ -29,7 +29,7 @@
     <PageVerify>CHECKSUM</PageVerify>
     <AllowSnapshotIsolation>True</AllowSnapshotIsolation>
     <ReadCommittedSnapshot>True</ReadCommittedSnapshot>
-    <DacVersion>1.6.0.0</DacVersion>
+    <DacVersion>1.7.0.0</DacVersion>
     <DefaultCollation>Latin1_General_CI_AS</DefaultCollation>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
