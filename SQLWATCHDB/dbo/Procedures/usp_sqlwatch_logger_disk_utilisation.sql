@@ -119,14 +119,21 @@ if @product_version_major < 11
 	end
 else
 	begin
+		--https://github.com/marcingminski/sqlwatch/issues/90
+		--https://support.microsoft.com/en-gb/help/4088901/fix-assertion-failure-for-sys-dm-db-log-space-usage-on-database
+		--exclude log collection for database snapshots. Snapshots have no logs anyway.
 		insert into @logspace
 			exec sp_MSforeachdb '
 				use [?]
-				select 
-					''?'',
-					[total_log_size_in_bytes],
-					[used_log_space_in_bytes]
-				from sys.dm_db_log_space_usage'
+				if exists (select 1 from sys.databases where name = ''?'' 
+							and source_database_id is null)
+					begin
+						select 
+							''?'',
+							[total_log_size_in_bytes],
+							[used_log_space_in_bytes]
+						from sys.dm_db_log_space_usage
+					end'
 	end
 
 
