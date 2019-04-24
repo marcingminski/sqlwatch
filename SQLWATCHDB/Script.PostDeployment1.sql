@@ -543,7 +543,7 @@ insert into #steps
 
 			('dbo.usp_sqlwatch_logger_disk_utilisation',1, 'SQLWATCH-LOGGER-DISK-UTILISATION',	'TSQL', 'exec dbo.usp_sqlwatch_logger_disk_utilisation'),
 			('Get-WMIObject Win32_Volume',		2, 'SQLWATCH-LOGGER-DISK-UTILISATION',	'PowerShell', N'[datetime]$snapshot_time = (Invoke-SqlCmd -ServerInstance "' + @server + '" -Database ' + '$(DatabaseName)' + ' -Query "select [snapshot_time]=max([snapshot_time]) 
-from [dbo].[sql_perf_mon_snapshot_header]
+from [dbo].[sqlwatch_logger_snapshot_header]
 where snapshot_type_id = 2").snapshot_time
 
 #https://msdn.microsoft.com/en-us/library/aa394515(v=vs.85).aspx
@@ -557,7 +557,7 @@ Get-WMIObject Win32_Volume | ?{$_.DriveType -eq 3} | %{
     $Capacity = $_.Capacity
     $SnapshotTime = Get-Date $snapshot_time -format "yyyy-MM-dd HH:mm:ss.fff"
     Invoke-SqlCmd -ServerInstance "' + @server + '" -Database ' + '$(DatabaseName)' + ' -Query "
-     insert into [dbo].[logger_disk_utilisation_volume](
+     insert into [dbo].[sqlwatch_logger_disk_utilisation_volume](
             [volume_name]
            ,[volume_label]
            ,[volume_fs]
