@@ -56,7 +56,7 @@ declare @sql nvarchar(4000)
 		where snapshot_type_id = 1
 		and sql_instance = @@SERVERNAME
 		
-		set @date_snapshot_current = getdate();
+		set @date_snapshot_current = getutcdate();
 		insert into [dbo].[sqlwatch_logger_snapshot_header] (snapshot_time, snapshot_type_id)
 		values (@date_snapshot_current, 1)		
 		--------------------------------------------------------------------------------------------------------------

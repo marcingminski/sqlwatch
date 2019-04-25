@@ -14,7 +14,7 @@
 	[snapshot_time] datetime not null,
 	[snapshot_type_id] tinyint not null default 1 ,
 	[sql_instance] nvarchar(25) not null default @@SERVERNAME,
-	constraint fk_sql_perf_mon_file_stats_snapshot_header foreign key ([snapshot_time],[snapshot_type_id], [sql_instance]) references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time],[snapshot_type_id], [sql_instance]) on delete cascade ,
+	constraint fk_sql_perf_mon_file_stats_snapshot_header foreign key ([snapshot_time],[snapshot_type_id], [sql_instance]) references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time],[snapshot_type_id], [sql_instance]) on delete cascade on update cascade,
 	constraint pk_sql_perf_mon_file_stats primary key clustered (
 		[snapshot_time], [database_name], [logical_file_name], [type_desc], [sql_instance]
 	)

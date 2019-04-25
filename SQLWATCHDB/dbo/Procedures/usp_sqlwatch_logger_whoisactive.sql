@@ -54,7 +54,7 @@ AS
 			-- snapshot_time and enforce referential integrity with the header table and
 			-- to apply any additional filtering:
 
-			set @snapshot_time = getdate()
+			set @snapshot_time = getutcdate()
 			insert into dbo.[sqlwatch_logger_snapshot_header] (snapshot_time, snapshot_type_id)
 			select @snapshot_time, @snapshot_type_id
 
@@ -67,7 +67,7 @@ AS
 					,[writes],[physical_reads],[login_time], @snapshot_type_id, @@SERVERNAME
 			from [##SQLWATCH_7A2124DA-B485-4C43-AE04-65D61E6A157C]
 			-- exclude anything that has been running for less that the desired duration in seconds (default 15)
-			where [start_time] < dateadd(s,@min_session_duration_seconds,getdate())
+			where [start_time] < dateadd(s,@min_session_duration_seconds,getutcdate())
 			-- unless its being blocked or is a blocker
 			or [blocking_session_id] is not null or [blocked_session_count] > 0
 		end

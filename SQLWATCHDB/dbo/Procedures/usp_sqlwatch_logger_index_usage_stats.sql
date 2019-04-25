@@ -1,7 +1,7 @@
 ﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_logger_index_usage_stats]
 AS
 
-declare @snapshot_time datetime = getdate();
+declare @snapshot_time datetime = getutcdate();
 declare @snapshot_type tinyint = 14
 declare @database_name sysname
 declare @sql varchar(max)
@@ -137,7 +137,7 @@ dbcc show_statistics (''' + @object_name + ''',''' + @index_name + ''') with  HI
 				, [object_name] = @object_name
 				, index_name = @index_name
 				, index_id = @index_id
-				, [collection_time] = getdate()
+				, [collection_time] = getutcdate()
 		where index_name = 'fe92qw0fa_dummy'
 
 		fetch next from c_index

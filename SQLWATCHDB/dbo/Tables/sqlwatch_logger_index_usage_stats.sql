@@ -21,5 +21,5 @@
 	[index_disabled] bit null,
 	[sql_instance] nvarchar(25) not null default @@SERVERNAME,
 	constraint [pk_index_usage_stats] primary key clustered ([snapshot_time] asc,[database_name] asc,[object_name] asc,[index_id] asc, [sql_instance]),
-	constraint [fk_index_usage_stats] foreign key ([snapshot_time],[snapshot_type_id], [sql_instance]) references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time],[snapshot_type_id], [sql_instance]) on delete cascade
+	constraint [fk_index_usage_stats] foreign key ([snapshot_time],[snapshot_type_id], [sql_instance]) references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time],[snapshot_type_id], [sql_instance]) on delete cascade on update cascade
 )

@@ -60,7 +60,7 @@ BEGIN
 	--------------------------------------------------------------------------------------------------------------
     -- variables
 	--------------------------------------------------------------------------------------------------------------
-	declare @snapshot_time datetime = getdate();
+	declare @snapshot_time datetime = getutcdate();
 	declare @snapshot_type tinyint = 3
 	insert into [dbo].[sqlwatch_logger_snapshot_header] (snapshot_time, snapshot_type_id)
 	values (@snapshot_time, @snapshot_type)

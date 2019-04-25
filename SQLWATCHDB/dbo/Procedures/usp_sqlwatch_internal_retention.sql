@@ -17,7 +17,7 @@ while @row_count > 0
 					from dbo.[sqlwatch_logger_snapshot_header] sh
 					inner join [dbo].[sqlwatch_config_snapshot_type] st
 						on sh.[snapshot_type_id] = st.[snapshot_type_id]
-					where datediff(day,sh.snapshot_time,getdate()) > st.snapshot_retention_days
+					where datediff(day,sh.snapshot_time,getutcdate()) > st.snapshot_retention_days
 					and dbo.[sqlwatch_logger_snapshot_header].[snapshot_time] = sh.[snapshot_time]
 					and dbo.[sqlwatch_logger_snapshot_header].snapshot_type_id = sh.snapshot_type_id
 			)

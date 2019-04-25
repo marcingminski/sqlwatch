@@ -15,7 +15,7 @@
 	[process_virtual_memory_low] [bit] NOT NULL,
 	[snapshot_type_id] tinyint not null default 1 ,
 	[sql_instance] nvarchar(25) not null default @@SERVERNAME,
-	constraint fk_sql_perf_mon_os_process_memory_snapshot_header foreign key ([snapshot_time],[snapshot_type_id],[sql_instance]) references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time],[snapshot_type_id],[sql_instance]) on delete cascade ,
+	constraint fk_sql_perf_mon_os_process_memory_snapshot_header foreign key ([snapshot_time],[snapshot_type_id],[sql_instance]) references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time],[snapshot_type_id],[sql_instance]) on delete cascade  on update cascade,
 	constraint pk_sql_perf_mon_os_process_memory primary key clustered (
 		[snapshot_time] ASC, [sql_instance]
 	)

@@ -7,7 +7,7 @@
 	constraint PK_database primary key clustered (
 	 [database_name],[database_create_date], [sql_instance]
 	 ),
-	 constraint fk_database_server foreign key ([sql_instance]) references dbo.sqlwatch_config_sql_instance([sql_instance]) on delete cascade
+	 constraint fk_database_server foreign key ([sql_instance]) references dbo.sqlwatch_config_sql_instance([sql_instance]) on delete cascade on update cascade
 )
 GO
 CREATE NONCLUSTERED INDEX idx_perf_mon_database_current ON [dbo].[sqlwatch_meta_database]([database_current])

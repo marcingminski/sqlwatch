@@ -5,7 +5,7 @@
 	,[login_time] datetime NULL,
 	[snapshot_type_id] tinyint not null default 1 ,
 	[sql_instance] nvarchar(25) not null default @@SERVERNAME,
-	constraint fk_sql_perf_mon_who_is_active_snapshot_header foreign key ([snapshot_time],[snapshot_type_id],[sql_instance]) references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time],[snapshot_type_id],[sql_instance]) on delete cascade ,
+	constraint fk_sql_perf_mon_who_is_active_snapshot_header foreign key ([snapshot_time],[snapshot_type_id],[sql_instance]) references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time],[snapshot_type_id],[sql_instance]) on delete cascade  on update cascade,
 	)
 go
 create nonclustered index idx_whoisactive on [dbo].[sqlwatch_logger_whoisactive] ([snapshot_time])

@@ -18,5 +18,5 @@
 	constraint FK_sql_perf_mon_master_files_snapshot foreign key ([snapshot_time], [snapshot_type_id], [sql_instance])
 		references [dbo].[sqlwatch_logger_snapshot_header] (
 			[snapshot_time], [snapshot_type_id], [sql_instance]
-		) on delete cascade
+		) on delete cascade on update cascade
 )

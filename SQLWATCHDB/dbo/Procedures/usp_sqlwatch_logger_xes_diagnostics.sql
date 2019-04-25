@@ -3,7 +3,7 @@ AS
 
 if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 	begin
-		declare @snapshot_time datetime = getdate()
+		declare @snapshot_time datetime = getutcdate()
 		declare @snapshot_type_id tinyint = 10
 		declare @filename varchar(8000)
 

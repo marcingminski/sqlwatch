@@ -15,5 +15,5 @@
 	[collection_time] datetime,
 	[sql_instance] nvarchar(25) not null default @@SERVERNAME,
 	 constraint [pk_logger_index_stats_histogram] primary key nonclustered ([snapshot_time] ASC,[index_id] ASC,[database_name] ASC,[object_name] ASC,[sqlwatch_stat_range_id] ASC, [sql_instance]),
-	 constraint [fk_logger_index_stats_histogram] foreign key ([snapshot_time],[snapshot_type_id], [sql_instance]) references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time],[snapshot_type_id], [sql_instance]) on delete cascade
+	 constraint [fk_logger_index_stats_histogram] foreign key ([snapshot_time],[snapshot_type_id], [sql_instance]) references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time],[snapshot_type_id], [sql_instance]) on delete cascade on update cascade
 	 )

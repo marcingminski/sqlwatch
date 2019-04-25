@@ -22,5 +22,5 @@
 	constraint FK_logger_disk_util_database_snapshot 
 		foreign key ([snapshot_time],[snapshot_type_id],[sql_instance])
 		references [dbo].[sqlwatch_logger_snapshot_header] ([snapshot_time],[snapshot_type_id],[sql_instance])
-		on delete cascade
+		on delete cascade on update cascade
 )
