@@ -145,6 +145,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="migrate time to utc.sql" />
+    <None Include="fix performance counter column types.sql" />
   </ItemGroup>
   <Target Name="SetDacVersionToAssemblyVersion" AfterTargets="CoreCompile">
     <GetAssemblyIdentity AssemblyFiles="$(IntermediateTargetFullFileName)">

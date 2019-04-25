@@ -92,10 +92,10 @@ if (select count(*) from [dbo].[sqlwatch_meta_server]) = 0
 --
 --------------------------------------------------------------------------------------
 create table #sql_perf_mon_config_perf_counters (
-	[object_name] nvarchar(256) not null,
-	[instance_name] nvarchar(256) not null,
-	[counter_name] nvarchar(256) not null,
-	[base_counter_name] nvarchar(256) null,
+	[object_name] nvarchar(128) not null,
+	[instance_name] nvarchar(128) not null,
+	[counter_name] nvarchar(128) not null,
+	[base_counter_name] nvarchar(128) null,
 	[collect] bit null,
 	constraint tmp_pk_sql_perf_mon_config_perf_counters primary key (
 		[object_name] , [instance_name], [counter_name]
