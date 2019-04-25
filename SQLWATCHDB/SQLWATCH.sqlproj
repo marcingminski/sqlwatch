@@ -115,6 +115,7 @@
     <Build Include="dbo\Procedures\usp_sqlwatch_logger_index_usage_stats.sql" />
     <Build Include="dbo\Tables\sqlwatch_logger_index_usage_stats_histogram.sql" />
     <Build Include="dbo\Tables\sqlwatch_config_sql_instance.sql" />
+    <Build Include="ExtendedProperty-SQLWATCH-Information.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
@@ -144,8 +145,8 @@
     </ArtifactReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="migrate time to utc.sql" />
-    <None Include="fix performance counter column types.sql" />
+    <None Include="POSTDEPLOY migrate time to utc.sql" />
+    <None Include="PREDEPLOY fix performance counter column types.sql" />
   </ItemGroup>
   <Target Name="SetDacVersionToAssemblyVersion" AfterTargets="CoreCompile">
     <GetAssemblyIdentity AssemblyFiles="$(IntermediateTargetFullFileName)">

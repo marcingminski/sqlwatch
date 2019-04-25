@@ -13,14 +13,24 @@
 
 */
 
+		declare @offsethours int = datediff(hour,getdate(),getutcdate())
+		declare @error int
 
-begin tran datemigration
---get time offset of the local instance:
-declare @offsethours int = datediff(hour,getdate(),getutcdate())
+		begin tran migrateutc
+		update dbo.sqlwatch_logger_snapshot_header with (tablock)
+			set snapshot_time = dateadd(hour,@offsethours,snapshot_time)
+			set @error = @@ERROR
 
-begin tran migrateutc
-update dbo.sqlwatch_logger_snapshot_header with (tablock)
-set snapshot_time = dateadd(hour,@offsethours,snapshot_time)
+			if @error = 0
+				begin
+					print 'Commiting'
+					commit tran migrateutc
+				end
+			else
+				begin
+					print 'Rolling back'
+					rollback tran migrateutc
+				end
 
 --if no error:
 --commit tran datemigration
