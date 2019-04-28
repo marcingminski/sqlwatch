@@ -5,18 +5,30 @@ VisualStudioVersion = 15.0.27130.2027
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "SQLWATCH", "SQLWATCH.sqlproj", "{DFAC46EF-72EB-4A88-96AB-F7D1A96E9E1C}"
 EndProject
+Project("{159641D6-6404-4A2A-AE62-294DE0FE8301}") = "SQLWATCHSSIS", "..\SQLWATCHSSIS\SQLWATCHSSIS.dtproj", "{AE2DA980-BBCB-496F-9438-F28438C0898D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Development|Any CPU = Development|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{DFAC46EF-72EB-4A88-96AB-F7D1A96E9E1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DFAC46EF-72EB-4A88-96AB-F7D1A96E9E1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DFAC46EF-72EB-4A88-96AB-F7D1A96E9E1C}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{DFAC46EF-72EB-4A88-96AB-F7D1A96E9E1C}.Development|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFAC46EF-72EB-4A88-96AB-F7D1A96E9E1C}.Development|Any CPU.Build.0 = Debug|Any CPU
+		{DFAC46EF-72EB-4A88-96AB-F7D1A96E9E1C}.Development|Any CPU.Deploy.0 = Debug|Any CPU
 		{DFAC46EF-72EB-4A88-96AB-F7D1A96E9E1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DFAC46EF-72EB-4A88-96AB-F7D1A96E9E1C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DFAC46EF-72EB-4A88-96AB-F7D1A96E9E1C}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{AE2DA980-BBCB-496F-9438-F28438C0898D}.Debug|Any CPU.ActiveCfg = Development
+		{AE2DA980-BBCB-496F-9438-F28438C0898D}.Debug|Any CPU.Build.0 = Development
+		{AE2DA980-BBCB-496F-9438-F28438C0898D}.Development|Any CPU.ActiveCfg = Development
+		{AE2DA980-BBCB-496F-9438-F28438C0898D}.Development|Any CPU.Build.0 = Development
+		{AE2DA980-BBCB-496F-9438-F28438C0898D}.Release|Any CPU.ActiveCfg = Development
+		{AE2DA980-BBCB-496F-9438-F28438C0898D}.Release|Any CPU.Build.0 = Development
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
