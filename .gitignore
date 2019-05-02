@@ -10,3 +10,5 @@
 /SQLWATCHDB/bin/Debug
 *.dbmdl
 *.jfm
+/SQLWATCHSSIS/obj/Development
+/SQLWATCHSSIS/import.dtsx

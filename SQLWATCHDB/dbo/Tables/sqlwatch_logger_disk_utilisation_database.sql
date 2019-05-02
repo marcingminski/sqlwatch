@@ -14,7 +14,7 @@
 	[snapshot_type_id] tinyint,
 	[sql_instance] nvarchar(25) default @@SERVERNAME,
 	constraint PK_logger_disk_util_database
-		primary key clustered ([snapshot_time], [database_name]),
+		primary key clustered ([snapshot_time],[snapshot_type_id],[sql_instance], [database_name]),
 	constraint FK_logger_disk_util_database_database
 		foreign key ([database_name],[database_create_date],[sql_instance])
 		references [dbo].[sqlwatch_meta_database] ([database_name],[database_create_date],[sql_instance])
