@@ -13,3 +13,10 @@
 		[snapshot_time] asc, [snapshot_type_id] asc, [sql_instance] asc, [wait_type] asc
 		)
 ) 
+
+go
+
+/* aid filtering by server in the central repository */
+CREATE NONCLUSTERED INDEX idx_sqlwatch_wait_stats_001
+ON [dbo].[sqlwatch_logger_perf_os_wait_stats] ([sql_instance])
+INCLUDE ([wait_type],[waiting_tasks_count],[wait_time_ms],[max_wait_time_ms],[signal_wait_time_ms],[snapshot_time],[snapshot_type_id])

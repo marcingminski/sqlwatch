@@ -10,6 +10,24 @@ Post-Deployment Script Template
 --------------------------------------------------------------------------------------
 */
 
+/* 2019-05-05 backfill db create date */
+if (select count(*) from dbo.[sqlwatch_logger_perf_file_stats] where database_create_date = '1900-01-01') > 0
+	begin
+		ALTER TABLE [dbo].[sqlwatch_logger_perf_file_stats] DROP CONSTRAINT [fk_pk_sql_perf_mon_file_stats_database];
+
+		update fs
+			set [database_create_date] = db.database_create_date
+		from dbo.[sqlwatch_logger_perf_file_stats] fs
+		inner join dbo.sqlwatch_meta_database db
+			on db.[database_name] = fs.[database_name]
+		where fs.database_create_date = '1900-01-01';
+
+		ALTER TABLE [dbo].[sqlwatch_logger_perf_file_stats]  WITH NOCHECK ADD  CONSTRAINT [fk_pk_sql_perf_mon_file_stats_database] FOREIGN KEY([database_name], [database_create_date], [sql_instance])
+		REFERENCES [dbo].[sqlwatch_meta_database] ([database_name], [database_create_date], [sql_instance]) ON UPDATE CASCADE ON DELETE CASCADE;
+
+		ALTER TABLE [dbo].[sqlwatch_logger_perf_file_stats] CHECK CONSTRAINT [fk_pk_sql_perf_mon_file_stats_database];
+	end
+
 
 /* Since version beta 6 these objects are no longer required. They have been removed from the Project however,
 	as SQLWATCH can be installed in the existing database the dacpac deployment does not drop objects not in the Project.

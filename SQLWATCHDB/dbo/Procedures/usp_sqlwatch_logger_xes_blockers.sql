@@ -1,5 +1,7 @@
 ﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_logger_xes_blockers]
 AS
+set xact_abort on
+begin tran
 
 if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 	begin
@@ -112,3 +114,5 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 	end
 else
 	print 'Product version must be 11 or higher'
+
+commit tran

@@ -1,6 +1,9 @@
 ﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_logger_index_usage_stats]
 AS
 
+set xact_abort on
+begin tran
+
 declare @snapshot_time datetime = getutcdate();
 declare @snapshot_type tinyint = 14
 declare @database_name sysname
@@ -12,6 +15,10 @@ declare @index_id int
 declare @object_name nvarchar(256)
 
 set nocount on ;
+
+/* add any new databases to satisty FK relations*/
+exec [dbo].[usp_sqlwatch_internal_add_database]
+
 
 /* step 1, get indexes from each database.
    we're creating snapshot timestamp here and because index collection may take few minutes,
@@ -173,7 +180,4 @@ deallocate c_index
 	inner join sys.databases dbs
 		on dbs.[name] = st.[database_name]
 
-
-
-
-
+commit tran

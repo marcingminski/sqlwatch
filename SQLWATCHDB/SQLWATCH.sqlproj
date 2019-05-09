@@ -147,6 +147,9 @@
   <ItemGroup>
     <None Include="POSTDEPLOY migrate time to utc.sql" />
     <None Include="PREDEPLOY fix performance counter column types.sql" />
+    <None Include="Generate SQL statements for SSIS.sql" />
+    <None Include="Generate import tables.sql" />
+    <None Include="Generate final merge.sql" />
   </ItemGroup>
   <Target Name="SetDacVersionToAssemblyVersion" AfterTargets="CoreCompile">
     <GetAssemblyIdentity AssemblyFiles="$(IntermediateTargetFullFileName)">

@@ -1,6 +1,9 @@
 ﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_logger_xes_long_queries]
 AS
 
+set xact_abort on
+begin tran
+
 if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 	begin
 		declare @snapshot_time datetime = getutcdate()
@@ -74,3 +77,5 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 	end
 else
 	print 'Product version must be 11 or higher'
+
+commit tran

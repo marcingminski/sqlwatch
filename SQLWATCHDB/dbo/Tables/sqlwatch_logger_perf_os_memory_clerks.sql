@@ -14,3 +14,7 @@
 		[snapshot_time], [snapshot_type_id], [sql_instance], [clerk_name]
 		)
 )
+go
+CREATE NONCLUSTERED INDEX idx_sqlwatch_os_memory_clerks_001
+ON [dbo].[sqlwatch_logger_perf_os_memory_clerks] ([sql_instance])
+INCLUDE ([snapshot_time],[snapshot_type_id])

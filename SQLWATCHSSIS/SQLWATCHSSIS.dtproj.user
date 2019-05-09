@@ -4,6 +4,8 @@
     <Configuration>
       <Name>Development</Name>
       <Options>
+        <ServerName>sql-test-1\sql2016</ServerName>
+        <PathOnServer>/SSISDB/SQLWATCH/SQLWATCHSSIS</PathOnServer>
         <UserIDs />
         <UserPasswords />
         <OfflineMode>false</OfflineMode>

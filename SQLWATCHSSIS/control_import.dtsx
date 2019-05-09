@@ -5,14 +5,15 @@
   DTS:CreationName="SSIS.Package.3"
   DTS:CreatorComputerName="VM-MBPWIN10-1"
   DTS:CreatorName="HOME\marcin"
+  DTS:DelayValidation="True"
   DTS:DTSID="{249E659D-67F3-4D8A-9476-9F4B21E8DE5B}"
   DTS:ExecutableType="SSIS.Package.3"
   DTS:LastModifiedProductVersion="15.0.1100.123"
   DTS:LocaleID="2057"
   DTS:ObjectName="control_import"
   DTS:PackageType="5"
-  DTS:VersionBuild="20"
-  DTS:VersionGUID="{D78E25CF-ABDD-4307-8D12-18B96B86AAB3}">
+  DTS:VersionBuild="70"
+  DTS:VersionGUID="{7A6CF8F1-D928-4E4D-ABA1-37D3A9795BD5}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">6</DTS:Property>
   <DTS:ConnectionManagers>
@@ -31,11 +32,12 @@
         DTS:Name="UserName">@[$Package::repository_user_name]</DTS:PropertyExpression>
       <DTS:ObjectData>
         <DTS:ConnectionManager
-          DTS:ConnectionString="Data Source=linux.docker.home.local,14334;User ID=sa;Initial Catalog=SQLWATCH;Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;">
+          DTS:Retain="True"
+          DTS:ConnectionString="Data Source=sql-test-1\sql2016;User ID=sqlwatchuser;Initial Catalog=SQLWATCH;Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;Packet Size=32767;">
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAA3Kp2lNKhI0Gr+ttggegpLQAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAA9YPOdKUR8tg04WR6jbVr9AAAAAASAAACgAAAAEAAAAAv38V/QpCGTsPHPO39glYYgAAAAWhBfRMxlVcDTR67MD0O6N3pUqVi+4oCNluYUxm7AHL0UAAAAd+rnJ6LPpQ1H39cgYLQfmvHJLuE</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAA3Kp2lNKhI0Gr+ttggegpLQAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAABBI6R5WWZ5+IUo/3yFKUnrAAAAAASAAACgAAAAEAAAAEkwkGi8Tnm/i2VIR+xeaqIgAAAAnf1awOFj1SknxigJ0G6E8W6D7b42U2DdSNgzkt9FjPUUAAAAQjx3JbM8M+s/A93ilQrBwR5ZLOw</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -43,7 +45,19 @@
   <DTS:PackageParameters>
     <DTS:PackageParameter
       DTS:CreationName=""
+      DTS:DataType="3"
+      DTS:Description="Number of threads for parallel collection. If this is set to &gt; 1, then multiple servers will be collected in parallel, in addition to each colelctor data flow being run in parralel, according to the MaxConcurrentExecutables parameter. Be careful as running parralel collectors may be slower than single thread. Make sure central repository can sustain the workload. Maximum allowed parralel threads are 8."
+      DTS:DTSID="{3061DD6C-7DCC-49A6-80E4-073CF55C063C}"
+      DTS:ObjectName="number_of_parallel_collectors"
+      DTS:Required="True">
+      <DTS:Property
+        DTS:DataType="3"
+        DTS:Name="ParameterValue">3</DTS:Property>
+    </DTS:PackageParameter>
+    <DTS:PackageParameter
+      DTS:CreationName=""
       DTS:DataType="8"
+      DTS:Description="Name of the database where the central repository is. Default SQLWATCH"
       DTS:DTSID="{1A7A750D-24A8-442B-AA34-5125CD45BC07}"
       DTS:ObjectName="repository_database"
       DTS:Required="True">
@@ -54,37 +68,38 @@
     <DTS:PackageParameter
       DTS:CreationName=""
       DTS:DataType="8"
+      DTS:Description="Name of the SQL Server instance where the central repository is hosted."
       DTS:DTSID="{CCC86E2E-2D06-4813-A67B-A2B0ADC6F5FE}"
       DTS:ObjectName="repository_instance_name"
       DTS:Required="True">
       <DTS:Property
         DTS:DataType="8"
-        DTS:Name="ParameterValue">linux.docker.home.local,14334</DTS:Property>
+        DTS:Name="ParameterValue">sql-test-1\sql2016</DTS:Property>
     </DTS:PackageParameter>
     <DTS:PackageParameter
       DTS:CreationName=""
       DTS:DataType="8"
+      DTS:Description="SQL User to access central repository or blank for Windows authentication"
       DTS:DTSID="{168C312A-A0AB-4A19-92CB-DA9083DB82E9}"
       DTS:ObjectName="repository_password"
-      DTS:Required="True"
       DTS:Sensitive="True">
       <DTS:Property
         DTS:Name="ParameterValue">
         <DTS:Property
           DTS:DataType="8"
           DTS:Name="ParameterValue"
-          Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAA3Kp2lNKhI0Gr+ttggegpLQAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAACA3xUOwQ07Ou/e5jFW0vqBAAAAAASAAACgAAAAEAAAAKJXyrBJ/aq2I6CFAG1sav0gAAAAIM2Ujjqb43yBOhiigZZJ7VEJfuAt5zXsmIjduA1SDqQUAAAAiZhEZ/3J5AnHYlaBLxRYzHbyf54</DTS:Property>
+          Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAA3Kp2lNKhI0Gr+ttggegpLQAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAACD9SQtQMbdFEJO9kvN1z40AAAAAASAAACgAAAAEAAAAOEBgTsHM3EhGe9pFw8ODK8gAAAAsy74F7klbjT7Kk51y8X3ElSEvbXBcg5/bihlppDW9g0UAAAADnrlVRt0Ikrq/Hdm2nd9AYUaK3Y</DTS:Property>
       </DTS:Property>
     </DTS:PackageParameter>
     <DTS:PackageParameter
       DTS:CreationName=""
       DTS:DataType="8"
+      DTS:Description="SQL Password to access central repository or blank for Windows authentication"
       DTS:DTSID="{57BFCA6D-9A3D-412D-B81C-090D88A31CB1}"
-      DTS:ObjectName="repository_user_name"
-      DTS:Required="True">
+      DTS:ObjectName="repository_user_name">
       <DTS:Property
         DTS:DataType="8"
-        DTS:Name="ParameterValue">sa</DTS:Property>
+        DTS:Name="ParameterValue">sqlwatchuser</DTS:Property>
     </DTS:PackageParameter>
   </DTS:PackageParameters>
   <DTS:Variables>
@@ -108,114 +123,2143 @@
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
+      DTS:DTSID="{334320EF-EF72-44D6-A3F3-7A4ADB80324D}"
+      DTS:IncludeInDebugDump="6789"
+      DTS:Namespace="User"
+      DTS:ObjectName="remote_instances_to_process_t1">
+      <DTS:VariableValue
+        DTS:DataSubType="ManagedSerializable"
+        DTS:DataType="13">
+        <SOAP-ENV:Envelope xmlns:clr="http://schemas.microsoft.com/soap/encoding/clr/1.0" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+          <SOAP-ENV:Body>
+            <xsd:anyType
+              id="ref-1"></xsd:anyType>
+          </SOAP-ENV:Body>
+        </SOAP-ENV:Envelope>
+      </DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{AF3AA765-98B7-4BD2-8150-B4C5B0A41306}"
+      DTS:IncludeInDebugDump="6789"
+      DTS:Namespace="User"
+      DTS:ObjectName="remote_instances_to_process_t2">
+      <DTS:VariableValue
+        DTS:DataSubType="ManagedSerializable"
+        DTS:DataType="13">
+        <SOAP-ENV:Envelope xmlns:clr="http://schemas.microsoft.com/soap/encoding/clr/1.0" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+          <SOAP-ENV:Body>
+            <xsd:anyType
+              id="ref-1"></xsd:anyType>
+          </SOAP-ENV:Body>
+        </SOAP-ENV:Envelope>
+      </DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{8BB8AF0D-CBD1-4B89-8BF6-537E644E1613}"
+      DTS:IncludeInDebugDump="6789"
+      DTS:Namespace="User"
+      DTS:ObjectName="remote_instances_to_process_t3">
+      <DTS:VariableValue
+        DTS:DataSubType="ManagedSerializable"
+        DTS:DataType="13">
+        <SOAP-ENV:Envelope xmlns:clr="http://schemas.microsoft.com/soap/encoding/clr/1.0" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+          <SOAP-ENV:Body>
+            <xsd:anyType
+              id="ref-1"></xsd:anyType>
+          </SOAP-ENV:Body>
+        </SOAP-ENV:Envelope>
+      </DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{464BBF6B-F73E-439E-BDC4-DAB59677944D}"
+      DTS:IncludeInDebugDump="6789"
+      DTS:Namespace="User"
+      DTS:ObjectName="remote_instances_to_process_t4">
+      <DTS:VariableValue
+        DTS:DataSubType="ManagedSerializable"
+        DTS:DataType="13">
+        <SOAP-ENV:Envelope xmlns:clr="http://schemas.microsoft.com/soap/encoding/clr/1.0" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+          <SOAP-ENV:Body>
+            <xsd:anyType
+              id="ref-1"></xsd:anyType>
+          </SOAP-ENV:Body>
+        </SOAP-ENV:Envelope>
+      </DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{C2B35064-FD27-417E-A239-D878D8B0360A}"
+      DTS:IncludeInDebugDump="6789"
+      DTS:Namespace="User"
+      DTS:ObjectName="remote_instances_to_process_t5">
+      <DTS:VariableValue
+        DTS:DataSubType="ManagedSerializable"
+        DTS:DataType="13">
+        <SOAP-ENV:Envelope xmlns:clr="http://schemas.microsoft.com/soap/encoding/clr/1.0" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+          <SOAP-ENV:Body>
+            <xsd:anyType
+              id="ref-1"></xsd:anyType>
+          </SOAP-ENV:Body>
+        </SOAP-ENV:Envelope>
+      </DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{98B27E11-E4A4-434F-90A1-B585E91E6F91}"
+      DTS:IncludeInDebugDump="6789"
+      DTS:Namespace="User"
+      DTS:ObjectName="remote_instances_to_process_t6">
+      <DTS:VariableValue
+        DTS:DataSubType="ManagedSerializable"
+        DTS:DataType="13">
+        <SOAP-ENV:Envelope xmlns:clr="http://schemas.microsoft.com/soap/encoding/clr/1.0" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+          <SOAP-ENV:Body>
+            <xsd:anyType
+              id="ref-1"></xsd:anyType>
+          </SOAP-ENV:Body>
+        </SOAP-ENV:Envelope>
+      </DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{C3F17D9D-3DD6-491E-BFC5-2EC54B0A3C25}"
+      DTS:IncludeInDebugDump="6789"
+      DTS:Namespace="User"
+      DTS:ObjectName="remote_instances_to_process_t7">
+      <DTS:VariableValue
+        DTS:DataSubType="ManagedSerializable"
+        DTS:DataType="13">
+        <SOAP-ENV:Envelope xmlns:clr="http://schemas.microsoft.com/soap/encoding/clr/1.0" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+          <SOAP-ENV:Body>
+            <xsd:anyType
+              id="ref-1"></xsd:anyType>
+          </SOAP-ENV:Body>
+        </SOAP-ENV:Envelope>
+      </DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{2192D5BA-EC3F-4C01-BCC1-53BDDE628B79}"
+      DTS:IncludeInDebugDump="6789"
+      DTS:Namespace="User"
+      DTS:ObjectName="remote_instances_to_process_t8">
+      <DTS:VariableValue
+        DTS:DataSubType="ManagedSerializable"
+        DTS:DataType="13">
+        <SOAP-ENV:Envelope xmlns:clr="http://schemas.microsoft.com/soap/encoding/clr/1.0" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+          <SOAP-ENV:Body>
+            <xsd:anyType
+              id="ref-1"></xsd:anyType>
+          </SOAP-ENV:Body>
+        </SOAP-ENV:Envelope>
+      </DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
       DTS:DTSID="{979AA9E2-515A-4BF9-9417-9889B05FCEB2}"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
-      DTS:ObjectName="remote_instance_name">
+      DTS:ObjectName="remote_instance_name_t1">
       <DTS:VariableValue
         DTS:DataType="8"
         xml:space="preserve"></DTS:VariableValue>
     </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{45789DB4-C4C7-4F7E-9E39-B8E8D977A272}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="remote_instance_name_t2">
+      <DTS:VariableValue
+        DTS:DataType="8"
+        xml:space="preserve"></DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{5B1CDD80-A2A4-4AE3-82A3-F481AD2F2562}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="remote_instance_name_t3">
+      <DTS:VariableValue
+        DTS:DataType="8"
+        xml:space="preserve"></DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{546E15DE-9103-439E-96B0-5925D03E05F4}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="remote_instance_name_t4">
+      <DTS:VariableValue
+        DTS:DataType="8"
+        xml:space="preserve"></DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{8D623801-2815-4222-98A0-C58742C2CF7D}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="remote_instance_name_t5">
+      <DTS:VariableValue
+        DTS:DataType="8"
+        xml:space="preserve"></DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{F69828DC-0B4B-4E5A-ABF4-E14B5286DF6E}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="remote_instance_name_t6">
+      <DTS:VariableValue
+        DTS:DataType="8"
+        xml:space="preserve"></DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{FD6D02DB-0E0C-40ED-9D8E-D4AA8C1D171C}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="remote_instance_name_t7">
+      <DTS:VariableValue
+        DTS:DataType="8"
+        xml:space="preserve"></DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{F4330F60-8B06-4446-B853-A5CA9CEF263A}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="remote_instance_name_t8">
+      <DTS:VariableValue
+        DTS:DataType="8"
+        xml:space="preserve"></DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{C88B6569-5CD7-4CB0-9998-89D4BCAE602A}"
+      DTS:EvaluateAsExpression="True"
+      DTS:Expression="&quot;if object_id ('tempdb..##import_sqlwatch_logger_disk_utilisation_database') is null   begin    create table ##import_sqlwatch_logger_disk_utilisation_database (     [database_name] nvarchar(128),[database_create_date] datetime,[database_size_bytes] bigint,[unallocated_space_bytes] bigint,[reserved_bytes] bigint,[data_bytes] bigint,[index_size_bytes] bigint,[unused_bytes] bigint,[log_size_total_bytes] bigint,[log_size_used_bytes] bigint,[snapshot_time] datetime,[snapshot_type_id] tinyint,[sql_instance] nvarchar(25),      constraint pk_tmp_import_sqlwatch_logger_disk_utilisation_database primary key (     [snapshot_time],[snapshot_type_id],[sql_instance],[database_name],[database_create_date]      )    )   end&#xA;if object_id ('tempdb..##import_sqlwatch_logger_disk_utilisation_volume') is null   begin    create table ##import_sqlwatch_logger_disk_utilisation_volume (     [volume_name] nvarchar(255),[volume_label] nvarchar(255),[volume_fs] varchar(255),[volume_block_size_bytes] int,[volume_free_space_bytes] bigint,[volume_total_space_bytes] bigint,[snapshot_time] datetime,[snapshot_type_id] tinyint,[sql_instance] nvarchar(25),      constraint pk_tmp_import_sqlwatch_logger_disk_utilisation_volume primary key (     [snapshot_time],[snapshot_type_id],[sql_instance],[volume_name]      )    )   end&#xA;if object_id ('tempdb..##import_sqlwatch_logger_index_missing') is null   begin    create table ##import_sqlwatch_logger_index_missing (     [servername] nvarchar(128),[database_name] nvarchar(128),[database_create_date] datetime,[object_name] nvarchar(256),[snapshot_time] datetime,[index_handle] int,[last_user_seek] datetime,[unique_compiles] bigint,[user_seeks] bigint,[user_scans] bigint,[avg_total_user_cost] float,[avg_user_impact] float,[missing_index_def] nvarchar(4000),[snapshot_type_id] tinyint,[sql_instance] nvarchar(25),      constraint pk_tmp_import_sqlwatch_logger_index_missing primary key (     [snapshot_time],[snapshot_type_id],[database_name],[database_create_date],[index_handle],[sql_instance]      )    )   end&#xA;if object_id ('tempdb..##import_sqlwatch_logger_index_usage_stats') is null   begin    create table ##import_sqlwatch_logger_index_usage_stats (     [database_name] nvarchar(128),[database_create_date] datetime,[object_name] nvarchar(256),[index_id] int,[index_name] nvarchar(128),[used_pages_count] bigint,[index_type] tinyint,[user_seeks] bigint,[user_scans] bigint,[user_lookups] bigint,[user_updates] bigint,[last_user_seek] datetime,[last_user_scan] datetime,[last_user_lookup] datetime,[last_user_update] datetime,[stats_date] datetime,[snapshot_time] datetime,[snapshot_type_id] tinyint,[index_disabled] bit,[sql_instance] nvarchar(25),      constraint pk_tmp_import_sqlwatch_logger_index_usage_stats primary key (     [snapshot_time],[snapshot_type_id],[database_name],[database_create_date],[object_name],[index_id],[sql_instance]      )    )   end&#xA;if object_id ('tempdb..##import_sqlwatch_logger_index_usage_stats_histogram') is null   begin    create table ##import_sqlwatch_logger_index_usage_stats_histogram (     [database_name] nvarchar(128),[database_create_date] datetime,[object_name] nvarchar(256),[index_name] nvarchar(128),[index_id] int,[sqlwatch_stat_range_id] bigint,[RANGE_HI_KEY] sql_variant,[RANGE_ROWS] real,[EQ_ROWS] real,[DISTINCT_RANGE_ROWS] real,[AVG_RANGE_ROWS] real,[snapshot_time] datetime,[snapshot_type_id] tinyint,[collection_time] datetime,[sql_instance] nvarchar(25),      constraint pk_tmp_import_sqlwatch_logger_index_usage_stats_histogram primary key (     [snapshot_time],[snapshot_type_id],[index_id],[database_name],[database_create_date],[object_name],[sqlwatch_stat_range_id],[sql_instance]      )    )   end&#xA;if object_id ('tempdb..##import_sqlwatch_logger_perf_file_stats') is null   begin    create table ##import_sqlwatch_logger_perf_file_stats (     [database_name] nvarchar(128),[database_create_date] datetime,[logical_file_name] nvarchar(128),[type_desc] nvarchar(60),[logical_disk] varchar(255),[num_of_reads] bigint,[num_of_bytes_read] bigint,[io_stall_read_ms] bigint,[num_of_writes] bigint,[num_of_bytes_written] bigint,[io_stall_write_ms] bigint,[size_on_disk_bytes] bigint,[snapshot_time] datetime,[snapshot_type_id] tinyint,[sql_instance] nvarchar(25),      constraint pk_tmp_import_sqlwatch_logger_perf_file_stats primary key (     [snapshot_time],[snapshot_type_id],[sql_instance],[database_name],[database_create_date],[logical_file_name],[type_desc]      )    )   end&#xA;if object_id ('tempdb..##import_sqlwatch_logger_perf_master_files') is null   begin    create table ##import_sqlwatch_logger_perf_master_files (     [database_name] nvarchar(128),[database_create_date] datetime,[file_type] tinyint,[file_physical_name] nvarchar(260),[file_size] int,[snapshot_time] datetime,[snapshot_type_id] tinyint,[sql_instance] nvarchar(25),      constraint pk_tmp_import_sqlwatch_logger_perf_master_files primary key (     [snapshot_time],[snapshot_type_id],[database_name],[database_create_date],[sql_instance]      )    )   end&#xA;if object_id ('tempdb..##import_sqlwatch_logger_perf_os_memory_clerks') is null   begin    create table ##import_sqlwatch_logger_perf_os_memory_clerks (     [snapshot_time] datetime,[total_kb] bigint,[allocated_kb] bigint,[total_kb_all_clerks] bigint,[clerk_name] varchar(255),[memory_available] int,[snapshot_type_id] tinyint,[sql_instance] nvarchar(25),      constraint pk_tmp_import_sqlwatch_logger_perf_os_memory_clerks primary key (     [snapshot_time],[snapshot_type_id],[sql_instance],[clerk_name]      )    )   end&#xA;if object_id ('tempdb..##import_sqlwatch_logger_perf_os_performance_counters') is null   begin    create table ##import_sqlwatch_logger_perf_os_performance_counters (     [object_name] nvarchar(128),[instance_name] nvarchar(128),[counter_name] nvarchar(128),[cntr_value] bigint,[base_cntr_value] bigint,[cntr_type] bigint,[snapshot_time] datetime,[snapshot_type_id] tinyint,[sql_instance] nvarchar(25),      constraint pk_tmp_import_sqlwatch_logger_perf_os_performance_counters primary key (     [snapshot_time],[snapshot_type_id],[sql_instance],[object_name],[counter_name],[instance_name]      )    )   end&#xA;if object_id ('tempdb..##import_sqlwatch_logger_perf_os_process_memory') is null   begin    create table ##import_sqlwatch_logger_perf_os_process_memory (     [snapshot_time] datetime,[physical_memory_in_use_kb] bigint,[large_page_allocations_kb] bigint,[locked_page_allocations_kb] bigint,[total_virtual_address_space_kb] bigint,[virtual_address_space_reserved_kb] bigint,[virtual_address_space_committed_kb] bigint,[virtual_address_space_available_kb] bigint,[page_fault_count] bigint,[memory_utilization_percentage] int,[available_commit_limit_kb] bigint,[process_physical_memory_low] bit,[process_virtual_memory_low] bit,[snapshot_type_id] tinyint,[sql_instance] nvarchar(25),      constraint pk_tmp_import_sqlwatch_logger_perf_os_process_memory primary key (     [snapshot_time],[snapshot_type_id],[sql_instance]      )    )   end&#xA;if object_id ('tempdb..##import_sqlwatch_logger_perf_os_schedulers') is null   begin    create table ##import_sqlwatch_logger_perf_os_schedulers (     [snapshot_time] datetime,[snapshot_type_id] tinyint,[scheduler_count] smallint,[idle_scheduler_count] smallint,[current_tasks_count] int,[runnable_tasks_count] int,[preemptive_switches_count] bigint,[context_switches_count] bigint,[idle_switches_count] bigint,[current_workers_count] int,[active_workers_count] int,[work_queue_count] int,[pending_disk_io_count] int,[load_factor] int,[yield_count] bigint,[failed_to_create_worker] int,[total_cpu_usage_ms] bigint,[total_scheduler_delay_ms] bigint,[sql_instance] nvarchar(25),      constraint pk_tmp_import_sqlwatch_logger_perf_os_schedulers primary key (     [snapshot_time],[snapshot_type_id],[sql_instance]      )    )   end&#xA;if object_id ('tempdb..##import_sqlwatch_logger_perf_os_wait_stats') is null   begin    create table ##import_sqlwatch_logger_perf_os_wait_stats (     [wait_type] nvarchar(60),[waiting_tasks_count] bigint,[wait_time_ms] bigint,[max_wait_time_ms] bigint,[signal_wait_time_ms] bigint,[snapshot_time] datetime,[snapshot_type_id] tinyint,[sql_instance] nvarchar(25),      constraint pk_tmp_import_sqlwatch_logger_perf_os_wait_stats primary key (     [snapshot_time],[snapshot_type_id],[sql_instance],[wait_type]      )    )   end&#xA;if object_id ('tempdb..##import_sqlwatch_logger_snapshot_header') is null   begin    create table ##import_sqlwatch_logger_snapshot_header (     [snapshot_time] datetime,[snapshot_type_id] tinyint,[sql_instance] nvarchar(25),      constraint pk_tmp_import_sqlwatch_logger_snapshot_header primary key (     [snapshot_time],[snapshot_type_id],[sql_instance]      )    )   end&#xA;if object_id ('tempdb..##import_sqlwatch_logger_whoisactive') is null   begin    create table ##import_sqlwatch_logger_whoisactive (     [skey] int,[snapshot_time] datetime,[start_time] datetime,[session_id] smallint,[status] varchar(30),[percent_complete] varchar(30),[host_name] nvarchar(128),[database_name] nvarchar(128),[program_name] nvarchar(128),[sql_text] xml,[sql_command] xml,[login_name] nvarchar(128),[open_tran_count] varchar(30),[wait_info] nvarchar(4000),[blocking_session_id] smallint,[blocked_session_count] varchar(30),[CPU] varchar(30),[used_memory] varchar(30),[tempdb_current] varchar(30),[tempdb_allocations] varchar(30),[reads] varchar(30),[writes] varchar(30),[physical_reads] varchar(30),[login_time] datetime,[snapshot_type_id] tinyint,[sql_instance] nvarchar(25),      constraint pk_tmp_import_sqlwatch_logger_whoisactive primary key (     [skey],[sql_instance]      )    )   end&#xA;if object_id ('tempdb..##import_sqlwatch_logger_xes_blockers') is null   begin    create table ##import_sqlwatch_logger_xes_blockers (     [attach_activity_id] uniqueidentifier,[attach_activity_sequence] int,[blocking_start_time] datetime,[blocking_end_time] datetime,[blocked_ecid] int,[blocked_spid] int,[blocked_sql] nvarchar(max),[database_name] nvarchar(128),[lock_mode] varchar(128),[blocking_ecid] int,[blocking_spid] int,[blocking_sql] nvarchar(max),[blocking_duration_ms] int,[blocking_client_app_name] nvarchar(128),[blocking_client_hostname] nvarchar(128),[report_xml] xml,[snapshot_time] datetime,[snapshot_type_id] tinyint,[sql_instance] nvarchar(25),      constraint pk_tmp_import_sqlwatch_logger_xes_blockers primary key (     [snapshot_time],[snapshot_type_id],[attach_activity_id],[attach_activity_sequence],[sql_instance]      )    )   end&#xA;if object_id ('tempdb..##import_sqlwatch_logger_xes_iosubsystem') is null   begin    create table ##import_sqlwatch_logger_xes_iosubsystem (     [event_time] datetime,[io_latch_timeouts] bigint,[total_long_ios] bigint,[longest_pending_request_file] varchar(255),[longest_pending_request_duration] bigint,[snapshot_time] datetime,[snapshot_type_id] tinyint,[sql_instance] nvarchar(25),      constraint pk_tmp_import_sqlwatch_logger_xes_iosubsystem primary key (     [snapshot_time],[snapshot_type_id],[sql_instance],[event_time]      )    )   end&#xA;if object_id ('tempdb..##import_sqlwatch_logger_xes_long_queries') is null   begin    create table ##import_sqlwatch_logger_xes_long_queries (     [activity_id] uniqueidentifier,[activity_sequence] smallint,[activity_id_xfer] uniqueidentifier,[activity_seqeuence_xfer] smallint,[event_time] datetime,[event_name] varchar(255),[session_id] bigint,[database_name] varchar(255),[cpu_time] bigint,[physical_reads] bigint,[logical_reads] bigint,[writes] bigint,[spills] bigint,[offset] bigint,[offset_end] bigint,[statement] varchar(max),[username] varchar(255),[sql_text] varchar(max),[object_name] varchar(max),[client_hostname] varchar(255),[client_app_name] varchar(255),[duration_ms] bigint,[wait_type] varchar(255),[snapshot_time] datetime,[snapshot_type_id] tinyint,[sql_instance] nvarchar(25),      constraint pk_tmp_import_sqlwatch_logger_xes_long_queries primary key (     [snapshot_time],[snapshot_type_id],[activity_id],[activity_sequence],[sql_instance]      )    )   end&#xA;if object_id ('tempdb..##import_sqlwatch_logger_xes_query_processing') is null   begin    create table ##import_sqlwatch_logger_xes_query_processing (     [event_time] datetime,[max_workers] bigint,[workers_created] bigint,[idle_workers] bigint,[pending_tasks] bigint,[unresolvable_deadlocks] int,[deadlocked_scheduler] int,[snapshot_time] datetime,[snapshot_type_id] tinyint,[sql_instance] nvarchar(25),      constraint pk_tmp_import_sqlwatch_logger_xes_query_processing primary key (     [snapshot_time],[snapshot_type_id],[sql_instance],[event_time]      )    )   end&#xA;if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begin    create table ##import_sqlwatch_logger_xes_waits_stats (     [event_time] datetime,[session_id] int,[wait_type] varchar(255),[duration] bigint,[signal_duration] bigint,[wait_resource] varchar(255),[sql_text] varchar(max),[snapshot_time] datetime,[snapshot_type_id] tinyint,[activity_id] uniqueidentifier,[activity_sequence] int,[username] varchar(255),[database_name] varchar(255),[client_hostname] varchar(255),[client_app_name] varchar(255),[activity_id_xfer] uniqueidentifier,[activity_seqeuence_xfer] int,[event_name] varchar(255),[sql_instance] nvarchar(25),      constraint pk_tmp_import_sqlwatch_logger_xes_waits_stats primary key (     [snapshot_time],[snapshot_type_id],[sql_instance],[activity_id],[activity_sequence]      )    )   end&quot;"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="sql_create_landing_tables">
+      <DTS:VariableValue
+        DTS:DataType="8">if object_id ('tempdb..##import_sqlwatch_logger_disk_utilisation_database') is null   begin    create table ##import_sqlwatch_logger_disk_utilisation_database (     [database_name] nvarchar(128),[database_create_date] datetime,[database_size_bytes] bigint,[unallocated_space_bytes] bigint,[reserved_bytes] bigint,[data_bytes] bigint,[index_size_bytes] bigint,[unused_bytes] bigint,[log_size_total_bytes] bigint,[log_size_used_bytes] bigint,[snapshot_time] datetime,[snapshot_type_id] tinyint,[sql_instance] nvarchar(25),      constraint pk_tmp_import_sqlwatch_logger_disk_utilisation_database primary key (     [snapshot_time],[snapshot_type_id],[sql_instance],[database_name],[database_create_date]      )    )   end
+if object_id ('tempdb..##import_sqlwatch_logger_disk_utilisation_volume') is null   begin    create table ##import_sqlwatch_logger_disk_utilisation_volume (     [volume_name] nvarchar(255),[volume_label] nvarchar(255),[volume_fs] varchar(255),[volume_block_size_bytes] int,[volume_free_space_bytes] bigint,[volume_total_space_bytes] bigint,[snapshot_time] datetime,[snapshot_type_id] tinyint,[sql_instance] nvarchar(25),      constraint pk_tmp_import_sqlwatch_logger_disk_utilisation_volume primary key (     [snapshot_time],[snapshot_type_id],[sql_instance],[volume_name]      )    )   end
+if object_id ('tempdb..##import_sqlwatch_logger_index_missing') is null   begin    create table ##import_sqlwatch_logger_index_missing (     [servername] nvarchar(128),[database_name] nvarchar(128),[database_create_date] datetime,[object_name] nvarchar(256),[snapshot_time] datetime,[index_handle] int,[last_user_seek] datetime,[unique_compiles] bigint,[user_seeks] bigint,[user_scans] bigint,[avg_total_user_cost] float,[avg_user_impact] float,[missing_index_def] nvarchar(4000),[snapshot_type_id] tinyint,[sql_instance] nvarchar(25),      constraint pk_tmp_import_sqlwatch_logger_index_missing primary key (     [snapshot_time],[snapshot_type_id],[database_name],[database_create_date],[index_handle],[sql_instance]      )    )   end
+if object_id ('tempdb..##import_sqlwatch_logger_index_usage_stats') is null   begin    create table ##import_sqlwatch_logger_index_usage_stats (     [database_name] nvarchar(128),[database_create_date] datetime,[object_name] nvarchar(256),[index_id] int,[index_name] nvarchar(128),[used_pages_count] bigint,[index_type] tinyint,[user_seeks] bigint,[user_scans] bigint,[user_lookups] bigint,[user_updates] bigint,[last_user_seek] datetime,[last_user_scan] datetime,[last_user_lookup] datetime,[last_user_update] datetime,[stats_date] datetime,[snapshot_time] datetime,[snapshot_type_id] tinyint,[index_disabled] bit,[sql_instance] nvarchar(25),      constraint pk_tmp_import_sqlwatch_logger_index_usage_stats primary key (     [snapshot_time],[snapshot_type_id],[database_name],[database_create_date],[object_name],[index_id],[sql_instance]      )    )   end
+if object_id ('tempdb..##import_sqlwatch_logger_index_usage_stats_histogram') is null   begin    create table ##import_sqlwatch_logger_index_usage_stats_histogram (     [database_name] nvarchar(128),[database_create_date] datetime,[object_name] nvarchar(256),[index_name] nvarchar(128),[index_id] int,[sqlwatch_stat_range_id] bigint,[RANGE_HI_KEY] sql_variant,[RANGE_ROWS] real,[EQ_ROWS] real,[DISTINCT_RANGE_ROWS] real,[AVG_RANGE_ROWS] real,[snapshot_time] datetime,[snapshot_type_id] tinyint,[collection_time] datetime,[sql_instance] nvarchar(25),      constraint pk_tmp_import_sqlwatch_logger_index_usage_stats_histogram primary key (     [snapshot_time],[snapshot_type_id],[index_id],[database_name],[database_create_date],[object_name],[sqlwatch_stat_range_id],[sql_instance]      )    )   end
+if object_id ('tempdb..##import_sqlwatch_logger_perf_file_stats') is null   begin    create table ##import_sqlwatch_logger_perf_file_stats (     [database_name] nvarchar(128),[database_create_date] datetime,[logical_file_name] nvarchar(128),[type_desc] nvarchar(60),[logical_disk] varchar(255),[num_of_reads] bigint,[num_of_bytes_read] bigint,[io_stall_read_ms] bigint,[num_of_writes] bigint,[num_of_bytes_written] bigint,[io_stall_write_ms] bigint,[size_on_disk_bytes] bigint,[snapshot_time] datetime,[snapshot_type_id] tinyint,[sql_instance] nvarchar(25),      constraint pk_tmp_import_sqlwatch_logger_perf_file_stats primary key (     [snapshot_time],[snapshot_type_id],[sql_instance],[database_name],[database_create_date],[logical_file_name],[type_desc]      )    )   end
+if object_id ('tempdb..##import_sqlwatch_logger_perf_master_files') is null   begin    create table ##import_sqlwatch_logger_perf_master_files (     [database_name] nvarchar(128),[database_create_date] datetime,[file_type] tinyint,[file_physical_name] nvarchar(260),[file_size] int,[snapshot_time] datetime,[snapshot_type_id] tinyint,[sql_instance] nvarchar(25),      constraint pk_tmp_import_sqlwatch_logger_perf_master_files primary key (     [snapshot_time],[snapshot_type_id],[database_name],[database_create_date],[sql_instance]      )    )   end
+if object_id ('tempdb..##import_sqlwatch_logger_perf_os_memory_clerks') is null   begin    create table ##import_sqlwatch_logger_perf_os_memory_clerks (     [snapshot_time] datetime,[total_kb] bigint,[allocated_kb] bigint,[total_kb_all_clerks] bigint,[clerk_name] varchar(255),[memory_available] int,[snapshot_type_id] tinyint,[sql_instance] nvarchar(25),      constraint pk_tmp_import_sqlwatch_logger_perf_os_memory_clerks primary key (     [snapshot_time],[snapshot_type_id],[sql_instance],[clerk_name]      )    )   end
+if object_id ('tempdb..##import_sqlwatch_logger_perf_os_performance_counters') is null   begin    create table ##import_sqlwatch_logger_perf_os_performance_counters (     [object_name] nvarchar(128),[instance_name] nvarchar(128),[counter_name] nvarchar(128),[cntr_value] bigint,[base_cntr_value] bigint,[cntr_type] bigint,[snapshot_time] datetime,[snapshot_type_id] tinyint,[sql_instance] nvarchar(25),      constraint pk_tmp_import_sqlwatch_logger_perf_os_performance_counters primary key (     [snapshot_time],[snapshot_type_id],[sql_instance],[object_name],[counter_name],[instance_name]      )    )   end
+if object_id ('tempdb..##import_sqlwatch_logger_perf_os_process_memory') is null   begin    create table ##import_sqlwatch_logger_perf_os_process_memory (     [snapshot_time] datetime,[physical_memory_in_use_kb] bigint,[large_page_allocations_kb] bigint,[locked_page_allocations_kb] bigint,[total_virtual_address_space_kb] bigint,[virtual_address_space_reserved_kb] bigint,[virtual_address_space_committed_kb] bigint,[virtual_address_space_available_kb] bigint,[page_fault_count] bigint,[memory_utilization_percentage] int,[available_commit_limit_kb] bigint,[process_physical_memory_low] bit,[process_virtual_memory_low] bit,[snapshot_type_id] tinyint,[sql_instance] nvarchar(25),      constraint pk_tmp_import_sqlwatch_logger_perf_os_process_memory primary key (     [snapshot_time],[snapshot_type_id],[sql_instance]      )    )   end
+if object_id ('tempdb..##import_sqlwatch_logger_perf_os_schedulers') is null   begin    create table ##import_sqlwatch_logger_perf_os_schedulers (     [snapshot_time] datetime,[snapshot_type_id] tinyint,[scheduler_count] smallint,[idle_scheduler_count] smallint,[current_tasks_count] int,[runnable_tasks_count] int,[preemptive_switches_count] bigint,[context_switches_count] bigint,[idle_switches_count] bigint,[current_workers_count] int,[active_workers_count] int,[work_queue_count] int,[pending_disk_io_count] int,[load_factor] int,[yield_count] bigint,[failed_to_create_worker] int,[total_cpu_usage_ms] bigint,[total_scheduler_delay_ms] bigint,[sql_instance] nvarchar(25),      constraint pk_tmp_import_sqlwatch_logger_perf_os_schedulers primary key (     [snapshot_time],[snapshot_type_id],[sql_instance]      )    )   end
+if object_id ('tempdb..##import_sqlwatch_logger_perf_os_wait_stats') is null   begin    create table ##import_sqlwatch_logger_perf_os_wait_stats (     [wait_type] nvarchar(60),[waiting_tasks_count] bigint,[wait_time_ms] bigint,[max_wait_time_ms] bigint,[signal_wait_time_ms] bigint,[snapshot_time] datetime,[snapshot_type_id] tinyint,[sql_instance] nvarchar(25),      constraint pk_tmp_import_sqlwatch_logger_perf_os_wait_stats primary key (     [snapshot_time],[snapshot_type_id],[sql_instance],[wait_type]      )    )   end
+if object_id ('tempdb..##import_sqlwatch_logger_snapshot_header') is null   begin    create table ##import_sqlwatch_logger_snapshot_header (     [snapshot_time] datetime,[snapshot_type_id] tinyint,[sql_instance] nvarchar(25),      constraint pk_tmp_import_sqlwatch_logger_snapshot_header primary key (     [snapshot_time],[snapshot_type_id],[sql_instance]      )    )   end
+if object_id ('tempdb..##import_sqlwatch_logger_whoisactive') is null   begin    create table ##import_sqlwatch_logger_whoisactive (     [skey] int,[snapshot_time] datetime,[start_time] datetime,[session_id] smallint,[status] varchar(30),[percent_complete] varchar(30),[host_name] nvarchar(128),[database_name] nvarchar(128),[program_name] nvarchar(128),[sql_text] xml,[sql_command] xml,[login_name] nvarchar(128),[open_tran_count] varchar(30),[wait_info] nvarchar(4000),[blocking_session_id] smallint,[blocked_session_count] varchar(30),[CPU] varchar(30),[used_memory] varchar(30),[tempdb_current] varchar(30),[tempdb_allocations] varchar(30),[reads] varchar(30),[writes] varchar(30),[physical_reads] varchar(30),[login_time] datetime,[snapshot_type_id] tinyint,[sql_instance] nvarchar(25),      constraint pk_tmp_import_sqlwatch_logger_whoisactive primary key (     [skey],[sql_instance]      )    )   end
+if object_id ('tempdb..##import_sqlwatch_logger_xes_blockers') is null   begin    create table ##import_sqlwatch_logger_xes_blockers (     [attach_activity_id] uniqueidentifier,[attach_activity_sequence] int,[blocking_start_time] datetime,[blocking_end_time] datetime,[blocked_ecid] int,[blocked_spid] int,[blocked_sql] nvarchar(max),[database_name] nvarchar(128),[lock_mode] varchar(128),[blocking_ecid] int,[blocking_spid] int,[blocking_sql] nvarchar(max),[blocking_duration_ms] int,[blocking_client_app_name] nvarchar(128),[blocking_client_hostname] nvarchar(128),[report_xml] xml,[snapshot_time] datetime,[snapshot_type_id] tinyint,[sql_instance] nvarchar(25),      constraint pk_tmp_import_sqlwatch_logger_xes_blockers primary key (     [snapshot_time],[snapshot_type_id],[attach_activity_id],[attach_activity_sequence],[sql_instance]      )    )   end
+if object_id ('tempdb..##import_sqlwatch_logger_xes_iosubsystem') is null   begin    create table ##import_sqlwatch_logger_xes_iosubsystem (     [event_time] datetime,[io_latch_timeouts] bigint,[total_long_ios] bigint,[longest_pending_request_file] varchar(255),[longest_pending_request_duration] bigint,[snapshot_time] datetime,[snapshot_type_id] tinyint,[sql_instance] nvarchar(25),      constraint pk_tmp_import_sqlwatch_logger_xes_iosubsystem primary key (     [snapshot_time],[snapshot_type_id],[sql_instance],[event_time]      )    )   end
+if object_id ('tempdb..##import_sqlwatch_logger_xes_long_queries') is null   begin    create table ##import_sqlwatch_logger_xes_long_queries (     [activity_id] uniqueidentifier,[activity_sequence] smallint,[activity_id_xfer] uniqueidentifier,[activity_seqeuence_xfer] smallint,[event_time] datetime,[event_name] varchar(255),[session_id] bigint,[database_name] varchar(255),[cpu_time] bigint,[physical_reads] bigint,[logical_reads] bigint,[writes] bigint,[spills] bigint,[offset] bigint,[offset_end] bigint,[statement] varchar(max),[username] varchar(255),[sql_text] varchar(max),[object_name] varchar(max),[client_hostname] varchar(255),[client_app_name] varchar(255),[duration_ms] bigint,[wait_type] varchar(255),[snapshot_time] datetime,[snapshot_type_id] tinyint,[sql_instance] nvarchar(25),      constraint pk_tmp_import_sqlwatch_logger_xes_long_queries primary key (     [snapshot_time],[snapshot_type_id],[activity_id],[activity_sequence],[sql_instance]      )    )   end
+if object_id ('tempdb..##import_sqlwatch_logger_xes_query_processing') is null   begin    create table ##import_sqlwatch_logger_xes_query_processing (     [event_time] datetime,[max_workers] bigint,[workers_created] bigint,[idle_workers] bigint,[pending_tasks] bigint,[unresolvable_deadlocks] int,[deadlocked_scheduler] int,[snapshot_time] datetime,[snapshot_type_id] tinyint,[sql_instance] nvarchar(25),      constraint pk_tmp_import_sqlwatch_logger_xes_query_processing primary key (     [snapshot_time],[snapshot_type_id],[sql_instance],[event_time]      )    )   end
+if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begin    create table ##import_sqlwatch_logger_xes_waits_stats (     [event_time] datetime,[session_id] int,[wait_type] varchar(255),[duration] bigint,[signal_duration] bigint,[wait_resource] varchar(255),[sql_text] varchar(max),[snapshot_time] datetime,[snapshot_type_id] tinyint,[activity_id] uniqueidentifier,[activity_sequence] int,[username] varchar(255),[database_name] varchar(255),[client_hostname] varchar(255),[client_app_name] varchar(255),[activity_id_xfer] uniqueidentifier,[activity_seqeuence_xfer] int,[event_name] varchar(255),[sql_instance] nvarchar(25),      constraint pk_tmp_import_sqlwatch_logger_xes_waits_stats primary key (     [snapshot_time],[snapshot_type_id],[sql_instance],[activity_id],[activity_sequence]      )    )   end</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{EE314841-1ACA-4849-8047-0168FF94B063}"
+      DTS:IncludeInDebugDump="6789"
+      DTS:Namespace="User"
+      DTS:ObjectName="thread_id">
+      <DTS:VariableValue
+        DTS:DataType="14">0</DTS:VariableValue>
+    </DTS:Variable>
   </DTS:Variables>
   <DTS:Executables>
     <DTS:Executable
-      DTS:refId="Package\Foreach Loop Container"
-      DTS:CreationName="STOCK:FOREACHLOOP"
-      DTS:Description="Foreach Loop Container"
-      DTS:DTSID="{3248763E-4C76-4CFB-A529-7F0890F8021F}"
-      DTS:ExecutableType="STOCK:FOREACHLOOP"
+      DTS:refId="Package\Data Flow Task"
+      DTS:CreationName="SSIS.Pipeline.3"
+      DTS:Description="Data Flow Task"
+      DTS:DTSID="{D71E352D-0CA3-4A7F-8A8B-C503D1018A2E}"
+      DTS:ExecutableType="SSIS.Pipeline.3"
       DTS:LocaleID="-1"
-      DTS:ObjectName="Foreach Loop Container">
-      <DTS:ForEachEnumerator
-        DTS:CreationName="Microsoft.SqlServer.Dts.Runtime.Enumerators.ADO.ForEachADOEnumerator, Microsoft.SqlServer.ForEachADOEnumerator, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
-        DTS:DTSID="{6D309271-A42D-4D39-8CB2-F177B4B056B1}"
-        DTS:ObjectName="{6D309271-A42D-4D39-8CB2-F177B4B056B1}">
-        <DTS:ObjectData>
-          <FEEADO
-            EnumType="EnumerateRowsInFirstTable"
-            VarName="User::remote_instances_to_process" />
-        </DTS:ObjectData>
-      </DTS:ForEachEnumerator>
+      DTS:ObjectName="Data Flow Task"
+      DTS:TaskContact="Performs high-performance data extraction, transformation and loading;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <pipeline
+          version="1">
+          <components>
+            <component
+              refId="Package\Data Flow Task\Multicast"
+              componentClassID="DTSTransform.Multicast.3"
+              contactInfo="Multicast;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+              description="Distributes every input row to every row in one or more outputs. For example, branch your data flow to make a copy of data so that some values can be masked before sharing with external partners."
+              name="Multicast">
+              <inputs>
+                <input
+                  refId="Package\Data Flow Task\Multicast.Inputs[Multicast Input 1]"
+                  name="Multicast Input 1">
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\Data Flow Task\Multicast.Outputs[Multicast Output 2]"
+                  deleteOutputOnPathDetached="true"
+                  name="Multicast Output 2"
+                  synchronousInputId="Package\Data Flow Task\Multicast.Inputs[Multicast Input 1]">
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\Data Flow Task\Multicast.Outputs[Multicast Output 1]"
+                  deleteOutputOnPathDetached="true"
+                  name="Multicast Output 1"
+                  synchronousInputId="Package\Data Flow Task\Multicast.Inputs[Multicast Input 1]">
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\Data Flow Task\Multicast.Outputs[Multicast Output 3]"
+                  deleteOutputOnPathDetached="true"
+                  name="Multicast Output 3"
+                  synchronousInputId="Package\Data Flow Task\Multicast.Inputs[Multicast Input 1]">
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\Data Flow Task\Multicast.Outputs[Multicast Output 4]"
+                  deleteOutputOnPathDetached="true"
+                  name="Multicast Output 4"
+                  synchronousInputId="Package\Data Flow Task\Multicast.Inputs[Multicast Input 1]">
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\Data Flow Task\Multicast.Outputs[Multicast Output 5]"
+                  deleteOutputOnPathDetached="true"
+                  name="Multicast Output 5"
+                  synchronousInputId="Package\Data Flow Task\Multicast.Inputs[Multicast Input 1]">
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\Data Flow Task\Multicast.Outputs[Multicast Output 6]"
+                  deleteOutputOnPathDetached="true"
+                  name="Multicast Output 6"
+                  synchronousInputId="Package\Data Flow Task\Multicast.Inputs[Multicast Input 1]">
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\Data Flow Task\Multicast.Outputs[Multicast Output 7]"
+                  deleteOutputOnPathDetached="true"
+                  name="Multicast Output 7"
+                  synchronousInputId="Package\Data Flow Task\Multicast.Inputs[Multicast Input 1]">
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\Data Flow Task\Multicast.Outputs[Multicast Output 8]"
+                  deleteOutputOnPathDetached="true"
+                  name="Multicast Output 8"
+                  synchronousInputId="Package\Data Flow Task\Multicast.Inputs[Multicast Input 1]">
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\Data Flow Task\Multicast.Outputs[Multicast Output 9]"
+                  dangling="true"
+                  deleteOutputOnPathDetached="true"
+                  name="Multicast Output 9"
+                  synchronousInputId="Package\Data Flow Task\Multicast.Inputs[Multicast Input 1]">
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\Data Flow Task\OLE DB Source"
+              componentClassID="DTSAdapter.OLEDBSource.3"
+              contactInfo="OLE DB Source;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;7"
+              description="OLE DB Source"
+              name="OLE DB Source"
+              usesDispositions="true"
+              version="7">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset"></property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91">select sql_instance 
+	, ntile(isnull(?,1)) over(order by sql_instance) as thread_id
+	from [dbo].[sqlwatch_config_sql_instance]
+	where is_active = 1
+	/* do not collect own instance */
+	and sql_instance &lt;&gt; @@servername</property>
+                <property
+                  dataType="System.String"
+                  description="The variable that contains the SQL command to be executed."
+                  name="SqlCommandVariable"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">2</property>
+                <property
+                  dataType="System.String"
+                  description="The mappings between the parameters in the SQL command and variables."
+                  name="ParameterMapping">"Parameter0:Input",{3061DD6C-8233-49A6-80E4-073CF55C063C};</property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\Data Flow Task\OLE DB Source.Connections[OleDbConnection]"
+                  connectionManagerID="Package.ConnectionManagers[central_repo]"
+                  connectionManagerRefId="Package.ConnectionManagers[central_repo]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <outputs>
+                <output
+                  refId="Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Output]"
+                  name="OLE DB Source Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Output].Columns[sql_instance]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[sql_instance]"
+                      length="25"
+                      lineageId="Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Output].Columns[sql_instance]"
+                      name="sql_instance"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Output].Columns[thread_id]"
+                      dataType="i8"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[thread_id]"
+                      lineageId="Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Output].Columns[thread_id]"
+                      name="thread_id"
+                      truncationRowDisposition="FailComponent" />
+                  </outputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[sql_instance]"
+                      dataType="wstr"
+                      length="25"
+                      name="sql_instance" />
+                    <externalMetadataColumn
+                      refId="Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[thread_id]"
+                      dataType="i8"
+                      name="thread_id" />
+                  </externalMetadataColumns>
+                </output>
+                <output
+                  refId="Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Error Output]"
+                  isErrorOut="true"
+                  name="OLE DB Source Error Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[sql_instance]"
+                      dataType="wstr"
+                      length="25"
+                      lineageId="Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[sql_instance]"
+                      name="sql_instance" />
+                    <outputColumn
+                      refId="Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[thread_id]"
+                      dataType="i8"
+                      lineageId="Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[thread_id]"
+                      name="thread_id" />
+                    <outputColumn
+                      refId="Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\Data Flow Task\rs thread 1"
+              componentClassID="DTSAdapter.RecordsetDestination.3"
+              contactInfo="Recordset Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+              description="Creates and populates an in-memory ADO recordset that is available outside of the data flow. Scripts and other package elements can use the recordset. For example, use a recordset to store the names of files that will be loaded into the data warehouse."
+              name="rs thread 1">
+              <properties>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the recordset."
+                  name="VariableName">User::remote_instances_to_process_t1</property>
+              </properties>
+              <inputs>
+                <input
+                  refId="Package\Data Flow Task\rs thread 1.Inputs[Recordset Destination Input]"
+                  hasSideEffects="true"
+                  name="Recordset Destination Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\Data Flow Task\rs thread 1.Inputs[Recordset Destination Input].Columns[sql_instance]"
+                      cachedDataType="wstr"
+                      cachedLength="25"
+                      cachedName="sql_instance"
+                      lineageId="Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Output].Columns[sql_instance]" />
+                    <inputColumn
+                      refId="Package\Data Flow Task\rs thread 1.Inputs[Recordset Destination Input].Columns[thread_id]"
+                      cachedDataType="i8"
+                      cachedName="thread_id"
+                      lineageId="Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Output].Columns[thread_id]" />
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+            </component>
+            <component
+              refId="Package\Data Flow Task\rs thread 2"
+              componentClassID="DTSAdapter.RecordsetDestination.3"
+              contactInfo="Recordset Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+              description="Creates and populates an in-memory ADO recordset that is available outside of the data flow. Scripts and other package elements can use the recordset. For example, use a recordset to store the names of files that will be loaded into the data warehouse."
+              name="rs thread 2">
+              <properties>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the recordset."
+                  name="VariableName">User::remote_instances_to_process_t2</property>
+              </properties>
+              <inputs>
+                <input
+                  refId="Package\Data Flow Task\rs thread 2.Inputs[Recordset Destination Input]"
+                  hasSideEffects="true"
+                  name="Recordset Destination Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\Data Flow Task\rs thread 2.Inputs[Recordset Destination Input].Columns[sql_instance]"
+                      cachedDataType="wstr"
+                      cachedLength="25"
+                      cachedName="sql_instance"
+                      lineageId="Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Output].Columns[sql_instance]" />
+                    <inputColumn
+                      refId="Package\Data Flow Task\rs thread 2.Inputs[Recordset Destination Input].Columns[thread_id]"
+                      cachedDataType="i8"
+                      cachedName="thread_id"
+                      lineageId="Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Output].Columns[thread_id]" />
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+            </component>
+            <component
+              refId="Package\Data Flow Task\rs thread 3"
+              componentClassID="DTSAdapter.RecordsetDestination.3"
+              contactInfo="Recordset Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+              description="Creates and populates an in-memory ADO recordset that is available outside of the data flow. Scripts and other package elements can use the recordset. For example, use a recordset to store the names of files that will be loaded into the data warehouse."
+              name="rs thread 3">
+              <properties>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the recordset."
+                  name="VariableName">User::remote_instances_to_process_t3</property>
+              </properties>
+              <inputs>
+                <input
+                  refId="Package\Data Flow Task\rs thread 3.Inputs[Recordset Destination Input]"
+                  hasSideEffects="true"
+                  name="Recordset Destination Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\Data Flow Task\rs thread 3.Inputs[Recordset Destination Input].Columns[sql_instance]"
+                      cachedDataType="wstr"
+                      cachedLength="25"
+                      cachedName="sql_instance"
+                      lineageId="Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Output].Columns[sql_instance]" />
+                    <inputColumn
+                      refId="Package\Data Flow Task\rs thread 3.Inputs[Recordset Destination Input].Columns[thread_id]"
+                      cachedDataType="i8"
+                      cachedName="thread_id"
+                      lineageId="Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Output].Columns[thread_id]" />
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+            </component>
+            <component
+              refId="Package\Data Flow Task\rs thread 4"
+              componentClassID="DTSAdapter.RecordsetDestination.3"
+              contactInfo="Recordset Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+              description="Creates and populates an in-memory ADO recordset that is available outside of the data flow. Scripts and other package elements can use the recordset. For example, use a recordset to store the names of files that will be loaded into the data warehouse."
+              name="rs thread 4">
+              <properties>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the recordset."
+                  name="VariableName">User::remote_instances_to_process_t4</property>
+              </properties>
+              <inputs>
+                <input
+                  refId="Package\Data Flow Task\rs thread 4.Inputs[Recordset Destination Input]"
+                  hasSideEffects="true"
+                  name="Recordset Destination Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\Data Flow Task\rs thread 4.Inputs[Recordset Destination Input].Columns[sql_instance]"
+                      cachedDataType="wstr"
+                      cachedLength="25"
+                      cachedName="sql_instance"
+                      lineageId="Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Output].Columns[sql_instance]" />
+                    <inputColumn
+                      refId="Package\Data Flow Task\rs thread 4.Inputs[Recordset Destination Input].Columns[thread_id]"
+                      cachedDataType="i8"
+                      cachedName="thread_id"
+                      lineageId="Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Output].Columns[thread_id]" />
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+            </component>
+            <component
+              refId="Package\Data Flow Task\rs thread 5"
+              componentClassID="DTSAdapter.RecordsetDestination.3"
+              contactInfo="Recordset Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+              description="Creates and populates an in-memory ADO recordset that is available outside of the data flow. Scripts and other package elements can use the recordset. For example, use a recordset to store the names of files that will be loaded into the data warehouse."
+              name="rs thread 5">
+              <properties>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the recordset."
+                  name="VariableName">User::remote_instances_to_process_t5</property>
+              </properties>
+              <inputs>
+                <input
+                  refId="Package\Data Flow Task\rs thread 5.Inputs[Recordset Destination Input]"
+                  hasSideEffects="true"
+                  name="Recordset Destination Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\Data Flow Task\rs thread 5.Inputs[Recordset Destination Input].Columns[sql_instance]"
+                      cachedDataType="wstr"
+                      cachedLength="25"
+                      cachedName="sql_instance"
+                      lineageId="Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Output].Columns[sql_instance]" />
+                    <inputColumn
+                      refId="Package\Data Flow Task\rs thread 5.Inputs[Recordset Destination Input].Columns[thread_id]"
+                      cachedDataType="i8"
+                      cachedName="thread_id"
+                      lineageId="Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Output].Columns[thread_id]" />
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+            </component>
+            <component
+              refId="Package\Data Flow Task\rs thread 6"
+              componentClassID="DTSAdapter.RecordsetDestination.3"
+              contactInfo="Recordset Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+              description="Creates and populates an in-memory ADO recordset that is available outside of the data flow. Scripts and other package elements can use the recordset. For example, use a recordset to store the names of files that will be loaded into the data warehouse."
+              name="rs thread 6">
+              <properties>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the recordset."
+                  name="VariableName">User::remote_instances_to_process_t6</property>
+              </properties>
+              <inputs>
+                <input
+                  refId="Package\Data Flow Task\rs thread 6.Inputs[Recordset Destination Input]"
+                  hasSideEffects="true"
+                  name="Recordset Destination Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\Data Flow Task\rs thread 6.Inputs[Recordset Destination Input].Columns[sql_instance]"
+                      cachedDataType="wstr"
+                      cachedLength="25"
+                      cachedName="sql_instance"
+                      lineageId="Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Output].Columns[sql_instance]" />
+                    <inputColumn
+                      refId="Package\Data Flow Task\rs thread 6.Inputs[Recordset Destination Input].Columns[thread_id]"
+                      cachedDataType="i8"
+                      cachedName="thread_id"
+                      lineageId="Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Output].Columns[thread_id]" />
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+            </component>
+            <component
+              refId="Package\Data Flow Task\rs thread 7"
+              componentClassID="DTSAdapter.RecordsetDestination.3"
+              contactInfo="Recordset Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+              description="Creates and populates an in-memory ADO recordset that is available outside of the data flow. Scripts and other package elements can use the recordset. For example, use a recordset to store the names of files that will be loaded into the data warehouse."
+              name="rs thread 7">
+              <properties>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the recordset."
+                  name="VariableName">User::remote_instances_to_process_t7</property>
+              </properties>
+              <inputs>
+                <input
+                  refId="Package\Data Flow Task\rs thread 7.Inputs[Recordset Destination Input]"
+                  hasSideEffects="true"
+                  name="Recordset Destination Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\Data Flow Task\rs thread 7.Inputs[Recordset Destination Input].Columns[sql_instance]"
+                      cachedDataType="wstr"
+                      cachedLength="25"
+                      cachedName="sql_instance"
+                      lineageId="Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Output].Columns[sql_instance]" />
+                    <inputColumn
+                      refId="Package\Data Flow Task\rs thread 7.Inputs[Recordset Destination Input].Columns[thread_id]"
+                      cachedDataType="i8"
+                      cachedName="thread_id"
+                      lineageId="Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Output].Columns[thread_id]" />
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+            </component>
+            <component
+              refId="Package\Data Flow Task\rs thread 8"
+              componentClassID="DTSAdapter.RecordsetDestination.3"
+              contactInfo="Recordset Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+              description="Creates and populates an in-memory ADO recordset that is available outside of the data flow. Scripts and other package elements can use the recordset. For example, use a recordset to store the names of files that will be loaded into the data warehouse."
+              name="rs thread 8">
+              <properties>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the recordset."
+                  name="VariableName">User::remote_instances_to_process_t8</property>
+              </properties>
+              <inputs>
+                <input
+                  refId="Package\Data Flow Task\rs thread 8.Inputs[Recordset Destination Input]"
+                  hasSideEffects="true"
+                  name="Recordset Destination Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\Data Flow Task\rs thread 8.Inputs[Recordset Destination Input].Columns[sql_instance]"
+                      cachedDataType="wstr"
+                      cachedLength="25"
+                      cachedName="sql_instance"
+                      lineageId="Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Output].Columns[sql_instance]" />
+                    <inputColumn
+                      refId="Package\Data Flow Task\rs thread 8.Inputs[Recordset Destination Input].Columns[thread_id]"
+                      cachedDataType="i8"
+                      cachedName="thread_id"
+                      lineageId="Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Output].Columns[thread_id]" />
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+            </component>
+            <component
+              refId="Package\Data Flow Task\thread 1"
+              componentClassID="DTSTransform.ConditionalSplit.3"
+              contactInfo="Conditional Split;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+              description="Routes data rows to different outputs depending on the content of the data. Use conditions (SSIS expressions) to specify which rows are routed. For example, separate records that need to be cleaned from those that are ready to be loaded or route only a subset of records."
+              name="thread 1"
+              usesDispositions="true">
+              <inputs>
+                <input
+                  refId="Package\Data Flow Task\thread 1.Inputs[Conditional Split Input]"
+                  description="Input to the Conditional Split Transformation"
+                  name="Conditional Split Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\Data Flow Task\thread 1.Inputs[Conditional Split Input].Columns[thread_id]"
+                      cachedDataType="i8"
+                      cachedName="thread_id"
+                      lineageId="Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Output].Columns[thread_id]" />
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\Data Flow Task\thread 1.Outputs[Case 1]"
+                  description="Output 1 of the Conditional Split Transformation"
+                  errorOrTruncationOperation="Computation"
+                  errorRowDisposition="FailComponent"
+                  exclusionGroup="1"
+                  name="Case 1"
+                  synchronousInputId="Package\Data Flow Task\thread 1.Inputs[Conditional Split Input]"
+                  truncationRowDisposition="FailComponent">
+                  <properties>
+                    <property
+                      containsID="true"
+                      dataType="System.String"
+                      description="Specifies the expression. This expression version uses lineage identifiers instead of column names."
+                      name="Expression">#{Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Output].Columns[thread_id]} == 1</property>
+                    <property
+                      containsID="true"
+                      dataType="System.String"
+                      description="Specifies the friendly version of the expression. This expression version uses column names."
+                      expressionType="Notify"
+                      name="FriendlyExpression">thread_id == 1</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the position of the condition in the list of conditions that the transformation evaluates. The evaluation order is from the lowest to the highest value."
+                      name="EvaluationOrder">0</property>
+                  </properties>
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\Data Flow Task\thread 1.Outputs[Conditional Split Default Output]"
+                  description="Default Output of the Conditional Split Transformation"
+                  exclusionGroup="1"
+                  name="Conditional Split Default Output"
+                  synchronousInputId="Package\Data Flow Task\thread 1.Inputs[Conditional Split Input]">
+                  <properties>
+                    <property
+                      dataType="System.Boolean"
+                      name="IsDefaultOut">true</property>
+                  </properties>
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\Data Flow Task\thread 1.Outputs[Conditional Split Error Output]"
+                  description="Error Output of the Conditional Split Transformation"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="Conditional Split Error Output"
+                  synchronousInputId="Package\Data Flow Task\thread 1.Inputs[Conditional Split Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Data Flow Task\thread 1.Outputs[Conditional Split Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\Data Flow Task\thread 1.Outputs[Conditional Split Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\Data Flow Task\thread 1.Outputs[Conditional Split Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\Data Flow Task\thread 1.Outputs[Conditional Split Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\Data Flow Task\thread 2"
+              componentClassID="DTSTransform.ConditionalSplit.3"
+              contactInfo="Conditional Split;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+              description="Routes data rows to different outputs depending on the content of the data. Use conditions (SSIS expressions) to specify which rows are routed. For example, separate records that need to be cleaned from those that are ready to be loaded or route only a subset of records."
+              name="thread 2"
+              usesDispositions="true">
+              <inputs>
+                <input
+                  refId="Package\Data Flow Task\thread 2.Inputs[Conditional Split Input]"
+                  description="Input to the Conditional Split Transformation"
+                  name="Conditional Split Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\Data Flow Task\thread 2.Inputs[Conditional Split Input].Columns[thread_id]"
+                      cachedDataType="i8"
+                      cachedName="thread_id"
+                      lineageId="Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Output].Columns[thread_id]" />
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\Data Flow Task\thread 2.Outputs[Case 1]"
+                  description="Output 1 of the Conditional Split Transformation"
+                  errorOrTruncationOperation="Computation"
+                  errorRowDisposition="FailComponent"
+                  exclusionGroup="1"
+                  name="Case 1"
+                  synchronousInputId="Package\Data Flow Task\thread 2.Inputs[Conditional Split Input]"
+                  truncationRowDisposition="FailComponent">
+                  <properties>
+                    <property
+                      containsID="true"
+                      dataType="System.String"
+                      description="Specifies the expression. This expression version uses lineage identifiers instead of column names."
+                      name="Expression">#{Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Output].Columns[thread_id]} == 2</property>
+                    <property
+                      containsID="true"
+                      dataType="System.String"
+                      description="Specifies the friendly version of the expression. This expression version uses column names."
+                      expressionType="Notify"
+                      name="FriendlyExpression">thread_id == 2</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the position of the condition in the list of conditions that the transformation evaluates. The evaluation order is from the lowest to the highest value."
+                      name="EvaluationOrder">0</property>
+                  </properties>
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\Data Flow Task\thread 2.Outputs[Conditional Split Default Output]"
+                  description="Default Output of the Conditional Split Transformation"
+                  exclusionGroup="1"
+                  name="Conditional Split Default Output"
+                  synchronousInputId="Package\Data Flow Task\thread 2.Inputs[Conditional Split Input]">
+                  <properties>
+                    <property
+                      dataType="System.Boolean"
+                      name="IsDefaultOut">true</property>
+                  </properties>
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\Data Flow Task\thread 2.Outputs[Conditional Split Error Output]"
+                  description="Error Output of the Conditional Split Transformation"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="Conditional Split Error Output"
+                  synchronousInputId="Package\Data Flow Task\thread 2.Inputs[Conditional Split Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Data Flow Task\thread 2.Outputs[Conditional Split Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\Data Flow Task\thread 2.Outputs[Conditional Split Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\Data Flow Task\thread 2.Outputs[Conditional Split Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\Data Flow Task\thread 2.Outputs[Conditional Split Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\Data Flow Task\thread 3"
+              componentClassID="DTSTransform.ConditionalSplit.3"
+              contactInfo="Conditional Split;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+              description="Routes data rows to different outputs depending on the content of the data. Use conditions (SSIS expressions) to specify which rows are routed. For example, separate records that need to be cleaned from those that are ready to be loaded or route only a subset of records."
+              name="thread 3"
+              usesDispositions="true">
+              <inputs>
+                <input
+                  refId="Package\Data Flow Task\thread 3.Inputs[Conditional Split Input]"
+                  description="Input to the Conditional Split Transformation"
+                  name="Conditional Split Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\Data Flow Task\thread 3.Inputs[Conditional Split Input].Columns[thread_id]"
+                      cachedDataType="i8"
+                      cachedName="thread_id"
+                      lineageId="Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Output].Columns[thread_id]" />
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\Data Flow Task\thread 3.Outputs[Case 1]"
+                  description="Output 1 of the Conditional Split Transformation"
+                  errorOrTruncationOperation="Computation"
+                  errorRowDisposition="FailComponent"
+                  exclusionGroup="1"
+                  name="Case 1"
+                  synchronousInputId="Package\Data Flow Task\thread 3.Inputs[Conditional Split Input]"
+                  truncationRowDisposition="FailComponent">
+                  <properties>
+                    <property
+                      containsID="true"
+                      dataType="System.String"
+                      description="Specifies the expression. This expression version uses lineage identifiers instead of column names."
+                      name="Expression">#{Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Output].Columns[thread_id]} == 3</property>
+                    <property
+                      containsID="true"
+                      dataType="System.String"
+                      description="Specifies the friendly version of the expression. This expression version uses column names."
+                      expressionType="Notify"
+                      name="FriendlyExpression">thread_id == 3</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the position of the condition in the list of conditions that the transformation evaluates. The evaluation order is from the lowest to the highest value."
+                      name="EvaluationOrder">0</property>
+                  </properties>
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\Data Flow Task\thread 3.Outputs[Conditional Split Default Output]"
+                  description="Default Output of the Conditional Split Transformation"
+                  exclusionGroup="1"
+                  name="Conditional Split Default Output"
+                  synchronousInputId="Package\Data Flow Task\thread 3.Inputs[Conditional Split Input]">
+                  <properties>
+                    <property
+                      dataType="System.Boolean"
+                      name="IsDefaultOut">true</property>
+                  </properties>
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\Data Flow Task\thread 3.Outputs[Conditional Split Error Output]"
+                  description="Error Output of the Conditional Split Transformation"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="Conditional Split Error Output"
+                  synchronousInputId="Package\Data Flow Task\thread 3.Inputs[Conditional Split Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Data Flow Task\thread 3.Outputs[Conditional Split Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\Data Flow Task\thread 3.Outputs[Conditional Split Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\Data Flow Task\thread 3.Outputs[Conditional Split Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\Data Flow Task\thread 3.Outputs[Conditional Split Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\Data Flow Task\thread 4"
+              componentClassID="DTSTransform.ConditionalSplit.3"
+              contactInfo="Conditional Split;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+              description="Routes data rows to different outputs depending on the content of the data. Use conditions (SSIS expressions) to specify which rows are routed. For example, separate records that need to be cleaned from those that are ready to be loaded or route only a subset of records."
+              name="thread 4"
+              usesDispositions="true">
+              <inputs>
+                <input
+                  refId="Package\Data Flow Task\thread 4.Inputs[Conditional Split Input]"
+                  description="Input to the Conditional Split Transformation"
+                  name="Conditional Split Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\Data Flow Task\thread 4.Inputs[Conditional Split Input].Columns[thread_id]"
+                      cachedDataType="i8"
+                      cachedName="thread_id"
+                      lineageId="Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Output].Columns[thread_id]" />
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\Data Flow Task\thread 4.Outputs[Case 1]"
+                  description="Output 1 of the Conditional Split Transformation"
+                  errorOrTruncationOperation="Computation"
+                  errorRowDisposition="FailComponent"
+                  exclusionGroup="1"
+                  name="Case 1"
+                  synchronousInputId="Package\Data Flow Task\thread 4.Inputs[Conditional Split Input]"
+                  truncationRowDisposition="FailComponent">
+                  <properties>
+                    <property
+                      containsID="true"
+                      dataType="System.String"
+                      description="Specifies the expression. This expression version uses lineage identifiers instead of column names."
+                      name="Expression">#{Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Output].Columns[thread_id]} == 4</property>
+                    <property
+                      containsID="true"
+                      dataType="System.String"
+                      description="Specifies the friendly version of the expression. This expression version uses column names."
+                      expressionType="Notify"
+                      name="FriendlyExpression">thread_id == 4</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the position of the condition in the list of conditions that the transformation evaluates. The evaluation order is from the lowest to the highest value."
+                      name="EvaluationOrder">0</property>
+                  </properties>
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\Data Flow Task\thread 4.Outputs[Conditional Split Default Output]"
+                  description="Default Output of the Conditional Split Transformation"
+                  exclusionGroup="1"
+                  name="Conditional Split Default Output"
+                  synchronousInputId="Package\Data Flow Task\thread 4.Inputs[Conditional Split Input]">
+                  <properties>
+                    <property
+                      dataType="System.Boolean"
+                      name="IsDefaultOut">true</property>
+                  </properties>
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\Data Flow Task\thread 4.Outputs[Conditional Split Error Output]"
+                  description="Error Output of the Conditional Split Transformation"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="Conditional Split Error Output"
+                  synchronousInputId="Package\Data Flow Task\thread 4.Inputs[Conditional Split Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Data Flow Task\thread 4.Outputs[Conditional Split Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\Data Flow Task\thread 4.Outputs[Conditional Split Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\Data Flow Task\thread 4.Outputs[Conditional Split Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\Data Flow Task\thread 4.Outputs[Conditional Split Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\Data Flow Task\thread 5"
+              componentClassID="DTSTransform.ConditionalSplit.3"
+              contactInfo="Conditional Split;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+              description="Routes data rows to different outputs depending on the content of the data. Use conditions (SSIS expressions) to specify which rows are routed. For example, separate records that need to be cleaned from those that are ready to be loaded or route only a subset of records."
+              name="thread 5"
+              usesDispositions="true">
+              <inputs>
+                <input
+                  refId="Package\Data Flow Task\thread 5.Inputs[Conditional Split Input]"
+                  description="Input to the Conditional Split Transformation"
+                  name="Conditional Split Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\Data Flow Task\thread 5.Inputs[Conditional Split Input].Columns[thread_id]"
+                      cachedDataType="i8"
+                      cachedName="thread_id"
+                      lineageId="Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Output].Columns[thread_id]" />
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\Data Flow Task\thread 5.Outputs[Case 1]"
+                  description="Output 1 of the Conditional Split Transformation"
+                  errorOrTruncationOperation="Computation"
+                  errorRowDisposition="FailComponent"
+                  exclusionGroup="1"
+                  name="Case 1"
+                  synchronousInputId="Package\Data Flow Task\thread 5.Inputs[Conditional Split Input]"
+                  truncationRowDisposition="FailComponent">
+                  <properties>
+                    <property
+                      containsID="true"
+                      dataType="System.String"
+                      description="Specifies the expression. This expression version uses lineage identifiers instead of column names."
+                      name="Expression">#{Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Output].Columns[thread_id]} == 5</property>
+                    <property
+                      containsID="true"
+                      dataType="System.String"
+                      description="Specifies the friendly version of the expression. This expression version uses column names."
+                      expressionType="Notify"
+                      name="FriendlyExpression">thread_id == 5</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the position of the condition in the list of conditions that the transformation evaluates. The evaluation order is from the lowest to the highest value."
+                      name="EvaluationOrder">0</property>
+                  </properties>
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\Data Flow Task\thread 5.Outputs[Conditional Split Default Output]"
+                  description="Default Output of the Conditional Split Transformation"
+                  exclusionGroup="1"
+                  name="Conditional Split Default Output"
+                  synchronousInputId="Package\Data Flow Task\thread 5.Inputs[Conditional Split Input]">
+                  <properties>
+                    <property
+                      dataType="System.Boolean"
+                      name="IsDefaultOut">true</property>
+                  </properties>
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\Data Flow Task\thread 5.Outputs[Conditional Split Error Output]"
+                  description="Error Output of the Conditional Split Transformation"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="Conditional Split Error Output"
+                  synchronousInputId="Package\Data Flow Task\thread 5.Inputs[Conditional Split Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Data Flow Task\thread 5.Outputs[Conditional Split Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\Data Flow Task\thread 5.Outputs[Conditional Split Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\Data Flow Task\thread 5.Outputs[Conditional Split Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\Data Flow Task\thread 5.Outputs[Conditional Split Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\Data Flow Task\thread 6"
+              componentClassID="DTSTransform.ConditionalSplit.3"
+              contactInfo="Conditional Split;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+              description="Routes data rows to different outputs depending on the content of the data. Use conditions (SSIS expressions) to specify which rows are routed. For example, separate records that need to be cleaned from those that are ready to be loaded or route only a subset of records."
+              name="thread 6"
+              usesDispositions="true">
+              <inputs>
+                <input
+                  refId="Package\Data Flow Task\thread 6.Inputs[Conditional Split Input]"
+                  description="Input to the Conditional Split Transformation"
+                  name="Conditional Split Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\Data Flow Task\thread 6.Inputs[Conditional Split Input].Columns[thread_id]"
+                      cachedDataType="i8"
+                      cachedName="thread_id"
+                      lineageId="Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Output].Columns[thread_id]" />
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\Data Flow Task\thread 6.Outputs[Case 1]"
+                  description="Output 1 of the Conditional Split Transformation"
+                  errorOrTruncationOperation="Computation"
+                  errorRowDisposition="FailComponent"
+                  exclusionGroup="1"
+                  name="Case 1"
+                  synchronousInputId="Package\Data Flow Task\thread 6.Inputs[Conditional Split Input]"
+                  truncationRowDisposition="FailComponent">
+                  <properties>
+                    <property
+                      containsID="true"
+                      dataType="System.String"
+                      description="Specifies the expression. This expression version uses lineage identifiers instead of column names."
+                      name="Expression">#{Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Output].Columns[thread_id]} == 6</property>
+                    <property
+                      containsID="true"
+                      dataType="System.String"
+                      description="Specifies the friendly version of the expression. This expression version uses column names."
+                      expressionType="Notify"
+                      name="FriendlyExpression">thread_id == 6</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the position of the condition in the list of conditions that the transformation evaluates. The evaluation order is from the lowest to the highest value."
+                      name="EvaluationOrder">0</property>
+                  </properties>
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\Data Flow Task\thread 6.Outputs[Conditional Split Default Output]"
+                  description="Default Output of the Conditional Split Transformation"
+                  exclusionGroup="1"
+                  name="Conditional Split Default Output"
+                  synchronousInputId="Package\Data Flow Task\thread 6.Inputs[Conditional Split Input]">
+                  <properties>
+                    <property
+                      dataType="System.Boolean"
+                      name="IsDefaultOut">true</property>
+                  </properties>
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\Data Flow Task\thread 6.Outputs[Conditional Split Error Output]"
+                  description="Error Output of the Conditional Split Transformation"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="Conditional Split Error Output"
+                  synchronousInputId="Package\Data Flow Task\thread 6.Inputs[Conditional Split Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Data Flow Task\thread 6.Outputs[Conditional Split Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\Data Flow Task\thread 6.Outputs[Conditional Split Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\Data Flow Task\thread 6.Outputs[Conditional Split Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\Data Flow Task\thread 6.Outputs[Conditional Split Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\Data Flow Task\thread 7"
+              componentClassID="DTSTransform.ConditionalSplit.3"
+              contactInfo="Conditional Split;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+              description="Routes data rows to different outputs depending on the content of the data. Use conditions (SSIS expressions) to specify which rows are routed. For example, separate records that need to be cleaned from those that are ready to be loaded or route only a subset of records."
+              name="thread 7"
+              usesDispositions="true">
+              <inputs>
+                <input
+                  refId="Package\Data Flow Task\thread 7.Inputs[Conditional Split Input]"
+                  description="Input to the Conditional Split Transformation"
+                  name="Conditional Split Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\Data Flow Task\thread 7.Inputs[Conditional Split Input].Columns[thread_id]"
+                      cachedDataType="i8"
+                      cachedName="thread_id"
+                      lineageId="Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Output].Columns[thread_id]" />
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\Data Flow Task\thread 7.Outputs[Case 1]"
+                  description="Output 1 of the Conditional Split Transformation"
+                  errorOrTruncationOperation="Computation"
+                  errorRowDisposition="FailComponent"
+                  exclusionGroup="1"
+                  name="Case 1"
+                  synchronousInputId="Package\Data Flow Task\thread 7.Inputs[Conditional Split Input]"
+                  truncationRowDisposition="FailComponent">
+                  <properties>
+                    <property
+                      containsID="true"
+                      dataType="System.String"
+                      description="Specifies the expression. This expression version uses lineage identifiers instead of column names."
+                      name="Expression">#{Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Output].Columns[thread_id]} == 7</property>
+                    <property
+                      containsID="true"
+                      dataType="System.String"
+                      description="Specifies the friendly version of the expression. This expression version uses column names."
+                      expressionType="Notify"
+                      name="FriendlyExpression">thread_id == 7</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the position of the condition in the list of conditions that the transformation evaluates. The evaluation order is from the lowest to the highest value."
+                      name="EvaluationOrder">0</property>
+                  </properties>
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\Data Flow Task\thread 7.Outputs[Conditional Split Default Output]"
+                  description="Default Output of the Conditional Split Transformation"
+                  exclusionGroup="1"
+                  name="Conditional Split Default Output"
+                  synchronousInputId="Package\Data Flow Task\thread 7.Inputs[Conditional Split Input]">
+                  <properties>
+                    <property
+                      dataType="System.Boolean"
+                      name="IsDefaultOut">true</property>
+                  </properties>
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\Data Flow Task\thread 7.Outputs[Conditional Split Error Output]"
+                  description="Error Output of the Conditional Split Transformation"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="Conditional Split Error Output"
+                  synchronousInputId="Package\Data Flow Task\thread 7.Inputs[Conditional Split Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Data Flow Task\thread 7.Outputs[Conditional Split Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\Data Flow Task\thread 7.Outputs[Conditional Split Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\Data Flow Task\thread 7.Outputs[Conditional Split Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\Data Flow Task\thread 7.Outputs[Conditional Split Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\Data Flow Task\thread 8"
+              componentClassID="DTSTransform.ConditionalSplit.3"
+              contactInfo="Conditional Split;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+              description="Routes data rows to different outputs depending on the content of the data. Use conditions (SSIS expressions) to specify which rows are routed. For example, separate records that need to be cleaned from those that are ready to be loaded or route only a subset of records."
+              name="thread 8"
+              usesDispositions="true">
+              <inputs>
+                <input
+                  refId="Package\Data Flow Task\thread 8.Inputs[Conditional Split Input]"
+                  description="Input to the Conditional Split Transformation"
+                  name="Conditional Split Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\Data Flow Task\thread 8.Inputs[Conditional Split Input].Columns[thread_id]"
+                      cachedDataType="i8"
+                      cachedName="thread_id"
+                      lineageId="Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Output].Columns[thread_id]" />
+                  </inputColumns>
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\Data Flow Task\thread 8.Outputs[Case 1]"
+                  description="Output 1 of the Conditional Split Transformation"
+                  errorOrTruncationOperation="Computation"
+                  errorRowDisposition="FailComponent"
+                  exclusionGroup="1"
+                  name="Case 1"
+                  synchronousInputId="Package\Data Flow Task\thread 8.Inputs[Conditional Split Input]"
+                  truncationRowDisposition="FailComponent">
+                  <properties>
+                    <property
+                      containsID="true"
+                      dataType="System.String"
+                      description="Specifies the expression. This expression version uses lineage identifiers instead of column names."
+                      name="Expression">#{Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Output].Columns[thread_id]} == 8</property>
+                    <property
+                      containsID="true"
+                      dataType="System.String"
+                      description="Specifies the friendly version of the expression. This expression version uses column names."
+                      expressionType="Notify"
+                      name="FriendlyExpression">thread_id == 8</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the position of the condition in the list of conditions that the transformation evaluates. The evaluation order is from the lowest to the highest value."
+                      name="EvaluationOrder">0</property>
+                  </properties>
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\Data Flow Task\thread 8.Outputs[Conditional Split Default Output]"
+                  description="Default Output of the Conditional Split Transformation"
+                  exclusionGroup="1"
+                  name="Conditional Split Default Output"
+                  synchronousInputId="Package\Data Flow Task\thread 8.Inputs[Conditional Split Input]">
+                  <properties>
+                    <property
+                      dataType="System.Boolean"
+                      name="IsDefaultOut">true</property>
+                  </properties>
+                  <externalMetadataColumns />
+                </output>
+                <output
+                  refId="Package\Data Flow Task\thread 8.Outputs[Conditional Split Error Output]"
+                  description="Error Output of the Conditional Split Transformation"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="Conditional Split Error Output"
+                  synchronousInputId="Package\Data Flow Task\thread 8.Inputs[Conditional Split Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Data Flow Task\thread 8.Outputs[Conditional Split Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\Data Flow Task\thread 8.Outputs[Conditional Split Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\Data Flow Task\thread 8.Outputs[Conditional Split Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\Data Flow Task\thread 8.Outputs[Conditional Split Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+          </components>
+          <paths>
+            <path
+              refId="Package\Data Flow Task.Paths[Case 1]"
+              endId="Package\Data Flow Task\rs thread 4.Inputs[Recordset Destination Input]"
+              name="Case 1"
+              startId="Package\Data Flow Task\thread 4.Outputs[Case 1]" />
+            <path
+              refId="Package\Data Flow Task.Paths[Case 11]"
+              endId="Package\Data Flow Task\rs thread 3.Inputs[Recordset Destination Input]"
+              name="Case 1"
+              startId="Package\Data Flow Task\thread 3.Outputs[Case 1]" />
+            <path
+              refId="Package\Data Flow Task.Paths[Case 12]"
+              endId="Package\Data Flow Task\rs thread 5.Inputs[Recordset Destination Input]"
+              name="Case 1"
+              startId="Package\Data Flow Task\thread 5.Outputs[Case 1]" />
+            <path
+              refId="Package\Data Flow Task.Paths[Case 13]"
+              endId="Package\Data Flow Task\rs thread 6.Inputs[Recordset Destination Input]"
+              name="Case 1"
+              startId="Package\Data Flow Task\thread 6.Outputs[Case 1]" />
+            <path
+              refId="Package\Data Flow Task.Paths[Case 14]"
+              endId="Package\Data Flow Task\rs thread 7.Inputs[Recordset Destination Input]"
+              name="Case 1"
+              startId="Package\Data Flow Task\thread 7.Outputs[Case 1]" />
+            <path
+              refId="Package\Data Flow Task.Paths[Case 15]"
+              endId="Package\Data Flow Task\rs thread 8.Inputs[Recordset Destination Input]"
+              name="Case 1"
+              startId="Package\Data Flow Task\thread 8.Outputs[Case 1]" />
+            <path
+              refId="Package\Data Flow Task.Paths[Case 16]"
+              endId="Package\Data Flow Task\rs thread 1.Inputs[Recordset Destination Input]"
+              name="Case 1"
+              startId="Package\Data Flow Task\thread 1.Outputs[Case 1]" />
+            <path
+              refId="Package\Data Flow Task.Paths[Case 17]"
+              endId="Package\Data Flow Task\rs thread 2.Inputs[Recordset Destination Input]"
+              name="Case 1"
+              startId="Package\Data Flow Task\thread 2.Outputs[Case 1]" />
+            <path
+              refId="Package\Data Flow Task.Paths[Multicast Output 1]"
+              endId="Package\Data Flow Task\thread 2.Inputs[Conditional Split Input]"
+              name="Multicast Output 1"
+              startId="Package\Data Flow Task\Multicast.Outputs[Multicast Output 1]" />
+            <path
+              refId="Package\Data Flow Task.Paths[Multicast Output 2]"
+              endId="Package\Data Flow Task\thread 1.Inputs[Conditional Split Input]"
+              name="Multicast Output 2"
+              startId="Package\Data Flow Task\Multicast.Outputs[Multicast Output 2]" />
+            <path
+              refId="Package\Data Flow Task.Paths[Multicast Output 3]"
+              endId="Package\Data Flow Task\thread 3.Inputs[Conditional Split Input]"
+              name="Multicast Output 3"
+              startId="Package\Data Flow Task\Multicast.Outputs[Multicast Output 3]" />
+            <path
+              refId="Package\Data Flow Task.Paths[Multicast Output 4]"
+              endId="Package\Data Flow Task\thread 4.Inputs[Conditional Split Input]"
+              name="Multicast Output 4"
+              startId="Package\Data Flow Task\Multicast.Outputs[Multicast Output 4]" />
+            <path
+              refId="Package\Data Flow Task.Paths[Multicast Output 5]"
+              endId="Package\Data Flow Task\thread 5.Inputs[Conditional Split Input]"
+              name="Multicast Output 5"
+              startId="Package\Data Flow Task\Multicast.Outputs[Multicast Output 5]" />
+            <path
+              refId="Package\Data Flow Task.Paths[Multicast Output 6]"
+              endId="Package\Data Flow Task\thread 6.Inputs[Conditional Split Input]"
+              name="Multicast Output 6"
+              startId="Package\Data Flow Task\Multicast.Outputs[Multicast Output 6]" />
+            <path
+              refId="Package\Data Flow Task.Paths[Multicast Output 7]"
+              endId="Package\Data Flow Task\thread 7.Inputs[Conditional Split Input]"
+              name="Multicast Output 7"
+              startId="Package\Data Flow Task\Multicast.Outputs[Multicast Output 7]" />
+            <path
+              refId="Package\Data Flow Task.Paths[Multicast Output 8]"
+              endId="Package\Data Flow Task\thread 8.Inputs[Conditional Split Input]"
+              name="Multicast Output 8"
+              startId="Package\Data Flow Task\Multicast.Outputs[Multicast Output 8]" />
+            <path
+              refId="Package\Data Flow Task.Paths[OLE DB Source Output]"
+              endId="Package\Data Flow Task\Multicast.Inputs[Multicast Input 1]"
+              name="OLE DB Source Output"
+              startId="Package\Data Flow Task\OLE DB Source.Outputs[OLE DB Source Output]" />
+          </paths>
+        </pipeline>
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Sequence Container"
+      DTS:CreationName="STOCK:SEQUENCE"
+      DTS:Description="Sequence Container"
+      DTS:DTSID="{83F02B0B-CE13-4361-AFA7-8A0017133829}"
+      DTS:ExecutableType="STOCK:SEQUENCE"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Sequence Container">
       <DTS:Variables />
       <DTS:Executables>
         <DTS:Executable
-          DTS:refId="Package\Foreach Loop Container\execute remote data import 1"
-          DTS:CreationName="SSIS.ExecutePackageTask.3"
-          DTS:Description="Execute Package Task"
-          DTS:DTSID="{1F8234FC-8427-45ED-8BCE-020B23BD141D}"
-          DTS:ExecutableType="SSIS.ExecutePackageTask.3"
+          DTS:refId="Package\Sequence Container\Foreach Loop Container 1"
+          DTS:CreationName="STOCK:FOREACHLOOP"
+          DTS:Description="Foreach Loop Container"
+          DTS:DTSID="{3248763E-4C76-4CFB-A529-7F0890F8021F}"
+          DTS:ExecutableType="STOCK:FOREACHLOOP"
           DTS:LocaleID="-1"
-          DTS:ObjectName="execute remote data import 1"
-          DTS:TaskContact="Microsoft Corporation; Microsoft SQL Server; Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+          DTS:MaxErrorCount="10000"
+          DTS:ObjectName="Foreach Loop Container 1">
+          <DTS:ForEachEnumerator
+            DTS:CreationName="Microsoft.SqlServer.Dts.Runtime.Enumerators.ADO.ForEachADOEnumerator, Microsoft.SqlServer.ForEachADOEnumerator, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+            DTS:DTSID="{6D309271-A42D-4D39-8CB2-F177B4B056B1}"
+            DTS:ObjectName="{6D309271-A42D-4D39-8CB2-F177B4B056B1}">
+            <DTS:ObjectData>
+              <FEEADO
+                EnumType="EnumerateRowsInFirstTable"
+                VarName="User::remote_instances_to_process_t1" />
+            </DTS:ObjectData>
+          </DTS:ForEachEnumerator>
           <DTS:Variables />
-          <DTS:ObjectData>
-            <ExecutePackageTask>
-              <UseProjectReference>True</UseProjectReference>
-              <PackageName>import_remote_data.dtsx</PackageName>
-              <ParameterAssignment>
-                <ParameterName>remote_instance_name</ParameterName>
-                <BindedVariableOrParameterName>User::remote_instance_name</BindedVariableOrParameterName>
-              </ParameterAssignment>
-              <ParameterAssignment>
-                <ParameterName>repository_database</ParameterName>
-                <BindedVariableOrParameterName>$Package::repository_database</BindedVariableOrParameterName>
-              </ParameterAssignment>
-              <ParameterAssignment>
-                <ParameterName>repository_instance_name</ParameterName>
-                <BindedVariableOrParameterName>$Package::repository_instance_name</BindedVariableOrParameterName>
-              </ParameterAssignment>
-              <ParameterAssignment>
-                <ParameterName>repository_password</ParameterName>
-                <BindedVariableOrParameterName>$Package::repository_password</BindedVariableOrParameterName>
-              </ParameterAssignment>
-              <ParameterAssignment>
-                <ParameterName>repository_user_name</ParameterName>
-                <BindedVariableOrParameterName>$Package::repository_user_name</BindedVariableOrParameterName>
-              </ParameterAssignment>
-            </ExecutePackageTask>
-          </DTS:ObjectData>
+          <DTS:Executables>
+            <DTS:Executable
+              DTS:refId="Package\Sequence Container\Foreach Loop Container 1\execute remote data import"
+              DTS:CreationName="SSIS.ExecutePackageTask.3"
+              DTS:Description="Execute Package Task"
+              DTS:DTSID="{31c1d0fd-3186-49be-ba87-59632c4b815b}"
+              DTS:ExecutableType="SSIS.ExecutePackageTask.3"
+              DTS:ForceExecutionResult="0"
+              DTS:LocaleID="-1"
+              DTS:ObjectName="execute remote data import"
+              DTS:TaskContact="Microsoft Corporation; Microsoft SQL Server; Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+              <DTS:Variables />
+              <DTS:ObjectData>
+                <ExecutePackageTask>
+                  <UseProjectReference>True</UseProjectReference>
+                  <PackageName>import_remote_data 1.dtsx</PackageName>
+                  <ParameterAssignment>
+                    <ParameterName>remote_instance_name</ParameterName>
+                    <BindedVariableOrParameterName>User::remote_instance_name_t1</BindedVariableOrParameterName>
+                  </ParameterAssignment>
+                  <ParameterAssignment>
+                    <ParameterName>repository_database</ParameterName>
+                    <BindedVariableOrParameterName>$Package::repository_database</BindedVariableOrParameterName>
+                  </ParameterAssignment>
+                  <ParameterAssignment>
+                    <ParameterName>repository_instance_name</ParameterName>
+                    <BindedVariableOrParameterName>$Package::repository_instance_name</BindedVariableOrParameterName>
+                  </ParameterAssignment>
+                  <ParameterAssignment>
+                    <ParameterName>repository_password</ParameterName>
+                    <BindedVariableOrParameterName>$Package::repository_password</BindedVariableOrParameterName>
+                  </ParameterAssignment>
+                  <ParameterAssignment>
+                    <ParameterName>repository_user_name</ParameterName>
+                    <BindedVariableOrParameterName>$Package::repository_user_name</BindedVariableOrParameterName>
+                  </ParameterAssignment>
+                </ExecutePackageTask>
+              </DTS:ObjectData>
+            </DTS:Executable>
+          </DTS:Executables>
+          <DTS:ForEachVariableMappings>
+            <DTS:ForEachVariableMapping
+              DTS:CreationName=""
+              DTS:DTSID="{52400F4F-71B6-41E3-BB07-2FFCC0A1A49E}"
+              DTS:ObjectName="{52400F4F-71B6-41E3-BB07-2FFCC0A1A49E}"
+              DTS:ValueIndex="0"
+              DTS:VariableName="User::remote_instance_name_t1" />
+          </DTS:ForEachVariableMappings>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Sequence Container\Foreach Loop Container 2"
+          DTS:CreationName="STOCK:FOREACHLOOP"
+          DTS:Description="Foreach Loop Container"
+          DTS:DTSID="{38dd8751-33fd-4b58-b3c0-2a0fc1b0a32b}"
+          DTS:ExecutableType="STOCK:FOREACHLOOP"
+          DTS:LocaleID="-1"
+          DTS:MaxErrorCount="10000"
+          DTS:ObjectName="Foreach Loop Container 2">
+          <DTS:ForEachEnumerator
+            DTS:CreationName="Microsoft.SqlServer.Dts.Runtime.Enumerators.ADO.ForEachADOEnumerator, Microsoft.SqlServer.ForEachADOEnumerator, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+            DTS:DTSID="{1c6060cf-544e-4b4d-a7d9-7504ae0b635c}"
+            DTS:ObjectName="{6D309271-A42D-4D39-8CB2-F177B4B056B1}">
+            <DTS:ObjectData>
+              <FEEADO
+                EnumType="EnumerateRowsInFirstTable"
+                VarName="User::remote_instances_to_process_t2" />
+            </DTS:ObjectData>
+          </DTS:ForEachEnumerator>
+          <DTS:Variables />
+          <DTS:Executables>
+            <DTS:Executable
+              DTS:refId="Package\Sequence Container\Foreach Loop Container 2\execute remote data import"
+              DTS:CreationName="SSIS.ExecutePackageTask.3"
+              DTS:Description="Execute Package Task"
+              DTS:DTSID="{e988eb1a-27cc-4568-bb92-4e6cf29779f0}"
+              DTS:ExecutableType="SSIS.ExecutePackageTask.3"
+              DTS:ForceExecutionResult="0"
+              DTS:LocaleID="-1"
+              DTS:ObjectName="execute remote data import"
+              DTS:TaskContact="Microsoft Corporation; Microsoft SQL Server; Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+              <DTS:Variables />
+              <DTS:ObjectData>
+                <ExecutePackageTask>
+                  <UseProjectReference>True</UseProjectReference>
+                  <PackageName>import_remote_data 1.dtsx</PackageName>
+                  <ParameterAssignment>
+                    <ParameterName>remote_instance_name</ParameterName>
+                    <BindedVariableOrParameterName>User::remote_instance_name_t2</BindedVariableOrParameterName>
+                  </ParameterAssignment>
+                  <ParameterAssignment>
+                    <ParameterName>repository_database</ParameterName>
+                    <BindedVariableOrParameterName>$Package::repository_database</BindedVariableOrParameterName>
+                  </ParameterAssignment>
+                  <ParameterAssignment>
+                    <ParameterName>repository_instance_name</ParameterName>
+                    <BindedVariableOrParameterName>$Package::repository_instance_name</BindedVariableOrParameterName>
+                  </ParameterAssignment>
+                  <ParameterAssignment>
+                    <ParameterName>repository_password</ParameterName>
+                    <BindedVariableOrParameterName>$Package::repository_password</BindedVariableOrParameterName>
+                  </ParameterAssignment>
+                  <ParameterAssignment>
+                    <ParameterName>repository_user_name</ParameterName>
+                    <BindedVariableOrParameterName>$Package::repository_user_name</BindedVariableOrParameterName>
+                  </ParameterAssignment>
+                </ExecutePackageTask>
+              </DTS:ObjectData>
+            </DTS:Executable>
+          </DTS:Executables>
+          <DTS:ForEachVariableMappings>
+            <DTS:ForEachVariableMapping
+              DTS:CreationName=""
+              DTS:DTSID="{247AB620-2BA0-433B-A3D7-AECD1860881E}"
+              DTS:ObjectName="{247AB620-2BA0-433B-A3D7-AECD1860881E}"
+              DTS:ValueIndex="0"
+              DTS:VariableName="User::remote_instance_name_t2" />
+          </DTS:ForEachVariableMappings>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Sequence Container\Foreach Loop Container 3"
+          DTS:CreationName="STOCK:FOREACHLOOP"
+          DTS:Description="Foreach Loop Container"
+          DTS:DTSID="{0714ca6a-4513-45c5-a8b9-e3d159297e0c}"
+          DTS:ExecutableType="STOCK:FOREACHLOOP"
+          DTS:LocaleID="-1"
+          DTS:MaxErrorCount="10000"
+          DTS:ObjectName="Foreach Loop Container 3">
+          <DTS:ForEachEnumerator
+            DTS:CreationName="Microsoft.SqlServer.Dts.Runtime.Enumerators.ADO.ForEachADOEnumerator, Microsoft.SqlServer.ForEachADOEnumerator, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+            DTS:DTSID="{8c164e85-7fa1-45f3-ad03-7998a3fe26b9}"
+            DTS:ObjectName="{6D309271-A42D-4D39-8CB2-F177B4B056B1}">
+            <DTS:ObjectData>
+              <FEEADO
+                EnumType="EnumerateRowsInFirstTable"
+                VarName="User::remote_instances_to_process_t3" />
+            </DTS:ObjectData>
+          </DTS:ForEachEnumerator>
+          <DTS:Variables />
+          <DTS:Executables>
+            <DTS:Executable
+              DTS:refId="Package\Sequence Container\Foreach Loop Container 3\execute remote data import"
+              DTS:CreationName="SSIS.ExecutePackageTask.3"
+              DTS:Description="Execute Package Task"
+              DTS:DTSID="{e80fa4b6-b1d2-436d-9265-119f4ac4313b}"
+              DTS:ExecutableType="SSIS.ExecutePackageTask.3"
+              DTS:ForceExecutionResult="0"
+              DTS:LocaleID="-1"
+              DTS:ObjectName="execute remote data import"
+              DTS:TaskContact="Microsoft Corporation; Microsoft SQL Server; Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+              <DTS:Variables />
+              <DTS:ObjectData>
+                <ExecutePackageTask>
+                  <UseProjectReference>True</UseProjectReference>
+                  <PackageName>import_remote_data 1.dtsx</PackageName>
+                  <ParameterAssignment>
+                    <ParameterName>remote_instance_name</ParameterName>
+                    <BindedVariableOrParameterName>User::remote_instance_name_t3</BindedVariableOrParameterName>
+                  </ParameterAssignment>
+                  <ParameterAssignment>
+                    <ParameterName>repository_database</ParameterName>
+                    <BindedVariableOrParameterName>$Package::repository_database</BindedVariableOrParameterName>
+                  </ParameterAssignment>
+                  <ParameterAssignment>
+                    <ParameterName>repository_instance_name</ParameterName>
+                    <BindedVariableOrParameterName>$Package::repository_instance_name</BindedVariableOrParameterName>
+                  </ParameterAssignment>
+                  <ParameterAssignment>
+                    <ParameterName>repository_password</ParameterName>
+                    <BindedVariableOrParameterName>$Package::repository_password</BindedVariableOrParameterName>
+                  </ParameterAssignment>
+                  <ParameterAssignment>
+                    <ParameterName>repository_user_name</ParameterName>
+                    <BindedVariableOrParameterName>$Package::repository_user_name</BindedVariableOrParameterName>
+                  </ParameterAssignment>
+                </ExecutePackageTask>
+              </DTS:ObjectData>
+            </DTS:Executable>
+          </DTS:Executables>
+          <DTS:ForEachVariableMappings>
+            <DTS:ForEachVariableMapping
+              DTS:CreationName=""
+              DTS:DTSID="{E2B63F8E-1226-449D-9AB3-DE1597A171EB}"
+              DTS:ObjectName="{E2B63F8E-1226-449D-9AB3-DE1597A171EB}"
+              DTS:ValueIndex="0"
+              DTS:VariableName="User::remote_instance_name_t3" />
+          </DTS:ForEachVariableMappings>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Sequence Container\Foreach Loop Container 4"
+          DTS:CreationName="STOCK:FOREACHLOOP"
+          DTS:Description="Foreach Loop Container"
+          DTS:DTSID="{3269185a-21f3-4094-a9d4-dbacf982849c}"
+          DTS:ExecutableType="STOCK:FOREACHLOOP"
+          DTS:LocaleID="-1"
+          DTS:MaxErrorCount="10000"
+          DTS:ObjectName="Foreach Loop Container 4">
+          <DTS:ForEachEnumerator
+            DTS:CreationName="Microsoft.SqlServer.Dts.Runtime.Enumerators.ADO.ForEachADOEnumerator, Microsoft.SqlServer.ForEachADOEnumerator, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+            DTS:DTSID="{35d70b27-d2e8-460c-9c78-223af4f09c43}"
+            DTS:ObjectName="{6D309271-A42D-4D39-8CB2-F177B4B056B1}">
+            <DTS:ObjectData>
+              <FEEADO
+                EnumType="EnumerateRowsInFirstTable"
+                VarName="User::remote_instances_to_process_t4" />
+            </DTS:ObjectData>
+          </DTS:ForEachEnumerator>
+          <DTS:Variables />
+          <DTS:Executables>
+            <DTS:Executable
+              DTS:refId="Package\Sequence Container\Foreach Loop Container 4\execute remote data import"
+              DTS:CreationName="SSIS.ExecutePackageTask.3"
+              DTS:Description="Execute Package Task"
+              DTS:DTSID="{ec79b54d-83ac-4e43-a9cc-7d2b75f221a5}"
+              DTS:ExecutableType="SSIS.ExecutePackageTask.3"
+              DTS:ForceExecutionResult="0"
+              DTS:LocaleID="-1"
+              DTS:ObjectName="execute remote data import"
+              DTS:TaskContact="Microsoft Corporation; Microsoft SQL Server; Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+              <DTS:Variables />
+              <DTS:ObjectData>
+                <ExecutePackageTask>
+                  <UseProjectReference>True</UseProjectReference>
+                  <PackageName>import_remote_data 1.dtsx</PackageName>
+                  <ParameterAssignment>
+                    <ParameterName>remote_instance_name</ParameterName>
+                    <BindedVariableOrParameterName>User::remote_instance_name_t4</BindedVariableOrParameterName>
+                  </ParameterAssignment>
+                  <ParameterAssignment>
+                    <ParameterName>repository_database</ParameterName>
+                    <BindedVariableOrParameterName>$Package::repository_database</BindedVariableOrParameterName>
+                  </ParameterAssignment>
+                  <ParameterAssignment>
+                    <ParameterName>repository_instance_name</ParameterName>
+                    <BindedVariableOrParameterName>$Package::repository_instance_name</BindedVariableOrParameterName>
+                  </ParameterAssignment>
+                  <ParameterAssignment>
+                    <ParameterName>repository_password</ParameterName>
+                    <BindedVariableOrParameterName>$Package::repository_password</BindedVariableOrParameterName>
+                  </ParameterAssignment>
+                  <ParameterAssignment>
+                    <ParameterName>repository_user_name</ParameterName>
+                    <BindedVariableOrParameterName>$Package::repository_user_name</BindedVariableOrParameterName>
+                  </ParameterAssignment>
+                </ExecutePackageTask>
+              </DTS:ObjectData>
+            </DTS:Executable>
+          </DTS:Executables>
+          <DTS:ForEachVariableMappings>
+            <DTS:ForEachVariableMapping
+              DTS:CreationName=""
+              DTS:DTSID="{1CE6A8D3-1C87-45D6-B564-637738FB8EEE}"
+              DTS:ObjectName="{1CE6A8D3-1C87-45D6-B564-637738FB8EEE}"
+              DTS:ValueIndex="0"
+              DTS:VariableName="User::remote_instance_name_t4" />
+          </DTS:ForEachVariableMappings>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Sequence Container\Foreach Loop Container 5"
+          DTS:CreationName="STOCK:FOREACHLOOP"
+          DTS:Description="Foreach Loop Container"
+          DTS:DTSID="{a69ef59f-8485-45c4-9785-9cde71a99355}"
+          DTS:ExecutableType="STOCK:FOREACHLOOP"
+          DTS:LocaleID="-1"
+          DTS:MaxErrorCount="10000"
+          DTS:ObjectName="Foreach Loop Container 5">
+          <DTS:ForEachEnumerator
+            DTS:CreationName="Microsoft.SqlServer.Dts.Runtime.Enumerators.ADO.ForEachADOEnumerator, Microsoft.SqlServer.ForEachADOEnumerator, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+            DTS:DTSID="{17f2a191-f9e7-4c4e-8eeb-14c49bae2508}"
+            DTS:ObjectName="{6D309271-A42D-4D39-8CB2-F177B4B056B1}">
+            <DTS:ObjectData>
+              <FEEADO
+                EnumType="EnumerateRowsInFirstTable"
+                VarName="User::remote_instances_to_process_t5" />
+            </DTS:ObjectData>
+          </DTS:ForEachEnumerator>
+          <DTS:Variables />
+          <DTS:Executables>
+            <DTS:Executable
+              DTS:refId="Package\Sequence Container\Foreach Loop Container 5\execute remote data import"
+              DTS:CreationName="SSIS.ExecutePackageTask.3"
+              DTS:Description="Execute Package Task"
+              DTS:DTSID="{b7c1653b-d94a-4715-985d-308b42f1ba80}"
+              DTS:ExecutableType="SSIS.ExecutePackageTask.3"
+              DTS:ForceExecutionResult="0"
+              DTS:LocaleID="-1"
+              DTS:ObjectName="execute remote data import"
+              DTS:TaskContact="Microsoft Corporation; Microsoft SQL Server; Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+              <DTS:Variables />
+              <DTS:ObjectData>
+                <ExecutePackageTask>
+                  <UseProjectReference>True</UseProjectReference>
+                  <PackageName>import_remote_data 1.dtsx</PackageName>
+                  <ParameterAssignment>
+                    <ParameterName>remote_instance_name</ParameterName>
+                    <BindedVariableOrParameterName>User::remote_instance_name_t5</BindedVariableOrParameterName>
+                  </ParameterAssignment>
+                  <ParameterAssignment>
+                    <ParameterName>repository_database</ParameterName>
+                    <BindedVariableOrParameterName>$Package::repository_database</BindedVariableOrParameterName>
+                  </ParameterAssignment>
+                  <ParameterAssignment>
+                    <ParameterName>repository_instance_name</ParameterName>
+                    <BindedVariableOrParameterName>$Package::repository_instance_name</BindedVariableOrParameterName>
+                  </ParameterAssignment>
+                  <ParameterAssignment>
+                    <ParameterName>repository_password</ParameterName>
+                    <BindedVariableOrParameterName>$Package::repository_password</BindedVariableOrParameterName>
+                  </ParameterAssignment>
+                  <ParameterAssignment>
+                    <ParameterName>repository_user_name</ParameterName>
+                    <BindedVariableOrParameterName>$Package::repository_user_name</BindedVariableOrParameterName>
+                  </ParameterAssignment>
+                </ExecutePackageTask>
+              </DTS:ObjectData>
+            </DTS:Executable>
+          </DTS:Executables>
+          <DTS:ForEachVariableMappings>
+            <DTS:ForEachVariableMapping
+              DTS:CreationName=""
+              DTS:DTSID="{8E5171A6-2B98-40E7-8ABB-EC992CE5A94C}"
+              DTS:ObjectName="{8E5171A6-2B98-40E7-8ABB-EC992CE5A94C}"
+              DTS:ValueIndex="0"
+              DTS:VariableName="User::remote_instance_name_t5" />
+          </DTS:ForEachVariableMappings>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Sequence Container\Foreach Loop Container 6"
+          DTS:CreationName="STOCK:FOREACHLOOP"
+          DTS:Description="Foreach Loop Container"
+          DTS:DTSID="{76a8f3a4-e823-482d-b0a9-fd966cd398be}"
+          DTS:ExecutableType="STOCK:FOREACHLOOP"
+          DTS:LocaleID="-1"
+          DTS:MaxErrorCount="10000"
+          DTS:ObjectName="Foreach Loop Container 6">
+          <DTS:ForEachEnumerator
+            DTS:CreationName="Microsoft.SqlServer.Dts.Runtime.Enumerators.ADO.ForEachADOEnumerator, Microsoft.SqlServer.ForEachADOEnumerator, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+            DTS:DTSID="{7c3df661-a99d-4333-bfa0-d195c26d06af}"
+            DTS:ObjectName="{6D309271-A42D-4D39-8CB2-F177B4B056B1}">
+            <DTS:ObjectData>
+              <FEEADO
+                EnumType="EnumerateRowsInFirstTable"
+                VarName="User::remote_instances_to_process_t6" />
+            </DTS:ObjectData>
+          </DTS:ForEachEnumerator>
+          <DTS:Variables />
+          <DTS:Executables>
+            <DTS:Executable
+              DTS:refId="Package\Sequence Container\Foreach Loop Container 6\execute remote data import"
+              DTS:CreationName="SSIS.ExecutePackageTask.3"
+              DTS:Description="Execute Package Task"
+              DTS:DTSID="{ba59d739-339b-4c55-8ec3-f37ed0519ff1}"
+              DTS:ExecutableType="SSIS.ExecutePackageTask.3"
+              DTS:ForceExecutionResult="0"
+              DTS:LocaleID="-1"
+              DTS:ObjectName="execute remote data import"
+              DTS:TaskContact="Microsoft Corporation; Microsoft SQL Server; Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+              <DTS:Variables />
+              <DTS:ObjectData>
+                <ExecutePackageTask>
+                  <UseProjectReference>True</UseProjectReference>
+                  <PackageName>import_remote_data 1.dtsx</PackageName>
+                  <ParameterAssignment>
+                    <ParameterName>remote_instance_name</ParameterName>
+                    <BindedVariableOrParameterName>User::remote_instance_name_t6</BindedVariableOrParameterName>
+                  </ParameterAssignment>
+                  <ParameterAssignment>
+                    <ParameterName>repository_database</ParameterName>
+                    <BindedVariableOrParameterName>$Package::repository_database</BindedVariableOrParameterName>
+                  </ParameterAssignment>
+                  <ParameterAssignment>
+                    <ParameterName>repository_instance_name</ParameterName>
+                    <BindedVariableOrParameterName>$Package::repository_instance_name</BindedVariableOrParameterName>
+                  </ParameterAssignment>
+                  <ParameterAssignment>
+                    <ParameterName>repository_password</ParameterName>
+                    <BindedVariableOrParameterName>$Package::repository_password</BindedVariableOrParameterName>
+                  </ParameterAssignment>
+                  <ParameterAssignment>
+                    <ParameterName>repository_user_name</ParameterName>
+                    <BindedVariableOrParameterName>$Package::repository_user_name</BindedVariableOrParameterName>
+                  </ParameterAssignment>
+                </ExecutePackageTask>
+              </DTS:ObjectData>
+            </DTS:Executable>
+          </DTS:Executables>
+          <DTS:ForEachVariableMappings>
+            <DTS:ForEachVariableMapping
+              DTS:CreationName=""
+              DTS:DTSID="{DEF6AAA5-6ADE-4A53-865D-E3DBC4E9860D}"
+              DTS:ObjectName="{DEF6AAA5-6ADE-4A53-865D-E3DBC4E9860D}"
+              DTS:ValueIndex="0"
+              DTS:VariableName="User::remote_instance_name_t6" />
+          </DTS:ForEachVariableMappings>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Sequence Container\Foreach Loop Container 7"
+          DTS:CreationName="STOCK:FOREACHLOOP"
+          DTS:Description="Foreach Loop Container"
+          DTS:DTSID="{7b40776d-8e25-4f7b-af2f-72c1a311148e}"
+          DTS:ExecutableType="STOCK:FOREACHLOOP"
+          DTS:LocaleID="-1"
+          DTS:MaxErrorCount="10000"
+          DTS:ObjectName="Foreach Loop Container 7">
+          <DTS:ForEachEnumerator
+            DTS:CreationName="Microsoft.SqlServer.Dts.Runtime.Enumerators.ADO.ForEachADOEnumerator, Microsoft.SqlServer.ForEachADOEnumerator, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+            DTS:DTSID="{5ad767ad-df2c-4cc2-ba22-7289db291583}"
+            DTS:ObjectName="{6D309271-A42D-4D39-8CB2-F177B4B056B1}">
+            <DTS:ObjectData>
+              <FEEADO
+                EnumType="EnumerateRowsInFirstTable"
+                VarName="User::remote_instances_to_process_t7" />
+            </DTS:ObjectData>
+          </DTS:ForEachEnumerator>
+          <DTS:Variables />
+          <DTS:Executables>
+            <DTS:Executable
+              DTS:refId="Package\Sequence Container\Foreach Loop Container 7\execute remote data import"
+              DTS:CreationName="SSIS.ExecutePackageTask.3"
+              DTS:Description="Execute Package Task"
+              DTS:DTSID="{d3905dae-6574-4527-ae96-12ec7bafc1f0}"
+              DTS:ExecutableType="SSIS.ExecutePackageTask.3"
+              DTS:ForceExecutionResult="0"
+              DTS:LocaleID="-1"
+              DTS:ObjectName="execute remote data import"
+              DTS:TaskContact="Microsoft Corporation; Microsoft SQL Server; Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+              <DTS:Variables />
+              <DTS:ObjectData>
+                <ExecutePackageTask>
+                  <UseProjectReference>True</UseProjectReference>
+                  <PackageName>import_remote_data 1.dtsx</PackageName>
+                  <ParameterAssignment>
+                    <ParameterName>remote_instance_name</ParameterName>
+                    <BindedVariableOrParameterName>User::remote_instance_name_t7</BindedVariableOrParameterName>
+                  </ParameterAssignment>
+                  <ParameterAssignment>
+                    <ParameterName>repository_database</ParameterName>
+                    <BindedVariableOrParameterName>$Package::repository_database</BindedVariableOrParameterName>
+                  </ParameterAssignment>
+                  <ParameterAssignment>
+                    <ParameterName>repository_instance_name</ParameterName>
+                    <BindedVariableOrParameterName>$Package::repository_instance_name</BindedVariableOrParameterName>
+                  </ParameterAssignment>
+                  <ParameterAssignment>
+                    <ParameterName>repository_password</ParameterName>
+                    <BindedVariableOrParameterName>$Package::repository_password</BindedVariableOrParameterName>
+                  </ParameterAssignment>
+                  <ParameterAssignment>
+                    <ParameterName>repository_user_name</ParameterName>
+                    <BindedVariableOrParameterName>$Package::repository_user_name</BindedVariableOrParameterName>
+                  </ParameterAssignment>
+                </ExecutePackageTask>
+              </DTS:ObjectData>
+            </DTS:Executable>
+          </DTS:Executables>
+          <DTS:ForEachVariableMappings>
+            <DTS:ForEachVariableMapping
+              DTS:CreationName=""
+              DTS:DTSID="{4E4D5921-163E-42B0-ADCC-736FA804C5F6}"
+              DTS:ObjectName="{4E4D5921-163E-42B0-ADCC-736FA804C5F6}"
+              DTS:ValueIndex="0"
+              DTS:VariableName="User::remote_instance_name_t7" />
+          </DTS:ForEachVariableMappings>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Sequence Container\Foreach Loop Container 8"
+          DTS:CreationName="STOCK:FOREACHLOOP"
+          DTS:Description="Foreach Loop Container"
+          DTS:DTSID="{ac1b063b-602b-4319-be22-7136d68063a4}"
+          DTS:ExecutableType="STOCK:FOREACHLOOP"
+          DTS:LocaleID="-1"
+          DTS:MaxErrorCount="10000"
+          DTS:ObjectName="Foreach Loop Container 8">
+          <DTS:ForEachEnumerator
+            DTS:CreationName="Microsoft.SqlServer.Dts.Runtime.Enumerators.ADO.ForEachADOEnumerator, Microsoft.SqlServer.ForEachADOEnumerator, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+            DTS:DTSID="{70a10e41-e403-4472-abb3-0f999de43d4d}"
+            DTS:ObjectName="{6D309271-A42D-4D39-8CB2-F177B4B056B1}">
+            <DTS:ObjectData>
+              <FEEADO
+                EnumType="EnumerateRowsInFirstTable"
+                VarName="User::remote_instances_to_process_t8" />
+            </DTS:ObjectData>
+          </DTS:ForEachEnumerator>
+          <DTS:Variables />
+          <DTS:Executables>
+            <DTS:Executable
+              DTS:refId="Package\Sequence Container\Foreach Loop Container 8\execute remote data import"
+              DTS:CreationName="SSIS.ExecutePackageTask.3"
+              DTS:Description="Execute Package Task"
+              DTS:DTSID="{0de4bb4a-bb32-4747-ac1a-17ee43219ee9}"
+              DTS:ExecutableType="SSIS.ExecutePackageTask.3"
+              DTS:ForceExecutionResult="0"
+              DTS:LocaleID="-1"
+              DTS:ObjectName="execute remote data import"
+              DTS:TaskContact="Microsoft Corporation; Microsoft SQL Server; Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+              <DTS:Variables />
+              <DTS:ObjectData>
+                <ExecutePackageTask>
+                  <UseProjectReference>True</UseProjectReference>
+                  <PackageName>import_remote_data 1.dtsx</PackageName>
+                  <ParameterAssignment>
+                    <ParameterName>remote_instance_name</ParameterName>
+                    <BindedVariableOrParameterName>User::remote_instance_name_t8</BindedVariableOrParameterName>
+                  </ParameterAssignment>
+                  <ParameterAssignment>
+                    <ParameterName>repository_database</ParameterName>
+                    <BindedVariableOrParameterName>$Package::repository_database</BindedVariableOrParameterName>
+                  </ParameterAssignment>
+                  <ParameterAssignment>
+                    <ParameterName>repository_instance_name</ParameterName>
+                    <BindedVariableOrParameterName>$Package::repository_instance_name</BindedVariableOrParameterName>
+                  </ParameterAssignment>
+                  <ParameterAssignment>
+                    <ParameterName>repository_password</ParameterName>
+                    <BindedVariableOrParameterName>$Package::repository_password</BindedVariableOrParameterName>
+                  </ParameterAssignment>
+                  <ParameterAssignment>
+                    <ParameterName>repository_user_name</ParameterName>
+                    <BindedVariableOrParameterName>$Package::repository_user_name</BindedVariableOrParameterName>
+                  </ParameterAssignment>
+                </ExecutePackageTask>
+              </DTS:ObjectData>
+            </DTS:Executable>
+          </DTS:Executables>
+          <DTS:ForEachVariableMappings>
+            <DTS:ForEachVariableMapping
+              DTS:CreationName=""
+              DTS:DTSID="{CAC36A30-7E4D-45F8-A1E0-C9B9036E26DD}"
+              DTS:ObjectName="{CAC36A30-7E4D-45F8-A1E0-C9B9036E26DD}"
+              DTS:ValueIndex="0"
+              DTS:VariableName="User::remote_instance_name_t8" />
+          </DTS:ForEachVariableMappings>
         </DTS:Executable>
       </DTS:Executables>
-      <DTS:ForEachVariableMappings>
-        <DTS:ForEachVariableMapping
-          DTS:CreationName=""
-          DTS:DTSID="{4EF87F67-1779-40E3-BBCE-2CF0F6621F65}"
-          DTS:ObjectName="{4EF87F67-1779-40E3-BBCE-2CF0F6621F65}"
-          DTS:ValueIndex="0"
-          DTS:VariableName="User::remote_instance_name" />
-      </DTS:ForEachVariableMappings>
-    </DTS:Executable>
-    <DTS:Executable
-      DTS:refId="Package\get remote instances"
-      DTS:CreationName="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
-      DTS:Description="Execute SQL Task"
-      DTS:DTSID="{8BC17DDF-D4F0-40FE-BAC2-0672C68B32E1}"
-      DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
-      DTS:LocaleID="-1"
-      DTS:ObjectName="get remote instances"
-      DTS:ThreadHint="0">
-      <DTS:Variables />
-      <DTS:ObjectData>
-        <SQLTask:SqlTaskData
-          SQLTask:Connection="{1DF2B296-3953-4499-98EA-13E6C4575138}"
-          SQLTask:SqlStatementSource="select sql_instance from [dbo].[sqlwatch_config_sql_instance]&#xA;where is_active = 1&#xA;/* do not collect own instance */&#xA;and sql_instance &lt;&gt; @@servername"
-          SQLTask:ResultType="ResultSetType_Rowset" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
-          <SQLTask:ResultBinding
-            SQLTask:ResultName="0"
-            SQLTask:DtsVariableName="User::remote_instances_to_process" />
-        </SQLTask:SqlTaskData>
-      </DTS:ObjectData>
     </DTS:Executable>
   </DTS:Executables>
   <DTS:PrecedenceConstraints>
     <DTS:PrecedenceConstraint
       DTS:refId="Package.PrecedenceConstraints[Constraint]"
       DTS:CreationName=""
-      DTS:DTSID="{0B030EB1-459B-448A-8FD4-CCFCB572B901}"
-      DTS:From="Package\get remote instances"
+      DTS:DTSID="{DC5B1DA7-D112-4CF5-AF77-DF9B9489F18E}"
+      DTS:From="Package\Data Flow Task"
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint"
-      DTS:To="Package\Foreach Loop Container" />
+      DTS:To="Package\Sequence Container" />
   </DTS:PrecedenceConstraints>
   <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
 <!--This CDATA section contains the layout information of the package. The section includes information such as (x,y) coordinates, width, and height.-->
@@ -228,48 +2272,132 @@
     design-time-name="Package">
     <LayoutInfo>
       <GraphLayout
-        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        Capacity="32" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
-          Size="215,42"
-          Id="Package\Foreach Loop Container\execute remote data import 1"
-          TopLeft="19,25.4166655743288" />
+          Size="151.5,42"
+          Id="Package\Data Flow Task"
+          TopLeft="658,110.49999945114" />
+        <NodeLayout
+          Size="206.5,42"
+          Id="Package\Sequence Container\Foreach Loop Container 1\execute remote data import"
+          TopLeft="26,23.3333340220981" />
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="239,224.5"
-          Size="239,267.5"
-          Id="Package\Foreach Loop Container"
-          TopLeft="236,113.749999434997" />
+          PanelSize="262.5,91.5"
+          Size="262.5,134.5"
+          Id="Package\Sequence Container\Foreach Loop Container 1"
+          TopLeft="36.0714285714284,35.6011928449722" />
         <NodeLayout
-          Size="176.5,42"
-          Id="Package\get remote instances"
-          TopLeft="45.5,41.7083331261658" />
+          Size="206.5,42"
+          Id="Package\Sequence Container\Foreach Loop Container 2\execute remote data import"
+          TopLeft="28,28.7500006618599" />
+        <ContainerLayout
+          HeaderHeight="43"
+          IsExpanded="True"
+          PanelSize="261.5,94.5"
+          Size="261.5,137.5"
+          Id="Package\Sequence Container\Foreach Loop Container 2"
+          TopLeft="321.071428571428,35.017861002169" />
+        <NodeLayout
+          Size="206.5,42"
+          Id="Package\Sequence Container\Foreach Loop Container 3\execute remote data import"
+          TopLeft="30,29.8333339898122" />
+        <ContainerLayout
+          HeaderHeight="43"
+          IsExpanded="True"
+          PanelSize="261.5,98"
+          Size="261.5,141"
+          Id="Package\Sequence Container\Foreach Loop Container 3"
+          TopLeft="599.071428571428,35.3511957668416" />
+        <NodeLayout
+          Size="206.5,42"
+          Id="Package\Sequence Container\Foreach Loop Container 4\execute remote data import"
+          TopLeft="31,34.1666673016217" />
+        <ContainerLayout
+          HeaderHeight="43"
+          IsExpanded="True"
+          PanelSize="261.5,100"
+          Size="261.5,143"
+          Id="Package\Sequence Container\Foreach Loop Container 4"
+          TopLeft="890,36.6666651707557" />
+        <NodeLayout
+          Size="206.5,42"
+          Id="Package\Sequence Container\Foreach Loop Container 5\execute remote data import"
+          TopLeft="31,34.1666673016217" />
+        <ContainerLayout
+          HeaderHeight="43"
+          IsExpanded="True"
+          PanelSize="261.5,100"
+          Size="261.5,143"
+          Id="Package\Sequence Container\Foreach Loop Container 5"
+          TopLeft="37.0714285714284,189.833332084947" />
+        <NodeLayout
+          Size="206.5,42"
+          Id="Package\Sequence Container\Foreach Loop Container 6\execute remote data import"
+          TopLeft="31,34.1666673016217" />
+        <ContainerLayout
+          HeaderHeight="43"
+          IsExpanded="True"
+          PanelSize="261.5,100"
+          Size="261.5,143"
+          Id="Package\Sequence Container\Foreach Loop Container 6"
+          TopLeft="321,195.416664993183" />
+        <NodeLayout
+          Size="206.5,42"
+          Id="Package\Sequence Container\Foreach Loop Container 7\execute remote data import"
+          TopLeft="31,34.1666673016217" />
+        <ContainerLayout
+          HeaderHeight="43"
+          IsExpanded="True"
+          PanelSize="261.5,100"
+          Size="261.5,143"
+          Id="Package\Sequence Container\Foreach Loop Container 7"
+          TopLeft="601,198.666664977041" />
+        <NodeLayout
+          Size="206.5,42"
+          Id="Package\Sequence Container\Foreach Loop Container 8\execute remote data import"
+          TopLeft="31,34.1666673016217" />
+        <ContainerLayout
+          HeaderHeight="43"
+          IsExpanded="True"
+          PanelSize="261.5,100"
+          Size="261.5,143"
+          Id="Package\Sequence Container\Foreach Loop Container 8"
+          TopLeft="890,197.583331649088" />
+        <ContainerLayout
+          HeaderHeight="43"
+          IsExpanded="True"
+          PanelSize="1227,381"
+          Size="1227,424"
+          Id="Package\Sequence Container"
+          TopLeft="10,221.666665655043" />
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint]"
-          TopLeft="133.75,83.7083331261658">
+          TopLeft="733.75,152.49999945114">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="221.75,30.0416663088317"
+              EndConnector="-110.25,69.1666662039029"
               Start="0,0"
-              End="221.75,22.5416663088317">
+              End="-110.25,61.6666662039029">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,11.0208331544158" />
+                    End="0,30.5833331019515" />
                   <mssgle:CubicBezierSegment
-                    Point1="0,11.0208331544158"
-                    Point2="0,15.0208331544158"
-                    Point3="4,15.0208331544158" />
+                    Point1="0,30.5833331019515"
+                    Point2="0,34.5833331019515"
+                    Point3="-4,34.5833331019515" />
                   <mssgle:LineSegment
-                    End="217.75,15.0208331544158" />
+                    End="-106.25,34.5833331019515" />
                   <mssgle:CubicBezierSegment
-                    Point1="217.75,15.0208331544158"
-                    Point2="221.75,15.0208331544158"
-                    Point3="221.75,19.0208331544158" />
+                    Point1="-106.25,34.5833331019515"
+                    Point2="-110.25,34.5833331019515"
+                    Point3="-110.25,38.5833331019515" />
                   <mssgle:LineSegment
-                    End="221.75,22.5416663088317" />
+                    End="-110.25,61.6666662039029" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -281,5 +2409,616 @@
       </GraphLayout>
     </LayoutInfo>
   </Package>
+  <TaskHost
+    design-time-name="Package\Data Flow Task">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="64" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
+        <NodeLayout
+          Size="117.5,42"
+          Id="Package\Data Flow Task\thread 4"
+          TopLeft="798.5,106.034723215461" />
+        <NodeLayout
+          Size="117.5,42"
+          Id="Package\Data Flow Task\thread 7"
+          TopLeft="651,518.60416561065" />
+        <NodeLayout
+          Size="132,42"
+          Id="Package\Data Flow Task\rs thread 1"
+          TopLeft="326.25,8.09722319528179" />
+        <NodeLayout
+          Size="133,42"
+          Id="Package\Data Flow Task\rs thread 8"
+          TopLeft="793.333333333334,616.02083483328" />
+        <NodeLayout
+          Size="129,42"
+          Id="Package\Data Flow Task\rs thread 7"
+          TopLeft="652.083333333333,618.291667648695" />
+        <NodeLayout
+          Size="117.5,42"
+          Id="Package\Data Flow Task\thread 3"
+          TopLeft="645.166666666667,106.951389370935" />
+        <NodeLayout
+          Size="117.5,42"
+          Id="Package\Data Flow Task\thread 2"
+          TopLeft="489.333333333333,104.256944433234" />
+        <NodeLayout
+          Size="130,42"
+          Id="Package\Data Flow Task\rs thread 6"
+          TopLeft="505.833333333334,615.145833824348" />
+        <NodeLayout
+          Size="117.5,42"
+          Id="Package\Data Flow Task\thread 6"
+          TopLeft="506.833333333333,523.131942859299" />
+        <NodeLayout
+          Size="129,42"
+          Id="Package\Data Flow Task\rs thread 2"
+          TopLeft="490.416666666667,10.7916681329826" />
+        <NodeLayout
+          Size="129,42"
+          Id="Package\Data Flow Task\rs thread 5"
+          TopLeft="356.666666666667,614.256944433234" />
+        <NodeLayout
+          Size="153.5,42"
+          Id="Package\Data Flow Task\OLE DB Source"
+          TopLeft="71.6666666666667,298.729165182863" />
+        <NodeLayout
+          Size="129,42"
+          Id="Package\Data Flow Task\rs thread 4"
+          TopLeft="792.916666666667,11.2152802552684" />
+        <NodeLayout
+          Size="117.5,42"
+          Id="Package\Data Flow Task\thread 5"
+          TopLeft="359.333333333333,525.85416456136" />
+        <NodeLayout
+          Size="117.5,42"
+          Id="Package\Data Flow Task\thread 8"
+          TopLeft="793.5,516.784721681883" />
+        <NodeLayout
+          Size="129,42"
+          Id="Package\Data Flow Task\rs thread 3"
+          TopLeft="645.416666666667,9.87500197750861" />
+        <NodeLayout
+          Size="120.5,42"
+          Id="Package\Data Flow Task\Multicast"
+          TopLeft="570.333333333333,317.868053976688" />
+        <NodeLayout
+          Size="117.5,42"
+          Id="Package\Data Flow Task\thread 1"
+          TopLeft="333.5,103.368055042121" />
+        <EdgeLayout
+          Id="Package\Data Flow Task.Paths[Multicast Output 7]"
+          TopLeft="641.833333333333,359.868053976688">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="67.9166666666666,158.736111633963"
+              Start="0,0"
+              End="67.9166666666666,151.236111633963">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,67.1951438907475" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,67.1951438907475"
+                    Point2="0,71.1951438907475"
+                    Point3="4,71.1951438907475" />
+                  <mssgle:LineSegment
+                    End="63.9166666666666,71.1951438907475" />
+                  <mssgle:CubicBezierSegment
+                    Point1="63.9166666666666,71.1951438907475"
+                    Point2="67.9166666666666,71.1951438907475"
+                    Point3="67.9166666666666,75.1951438907475" />
+                  <mssgle:LineSegment
+                    End="67.9166666666666,151.236111633963" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Data Flow Task.Paths[Multicast Output 6]"
+          TopLeft="619.333333333333,359.868053976688">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-53.75,163.263888882611"
+              Start="0,0"
+              End="-53.75,155.763888882611">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,69.2259089725212" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,69.2259089725212"
+                    Point2="0,73.2259089725212"
+                    Point3="-4,73.2259089725212" />
+                  <mssgle:LineSegment
+                    End="-49.75,73.2259089725212" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-49.75,73.2259089725212"
+                    Point2="-53.75,73.2259089725212"
+                    Point3="-53.75,77.2259089725212" />
+                  <mssgle:LineSegment
+                    End="-53.75,155.763888882611" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Data Flow Task.Paths[Multicast Output 5]"
+          TopLeft="596.833333333333,359.868053976688">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-178.75,165.986110584672"
+              Start="0,0"
+              End="-178.75,158.486110584672">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,46.7046908414273" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,46.7046908414273"
+                    Point2="0,50.7046908414273"
+                    Point3="-4,50.7046908414273" />
+                  <mssgle:LineSegment
+                    End="-174.75,50.7046908414273" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-174.75,50.7046908414273"
+                    Point2="-178.75,50.7046908414273"
+                    Point3="-178.75,54.7046908414273" />
+                  <mssgle:LineSegment
+                    End="-178.75,158.486110584672" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Data Flow Task.Paths[Multicast Output 4]"
+          TopLeft="664.333333333333,317.868053976688">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="192.916666666667,-169.833330761227"
+              Start="0,0"
+              End="192.916666666667,-162.333330761227">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,-47.8799223651012" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,-47.8799223651012"
+                    Point2="0,-51.8799223651012"
+                    Point3="4,-51.8799223651012" />
+                  <mssgle:LineSegment
+                    End="188.916666666667,-51.8799223651012" />
+                  <mssgle:CubicBezierSegment
+                    Point1="188.916666666667,-51.8799223651012"
+                    Point2="192.916666666667,-51.8799223651012"
+                    Point3="192.916666666667,-55.8799223651012" />
+                  <mssgle:LineSegment
+                    End="192.916666666667,-162.333330761227" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Data Flow Task.Paths[Multicast Output 3]"
+          TopLeft="641.833333333333,317.868053976688">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="62.0833333333333,-168.916664605753"
+              Start="0,0"
+              End="62.0833333333333,-161.416664605753">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,-71.7612500291251" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,-71.7612500291251"
+                    Point2="0,-75.7612500291251"
+                    Point3="4,-75.7612500291251" />
+                  <mssgle:LineSegment
+                    End="58.0833333333333,-75.7612500291251" />
+                  <mssgle:CubicBezierSegment
+                    Point1="58.0833333333333,-75.7612500291251"
+                    Point2="62.0833333333333,-75.7612500291251"
+                    Point3="62.0833333333333,-79.7612500291251" />
+                  <mssgle:LineSegment
+                    End="62.0833333333333,-161.416664605753" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Data Flow Task.Paths[Multicast Output 2]"
+          TopLeft="596.833333333333,317.868053976688">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-204.583333333333,-172.499998934567"
+              Start="0,0"
+              End="-204.583333333333,-164.999998934567">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,-48.6945241702136" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,-48.6945241702136"
+                    Point2="0,-52.6945241702136"
+                    Point3="-4,-52.6945241702136" />
+                  <mssgle:LineSegment
+                    End="-200.583333333333,-52.6945241702136" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-200.583333333333,-52.6945241702136"
+                    Point2="-204.583333333333,-52.6945241702136"
+                    Point3="-204.583333333333,-56.6945241702136" />
+                  <mssgle:LineSegment
+                    End="-204.583333333333,-164.999998934567" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Data Flow Task.Paths[Multicast Output 1]"
+          TopLeft="619.333333333333,317.868053976688">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-71.25,-171.611109543454"
+              Start="0,0"
+              End="-71.25,-164.111109543454">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,-72.9697424954621" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,-72.9697424954621"
+                    Point2="0,-76.9697424954621"
+                    Point3="-4,-76.9697424954621" />
+                  <mssgle:LineSegment
+                    End="-67.25,-76.9697424954621" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-67.25,-76.9697424954621"
+                    Point2="-71.25,-76.9697424954621"
+                    Point3="-71.25,-80.9697424954621" />
+                  <mssgle:LineSegment
+                    End="-71.25,-164.111109543454" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Data Flow Task.Paths[Case 17]"
+          TopLeft="551.5,104.256944433234">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,-51.4652763002515"
+              Start="0,0"
+              End="0,-43.9652763002515">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,-43.9652763002515" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="-15.2180859375,-26.7594936188757,30.436171875,9.5537109375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Data Flow Task.Paths[Case 16]"
+          TopLeft="392.25,103.368055042121">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,-53.2708318468391"
+              Start="0,0"
+              End="0,-45.7708318468391">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,-45.7708318468391" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="-15.2180859375,-27.6622713921696,30.436171875,9.5537109375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Data Flow Task.Paths[Case 15]"
+          TopLeft="856.041666666667,558.784721681883">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,57.2361131513978"
+              Start="0,0"
+              End="0,49.7361131513978">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,49.7361131513978" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="-15.2180859375,20.0912011069489,30.436171875,9.5537109375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Data Flow Task.Paths[Case 14]"
+          TopLeft="713.166666666667,560.60416561065">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,57.6875020380446"
+              Start="0,0"
+              End="0,50.1875020380446">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,50.1875020380446" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="-15.2180859375,20.3168955502723,30.436171875,9.5537109375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Data Flow Task.Paths[Case 13]"
+          TopLeft="568.208333333333,565.131942859299">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,50.0138909650486"
+              Start="0,0"
+              End="0,42.5138909650486">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,42.5138909650486" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="-15.2180859375,16.4800900137743,30.436171875,9.5537109375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Data Flow Task.Paths[Case 12]"
+          TopLeft="419.625,567.85416456136">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,46.4027798718743"
+              Start="0,0"
+              End="0,38.9027798718743">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,38.9027798718743" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="-15.2180859375,14.6745344671871,30.436171875,9.5537109375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Data Flow Task.Paths[Case 11]"
+          TopLeft="706.916666666667,106.951389370935">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,-55.076387393426"
+              Start="0,0"
+              End="0,-47.576387393426">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,-47.576387393426" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="-15.2180859375,-28.565049165463,30.436171875,9.5537109375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Data Flow Task.Paths[Case 1]"
+          TopLeft="857.333333333333,106.034723215461">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,-52.8194429601921"
+              Start="0,0"
+              End="0,-45.3194429601921">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,-45.3194429601921" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="-15.2180859375,-27.4365769488461,30.436171875,9.5537109375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Data Flow Task.Paths[OLE DB Source Output]"
+          TopLeft="225.166666666667,319.729165182863">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="345.166666666667,19.1388887938249"
+              Start="0,0"
+              End="337.666666666667,19.1388887938249">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="168.583333333333,0" />
+                  <mssgle:CubicBezierSegment
+                    Point1="168.583333333333,0"
+                    Point2="172.583333333333,0"
+                    Point3="172.583333333333,4" />
+                  <mssgle:LineSegment
+                    End="172.583333333333,15.1388887938249" />
+                  <mssgle:CubicBezierSegment
+                    Point1="172.583333333333,15.1388887938249"
+                    Point2="172.583333333333,19.1388887938249"
+                    Point3="176.583333333333,19.1388887938249" />
+                  <mssgle:LineSegment
+                    End="337.666666666667,19.1388887938249" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Data Flow Task.Paths[Multicast Output 8]"
+          TopLeft="664.333333333333,359.868053976688">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="187.916666666667,156.916667705195"
+              Start="0,0"
+              End="187.916666666667,149.416667705195">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,43.9341982038924" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,43.9341982038924"
+                    Point2="0,47.9341982038924"
+                    Point3="4,47.9341982038924" />
+                  <mssgle:LineSegment
+                    End="183.916666666667,47.9341982038924" />
+                  <mssgle:CubicBezierSegment
+                    Point1="183.916666666667,47.9341982038924"
+                    Point2="187.916666666667,47.9341982038924"
+                    Point3="187.916666666667,51.9341982038924" />
+                  <mssgle:LineSegment
+                    End="187.916666666667,149.416667705195" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <AnnotationLayout
+          Text="Get list of servers to process and distribute based on thread_id into its own objets.&#xA;This way we can process 8 separate arrays. To add more threads follow this pattern."
+          ParentId="Package\Data Flow Task"
+          FontInfo="{assembly:Null}"
+          Size="468,NaN"
+          Id="9041a37c-db4d-41a1-927b-09cd76b390bf"
+          TopLeft="901.25,305.364581816571" />
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\Data Flow Task\OLE DB Source">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
 </Objects>]]></DTS:DesignTimeProperties>
 </DTS:Executable>

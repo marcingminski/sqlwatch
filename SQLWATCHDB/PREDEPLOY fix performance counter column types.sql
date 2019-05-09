@@ -16,6 +16,8 @@
 
 */
 
+set xact_abort on;
+
 /* new table names */
 if (select CHARACTER_MAXIMUM_LENGTH from INFORMATION_SCHEMA.COLUMNS
 where TABLE_NAME = 'sqlwatch_logger_perf_os_performance_counters'
@@ -27,21 +29,12 @@ and (select CHARACTER_MAXIMUM_LENGTH from INFORMATION_SCHEMA.COLUMNS
 where TABLE_NAME = 'sqlwatch_logger_perf_os_performance_counters'
 and COLUMN_NAME = 'counter_name') <> 128
 	begin
-		declare @error int
 		begin tran datatypemigration
 		alter table [dbo].[sqlwatch_logger_perf_os_performance_counters] drop constraint [pk_sql_perf_mon_perf_counters];
-		set @error = @@ERROR
 		alter table [dbo].[sqlwatch_logger_perf_os_performance_counters] alter column [object_name] nvarchar(128) not null;
-		set @error = @@ERROR
 		alter table [dbo].[sqlwatch_logger_perf_os_performance_counters] alter column [instance_name] nvarchar(128) not null;
-		set @error = @@ERROR
 		alter table [dbo].[sqlwatch_logger_perf_os_performance_counters] alter column [counter_name] nvarchar(128) not null;
-		set @error = @@ERROR
-
-		if @error <> 0
-			rollback tran datatypemigration
-		else
-			commit tran datatypemigration
+		commit tran datatypemigration
 	end
 GO
 
@@ -56,21 +49,12 @@ and (select CHARACTER_MAXIMUM_LENGTH from INFORMATION_SCHEMA.COLUMNS
 where TABLE_NAME = 'sql_perf_mon_perf_counters'
 and COLUMN_NAME = 'counter_name') <> 128
 	begin
-		declare @error int
 		begin tran datatypemigration
 		alter table [dbo].sql_perf_mon_perf_counters drop constraint [pk_sql_perf_mon_perf_counters];
-		set @error = @@ERROR
 		alter table [dbo].sql_perf_mon_perf_counters alter column [object_name] nvarchar(128) not null;
-		set @error = @@ERROR
 		alter table [dbo].sql_perf_mon_perf_counters alter column [instance_name] nvarchar(128) not null;
-		set @error = @@ERROR
 		alter table [dbo].sql_perf_mon_perf_counters alter column [counter_name] nvarchar(128) not null;
-		set @error = @@ERROR
-
-		if @error <> 0
-			rollback tran datatypemigration
-		else
-			commit tran datatypemigration
+		commit tran datatypemigration
 	end
 GO
 

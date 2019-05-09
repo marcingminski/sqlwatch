@@ -24,3 +24,7 @@
 		[snapshot_time],[snapshot_type_id],[sql_instance], [activity_id], [activity_sequence]
 		)
 )
+go
+CREATE NONCLUSTERED INDEX idx_sqlwatch_xes_wait_stats_001
+ON [dbo].[sqlwatch_logger_xes_waits_stats] ([sql_instance])
+INCLUDE ([snapshot_time],[snapshot_type_id])

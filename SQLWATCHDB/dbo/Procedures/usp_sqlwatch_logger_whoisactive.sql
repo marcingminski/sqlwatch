@@ -2,6 +2,8 @@
 	@min_session_duration_seconds smallint = 15
 	)
 AS
+set xact_abort on
+begin tran
 
 	declare @sp_whoisactive_destination_table varchar(255)
 	declare @snapshot_time datetime
@@ -75,3 +77,4 @@ AS
 		begin
 			print 'sp_WhoIsActive not found.'
 		end
+commit tran

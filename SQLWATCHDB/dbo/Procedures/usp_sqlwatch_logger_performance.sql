@@ -1,6 +1,9 @@
 ﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_logger_performance] AS
+
+set xact_abort on
+begin tran
+
 set nocount on;
-set transaction isolation level read uncommitted;
 
 declare	@product_version nvarchar(128)
 declare @product_version_major decimal(10,2)
@@ -52,7 +55,7 @@ declare @sql nvarchar(4000)
 		-- set the basics
 		--------------------------------------------------------------------------------------------------------------
 		select @date_snapshot_previous = max([snapshot_time])
-		from [dbo].[sqlwatch_logger_snapshot_header]
+		from [dbo].[sqlwatch_logger_snapshot_header] (nolock) --so we dont get blocked by central repository. this is safe at this point.
 		where snapshot_type_id = 1
 		and sql_instance = @@SERVERNAME
 		
@@ -309,7 +312,9 @@ declare @sql nvarchar(4000)
 		--------------------------------------------------------------------------------------------------------------
 		insert into dbo.[sqlwatch_logger_perf_file_stats]
 		select 
-			db_name (f.database_id) as [database_name], f.name as logical_file_name, f.type_desc, 
+			[database_name] = d.name
+			, [database_create_date] = d.create_date 
+			, f.name as logical_file_name, f.type_desc, 
 			cast (case
 			when left (ltrim (f.physical_name), 2) = '\\' 
 					then left (ltrim (f.physical_name), charindex ('\', ltrim (f.physical_name), charindex ('\', ltrim (f.physical_name), 3) + 1) - 1)
@@ -323,7 +328,17 @@ declare @sql nvarchar(4000)
 			, 1
 			, @@SERVERNAME
 		from sys.dm_io_virtual_file_stats (default, default) as fs
-		inner join sys.master_files as f on fs.database_id = f.database_id and fs.[file_id] = f.[file_id]
+		inner join sys.master_files as f 
+			on fs.database_id = f.database_id 
+			and fs.[file_id] = f.[file_id]
+		
+		/* 2019-05-05 join on databases to get database name and create data as part of the  */
+		inner join sys.databases d 
+			on d.database_id = f.database_id
+		inner join [dbo].[sqlwatch_meta_database] sd 
+			on sd.[database_name] = d.[name] collate database_default
+			and sd.[database_create_date] = d.[create_date]
+
 		--------------------------------------------------------------------------------------------------------------
 		-- wait stats snapshot
 		--------------------------------------------------------------------------------------------------------------
@@ -414,4 +429,4 @@ declare @sql nvarchar(4000)
 				--and [event_time] > (select isnull(max([event_time]),'1970-01-01') from [dbo].[logger_perf_xes_iosubsystem])
 				--and convert(xml, [event_xml]).value('(/event/data/text)[1]','varchar(255)') = 'IO_SUBSYSTEM'
 			end
-go
+commit tran

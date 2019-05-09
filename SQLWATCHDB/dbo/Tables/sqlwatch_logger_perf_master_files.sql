@@ -9,7 +9,7 @@
 	[snapshot_type_id] tinyint,
 	[sql_instance] nvarchar(25) not null default @@SERVERNAME,
 	constraint PK_sql_perf_mon_master_files primary key clustered (
-		[snapshot_time], [database_name], [sql_instance]
+		[snapshot_time], [snapshot_type_id], [database_name], [database_create_date], [sql_instance]
 		),
 	constraint FK_sql_perf_mon_master_files_db foreign key ([database_name], [database_create_date], [sql_instance]) 
 		references [dbo].[sqlwatch_meta_database](

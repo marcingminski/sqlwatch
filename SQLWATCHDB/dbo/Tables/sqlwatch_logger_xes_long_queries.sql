@@ -31,6 +31,6 @@
 	[sql_instance] nvarchar(25) not null default @@SERVERNAME,
 	constraint fk_logger_perf_xes_long_queries foreign key ([snapshot_time],[snapshot_type_id],[sql_instance]) references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time],[snapshot_type_id],[sql_instance]) on delete cascade  on update cascade,
 	constraint pk_logger_perf_xes_long_queries primary key nonclustered (
-		[snapshot_time] ASC, [activity_id], [activity_sequence],[sql_instance]
+		[snapshot_time], [snapshot_type_id], [activity_id], [activity_sequence],[sql_instance]
 	)
 ) ON [PRIMARY] 

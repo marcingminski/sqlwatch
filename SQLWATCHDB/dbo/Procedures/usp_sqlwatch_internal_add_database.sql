@@ -12,7 +12,6 @@ as
    This procedure will be scheduled to run periodically to add
    any missing databases. It will also be triggered during install 
    to maintain one piece of code */
-
 	set nocount on;
 
 	declare @databases table (

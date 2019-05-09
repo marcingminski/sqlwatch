@@ -52,7 +52,9 @@
 -- =============================================
 CREATE PROCEDURE [dbo].[usp_sqlwatch_logger_missing_indexes]
 AS
-BEGIN
+set xact_abort on
+begin tran
+
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
@@ -119,8 +121,8 @@ BEGIN
 		inner join [dbo].[sqlwatch_meta_database] db
 		on db.[database_name] = db_name(mi.[database_id])
 		and db.[database_create_date] = sdb.[create_date]
-END
 
-GO
+
+commit tran
 
 
