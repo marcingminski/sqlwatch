@@ -338,6 +338,7 @@ declare @sql nvarchar(4000)
 		inner join [dbo].[sqlwatch_meta_database] sd 
 			on sd.[database_name] = d.[name] collate database_default
 			and sd.[database_create_date] = d.[create_date]
+			and sd.sql_instance = @@SERVERNAME
 
 		--------------------------------------------------------------------------------------------------------------
 		-- wait stats snapshot

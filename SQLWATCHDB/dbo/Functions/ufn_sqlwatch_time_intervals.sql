@@ -27,15 +27,17 @@ AS RETURN (
 			 ,	[snapshot_interval_end]		= dateadd(mi, interval_minutes, convert(datetime,dateadd(mi,(datediff(mi,0, [snapshot_time])/ interval_minutes) * interval_minutes,0)))
 			 ,	[report_time_interval_minutes] = interval_minutes
 			 ,	[snapshot_type_id]
-			 ,	[snapshot_age_hours]	= datediff(hour,dateadd(mi, interval_minutes, convert(datetime,dateadd(mi,(datediff(mi,0, [snapshot_time])/ interval_minutes) * interval_minutes,0))),getdate())
+			 ,	[snapshot_age_hours]	= datediff(hour,dateadd(mi, interval_minutes, convert(datetime,dateadd(mi,(datediff(mi,0, [snapshot_time])/ interval_minutes) * interval_minutes,0))),getutcdate())
+			 ,  [sql_instance]
 		from [dbo].[sqlwatch_logger_snapshot_header]
 		cross apply cte_interval_window
 		where snapshot_type_id = isnull(@snapshot_type_id,snapshot_type_id)
-		and snapshot_time >= DATEADD(HOUR, -@report_window, isnull(@report_end_time,getdate()))
-		and snapshot_time <= isnull(@report_end_time,getdate())
+		and snapshot_time >= DATEADD(HOUR, -@report_window, isnull(@report_end_time,getutcdate()))
+		and snapshot_time <= isnull(@report_end_time,getutcdate())
 		group by 
 				convert(datetime,dateadd(mi,(datediff(mi,0, [snapshot_time])/ interval_minutes) * interval_minutes,0))
 			,	dateadd(mi, interval_minutes, convert(datetime,dateadd(mi,(datediff(mi,0, [snapshot_time])/ interval_minutes) * interval_minutes,0)))
 			,	interval_minutes
 			,	[snapshot_type_id]
+			,   [sql_instance]
 )
