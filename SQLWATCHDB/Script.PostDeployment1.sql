@@ -664,6 +664,10 @@ when not matched then
 --we have to switch database to msdb but we also need to know which db jobs should run in so have to capture current database:
 declare @server nvarchar(255)
 set @server = @@SERVERNAME
+
+DECLARE @JobOwner NVARCHAR(255)
+SET @JobOwner = (SELECT [name] FROM syslogins WHERE [sid] = 0x01)
+
 USE [msdb]
 DECLARE @jobId BINARY(16)
 DECLARE @schedule_id int;
@@ -676,7 +680,7 @@ if (select name from sysjobs where name = 'DBA-PERF-LOGGER') is null
 				@notify_level_page=2, 
 				@delete_level=0, 
 				@category_name=N'Data Collector', 
-				@owner_login_name=N'sa', @job_id = @jobId OUTPUT;
+				@owner_login_name=@JobOwner, @job_id = @jobId OUTPUT;
 		EXEC msdb.dbo.sp_add_jobserver @job_name=N'DBA-PERF-LOGGER', @server_name = @server;
 		EXEC msdb.dbo.sp_add_jobstep @job_name=N'DBA-PERF-LOGGER', @step_name=N'DBA-PERF-LOGGER', 
 				@step_id=1, 
@@ -698,7 +702,7 @@ if (select name from sysjobs where name = 'DBA-PERF-LOGGER') is null
 				@delete_level=0, 
 				@description=N'', 
 				@category_name=N'Data Collector', 
-				@owner_login_name=N'sa', 
+				@owner_login_name=@JobOwner, 
 				@notify_email_operator_name=N'', 
 				@notify_page_operator_name=N'';
 		EXEC msdb.dbo.sp_add_jobschedule @job_name=N'DBA-PERF-LOGGER', @name=N'DBA-PERF-LOGGER', 
@@ -724,7 +728,7 @@ if (select name from sysjobs where name = 'DBA-PERF-LOGGER-RETENTION') is  null
 				@notify_level_page=2, 
 				@delete_level=0, 
 				@category_name=N'Data Collector', 
-				@owner_login_name=N'sa', @job_id = @jobId OUTPUT;
+				@owner_login_name=@JobOwner, @job_id = @jobId OUTPUT;
 		EXEC msdb.dbo.sp_add_jobserver @job_name=N'DBA-PERF-LOGGER-RETENTION', @server_name = @server;
 		EXEC msdb.dbo.sp_add_jobstep @job_name=N'DBA-PERF-LOGGER-RETENTION', @step_name=N'DBA-PERF-LOGGER-RETENTION', 
 				@step_id=1, 
@@ -746,7 +750,7 @@ if (select name from sysjobs where name = 'DBA-PERF-LOGGER-RETENTION') is  null
 				@delete_level=0, 
 				@description=N'', 
 				@category_name=N'Data Collector', 
-				@owner_login_name=N'sa', 
+				@owner_login_name=@JobOwner, 
 				@notify_email_operator_name=N'', 
 				@notify_page_operator_name=N'';
 		set @schedule_id = null
@@ -774,7 +778,7 @@ if (select name from sysjobs where name = 'DBA-PERF-AUTO-CONFIG') is  null
 			@notify_level_page=2, 
 			@delete_level=0, 
 			@category_name=N'Data Collector', 
-			@owner_login_name=N'sa', @job_id = @jobId OUTPUT
+			@owner_login_name=@JobOwner, @job_id = @jobId OUTPUT
 	EXEC msdb.dbo.sp_add_jobserver @job_name=N'DBA-PERF-AUTO-CONFIG', @server_name = @server
 	EXEC msdb.dbo.sp_add_jobstep @job_name=N'DBA-PERF-AUTO-CONFIG', @step_name=N'ADD-DATABASE', 
 			@step_id=1, 
@@ -797,7 +801,7 @@ if (select name from sysjobs where name = 'DBA-PERF-AUTO-CONFIG') is  null
 			@delete_level=0, 
 			@description=N'', 
 			@category_name=N'Data Collector', 
-			@owner_login_name=N'sa', 
+			@owner_login_name=@JobOwner, 
 			@notify_email_operator_name=N'', 
 			@notify_page_operator_name=N''
 
@@ -829,7 +833,7 @@ if (select name from sysjobs where name = 'SQLWATCH-LOGGER-MISSING-INDEXES') is 
 				@delete_level=0, 
 				@description=N'https://sqlwatch.io', 
 				@category_name=N'Data Collector', 
-				@owner_login_name=N'sa', @job_id = @jobId OUTPUT
+				@owner_login_name=@JobOwner, @job_id = @jobId OUTPUT
 
 		EXEC msdb.dbo.sp_add_jobstep @job_id=@jobId, @step_name=N'dbo.usp_logger_missing_indexes', 
 				@step_id=1, 
@@ -876,7 +880,7 @@ if (select name from sysjobs where name = 'SQLWATCH-LOGGER-DISK-UTILISATION') is
 					@notify_level_page=2, 
 					@delete_level=0, 
 					@category_name=N'Data Collector', 
-					@owner_login_name=N'sa', @job_id = @jobId OUTPUT
+					@owner_login_name=@JobOwner, @job_id = @jobId OUTPUT
 		EXEC msdb.dbo.sp_add_jobserver @job_name=N'SQLWATCH-LOGGER-DISK-UTILISATION', @server_name = @server;
 		EXEC msdb.dbo.sp_add_jobstep @job_name=N'SQLWATCH-LOGGER-DISK-UTILISATION', @step_name=N'exec dbo.usp_logger_disk_utilisation', 
 			@step_id=1, 
@@ -899,7 +903,7 @@ if (select name from sysjobs where name = 'SQLWATCH-LOGGER-DISK-UTILISATION') is
 				@delete_level=0, 
 				@description=N'', 
 				@category_name=N'Data Collector', 
-				@owner_login_name=N'sa', 
+				@owner_login_name=@JobOwner, 
 				@notify_email_operator_name=N'', 
 				@notify_page_operator_name=N''
 		set @schedule_id = null
