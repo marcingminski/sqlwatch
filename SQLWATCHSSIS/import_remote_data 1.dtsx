@@ -8,12 +8,12 @@
   DTS:DelayValidation="True"
   DTS:DTSID="{BCF52C81-EF14-4A6C-84FB-5E8F1A159F36}"
   DTS:ExecutableType="SSIS.Package.3"
-  DTS:LastModifiedProductVersion="15.0.1100.123"
+  DTS:LastModifiedProductVersion="15.0.1300.375"
   DTS:LocaleID="2057"
   DTS:ObjectName="import_remote_data"
   DTS:PackageType="5"
-  DTS:VersionBuild="649"
-  DTS:VersionGUID="{0BCDBA06-F34D-47C9-B99A-338A5FBEF785}">
+  DTS:VersionBuild="656"
+  DTS:VersionGUID="{A8F2B63A-956E-4F94-AA3F-08C56C665E3E}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">6</DTS:Property>
   <DTS:ConnectionManagers>
@@ -55,6 +55,8 @@
       DTS:DTSID="{F9823568-DB38-44D9-8D48-7A993CF9C520}"
       DTS:ObjectName="central_repository">
       <DTS:PropertyExpression
+        DTS:Name="ConnectionString">len(@[$Package::repository_user_name]) == 0 ? "Data Source=" + @[$Package::repository_instance_name]  + ";Initial Catalog=" + @[$Package::repository_database]  + ";Provider=SQLNCLI11.1;Integrated Security=SSPI;Auto Translate=False;Packet Size=32767;": "Data Source=" + @[$Package::repository_instance_name]  + ";User ID=" + @[$Package::repository_user_name]  + ";Initial Catalog=" + @[$Package::repository_database]  + ";Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;Packet Size=32767;"</DTS:PropertyExpression>
+      <DTS:PropertyExpression
         DTS:Name="InitialCatalog">@[$Package::repository_database]</DTS:PropertyExpression>
       <DTS:PropertyExpression
         DTS:Name="Password">@[$Package::repository_password]</DTS:PropertyExpression>
@@ -64,11 +66,11 @@
         DTS:Name="UserName">@[$Package::repository_user_name]</DTS:PropertyExpression>
       <DTS:ObjectData>
         <DTS:ConnectionManager
-          DTS:ConnectionString="Data Source=sql-test-1\sql2016;User ID=sqlwatchuser;Initial Catalog=SQLWATCH;Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;Packet Size=32767;">
+          DTS:ConnectionString="Data Source=192.168.2.12\sql2016;User ID=;Initial Catalog=SQLWATCH;Provider=SQLNCLI11.1;Integrated Security=SSPI;Auto Translate=False;Packet Size=32767;">
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAA3Kp2lNKhI0Gr+ttggegpLQAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAAwhqsLAUdXI67x1ctJu6z0AAAAAASAAACgAAAAEAAAAK2oKXHtM+reZS/DavMdoLwgAAAAchfpV53jxlbiXH/1jjmuOnImzvVO/ZyM9z232h1705sUAAAAZzYQZK/QZSx7IeKWgnvmTPSln1w</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAubFpPoP9EEaKbPsHw8xL0wAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAC8pbA5hRH2OW92ujeSBmH0AAAAAASAAACgAAAAEAAAAJrxss+q0fCsI39xHOilhWkgAAAAlFiuYzEvDqHVesuDJLzOsTGe1DelJkLEt5j0+LB5pOsUAAAAVr+DFiIQXS1YJQ8KNij5HSRLqyc</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -77,6 +79,8 @@
       DTS:CreationName="OLEDB"
       DTS:DTSID="{27dbb649-bd10-402d-8c7e-48c5b49fc6d5}"
       DTS:ObjectName="central_repository_config">
+      <DTS:PropertyExpression
+        DTS:Name="ConnectionString">len(@[$Package::repository_user_name]) == 0 ? "Data Source=" + @[$Package::repository_instance_name]  + ";Initial Catalog=" + @[$Package::repository_database]  + ";Provider=SQLNCLI11.1;Integrated Security=SSPI;Auto Translate=False;Packet Size=32767;": "Data Source=" + @[$Package::repository_instance_name]  + ";User ID=" + @[$Package::repository_user_name]  + ";Initial Catalog=" + @[$Package::repository_database]  + ";Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;Packet Size=32767;"</DTS:PropertyExpression>
       <DTS:PropertyExpression
         DTS:Name="InitialCatalog">@[$Package::repository_database]</DTS:PropertyExpression>
       <DTS:PropertyExpression
@@ -88,11 +92,11 @@
       <DTS:ObjectData>
         <DTS:ConnectionManager
           DTS:Retain="True"
-          DTS:ConnectionString="Data Source=sql-test-1\sql2016;User ID=sqlwatchuser;Initial Catalog=SQLWATCH;Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;Packet Size=32767;">
+          DTS:ConnectionString="Data Source=192.168.2.12\sql2016;User ID=;Initial Catalog=SQLWATCH;Provider=SQLNCLI11.1;Integrated Security=SSPI;Auto Translate=False;Packet Size=32767;">
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAA3Kp2lNKhI0Gr+ttggegpLQAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAC9mfUwIC3FzSb6LAi4+mCUAAAAAASAAACgAAAAEAAAAEPzKpGajZ5ddhhAd5Sgh44gAAAAnToUhdlqq/QMj6uULg21WTIZ7XHtU5LxsMCHVbSruJ4UAAAAwBBWVvnK2eVdFO2hbEbNCCZQUlo</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAubFpPoP9EEaKbPsHw8xL0wAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAAUvBVzzOmvzZ8HKuESVVBKAAAAAASAAACgAAAAEAAAAOMcuAHtTlhTmDw9Td06J6QgAAAAXGVLFDt5NRNqeWGEoF5HWPKxLbTzql8dSzpji+KInpkUAAAAlUclip/Mmpu8ry5njTLH3yH10Go</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -103,6 +107,8 @@
       DTS:DTSID="{73634AE9-C2BC-44BD-906C-C4E72B261DCC}"
       DTS:ObjectName="central_repository_landing">
       <DTS:PropertyExpression
+        DTS:Name="ConnectionString">len(@[$Package::repository_user_name]) == 0 ? "Data Source=" + @[$Package::repository_instance_name]  + ";Initial Catalog=tempdb;Provider=SQLNCLI11.1;Integrated Security=SSPI;Auto Translate=False;Packet Size=32767;": "Data Source=" + @[$Package::repository_instance_name]  + ";User ID=" + @[$Package::repository_user_name]  + ";Initial Catalog=tempdb;Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;Packet Size=32767;"</DTS:PropertyExpression>
+      <DTS:PropertyExpression
         DTS:Name="Password">@[$Package::repository_password]</DTS:PropertyExpression>
       <DTS:PropertyExpression
         DTS:Name="ServerName">@[$Package::repository_instance_name]</DTS:PropertyExpression>
@@ -110,11 +116,11 @@
         DTS:Name="UserName">@[$Package::repository_user_name]</DTS:PropertyExpression>
       <DTS:ObjectData>
         <DTS:ConnectionManager
-          DTS:ConnectionString="Data Source=sql-test-1\sql2016;User ID=sqlwatchuser;Initial Catalog=tempdb;Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;Packet Size=32767;">
+          DTS:ConnectionString="Data Source=192.168.2.12\sql2016;User ID=;Initial Catalog=tempdb;Provider=SQLNCLI11.1;Integrated Security=SSPI;Auto Translate=False;Packet Size=32767;">
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAA3Kp2lNKhI0Gr+ttggegpLQAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAABtq9UVsRNk4M3CuqMQYKjLAAAAAASAAACgAAAAEAAAAFqDJlUShiAEOEerhcezaRAgAAAA8RYKV27I+WL+QpJMFEl1kmPWLXC+n0EA+wh5KO56TkwUAAAAmeWxIzQWIYUxDr/yphjfLrdD8vk</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAubFpPoP9EEaKbPsHw8xL0wAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAADUd4qpHB+5hrfKjHMZ2ZzWAAAAAASAAACgAAAAEAAAAFeJJGCH7vpoEAioJOwQMzYgAAAAs9CTgwc+iEIcSbecQIwsat4jFrkXuamG57eu6OKXM5UUAAAAlN29B+VYeI+AyrSVSIBzGVLAtG4</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -125,6 +131,8 @@
       DTS:DTSID="{FCAE1DEC-120D-4B37-9B26-9F288DFB310B}"
       DTS:ObjectName="central_repository_tempdb">
       <DTS:PropertyExpression
+        DTS:Name="ConnectionString">len(@[$Package::repository_user_name]) == 0 ? "Data Source=" + @[$Package::repository_instance_name]  + ";Initial Catalog=tempdb;Provider=SQLNCLI11.1;Integrated Security=SSPI;Auto Translate=False;Packet Size=32767;": "Data Source=" + @[$Package::repository_instance_name]  + ";User ID=" + @[$Package::repository_user_name]  + ";Initial Catalog=tempdb;Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;Packet Size=32767;"</DTS:PropertyExpression>
+      <DTS:PropertyExpression
         DTS:Name="Password">@[$Package::repository_password]</DTS:PropertyExpression>
       <DTS:PropertyExpression
         DTS:Name="ServerName">@[$Package::repository_instance_name]</DTS:PropertyExpression>
@@ -133,11 +141,11 @@
       <DTS:ObjectData>
         <DTS:ConnectionManager
           DTS:Retain="True"
-          DTS:ConnectionString="Data Source=sql-test-1\sql2016;User ID=sqlwatchuser;Initial Catalog=tempdb;Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;Packet Size=32767;">
+          DTS:ConnectionString="Data Source=192.168.2.12\sql2016;User ID=;Initial Catalog=tempdb;Provider=SQLNCLI11.1;Integrated Security=SSPI;Auto Translate=False;Packet Size=32767;">
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAA3Kp2lNKhI0Gr+ttggegpLQAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAADruAfFGwMK4E3gln3hgZLmAAAAAASAAACgAAAAEAAAAMoAzb3Y28wnDExEURF++K0gAAAABf8Xa2QPM5Wp1TG78/lXsX1vZNYMUs/N1/0EB18ghysUAAAAYvF+jinitNkdJmRiWkapuayfm3w</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAubFpPoP9EEaKbPsHw8xL0wAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAD+ZfXjA9T/cTdoHPMrbVjVAAAAAASAAACgAAAAEAAAAAa3O43OwDlP3cpKQhYvtQsgAAAATz3K0YeuQ4JzEw/kuGv1aEt3H6cdELNg7Wn3A3T/6a0UAAAAFjJLYmV8r1GWiu8dT/zclTcjcFg</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -148,6 +156,8 @@
       DTS:DTSID="{70307EC3-869A-44CF-8BD4-E189ED4A7EDE}"
       DTS:ObjectName="remote_instance">
       <DTS:PropertyExpression
+        DTS:Name="ConnectionString">len( @[$Package::remote_user_name] ) == 0 ? "Data Source=" + @[User::hostname] + ";Initial Catalog=" + @[User::remote_sqlwatch_database_name]  + ";Provider=SQLNCLI11.1;Integrated Security=SSPI;Auto Translate=False;Packet Size=32767;": "Data Source=" + @[User::hostname]  + ";User ID=" + @[$Package::remote_user_name]  + ";Initial Catalog=" + @[User::remote_sqlwatch_database_name]  + ";Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;Packet Size=32767;"</DTS:PropertyExpression>
+      <DTS:PropertyExpression
         DTS:Name="InitialCatalog">@[User::remote_sqlwatch_database_name]</DTS:PropertyExpression>
       <DTS:PropertyExpression
         DTS:Name="Password">@[$Package::remote_password]</DTS:PropertyExpression>
@@ -157,11 +167,11 @@
         DTS:Name="UserName">@[$Package::remote_user_name]</DTS:PropertyExpression>
       <DTS:ObjectData>
         <DTS:ConnectionManager
-          DTS:ConnectionString="Data Source=linux.docker.home.local,14331;User ID=sqlwatchuser;Initial Catalog=SQLWATCH;Provider=SQLNCLI11.1;Auto Translate=False;Packet Size=32767;">
+          DTS:ConnectionString="Data Source=linux.docker.home.local,14331;User ID=;Initial Catalog=SQLWATCH;Provider=SQLNCLI11.1;Integrated Security=SSPI;Auto Translate=False;Packet Size=32767;">
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAA3Kp2lNKhI0Gr+ttggegpLQAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAD1dhfpXb7eUTI0ub07x/s/AAAAAASAAACgAAAAEAAAAC669Wcub+hYNxr2PjlPPpMgAAAA7Oak55TCtnA3HNGYuP78RirYZrE1HcLcEW4jqupfef0UAAAAMETjOgOpLJg4Yau9HP3AXinuq08</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAubFpPoP9EEaKbPsHw8xL0wAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAACak3o8UuReNGf2arcyY6yYAAAAAASAAACgAAAAEAAAAPBaASFWpvriK6plaQ+YpekgAAAAoaKVz3/FRPn9B/PYzfwtheCRIsRr6d09lTGkN1pICIQUAAAA48/aNfN0DInYabVJbmpCJKB6dvQ</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -172,6 +182,8 @@
       DTS:DTSID="{377C7E86-B621-4863-ACBD-4A6297842C70}"
       DTS:ObjectName="remote_instance_tempdb">
       <DTS:PropertyExpression
+        DTS:Name="ConnectionString">len( @[$Package::remote_user_name] ) == 0 ? "Data Source=" + @[User::hostname] + ";Initial Catalog=tempdb;Provider=SQLNCLI11.1;Integrated Security=SSPI;Auto Translate=False;Packet Size=32767;": "Data Source=" + @[User::hostname]  + ";User ID=" + @[$Package::remote_user_name]  + ";Initial Catalog=tempdb;Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;Packet Size=32767;"</DTS:PropertyExpression>
+      <DTS:PropertyExpression
         DTS:Name="Password">@[$Package::remote_password]</DTS:PropertyExpression>
       <DTS:PropertyExpression
         DTS:Name="ServerName">@[User::hostname]</DTS:PropertyExpression>
@@ -180,11 +192,11 @@
       <DTS:ObjectData>
         <DTS:ConnectionManager
           DTS:Retain="True"
-          DTS:ConnectionString="Data Source=linux.docker.home.local,14331;User ID=sqlwatchuser;Initial Catalog=tempdb;Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;Packet Size=32767;">
+          DTS:ConnectionString="Data Source=linux.docker.home.local,14331;User ID=;Initial Catalog=tempdb;Provider=SQLNCLI11.1;Integrated Security=SSPI;Auto Translate=False;Packet Size=32767;">
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAA3Kp2lNKhI0Gr+ttggegpLQAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAADHPwPrC/ISoni7O8v713+JAAAAAASAAACgAAAAEAAAALrhcnIe1rMxsAkE4hlLy+YgAAAAXl+aVcFnwfvHcwNNahpL3XpRbmuTQEUzOfIQQYCpMfsUAAAAFmqhvHfEQL96qm7pIf4zBzS/3vU</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAubFpPoP9EEaKbPsHw8xL0wAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAACZdWvDGT7mzRdcydq++9UDAAAAAASAAACgAAAAEAAAACfLXH4dDiTNSTJT46D/3hcgAAAAnBxS1XfiY25BYHRft1NJgu7kunMGX3jpZWIktx0cuycUAAAAV49EFbpj9aZKNO+DiZql5Fbgg24</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -223,7 +235,7 @@
         <DTS:Property
           DTS:DataType="8"
           DTS:Name="ParameterValue"
-          Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAA3Kp2lNKhI0Gr+ttggegpLQAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAAPLfBXztV9O2TWxZZ0POfMAAAAAASAAACgAAAAEAAAANsg44365zVTmTblz/ja5XYgAAAAHND0zdcuOVZB3VEyWtTz7ey3wUgHFB4yie/bNWEMOHAUAAAAUcDbOmzlXVkIbQz+uls/AqLcst8</DTS:Property>
+          Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAubFpPoP9EEaKbPsHw8xL0wAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAChCwDKxnkg46o+ZQwQdxY6AAAAAASAAACgAAAAEAAAAJK9GnaX8SJzHvSj0Qv5KS8gAAAAAzDVx1JzKy5H8f1vV2MAA94wMadRRXNK2+kZx6EyZU8UAAAATTv0XTt69pP/cMmWHeh24v2SHZU</DTS:Property>
       </DTS:Property>
     </DTS:PackageParameter>
     <DTS:PackageParameter
@@ -234,7 +246,8 @@
       DTS:ObjectName="remote_user_name">
       <DTS:Property
         DTS:DataType="8"
-        DTS:Name="ParameterValue">sqlwatchuser</DTS:Property>
+        DTS:Name="ParameterValue"
+        xml:space="preserve"></DTS:Property>
     </DTS:PackageParameter>
     <DTS:PackageParameter
       DTS:CreationName=""
@@ -256,7 +269,7 @@
       DTS:Required="True">
       <DTS:Property
         DTS:DataType="8"
-        DTS:Name="ParameterValue">sql-test-1\sql2016</DTS:Property>
+        DTS:Name="ParameterValue">192.168.2.12\sql2016</DTS:Property>
     </DTS:PackageParameter>
     <DTS:PackageParameter
       DTS:CreationName=""
@@ -270,7 +283,7 @@
         <DTS:Property
           DTS:DataType="8"
           DTS:Name="ParameterValue"
-          Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAA3Kp2lNKhI0Gr+ttggegpLQAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAAQlnAgYYp4cZ4Mq7UWRhVQAAAAAASAAACgAAAAEAAAAKXxB6lsH7rQEfbfUSIzxY4gAAAAjnLQwv8AWs+tj4IihGNsRXgFLWOFbZx4Hcg5k+Bg5MIUAAAAf0hB5dzoKK6nJkut8QyWxulUJw8</DTS:Property>
+          Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAubFpPoP9EEaKbPsHw8xL0wAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAAWdXf9BMNtj3hsvuTYnkApAAAAAASAAACgAAAAEAAAALnEWqgMwUuu6scD8I5otOUgAAAAM6OwQgmjpe6CnecRQ95BbEW80OyQgFQthavJf2/Q7boUAAAAbZytZx6rrylte2U9AkbEjk4YtQY</DTS:Property>
       </DTS:Property>
     </DTS:PackageParameter>
     <DTS:PackageParameter
@@ -281,7 +294,8 @@
       DTS:ObjectName="repository_user_name">
       <DTS:Property
         DTS:DataType="8"
-        DTS:Name="ParameterValue">sqlwatchuser</DTS:Property>
+        DTS:Name="ParameterValue"
+        xml:space="preserve"></DTS:Property>
     </DTS:PackageParameter>
   </DTS:PackageParameters>
   <DTS:Variables>
@@ -869,7 +883,7 @@ else
       DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
       DTS:LocaleID="-1"
       DTS:ObjectName="Begin transaction on config"
-      DTS:ThreadHint="2">
+      DTS:ThreadHint="0">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -887,7 +901,7 @@ else
       DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
       DTS:LocaleID="-1"
       DTS:ObjectName="Clear landing tables (for multithreading)"
-      DTS:ThreadHint="3">
+      DTS:ThreadHint="1">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -904,7 +918,7 @@ else
       DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
       DTS:LocaleID="-1"
       DTS:ObjectName="Commit transaction on config"
-      DTS:ThreadHint="2">
+      DTS:ThreadHint="0">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -921,7 +935,7 @@ else
       DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
       DTS:LocaleID="-1"
       DTS:ObjectName="Create remote temp table to store snapshots"
-      DTS:ThreadHint="2">
+      DTS:ThreadHint="0">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -945,7 +959,7 @@ else
       DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
       DTS:LocaleID="-1"
       DTS:ObjectName="Create repo temp table to store snapshots"
-      DTS:ThreadHint="2">
+      DTS:ThreadHint="0">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -1497,7 +1511,7 @@ with result sets (
       DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
       DTS:LocaleID="-1"
       DTS:ObjectName="Final merge"
-      DTS:ThreadHint="4">
+      DTS:ThreadHint="2">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -1513,7 +1527,7 @@ with result sets (
       DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
       DTS:LocaleID="-1"
       DTS:ObjectName="Get Remote Instance servername"
-      DTS:ThreadHint="2">
+      DTS:ThreadHint="0">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -1535,7 +1549,7 @@ with result sets (
       DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
       DTS:LocaleID="-1"
       DTS:ObjectName="Prepare connection to the remote instance"
-      DTS:ThreadHint="2">
+      DTS:ThreadHint="0">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -1566,7 +1580,7 @@ with result sets (
       DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
       DTS:LocaleID="-1"
       DTS:ObjectName="Rollback transaction on destination"
-      DTS:ThreadHint="1">
+      DTS:ThreadHint="3">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -1583,7 +1597,7 @@ with result sets (
       DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
       DTS:LocaleID="-1"
       DTS:ObjectName="set error"
-      DTS:ThreadHint="0">
+      DTS:ThreadHint="4">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -1606,7 +1620,7 @@ with result sets (
       DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
       DTS:LocaleID="-1"
       DTS:ObjectName="set success"
-      DTS:ThreadHint="2">
+      DTS:ThreadHint="0">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -1629,7 +1643,7 @@ with result sets (
       DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
       DTS:LocaleID="-1"
       DTS:ObjectName="set timestamp"
-      DTS:ThreadHint="2">
+      DTS:ThreadHint="0">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -1652,7 +1666,7 @@ with result sets (
       DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
       DTS:LocaleID="-1"
       DTS:ObjectName="Sustain tempDB connection on remote"
-      DTS:ThreadHint="2">
+      DTS:ThreadHint="0">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -1668,7 +1682,7 @@ with result sets (
       DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
       DTS:LocaleID="-1"
       DTS:ObjectName="Sustain tempDB connection on repo"
-      DTS:ThreadHint="2">
+      DTS:ThreadHint="0">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -36806,6 +36820,40 @@ where [refTable].[snapshot_time] = ? and [refTable].[snapshot_type_id] = ? and [
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 10]"
+          TopLeft="1028.33333333333,1359.68054912977">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-228.166666666663,8.54166692227"
+              Start="0,0"
+              End="-220.666666666663,8.54166692227">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="-110.083333333332,0" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-110.083333333332,0"
+                    Point2="-114.083333333332,0"
+                    Point3="-114.083333333332,4" />
+                  <mssgle:LineSegment
+                    End="-114.083333333332,4.54166692227" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-114.083333333332,4.54166692227"
+                    Point2="-114.083333333332,8.54166692227"
+                    Point3="-118.083333333332,8.54166692227" />
+                  <mssgle:LineSegment
+                    End="-220.666666666663,8.54166692227" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 2]"
           TopLeft="1226.41666666667,288.527777248648">
           <EdgeLayout.Curve>
@@ -36840,6 +36888,40 @@ where [refTable].[snapshot_time] = ? and [refTable].[snapshot_type_id] = ? and [
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 3]"
+          TopLeft="1152.83333333333,1192.06746411361">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-136.083333333334,64.5991963111301"
+              Start="0,0"
+              End="-136.083333333334,57.0991963111301">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,28.299598155565" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,28.299598155565"
+                    Point2="0,32.299598155565"
+                    Point3="-4,32.299598155565" />
+                  <mssgle:LineSegment
+                    End="-132.083333333334,32.299598155565" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-132.083333333334,32.299598155565"
+                    Point2="-136.083333333334,32.299598155565"
+                    Point3="-136.083333333334,36.299598155565" />
+                  <mssgle:LineSegment
+                    End="-136.083333333334,57.0991963111301" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 4]"
           TopLeft="269.916666666667,170.194443807695">
           <EdgeLayout.Curve>
@@ -36865,6 +36947,28 @@ where [refTable].[snapshot_time] = ? and [refTable].[snapshot_type_id] = ? and [
                     Point3="166.583333333333,16.8368042988734" />
                   <mssgle:LineSegment
                     End="166.583333333333,18.1736085977469" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 5]"
+          TopLeft="640.5,290.02083235803">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="86.166666666667,0"
+              Start="0,0"
+              End="78.666666666667,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="78.666666666667,0" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -36942,28 +37046,6 @@ where [refTable].[snapshot_time] = ? and [refTable].[snapshot_type_id] = ? and [
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package.PrecedenceConstraints[Constraint 5]"
-          TopLeft="640.5,290.02083235803">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="86.166666666667,0"
-              Start="0,0"
-              End="78.666666666667,0">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="78.666666666667,0" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 8]"
           TopLeft="798.916666666667,267.069443848052">
           <EdgeLayout.Curve>
@@ -36998,40 +37080,6 @@ where [refTable].[snapshot_time] = ? and [refTable].[snapshot_type_id] = ? and [
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package.PrecedenceConstraints[Constraint 3]"
-          TopLeft="1152.83333333333,1192.06746411361">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="-136.083333333334,64.5991963111301"
-              Start="0,0"
-              End="-136.083333333334,57.0991963111301">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,28.299598155565" />
-                  <mssgle:CubicBezierSegment
-                    Point1="0,28.299598155565"
-                    Point2="0,32.299598155565"
-                    Point3="-4,32.299598155565" />
-                  <mssgle:LineSegment
-                    End="-132.083333333334,32.299598155565" />
-                  <mssgle:CubicBezierSegment
-                    Point1="-132.083333333334,32.299598155565"
-                    Point2="-136.083333333334,32.299598155565"
-                    Point3="-136.083333333334,36.299598155565" />
-                  <mssgle:LineSegment
-                    End="-136.083333333334,57.0991963111301" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 9]"
           TopLeft="1016.75,1298.66666042474">
           <EdgeLayout.Curve>
@@ -37057,40 +37105,6 @@ where [refTable].[snapshot_time] = ? and [refTable].[snapshot_type_id] = ? and [
                     Point3="119.08333333333,24.006944352515" />
                   <mssgle:LineSegment
                     End="119.08333333333,32.51388870503" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package.PrecedenceConstraints[Constraint 10]"
-          TopLeft="1028.33333333333,1359.68054912977">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="-228.166666666663,8.54166692227"
-              Start="0,0"
-              End="-220.666666666663,8.54166692227">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="-110.083333333332,0" />
-                  <mssgle:CubicBezierSegment
-                    Point1="-110.083333333332,0"
-                    Point2="-114.083333333332,0"
-                    Point3="-114.083333333332,4" />
-                  <mssgle:LineSegment
-                    End="-114.083333333332,4.54166692227" />
-                  <mssgle:CubicBezierSegment
-                    Point1="-114.083333333332,4.54166692227"
-                    Point2="-114.083333333332,8.54166692227"
-                    Point3="-118.083333333332,8.54166692227" />
-                  <mssgle:LineSegment
-                    End="-220.666666666663,8.54166692227" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -38087,47 +38101,25 @@ where [refTable].[snapshot_time] = ? and [refTable].[snapshot_type_id] = ? and [
           Id="Package\Transaction container\meta_database-FULL\Merge Join"
           TopLeft="373,306.5" />
         <NodeLayout
-          Size="173,42"
-          Id="Package\Transaction container\meta_database-FULL\OLE DB Destination"
-          TopLeft="568,523.5" />
-        <NodeLayout
           Size="168.5,42"
           Id="Package\Transaction container\meta_database-FULL\OLE DB Command"
           TopLeft="163,521.5" />
+        <NodeLayout
+          Size="110.5,42"
+          Id="Package\Transaction container\meta_database-FULL\source"
+          TopLeft="149,101.5" />
         <NodeLayout
           Size="130,42"
           Id="Package\Transaction container\meta_database-FULL\destination"
           TopLeft="611,83.5" />
         <NodeLayout
+          Size="173,42"
+          Id="Package\Transaction container\meta_database-FULL\OLE DB Destination"
+          TopLeft="568,523.5" />
+        <NodeLayout
           Size="155,42"
           Id="Package\Transaction container\meta_database-FULL\Conditional Split"
           TopLeft="366,428.5" />
-        <NodeLayout
-          Size="110.5,42"
-          Id="Package\Transaction container\meta_database-FULL\source"
-          TopLeft="149,101.5" />
-        <EdgeLayout
-          Id="Package\Transaction container\meta_database-FULL.Paths[Merge Join Output]"
-          TopLeft="441,348.5">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,80"
-              Start="0,0"
-              End="0,72.5">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,72.5" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
         <EdgeLayout
           Id="Package\Transaction container\meta_database-FULL.Paths[Insert New]"
           TopLeft="468,470.5">
@@ -38162,74 +38154,6 @@ where [refTable].[snapshot_time] = ? and [refTable].[snapshot_type_id] = ? and [
             <mssgm:EdgeLabel
               BoundingBox="68.32435546875,26.5249042145594,49.8512890625,9.40234375"
               RelativePosition="Any" />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\Transaction container\meta_database-FULL.Paths[OLE DB Source Output]"
-          TopLeft="204.25,143.5">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="234.25,163"
-              Start="0,0"
-              End="234.25,155.5">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,77.5" />
-                  <mssgle:CubicBezierSegment
-                    Point1="0,77.5"
-                    Point2="0,81.5"
-                    Point3="4,81.5" />
-                  <mssgle:LineSegment
-                    End="230.25,81.5" />
-                  <mssgle:CubicBezierSegment
-                    Point1="230.25,81.5"
-                    Point2="234.25,81.5"
-                    Point3="234.25,85.5" />
-                  <mssgle:LineSegment
-                    End="234.25,155.5" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\Transaction container\meta_database-FULL.Paths[OLE DB Source Output1]"
-          TopLeft="676,125.5">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="-217,181"
-              Start="0,0"
-              End="-217,173.5">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,103.289592760181" />
-                  <mssgle:CubicBezierSegment
-                    Point1="0,103.289592760181"
-                    Point2="0,107.289592760181"
-                    Point3="-4,107.289592760181" />
-                  <mssgle:LineSegment
-                    End="-213,107.289592760181" />
-                  <mssgle:CubicBezierSegment
-                    Point1="-213,107.289592760181"
-                    Point2="-217,107.289592760181"
-                    Point3="-217,111.289592760181" />
-                  <mssgle:LineSegment
-                    End="-217,173.5" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -38268,11 +38192,107 @@ where [refTable].[snapshot_time] = ? and [refTable].[snapshot_type_id] = ? and [
               RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Transaction container\meta_database-FULL.Paths[OLE DB Source Output1]"
+          TopLeft="676,125.5">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-217,181"
+              Start="0,0"
+              End="-217,173.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,103.289592760181" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,103.289592760181"
+                    Point2="0,107.289592760181"
+                    Point3="-4,107.289592760181" />
+                  <mssgle:LineSegment
+                    End="-213,107.289592760181" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-213,107.289592760181"
+                    Point2="-217,107.289592760181"
+                    Point3="-217,111.289592760181" />
+                  <mssgle:LineSegment
+                    End="-217,173.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Transaction container\meta_database-FULL.Paths[OLE DB Source Output]"
+          TopLeft="204.25,143.5">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="234.25,163"
+              Start="0,0"
+              End="234.25,155.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,77.5" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,77.5"
+                    Point2="0,81.5"
+                    Point3="4,81.5" />
+                  <mssgle:LineSegment
+                    End="230.25,81.5" />
+                  <mssgle:CubicBezierSegment
+                    Point1="230.25,81.5"
+                    Point2="234.25,81.5"
+                    Point3="234.25,85.5" />
+                  <mssgle:LineSegment
+                    End="234.25,155.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Transaction container\meta_database-FULL.Paths[Merge Join Output]"
+          TopLeft="441,348.5">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,80"
+              Start="0,0"
+              End="0,72.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,72.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
       </GraphLayout>
     </LayoutInfo>
   </TaskHost>
   <PipelineComponentMetadata
-    design-time-name="Package\Transaction container\meta_database-FULL\OLE DB Destination">
+    design-time-name="Package\Transaction container\meta_database-FULL\source">
     <Properties>
       <Property>
         <Name>DataSourceViewID</Name>
@@ -38293,7 +38313,7 @@ where [refTable].[snapshot_time] = ? and [refTable].[snapshot_type_id] = ? and [
     </Properties>
   </PipelineComponentMetadata>
   <PipelineComponentMetadata
-    design-time-name="Package\Transaction container\meta_database-FULL\source">
+    design-time-name="Package\Transaction container\meta_database-FULL\OLE DB Destination">
     <Properties>
       <Property>
         <Name>DataSourceViewID</Name>
@@ -40965,7 +40985,9 @@ where [refTable].[snapshot_time] = ? and [refTable].[snapshot_type_id] = ? and [
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -40999,7 +41021,9 @@ where [refTable].[snapshot_time] = ? and [refTable].[snapshot_type_id] = ? and [
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -41069,7 +41093,9 @@ where [refTable].[snapshot_time] = ? and [refTable].[snapshot_type_id] = ? and [
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -41112,7 +41138,7 @@ where [refTable].[snapshot_time] = ? and [refTable].[snapshot_type_id] = ? and [
           Text="To make sure we are only inserting records that have corresponding header"
           ParentId="Package\Transaction container\utilisation_database"
           FontInfo="{assembly:Null}"
-          Size="427.5,40"
+          Size="427.5,NaN"
           Id="bb1d1904-2629-4dd1-bfd2-8adea0569168"
           TopLeft="416,433.5" />
       </GraphLayout>
@@ -41491,7 +41517,9 @@ where [refTable].[snapshot_time] = ? and [refTable].[snapshot_type_id] = ? and [
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -41525,7 +41553,9 @@ where [refTable].[snapshot_time] = ? and [refTable].[snapshot_type_id] = ? and [
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -41595,14 +41625,16 @@ where [refTable].[snapshot_time] = ? and [refTable].[snapshot_type_id] = ? and [
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <AnnotationLayout
           Text="To make sure we are only inserting records that have corresponding header"
           ParentId="Package\Transaction container\who_is_active"
           FontInfo="{assembly:Null}"
-          Size="427.5,40"
+          Size="427.5,NaN"
           Id="bb1d1904-2629-4dd1-bfd2-8adea0569168"
           TopLeft="416,433.5" />
       </GraphLayout>
@@ -41697,7 +41729,9 @@ where [refTable].[snapshot_time] = ? and [refTable].[snapshot_type_id] = ? and [
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -41731,7 +41765,9 @@ where [refTable].[snapshot_time] = ? and [refTable].[snapshot_type_id] = ? and [
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -41801,7 +41837,9 @@ where [refTable].[snapshot_time] = ? and [refTable].[snapshot_type_id] = ? and [
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -41844,7 +41882,7 @@ where [refTable].[snapshot_time] = ? and [refTable].[snapshot_type_id] = ? and [
           Text="To make sure we are only inserting records that have corresponding header"
           ParentId="Package\Transaction container\xes_blockers"
           FontInfo="{assembly:Null}"
-          Size="427.5,40"
+          Size="427.5,NaN"
           Id="bb1d1904-2629-4dd1-bfd2-8adea0569168"
           TopLeft="416,433.5" />
       </GraphLayout>
@@ -42683,7 +42721,9 @@ where [refTable].[snapshot_time] = ? and [refTable].[snapshot_type_id] = ? and [
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -42717,7 +42757,9 @@ where [refTable].[snapshot_time] = ? and [refTable].[snapshot_type_id] = ? and [
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -42787,7 +42829,9 @@ where [refTable].[snapshot_time] = ? and [refTable].[snapshot_type_id] = ? and [
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -42830,7 +42874,7 @@ where [refTable].[snapshot_time] = ? and [refTable].[snapshot_type_id] = ? and [
           Text="To make sure we are only inserting records that have corresponding header"
           ParentId="Package\Transaction container\xes_wait_stats"
           FontInfo="{assembly:Null}"
-          Size="427.5,40"
+          Size="427.5,NaN"
           Id="bb1d1904-2629-4dd1-bfd2-8adea0569168"
           TopLeft="416,433.5" />
       </GraphLayout>
