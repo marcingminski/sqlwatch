@@ -116,6 +116,8 @@
     <Build Include="dbo\Tables\sqlwatch_logger_index_usage_stats_histogram.sql" />
     <Build Include="dbo\Tables\sqlwatch_config_sql_instance.sql" />
     <Build Include="ExtendedProperty-SQLWATCH-Information.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_config_set_blocked_proc_threshold.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_config_set_agent_jobs.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
