@@ -513,5 +513,5 @@ exec ( @sql )
 
 USE [$(DatabaseName)];
 
-exec dbo.usp_sqlwatch_config_set_agent_jobs
+exec dbo.[usp_sqlwatch_config_set_default_agent_jobs]
 

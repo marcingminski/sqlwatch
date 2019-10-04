@@ -413,4 +413,11 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[usp_sqlwatch_config_set_blocked_proc_threshold]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="962b16a6-f0a1-4ca6-9af5-5622af2e569a" ChangeDateTime="10/04/2019 16:32:26">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_config_set_agent_jobs]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_config_set_default_agent_jobs]" />
+  </Operation>
 </Operations>

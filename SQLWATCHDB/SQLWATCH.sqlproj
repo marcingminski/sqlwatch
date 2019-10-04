@@ -117,7 +117,7 @@
     <Build Include="dbo\Tables\sqlwatch_config_sql_instance.sql" />
     <Build Include="ExtendedProperty-SQLWATCH-Information.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_config_set_blocked_proc_threshold.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_config_set_agent_jobs.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_config_set_default_agent_jobs.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
@@ -140,7 +140,7 @@
       <SuppressMissingDependenciesErrors>False</SuppressMissingDependenciesErrors>
       <DatabaseVariableLiteralValue>master</DatabaseVariableLiteralValue>
     </ArtifactReference>
-    <ArtifactReference Include="C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\Common7\IDE\Extensions\Microsoft\SQLDB\Extensions\SqlServer\110\SqlSchemas\msdb.dacpac">
+    <ArtifactReference Include="$(DacPacRootPath)\Extensions\Microsoft\SQLDB\Extensions\SqlServer\110\SqlSchemas\msdb.dacpac">
       <HintPath>$(DacPacRootPath)\Extensions\Microsoft\SQLDB\Extensions\SqlServer\110\SqlSchemas\msdb.dacpac</HintPath>
       <SuppressMissingDependenciesErrors>False</SuppressMissingDependenciesErrors>
       <DatabaseVariableLiteralValue>msdb</DatabaseVariableLiteralValue>
