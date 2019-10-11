@@ -45,7 +45,7 @@ while @@FETCH_STATUS = 0
 		set @sql = 'insert into [dbo].[sqlwatch_logger_index_usage_stats] (
 	database_name, database_create_date, object_name, index_id, index_name, [used_pages_count],index_type,
 	user_seeks, user_scans, user_lookups, user_updates, last_user_seek, last_user_scan, last_user_lookup, last_user_update,
-	stats_date, snapshot_time, snapshot_type_id, index_disabled
+	stats_date, snapshot_time, snapshot_type_id, index_disabled, partition_id
 	)
 			select 
 				database_name=dbs.name,
@@ -66,7 +66,8 @@ while @@FETCH_STATUS = 0
 				[stats_date]=STATS_DATE(ix.object_id, ix.index_id),
 				[snapshot_time] = ''' + convert(varchar(23),@snapshot_time,121) + ''',
 				[snapshot_type_id] = ' + convert(varchar(5),@snapshot_type) + ',
-				[is_disabled]=ix.is_disabled
+				[is_disabled]=ix.is_disabled,
+				ps.partition_id
 			from sys.dm_db_index_usage_stats ixus
 
 			inner join sys.databases dbs

@@ -20,7 +20,8 @@
 	[snapshot_type_id] [tinyint] NOT NULL,
 	[index_disabled] bit null,
 	[sql_instance] nvarchar(25) not null default @@SERVERNAME,
-	constraint [pk_index_usage_stats] primary key clustered ([snapshot_time], [snapshot_type_id], [database_name] asc,[database_create_date], [object_name] asc,[index_id] asc, [sql_instance]),
+	[partition_id] bigint not null default 0, --so we can add a column in previous versions of sqlwatch versions without having to backfill partition_ids
+	constraint [pk_index_usage_stats] primary key clustered ([snapshot_time], [snapshot_type_id], [database_name] asc,[database_create_date], [object_name] asc,[index_id] asc, [sql_instance], [partition_id]),
 	constraint [fk_index_usage_stats_database] foreign key ([database_name], [database_create_date], [sql_instance]) references [dbo].[sqlwatch_meta_database] ([database_name], [database_create_date], [sql_instance]) on delete cascade on update cascade,
 	constraint [fk_index_usage_stats_header] foreign key ([snapshot_time],[snapshot_type_id], [sql_instance]) references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time],[snapshot_type_id], [sql_instance]) on delete cascade on update cascade
 )
