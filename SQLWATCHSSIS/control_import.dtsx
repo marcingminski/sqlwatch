@@ -13,8 +13,8 @@
   DTS:MaxConcurrentExecutables="99"
   DTS:ObjectName="control_import"
   DTS:PackageType="5"
-  DTS:VersionBuild="201"
-  DTS:VersionGUID="{A3C5426B-2A96-4D86-9662-DA94AD3BDF90}">
+  DTS:VersionBuild="203"
+  DTS:VersionGUID="{FE895E1D-B493-498B-B483-22E30784CB63}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">6</DTS:Property>
   <DTS:ConnectionManagers>
@@ -40,7 +40,7 @@
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAubFpPoP9EEaKbPsHw8xL0wAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAAkn/7nIvK8kj+Ac5ziB6vyAAAAAASAAACgAAAAEAAAAPrARvRDtjDwA3HHCLa+eCAgAAAAlam79OI+a2k/WTOtGyMNyp8BldDZHAKXRF2VbESD7h0UAAAAhV7SAE6cXUM7oDeA2LerXhwKpRo</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAubFpPoP9EEaKbPsHw8xL0wAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAACjbL8Eab3Q/4Rrm3psFbIVAAAAAASAAACgAAAAEAAAAPWQm2QBCfNtfm9/QmkHBKAgAAAA13ghBZlHxNdT+xz20wVG6Zomj7kHH6BBhA7xSI+A0ngUAAAAYNSrZxR1dwFixW5rL/7C5K+7xbE</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -91,7 +91,7 @@
         <DTS:Property
           DTS:DataType="8"
           DTS:Name="ParameterValue"
-          Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAubFpPoP9EEaKbPsHw8xL0wAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAAAS+4/PbxuWwXuBE3cIwlBAAAAAASAAACgAAAAEAAAAM5oSUpoM3simw/gSCYQ268gAAAAIDDMuo5jv/taIgx8uHpFlmH1D0xV4W/MotZ7NiOnDfoUAAAAUAKG4Qdsvg1mzpiAiToRSMmnEgg</DTS:Property>
+          Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAubFpPoP9EEaKbPsHw8xL0wAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAACdCSIKL0WFoLVlZjrZTMZ9AAAAAASAAACgAAAAEAAAAOpP+vwuzfZ1mgYqgK4OzT4gAAAAeo5fBjXg/aJhTfR0AnLKgzEZzrJafAb+F/99AAWwyg4UAAAAYYyIC4kTbl8B7JokPZIBANTQPlc</DTS:Property>
       </DTS:Property>
     </DTS:PackageParameter>
     <DTS:PackageParameter
@@ -1797,7 +1797,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               <DTS:ObjectData>
                 <ExecutePackageTask>
                   <UseProjectReference>True</UseProjectReference>
-                  <PackageName>import_remote_data 1.dtsx</PackageName>
+                  <PackageName>import_remote_data.dtsx</PackageName>
                   <ParameterAssignment>
                     <ParameterName>remote_instance_name</ParameterName>
                     <BindedVariableOrParameterName>User::remote_instance_name_t1</BindedVariableOrParameterName>
@@ -1866,7 +1866,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               <DTS:ObjectData>
                 <ExecutePackageTask>
                   <UseProjectReference>True</UseProjectReference>
-                  <PackageName>import_remote_data 1.dtsx</PackageName>
+                  <PackageName>import_remote_data.dtsx</PackageName>
                   <ParameterAssignment>
                     <ParameterName>remote_instance_name</ParameterName>
                     <BindedVariableOrParameterName>User::remote_instance_name_t2</BindedVariableOrParameterName>
@@ -1935,7 +1935,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               <DTS:ObjectData>
                 <ExecutePackageTask>
                   <UseProjectReference>True</UseProjectReference>
-                  <PackageName>import_remote_data 1.dtsx</PackageName>
+                  <PackageName>import_remote_data.dtsx</PackageName>
                   <ParameterAssignment>
                     <ParameterName>remote_instance_name</ParameterName>
                     <BindedVariableOrParameterName>User::remote_instance_name_t3</BindedVariableOrParameterName>
@@ -2004,7 +2004,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               <DTS:ObjectData>
                 <ExecutePackageTask>
                   <UseProjectReference>True</UseProjectReference>
-                  <PackageName>import_remote_data 1.dtsx</PackageName>
+                  <PackageName>import_remote_data.dtsx</PackageName>
                   <ParameterAssignment>
                     <ParameterName>remote_instance_name</ParameterName>
                     <BindedVariableOrParameterName>User::remote_instance_name_t4</BindedVariableOrParameterName>
@@ -2073,7 +2073,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               <DTS:ObjectData>
                 <ExecutePackageTask>
                   <UseProjectReference>True</UseProjectReference>
-                  <PackageName>import_remote_data 1.dtsx</PackageName>
+                  <PackageName>import_remote_data.dtsx</PackageName>
                   <ParameterAssignment>
                     <ParameterName>remote_instance_name</ParameterName>
                     <BindedVariableOrParameterName>User::remote_instance_name_t5</BindedVariableOrParameterName>
@@ -2142,7 +2142,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               <DTS:ObjectData>
                 <ExecutePackageTask>
                   <UseProjectReference>True</UseProjectReference>
-                  <PackageName>import_remote_data 1.dtsx</PackageName>
+                  <PackageName>import_remote_data.dtsx</PackageName>
                   <ParameterAssignment>
                     <ParameterName>remote_instance_name</ParameterName>
                     <BindedVariableOrParameterName>User::remote_instance_name_t6</BindedVariableOrParameterName>
@@ -2211,7 +2211,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               <DTS:ObjectData>
                 <ExecutePackageTask>
                   <UseProjectReference>True</UseProjectReference>
-                  <PackageName>import_remote_data 1.dtsx</PackageName>
+                  <PackageName>import_remote_data.dtsx</PackageName>
                   <ParameterAssignment>
                     <ParameterName>remote_instance_name</ParameterName>
                     <BindedVariableOrParameterName>User::remote_instance_name_t7</BindedVariableOrParameterName>
@@ -2280,7 +2280,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               <DTS:ObjectData>
                 <ExecutePackageTask>
                   <UseProjectReference>True</UseProjectReference>
-                  <PackageName>import_remote_data 1.dtsx</PackageName>
+                  <PackageName>import_remote_data.dtsx</PackageName>
                   <ParameterAssignment>
                     <ParameterName>remote_instance_name</ParameterName>
                     <BindedVariableOrParameterName>User::remote_instance_name_t8</BindedVariableOrParameterName>
@@ -2359,7 +2359,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="begin transaction"
-              DTS:ThreadHint="0">
+              DTS:ThreadHint="18">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -2375,7 +2375,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="commit"
-              DTS:ThreadHint="2">
+              DTS:ThreadHint="20">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -2391,7 +2391,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="error"
-              DTS:ThreadHint="0">
+              DTS:ThreadHint="19">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -2452,7 +2452,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="get task"
-              DTS:ThreadHint="0">
+              DTS:ThreadHint="18">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -2480,7 +2480,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="success"
-              DTS:ThreadHint="1">
+              DTS:ThreadHint="18">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -2819,7 +2819,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="begin transaction"
-              DTS:ThreadHint="6">
+              DTS:ThreadHint="0">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -2835,7 +2835,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="commit"
-              DTS:ThreadHint="8">
+              DTS:ThreadHint="2">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -2851,7 +2851,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="error"
-              DTS:ThreadHint="7">
+              DTS:ThreadHint="0">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -2912,7 +2912,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="get task"
-              DTS:ThreadHint="6">
+              DTS:ThreadHint="0">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -2940,7 +2940,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="success"
-              DTS:ThreadHint="6">
+              DTS:ThreadHint="1">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3049,7 +3049,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="begin transaction"
-              DTS:ThreadHint="9">
+              DTS:ThreadHint="21">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3065,7 +3065,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="commit"
-              DTS:ThreadHint="11">
+              DTS:ThreadHint="23">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3081,7 +3081,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="error"
-              DTS:ThreadHint="10">
+              DTS:ThreadHint="22">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3142,7 +3142,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="get task"
-              DTS:ThreadHint="9">
+              DTS:ThreadHint="21">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3170,7 +3170,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="success"
-              DTS:ThreadHint="9">
+              DTS:ThreadHint="21">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3279,7 +3279,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="begin transaction"
-              DTS:ThreadHint="12">
+              DTS:ThreadHint="6">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3295,7 +3295,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="commit"
-              DTS:ThreadHint="14">
+              DTS:ThreadHint="8">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3311,7 +3311,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="error"
-              DTS:ThreadHint="13">
+              DTS:ThreadHint="7">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3372,7 +3372,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="get task"
-              DTS:ThreadHint="12">
+              DTS:ThreadHint="6">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3400,7 +3400,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="success"
-              DTS:ThreadHint="12">
+              DTS:ThreadHint="6">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3509,7 +3509,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="begin transaction"
-              DTS:ThreadHint="15">
+              DTS:ThreadHint="9">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3525,7 +3525,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="commit"
-              DTS:ThreadHint="17">
+              DTS:ThreadHint="11">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3541,7 +3541,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="error"
-              DTS:ThreadHint="16">
+              DTS:ThreadHint="9">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3602,7 +3602,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="get task"
-              DTS:ThreadHint="15">
+              DTS:ThreadHint="9">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3630,7 +3630,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="success"
-              DTS:ThreadHint="15">
+              DTS:ThreadHint="10">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3739,7 +3739,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="begin transaction"
-              DTS:ThreadHint="21">
+              DTS:ThreadHint="15">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3755,7 +3755,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="commit"
-              DTS:ThreadHint="23">
+              DTS:ThreadHint="17">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3771,7 +3771,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="error"
-              DTS:ThreadHint="21">
+              DTS:ThreadHint="15">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3832,7 +3832,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="get task"
-              DTS:ThreadHint="21">
+              DTS:ThreadHint="15">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3860,7 +3860,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="success"
-              DTS:ThreadHint="22">
+              DTS:ThreadHint="16">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3969,7 +3969,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="begin transaction"
-              DTS:ThreadHint="18">
+              DTS:ThreadHint="12">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3985,7 +3985,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="commit"
-              DTS:ThreadHint="20">
+              DTS:ThreadHint="14">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -4001,7 +4001,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="error"
-              DTS:ThreadHint="19">
+              DTS:ThreadHint="13">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -4062,7 +4062,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="get task"
-              DTS:ThreadHint="18">
+              DTS:ThreadHint="12">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -4090,7 +4090,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="success"
-              DTS:ThreadHint="18">
+              DTS:ThreadHint="12">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -4248,8 +4248,8 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="261.5,100"
-          Size="261.5,143"
+          PanelSize="261.5,131"
+          Size="261.5,174"
           Id="Package\Sequence Container\Foreach Loop Container 4"
           TopLeft="890,36.6666651707557" />
         <NodeLayout
@@ -4382,7 +4382,9 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -4416,7 +4418,9 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -4486,7 +4490,9 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -4520,7 +4526,9 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -4645,7 +4653,9 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -4679,7 +4689,9 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -4749,7 +4761,9 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -4783,7 +4797,9 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -4908,7 +4924,9 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -4942,7 +4960,9 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -5012,7 +5032,9 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -5046,7 +5068,9 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -5171,7 +5195,9 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -5205,7 +5231,9 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -5275,7 +5303,9 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -5309,7 +5339,9 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -5434,7 +5466,9 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -5468,7 +5502,9 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -5538,7 +5574,9 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -5572,7 +5610,9 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -5697,7 +5737,9 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -5731,7 +5773,9 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -5801,7 +5845,9 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -5835,7 +5881,9 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -5960,7 +6008,9 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -5994,7 +6044,9 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -6064,7 +6116,9 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -6098,7 +6152,9 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -6223,7 +6279,9 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -6257,7 +6315,9 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -6327,7 +6387,9 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -6361,7 +6423,9 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout

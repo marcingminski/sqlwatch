@@ -12,3 +12,4 @@
 *.jfm
 /SQLWATCHSSIS/obj/Development
 /SQLWATCHSSIS/import.dtsx
+/SQLWATCHDB/.vs/SQLWATCHDB/v16
