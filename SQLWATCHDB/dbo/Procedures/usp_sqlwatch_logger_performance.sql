@@ -98,9 +98,9 @@ declare @sql nvarchar(4000)
 
 		insert into dbo.[sqlwatch_logger_perf_os_performance_counters]
 		select
-			 pc.[object_name]
-			,pc.instance_name
-			,pc.counter_name
+			 [object_name] = rtrim(pc.[object_name])
+			,instance_name = rtrim(pc.instance_name)
+			,counter_name = rtrim(pc.counter_name)
 			,pc.cntr_value
 			,base_cntr_value=bc.cntr_value
 			,pc.cntr_type
