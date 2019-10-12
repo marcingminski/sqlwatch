@@ -7,5 +7,5 @@
 	constraint pk_sqlwatch_meta_agent_job primary key (
 		[sql_instance], [sqlwatch_job_id]
 		),
-	constraint uq_sqlwatch_meta_agent_job_name unique(job_name,[job_create_date])   
+	constraint uq_sqlwatch_meta_agent_job_name unique([sql_instance],job_name,[job_create_date])   
 )
