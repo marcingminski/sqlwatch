@@ -11,3 +11,6 @@
 				, [instance_name] = rtrim([instance_name])
 				, [counter_name] = rtrim([counter_name])
 		end
+
+
+--REBUILD INDEXES AFTER THE SCRIPT HAS FINISHED
