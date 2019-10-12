@@ -420,4 +420,11 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[usp_sqlwatch_config_set_default_agent_jobs]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="607ffa0b-6248-4758-b135-091836cf052b" ChangeDateTime="10/11/2019 22:02:55">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_report_agent_job_history]" />
+    <Property Name="ElementType" Value="SqlView" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[vw_sqlwatch_report_agent_job_history]" />
+  </Operation>
 </Operations>

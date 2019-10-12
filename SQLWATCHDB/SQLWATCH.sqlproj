@@ -118,6 +118,12 @@
     <Build Include="ExtendedProperty-SQLWATCH-Information.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_config_set_blocked_proc_threshold.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_config_set_default_agent_jobs.sql" />
+    <Build Include="dbo\Tables\sqlwatch_meta_agent_job.sql" />
+    <Build Include="dbo\Tables\sqlwatch_meta_agent_job_step.sql" />
+    <Build Include="dbo\Tables\sqlwatch_logger_agent_job_history.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_add_job.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_logger_agent_job_history.sql" />
+    <Build Include="dbo\Views\vw_sqlwatch_report_agent_job_history.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
@@ -152,6 +158,7 @@
     <None Include="Generate SQL statements for SSIS.sql" />
     <None Include="Generate import tables.sql" />
     <None Include="Generate final merge.sql" />
+    <None Include="fix_trim_perf_counter.sql" />
   </ItemGroup>
   <Target Name="SetDacVersionToAssemblyVersion" AfterTargets="CoreCompile">
     <GetAssemblyIdentity AssemblyFiles="$(IntermediateTargetFullFileName)">

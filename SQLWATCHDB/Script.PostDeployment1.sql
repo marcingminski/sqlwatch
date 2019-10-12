@@ -433,6 +433,9 @@ using (
 	union
 	/* index histogram */
 	select [snapshot_type_id] = 15, [snapshot_type_desc] = 'Index Histogram', [snapshot_retention_days] = 90
+	union
+	/* agent history */
+	select [snapshot_type_id] = 16, [snapshot_type_desc] = 'Agent History', [snapshot_retention_days] = 360
 
 ) as source
 on (source.[snapshot_type_id] = target.[snapshot_type_id])
