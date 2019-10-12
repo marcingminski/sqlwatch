@@ -176,5 +176,6 @@ inner join sys.databases db
 inner join [dbo].[sqlwatch_meta_database] swd
 	on swd.[database_name] = db.[name] collate database_default
 	and swd.[database_create_date] = db.[create_date]
+	and swd.sql_instance = @@SERVERNAME
 
 commit tran
