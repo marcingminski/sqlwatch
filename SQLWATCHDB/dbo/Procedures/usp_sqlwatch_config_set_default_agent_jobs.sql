@@ -58,7 +58,7 @@ insert into #jobs
 			('SQLWATCH-LOGGER-DISK-UTILISATION',4,		1,			8,				1,				0,					1,					20180101,	99991231, 437,			235959,		1),
 			('SQLWATCH-LOGGER-INDEXES',			4,		1,			8,				6,				0,					1,					20180101,	99991231, 420,			235959,		1),
 			('SQLWATCH-INTERNAL-CONFIG',		4,		1,			8,				1,				0,					1,					20180101,	99991231, 26,			235959,		1),
-			('SQLWATCH-LOGGER-AGENT-HISTORY',	4,		1,			4,				20,				0,					1,					20180101,	99991231, 0,			235959,		1)
+			('SQLWATCH-LOGGER-AGENT-HISTORY',	4,		1,			4,				10,				0,					1,					20180101,	99991231, 0,			235959,		1)
 
 /* step definition */
 insert into #steps
