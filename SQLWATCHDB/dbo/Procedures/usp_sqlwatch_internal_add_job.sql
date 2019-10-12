@@ -25,7 +25,7 @@ BEGIN TRAN
 		and mj.sql_instance = @@SERVERNAME
 	left join [dbo].[sqlwatch_meta_agent_job_step] ms
 		on ms.sql_instance = mj.sql_instance
-		and ms.step_name = ss.step_name
+		and ms.step_name = ss.step_name collate database_default
 		and ms.sqlwatch_job_id = mj.sqlwatch_job_id
 	where ms.step_name is null
 
