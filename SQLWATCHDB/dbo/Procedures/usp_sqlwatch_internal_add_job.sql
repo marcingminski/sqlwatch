@@ -9,7 +9,7 @@ BEGIN TRAN
 	from msdb.dbo.sysjobs sj
 	left join [dbo].[sqlwatch_meta_agent_job] mj
 		on mj.sql_instance = @@SERVERNAME
-		and mj.job_name = sj.name
+		and mj.job_name = sj.name collate database_default
 		and mj.job_create_date = sj.date_created
 	where mj.job_name is null
 
@@ -20,7 +20,7 @@ BEGIN TRAN
 	inner join msdb.dbo.sysjobs sj
 		on ss.job_id = sj.job_id
 	inner join dbo.sqlwatch_meta_agent_job mj
-		on mj.job_name = sj.name
+		on mj.job_name = sj.name collate database_default
 		and mj.job_create_date = sj.date_created
 		and mj.sql_instance = @@SERVERNAME
 	left join [dbo].[sqlwatch_meta_agent_job_step] ms
