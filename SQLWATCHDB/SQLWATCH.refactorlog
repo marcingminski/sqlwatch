@@ -427,4 +427,11 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[vw_sqlwatch_report_agent_job_history]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="8b0bb2b0-b2c4-45b0-8220-0ad61c2a2bbc" ChangeDateTime="10/12/2019 22:21:52">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_logger_perf_os_wait_stats].[wait_type]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_logger_perf_os_wait_stats]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[wait_type_id]" />
+  </Operation>
 </Operations>

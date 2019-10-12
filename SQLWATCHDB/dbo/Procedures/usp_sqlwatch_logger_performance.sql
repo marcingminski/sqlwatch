@@ -344,8 +344,11 @@ declare @sql nvarchar(4000)
 		-- wait stats snapshot
 		--------------------------------------------------------------------------------------------------------------
 		insert into [dbo].[sqlwatch_logger_perf_os_wait_stats]
-		select [wait_type], [waiting_tasks_count], [wait_time_ms],[max_wait_time_ms], [signal_wait_time_ms], [snapshot_time]=@date_snapshot_current, 1, @@SERVERNAME
-		from sys.dm_os_wait_stats
+		select [wait_type_id], [waiting_tasks_count], [wait_time_ms],[max_wait_time_ms], [signal_wait_time_ms], [snapshot_time]=@date_snapshot_current, 1, @@SERVERNAME
+		from sys.dm_os_wait_stats ws
+		inner join [dbo].[sqlwatch_meta_wait_stats] ms
+			on ms.[wait_type] = ws.[wait_type] collate database_default
+			and ms.[sql_instance] = @@SERVERNAME
 		where waiting_tasks_count + wait_time_ms + max_wait_time_ms + signal_wait_time_ms > 0
 
 		--------------------------------------------------------------------------------------------------------------

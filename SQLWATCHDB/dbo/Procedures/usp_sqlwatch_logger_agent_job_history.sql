@@ -28,14 +28,16 @@ from msdb.dbo.sysjobhistory jh
 		on jh.job_id = sj.job_id
 
 	inner join dbo.sqlwatch_meta_agent_job mj
-		on mj.job_name = sj.name collate database_default
+		--avoid implicit conversion warning:
+		on mj.job_name = convert(nvarchar(128),sj.name) collate database_default
 		and mj.job_create_date = sj.date_created
 		and mj.sql_instance = @@SERVERNAME
 
 	inner join dbo.sqlwatch_meta_agent_job_step js
 		on js.sql_instance = mj.sql_instance
 		and js.sqlwatch_job_id = mj.sqlwatch_job_id
-		and js.step_name = jh.step_name collate database_default
+		--avoid implicit conversion warning:
+		and js.step_name = convert(nvarchar(128),jh.step_name) collate database_default
 
 	/* make sure we are only getting new records from msdb history 
 	   need to check performnace over long time !!! */
