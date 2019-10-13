@@ -319,16 +319,17 @@ declare @sql nvarchar(4000)
 		insert into dbo.[sqlwatch_logger_perf_file_stats]
 		select 
 			[sqlwatch_database_id] = sd.sqlwatch_database_id
+			,[sqlwatch_master_file_id] = mf.sqlwatch_master_file_id
 			--, [database_create_date] = d.create_date 
-			, f.name as logical_file_name, f.type_desc, 
-			cast (case
-			when left (ltrim (f.physical_name), 2) = '\\' 
-					then left (ltrim (f.physical_name), charindex ('\', ltrim (f.physical_name), charindex ('\', ltrim (f.physical_name), 3) + 1) - 1)
-				when charindex ('\', ltrim(f.physical_name), 3) > 0 
-					then upper (left (ltrim (f.physical_name), charindex ('\', ltrim (f.physical_name), 3) - 1))
-				else f.physical_name
-			end as varchar(255)) as logical_disk, 
-			fs.num_of_reads, fs.num_of_bytes_read, fs.io_stall_read_ms, fs.num_of_writes, fs.num_of_bytes_written, 
+			--, f.name as logical_file_name, f.type_desc, 
+			--,cast (case
+			--when left (ltrim (f.physical_name), 2) = '\\' 
+			--		then left (ltrim (f.physical_name), charindex ('\', ltrim (f.physical_name), charindex ('\', ltrim (f.physical_name), 3) + 1) - 1)
+			--	when charindex ('\', ltrim(f.physical_name), 3) > 0 
+			--		then upper (left (ltrim (f.physical_name), charindex ('\', ltrim (f.physical_name), 3) - 1))
+			--	else f.physical_name
+			--end as varchar(255)) as logical_disk, 
+			,fs.num_of_reads, fs.num_of_bytes_read, fs.io_stall_read_ms, fs.num_of_writes, fs.num_of_bytes_written, 
 			fs.io_stall_write_ms, fs.size_on_disk_bytes,
 			snapshot_time=@date_snapshot_current
 			, 1
@@ -342,9 +343,16 @@ declare @sql nvarchar(4000)
 		inner join sys.databases d 
 			on d.database_id = f.database_id
 		inner join [dbo].[sqlwatch_meta_database] sd 
-			on sd.[database_name] = d.[name] collate database_default
+			on sd.[database_name] = convert(nvarchar(128),d.[name]) collate database_default
 			and sd.[database_create_date] = d.[create_date]
 			and sd.sql_instance = @@SERVERNAME
+
+		inner join [dbo].[sqlwatch_meta_master_file] mf
+			on mf.sql_instance = @@SERVERNAME
+			and mf.sqlwatch_database_id = sd.sqlwatch_database_id
+			and mf.file_name = convert(nvarchar(128),f.name) collate database_default
+			and mf.[file_physical_name] = convert(nvarchar(260),f.physical_name) collate database_default
+
 
 		--------------------------------------------------------------------------------------------------------------
 		-- wait stats snapshot

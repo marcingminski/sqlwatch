@@ -106,7 +106,8 @@ Get-WMIObject Win32_Volume | ?{$_.DriveType -eq 3} | %{
 			('dbo.usp_sqlwatch_logger_index_usage_stats',	2,		'SQLWATCH-LOGGER-INDEXES',		'TSQL', 'exec dbo.usp_sqlwatch_logger_index_usage_stats'),
 			('dbo.usp_sqlwatch_internal_add_database',		1,		'SQLWATCH-INTERNAL-CONFIG',		'TSQL', 'exec dbo.usp_sqlwatch_internal_add_database'),
 			('dbo.usp_sqlwatch_internal_add_job',			2,		'SQLWATCH-INTERNAL-CONFIG',		'TSQL', 'exec dbo.usp_sqlwatch_internal_add_job'),
-			('dbo.usp_sqlwatch_internal_add_performance_counter', 3,'SQLWATCH-INTERNAL-CONFIG',		'TSQL', 'exec dbo.usp_sqlwatch_internal_add_performance_counter')
+			('dbo.usp_sqlwatch_internal_add_performance_counter', 3,'SQLWATCH-INTERNAL-CONFIG',		'TSQL', 'exec dbo.usp_sqlwatch_internal_add_performance_counter'),
+			('dbo.usp_sqlwatch_internal_add_master_file',		  4,'SQLWATCH-INTERNAL-CONFIG',		'TSQL', 'exec dbo.usp_sqlwatch_internal_add_master_file')
 
 
 /* create job and steps */

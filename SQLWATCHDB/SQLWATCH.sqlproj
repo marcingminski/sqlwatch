@@ -89,7 +89,7 @@
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_retention.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_add_database.sql" />
     <Build Include="dbo\Tables\sqlwatch_config_snapshot_type.sql" />
-    <Build Include="dbo\Tables\sqlwatch_logger_perf_master_files.sql" />
+    <Build Include="dbo\Tables\sqlwatch_meta_master_file.sql" />
     <Build Include="dbo\Tables\sqlwatch_logger_disk_utilisation_database.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_logger_disk_utilisation.sql" />
     <Build Include="dbo\Tables\sqlwatch_logger_disk_utilisation_volume.sql" />
@@ -131,6 +131,7 @@
     <Build Include="dbo\Tables\sqlwatch_meta_performance_counter.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_add_performance_counter.sql" />
     <Build Include="dbo\Views\vw_sqlwatch_report_perf_os_performance_counters.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_add_master_file.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
@@ -174,6 +175,7 @@
     <None Include="migrate_wait_type_to_wait_type_id.sql" />
     <None Include="migrate_perf_counter_to_perf_counter_id.sql" />
     <None Include="migrate_database_name_to_sqlwatch_database_id.sql" />
+    <None Include="normalise_file_stats.sql" />
   </ItemGroup>
   <Target Name="SetDacVersionToAssemblyVersion" AfterTargets="CoreCompile">
     <GetAssemblyIdentity AssemblyFiles="$(IntermediateTargetFullFileName)">
