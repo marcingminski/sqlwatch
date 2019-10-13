@@ -8,7 +8,7 @@ declare @snapshot_time datetime
 declare @snapshot_type_id smallint
 
 set @snapshot_type_id = 16
-set @snapshot_time = getdate()
+set @snapshot_time = getutcdate();
 
 insert into sqlwatch_logger_snapshot_header (snapshot_time, snapshot_type_id)
 select @snapshot_time, @snapshot_type_id
