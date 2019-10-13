@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[sqlwatch_logger_perf_master_files]
 (
-	[database_name] sysname,
-	[database_create_date] datetime,
+	[sqlwatch_database_id] smallint,
+	--[database_create_date] datetime,
 	[file_type] tinyint,
 	[file_physical_name] nvarchar(260),
 	[file_size] int,
@@ -9,11 +9,11 @@
 	[snapshot_type_id] tinyint,
 	[sql_instance] nvarchar(25) not null default @@SERVERNAME,
 	constraint PK_sql_perf_mon_master_files primary key clustered (
-		[snapshot_time], [snapshot_type_id], [database_name], [database_create_date], [sql_instance]
+		[snapshot_time], [snapshot_type_id], [sqlwatch_database_id], [sql_instance]
 		),
-	constraint FK_sql_perf_mon_master_files_db foreign key ([database_name], [database_create_date], [sql_instance]) 
+	constraint FK_sql_perf_mon_master_files_db foreign key ([sql_instance],[sqlwatch_database_id]) 
 		references [dbo].[sqlwatch_meta_database](
-			[database_name], [database_create_date], [sql_instance]
+			[sql_instance],[sqlwatch_database_id]
 		) on delete cascade,
 	constraint FK_sql_perf_mon_master_files_snapshot foreign key ([snapshot_time], [snapshot_type_id], [sql_instance])
 		references [dbo].[sqlwatch_logger_snapshot_header] (

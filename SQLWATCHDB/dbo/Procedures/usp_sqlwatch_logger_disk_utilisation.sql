@@ -145,8 +145,9 @@ else
 --------------------------------------------------------------------------------------------------------------
 insert into [dbo].[sqlwatch_logger_disk_utilisation_database]
 select 
-	  su.[database_name]
-	, [database_create_date] = db.create_date
+	--  su.[database_name]
+	--, [database_create_date] = db.create_date
+	[sqlwatch_database_id] = swd.[sqlwatch_database_id]
 	/*	
 		conversion from sp_spaceused MiB format to bytes so we have consistent units 
 		to test that this gives us an exact number:

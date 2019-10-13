@@ -83,8 +83,8 @@ begin tran
 	insert into [dbo].[sqlwatch_logger_index_missing]
 	select 
 		[server_name] = @@servername ,
-		[database_name] = db.[database_name], 
-		[database_create_date] = db.[database_create_date],
+		[sqlwatch_database_id] = db.[sqlwatch_database_id], 
+		--[database_create_date] = db.[database_create_date],
 		[object_name] = parsename(mi.[statement],2) + '.' + parsename(mi.[statement],1), 
 		[snapshot_time] = @snapshot_time,
 		mi.[index_handle], 
@@ -121,6 +121,7 @@ begin tran
 		inner join [dbo].[sqlwatch_meta_database] db
 		on db.[database_name] = db_name(mi.[database_id])
 		and db.[database_create_date] = sdb.[create_date]
+		and db.sql_instance = @@SERVERNAME
 
 
 commit tran

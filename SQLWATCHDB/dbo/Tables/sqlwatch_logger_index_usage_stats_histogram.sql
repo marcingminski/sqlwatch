@@ -1,6 +1,5 @@
 ﻿CREATE TABLE [dbo].[sqlwatch_logger_index_usage_stats_histogram] (
-	[database_name] [sysname] NOT NULL,
-	[database_create_date] [datetime] NOT NULL,
+	[sqlwatch_database_id] smallint NOT NULL,
 	[object_name] [nvarchar](256) NOT NULL,
 	[index_name] [sysname] NULL,
 	[index_id] [int] NOT NULL,
@@ -14,8 +13,8 @@
 	[snapshot_type_id] [tinyint] NOT NULL,
 	[collection_time] datetime,
 	[sql_instance] nvarchar(25) not null default @@SERVERNAME,
-	 constraint [pk_logger_index_stats_histogram] primary key nonclustered ([snapshot_time],[snapshot_type_id], [index_id] ASC,[database_name], [database_create_date], [object_name] ASC,[sqlwatch_stat_range_id] ASC, [sql_instance]),
-	 constraint [fk_logger_index_stats_histogram_database] foreign key ([database_name], [database_create_date], [sql_instance]) references [dbo].[sqlwatch_meta_database] ([database_name], [database_create_date], [sql_instance]) on delete cascade on update cascade,
+	 constraint [pk_logger_index_stats_histogram] primary key nonclustered ([snapshot_time],[snapshot_type_id], [index_id] ASC,[sqlwatch_database_id], [object_name] ASC,[sqlwatch_stat_range_id] ASC, [sql_instance]),
+	 constraint [fk_logger_index_stats_histogram_database] foreign key ([sql_instance], [sqlwatch_database_id]) references [dbo].[sqlwatch_meta_database] ([sql_instance], [sqlwatch_database_id]) on delete cascade on update cascade,
 	 constraint [fk_logger_index_stats_histogram] foreign key ([snapshot_time],[snapshot_type_id], [sql_instance]) references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time],[snapshot_type_id], [sql_instance]) on delete cascade on update cascade
 	 )
 	 go

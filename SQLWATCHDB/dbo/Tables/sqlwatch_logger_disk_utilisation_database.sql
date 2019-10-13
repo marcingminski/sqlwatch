@@ -1,7 +1,6 @@
 ﻿CREATE TABLE [dbo].[sqlwatch_logger_disk_utilisation_database]
 (
-	[database_name] sysname,
-	[database_create_date] datetime,
+	[sqlwatch_database_id] smallint not null,
 	[database_size_bytes] bigint,
 	[unallocated_space_bytes] bigint,
 	[reserved_bytes] bigint,
@@ -14,10 +13,10 @@
 	[snapshot_type_id] tinyint,
 	[sql_instance] nvarchar(25) default @@SERVERNAME,
 	constraint PK_logger_disk_util_database
-		primary key clustered ([snapshot_time],[snapshot_type_id],[sql_instance], [database_name], [database_create_date]),
+		primary key clustered ([snapshot_time],[snapshot_type_id],[sql_instance], [sqlwatch_database_id]),
 	constraint FK_logger_disk_util_database_database
-		foreign key ([database_name],[database_create_date],[sql_instance])
-		references [dbo].[sqlwatch_meta_database] ([database_name],[database_create_date],[sql_instance])
+		foreign key ([sql_instance],[sqlwatch_database_id])
+		references [dbo].[sqlwatch_meta_database] ([sql_instance],[sqlwatch_database_id])
 		on delete cascade,
 	constraint FK_logger_disk_util_database_snapshot 
 		foreign key ([snapshot_time],[snapshot_type_id],[sql_instance])

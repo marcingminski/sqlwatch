@@ -173,6 +173,7 @@
     <None Include="fix_trim_perf_counter.sql" />
     <None Include="migrate_wait_type_to_wait_type_id.sql" />
     <None Include="migrate_perf_counter_to_perf_counter_id.sql" />
+    <None Include="migrate_database_name_to_sqlwatch_database_id.sql" />
   </ItemGroup>
   <Target Name="SetDacVersionToAssemblyVersion" AfterTargets="CoreCompile">
     <GetAssemblyIdentity AssemblyFiles="$(IntermediateTargetFullFileName)">

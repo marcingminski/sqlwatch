@@ -318,8 +318,8 @@ declare @sql nvarchar(4000)
 		--------------------------------------------------------------------------------------------------------------
 		insert into dbo.[sqlwatch_logger_perf_file_stats]
 		select 
-			[database_name] = d.name
-			, [database_create_date] = d.create_date 
+			[sqlwatch_database_id] = sd.sqlwatch_database_id
+			--, [database_create_date] = d.create_date 
 			, f.name as logical_file_name, f.type_desc, 
 			cast (case
 			when left (ltrim (f.physical_name), 2) = '\\' 

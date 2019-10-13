@@ -43,13 +43,14 @@ while @@FETCH_STATUS = 0
 	begin
 
 		set @sql = 'insert into [dbo].[sqlwatch_logger_index_usage_stats] (
-	database_name, database_create_date, object_name, index_id, index_name, [used_pages_count],index_type,
+	sqlwatch_database_id, object_name, index_id, index_name, [used_pages_count],index_type,
 	user_seeks, user_scans, user_lookups, user_updates, last_user_seek, last_user_scan, last_user_lookup, last_user_update,
 	stats_date, snapshot_time, snapshot_type_id, index_disabled, partition_id
 	)
 			select 
-				database_name=dbs.name,
-				database_create_date=dbs.create_date,
+				--database_name=dbs.name,
+				--database_create_date=dbs.create_date,
+				mdb.sqlwatch_database_id,
 				[object_name] = object_schema_name(ixus.object_id,dbs.database_id) + ''.'' + object_name(ixus.object_id,dbs.database_id),
 				ix.[index_id],
 				[index_name] = ix.[name],
@@ -87,6 +88,11 @@ while @@FETCH_STATUS = 0
 
 			inner join ' + quotename(@database_name) + '.sys.schemas s 
 				on s.[schema_id] = t.[schema_id]
+
+			inner join [dbo].[sqlwatch_meta_database] mdb
+				on mdb.sql_instance = ''' + @@SERVERNAME + '''
+				and mdb.database_name = dbs.name collate database_default
+				and mdb.database_create_date = dbs.create_date
 '
 		--print @sql
 		Print '[' + convert(varchar(23),getdate(),121) + '] Collecting index statistics for database: ' + @database_name
@@ -119,10 +125,13 @@ create table #stats (
 set @snapshot_type = 15
 
 declare c_index cursor for
-select [database_name], table_name=object_name , index_name, index_id 
-from [dbo].[sqlwatch_logger_index_usage_stats]
+select md.[database_name], table_name=object_name , index_name, index_id 
+from [dbo].[sqlwatch_logger_index_usage_stats] us
+	inner join [dbo].[sqlwatch_meta_database] md
+		on md.sqlwatch_database_id = us.sqlwatch_database_id
+		and md.sql_instance = us.sql_instance
 where [snapshot_time] = @snapshot_time
-and [sql_instance] = @@SERVERNAME
+and us.[sql_instance] = @@SERVERNAME
 
 open c_index
 
@@ -159,13 +168,12 @@ deallocate c_index
 	values (@snapshot_time, @snapshot_type)
 
 	insert into [dbo].[sqlwatch_logger_index_usage_stats_histogram](
-		 [database_name], [database_create_date], 
+		 [sqlwatch_database_id],  
 		[object_name], [index_name], [index_id], 
 		RANGE_HI_KEY, RANGE_ROWS, EQ_ROWS, DISTINCT_RANGE_ROWS, AVG_RANGE_ROWS,
 		[snapshot_time], [snapshot_type_id], [collection_time])
 	select
-		dbs.[name],
-		dbs.[create_date],
+		mdb.[sqlwatch_database_id],
 		st.[object_name],
 		st.[index_name],
 		st.[index_id],
@@ -180,5 +188,9 @@ deallocate c_index
 	from #stats st
 	inner join sys.databases dbs
 		on dbs.[name] = st.[database_name]
+	inner join [dbo].[sqlwatch_meta_database] mdb
+		on st.[database_name] = mdb.[database_name] collate database_default
+		and mdb.[sql_instance] = @@SERVERNAME
+		and mdb.[database_create_date] = dbs.[create_date]
 
 commit tran
