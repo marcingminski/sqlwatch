@@ -434,4 +434,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="[wait_type_id]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="c9332f72-dac5-4cd8-ae19-ba7207000c47" ChangeDateTime="10/12/2019 23:29:00">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_logger_perf_os_performance_counters].[object_name]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_logger_perf_os_performance_counters]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[performance_counter_id]" />
+  </Operation>
 </Operations>

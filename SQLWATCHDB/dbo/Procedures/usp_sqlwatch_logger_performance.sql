@@ -96,14 +96,16 @@ declare @sql nvarchar(4000)
 		-- 537003264 and 1073939712 -> this is similar to the above 65792 but we must divide the results by the base
 		--------------------------------------------------------------------------------------------------------------
 
-		insert into dbo.[sqlwatch_logger_perf_os_performance_counters]
+		insert into dbo.[sqlwatch_logger_perf_os_performance_counters] ([performance_counter_id],[instance_name], [cntr_value], [base_cntr_value],
+			[snapshot_time], [snapshot_type_id], [sql_instance])
 		select
-			 [object_name] = rtrim(pc.[object_name])
+			 --[object_name] = rtrim(pc.[object_name])
+			 mc.[performance_counter_id]
 			,instance_name = rtrim(pc.instance_name)
-			,counter_name = rtrim(pc.counter_name)
+			--,counter_name = rtrim(pc.counter_name)
 			,pc.cntr_value
 			,base_cntr_value=bc.cntr_value
-			,pc.cntr_type
+			--,pc.cntr_type
 			,snapshot_time=@date_snapshot_current
 			, 1
 			, @@SERVERNAME
@@ -152,6 +154,10 @@ declare @sql nvarchar(4000)
 							and pc2.instance_name = pc.instance_name collate database_default
 							and rtrim(pc2.counter_name) = sc.base_counter_name collate database_default
 						) bc
+		inner join [dbo].[sqlwatch_meta_performance_counter] mc
+			on mc.[object_name] = rtrim(pc.[object_name]) collate database_default
+			and mc.[counter_name] = rtrim(pc.[counter_name]) collate database_default
+			and mc.[sql_instance] = @@SERVERNAME
 		where sc.collect = 1
 		option (recompile)
 

@@ -31,7 +31,7 @@ and COLUMN_NAME = 'counter_name') <> 128
 	begin
 		begin tran datatypemigration
 		alter table [dbo].[sqlwatch_logger_perf_os_performance_counters] drop constraint [pk_sql_perf_mon_perf_counters];
-		alter table [dbo].[sqlwatch_logger_perf_os_performance_counters] alter column [object_name] nvarchar(128) not null;
+		alter table [dbo].[sqlwatch_logger_perf_os_performance_counters] alter column [performance_counter_id] nvarchar(128) not null;
 		alter table [dbo].[sqlwatch_logger_perf_os_performance_counters] alter column [instance_name] nvarchar(128) not null;
 		alter table [dbo].[sqlwatch_logger_perf_os_performance_counters] alter column [counter_name] nvarchar(128) not null;
 		commit tran datatypemigration
