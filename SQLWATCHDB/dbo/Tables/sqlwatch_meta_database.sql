@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[sqlwatch_meta_database]
 (
-	[database_name] sysname not null,
+	[database_name] nvarchar(128) not null,
 	[database_create_date] datetime not null default '1970-01-01',
 	[database_current] bit not null default 1,
 	[sql_instance] nvarchar(25) not null default @@SERVERNAME,
