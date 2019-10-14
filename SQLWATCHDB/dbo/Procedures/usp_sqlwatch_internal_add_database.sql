@@ -1,17 +1,5 @@
 ﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_internal_add_database]
 as
-	/* this procedure adds databse to our "dimension" table:
-	[dbo].[sql_perf_mon_database]
-   
-   this is only required so we can filter by database dimension
-   in the report. The data collection happens for all databases 
-   Currently, databases are being added to the above table
-   during installation. This is not good enough as when new
-   database is being created it will never appear on the report.
-
-   This procedure will be scheduled to run periodically to add
-   any missing databases. It will also be triggered during install 
-   to maintain one piece of code */
 	set nocount on;
 
 	declare @databases table (
@@ -31,6 +19,10 @@ as
 	so we need it as a dimensions to be able to filter in the report */
 	select 'mssqlsystemresource', '1970-01-01', @@SERVERNAME
 	
+
+	/*	using database_create_data to distinguish databases that have been dropped and re-created 
+		this is particulary useful when doing performance testing and we are re-creating test databases throughout the process and want to compare them later.
+	*/
 	;merge [dbo].[sqlwatch_meta_database] as target
 	using @databases as source
 		on (

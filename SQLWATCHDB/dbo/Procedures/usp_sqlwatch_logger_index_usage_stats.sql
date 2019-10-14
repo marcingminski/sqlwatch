@@ -16,10 +16,6 @@ declare @object_name nvarchar(256)
 
 set nocount on ;
 
-/* add any new databases to satisty FK relations*/
-exec [dbo].[usp_sqlwatch_internal_add_database]
-
-
 /* step 1, get indexes from each database.
    we're creating snapshot timestamp here and because index collection may take few minutes,
    the timepstamp will not be 100% accureate but it does not matter much in this instance as
@@ -43,19 +39,20 @@ while @@FETCH_STATUS = 0
 	begin
 
 		set @sql = 'insert into [dbo].[sqlwatch_logger_index_usage_stats] (
-	sqlwatch_database_id, object_name, index_id, index_name, [used_pages_count],index_type,
+	sqlwatch_database_id, [sqlwatch_index_id], [used_pages_count],
 	user_seeks, user_scans, user_lookups, user_updates, last_user_seek, last_user_scan, last_user_lookup, last_user_update,
-	stats_date, snapshot_time, snapshot_type_id, index_disabled, partition_id
+	stats_date, snapshot_time, snapshot_type_id, index_disabled, partition_id, [sqlwatch_table_id]
 	)
 			select 
 				--database_name=dbs.name,
 				--database_create_date=dbs.create_date,
 				mdb.sqlwatch_database_id,
-				[object_name] = object_schema_name(ixus.object_id,dbs.database_id) + ''.'' + object_name(ixus.object_id,dbs.database_id),
-				ix.[index_id],
-				[index_name] = ix.[name],
+				mi.[sqlwatch_index_id],
+				--[object_name] = object_schema_name(ixus.object_id,dbs.database_id) + ''.'' + object_name(ixus.object_id,dbs.database_id),
+				--ix.[index_id],
+				--[index_name] = ix.[name],
 				ps.[used_page_count],
-				[index_type] = ix.[type],
+				--[index_type] = ix.[type],
 				ixus.[user_seeks],
 				ixus.[user_scans],
 				ixus.[user_lookups],
@@ -68,7 +65,8 @@ while @@FETCH_STATUS = 0
 				[snapshot_time] = ''' + convert(varchar(23),@snapshot_time,121) + ''',
 				[snapshot_type_id] = ' + convert(varchar(5),@snapshot_type) + ',
 				[is_disabled]=ix.is_disabled,
-				ps.partition_id
+				ps.partition_id,
+				mt.sqlwatch_table_id
 			from sys.dm_db_index_usage_stats ixus
 
 			inner join sys.databases dbs
@@ -93,6 +91,16 @@ while @@FETCH_STATUS = 0
 				on mdb.sql_instance = ''' + @@SERVERNAME + '''
 				and mdb.database_name = dbs.name collate database_default
 				and mdb.database_create_date = dbs.create_date
+
+			inner join [dbo].[sqlwatch_meta_table] mt
+				on mt.sql_instance = mdb.sql_instance
+				and mt.sqlwatch_database_id = mt.sqlwatch_database_id
+				and mt.table_name = s.name + ''.'' + t.name
+
+			inner join [dbo].[sqlwatch_meta_index] mi
+				on mi.sql_instance = mdb.sql_instance
+				and mi.sqlwatch_database_id = mi.sqlwatch_database_id
+				and mi.sqlwatch_table_id = mi.sqlwatch_table_id
 '
 		--print @sql
 		Print '[' + convert(varchar(23),getdate(),121) + '] Collecting index statistics for database: ' + @database_name
@@ -107,90 +115,6 @@ close c_db
 deallocate c_db
 
 
-/* step 2, collect index statistsics and histograms for the newly collected indexes */
-create table #stats (
-	[database_name] sysname default 'fe92qw0fa_dummy',
-	[object_name] sysname default 'fe92qw0fa_dummy',
-	index_name sysname default 'fe92qw0fa_dummy',
-	index_id int,
-	RANGE_HI_KEY sql_variant,
-	RANGE_ROWS sql_variant,
-	EQ_ROWS sql_variant,
-	DISTINCT_RANGE_ROWS sql_variant,
-	AVG_RANGE_ROWS sql_variant,
-	[collection_time] datetime
-)
 
-
-set @snapshot_type = 15
-
-declare c_index cursor for
-select md.[database_name], table_name=object_name , index_name, index_id 
-from [dbo].[sqlwatch_logger_index_usage_stats] us
-	inner join [dbo].[sqlwatch_meta_database] md
-		on md.sqlwatch_database_id = us.sqlwatch_database_id
-		and md.sql_instance = us.sql_instance
-where [snapshot_time] = @snapshot_time
-and us.[sql_instance] = @@SERVERNAME
-
-open c_index
-
-fetch next from c_index
-into @database_name, @object_name, @index_name, @index_id
-
-while @@FETCH_STATUS = 0
-	begin
-		--set @object_name = object_schema_name(@object_id) + '.' + object_name(@object_id)
-		set @sql = 'use [' + @database_name + ']; 
-dbcc show_statistics (''' + @object_name + ''',''' + @index_name + ''') with  HISTOGRAM'
-		Print '[' + convert(varchar(23),getdate(),121) + '] Collecting index histogram for idnex: ' + @index_name
-
-		insert into #stats (RANGE_HI_KEY,RANGE_ROWS,EQ_ROWS,DISTINCT_RANGE_ROWS,AVG_RANGE_ROWS)
-		exec (@sql)
-		--print 'Getting stats for: ' + @database_name
-
-		update #stats
-			set [database_name] = @database_name
-				, [object_name] = @object_name
-				, index_name = @index_name
-				, index_id = @index_id
-				, [collection_time] = getutcdate()
-		where index_name = 'fe92qw0fa_dummy'
-
-		fetch next from c_index
-		into @database_name, @object_name, @index_name, @index_id
-	end
-
-close c_index
-deallocate c_index 
-
-	insert into [dbo].[sqlwatch_logger_snapshot_header] (snapshot_time, snapshot_type_id)
-	values (@snapshot_time, @snapshot_type)
-
-	insert into [dbo].[sqlwatch_logger_index_usage_stats_histogram](
-		 [sqlwatch_database_id],  
-		[object_name], [index_name], [index_id], 
-		RANGE_HI_KEY, RANGE_ROWS, EQ_ROWS, DISTINCT_RANGE_ROWS, AVG_RANGE_ROWS,
-		[snapshot_time], [snapshot_type_id], [collection_time])
-	select
-		mdb.[sqlwatch_database_id],
-		st.[object_name],
-		st.[index_name],
-		st.[index_id],
-		st.RANGE_HI_KEY,
-		RANGE_ROWS = convert(real,st.RANGE_ROWS),
-		EQ_ROWS = convert(real,st.EQ_ROWS),
-		DISTINCT_RANGE_ROWS = convert(real,st.DISTINCT_RANGE_ROWS),
-		AVG_RANGE_ROWS = convert(real,st.AVG_RANGE_ROWS),
-		[snapshot_time] = @snapshot_time,
-		[snapshot_type_id] = @snapshot_type,
-		[collection_time]
-	from #stats st
-	inner join sys.databases dbs
-		on dbs.[name] = st.[database_name]
-	inner join [dbo].[sqlwatch_meta_database] mdb
-		on st.[database_name] = mdb.[database_name] collate database_default
-		and mdb.[sql_instance] = @@SERVERNAME
-		and mdb.[database_create_date] = dbs.[create_date]
 
 commit tran

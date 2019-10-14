@@ -24,7 +24,7 @@ where isnumeric(b.database_name) = 0
 
 update b
 	set database_name = a.sqlwatch_database_id 
-from [dbo].[sqlwatch_logger_index_missing] b
+from [dbo].[sqlwatch_logger_index_missing_stats] b
 	inner join [dbo].[sqlwatch_meta_database] a
 		on a.database_name = b.database_name
 		and a.database_create_date = b.database_create_date

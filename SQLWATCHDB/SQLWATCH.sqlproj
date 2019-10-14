@@ -93,8 +93,8 @@
     <Build Include="dbo\Tables\sqlwatch_logger_disk_utilisation_database.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_logger_disk_utilisation.sql" />
     <Build Include="dbo\Tables\sqlwatch_logger_disk_utilisation_volume.sql" />
-    <Build Include="dbo\Tables\sqlwatch_logger_index_missing.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_logger_missing_indexes.sql" />
+    <Build Include="dbo\Tables\sqlwatch_logger_index_missing_stats.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_logger_missing_index_stats.sql" />
     <Build Include="dbo\Tables\sqlwatch_logger_xes_waits_stats.sql" />
     <Build Include="dbo\Tables\sqlwatch_logger_xes_query_processing.sql" />
     <Build Include="dbo\Tables\sqlwatch_logger_xes_iosubsystem.sql" />
@@ -138,6 +138,13 @@
     <Build Include="dbo\Procedures\usp_sqlwatch_logger_disk_utilisation_os_volume.sql" />
     <Build Include="dbo\Tables\sqlwatch_meta_memory_clerk.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_add_memory_clerk.sql" />
+    <Build Include="dbo\Tables\sqlwatch_meta_table.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_add_table.sql" />
+    <Build Include="dbo\Tables\sqlwatch_meta_index.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_add_index.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_logger_index_histogram.sql" />
+    <Build Include="dbo\Tables\sqlwatch_meta_index_missing.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_add_index_missing.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />

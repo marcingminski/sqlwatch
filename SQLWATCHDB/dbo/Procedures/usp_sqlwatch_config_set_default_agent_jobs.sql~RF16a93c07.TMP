@@ -62,12 +62,11 @@ insert into #jobs
 
 /* step definition */
 
-/*  Normally, the SQLWATCH-INTERNAL-META-CONFIG runs any metadata config procedures that collect reference data every hour. by reference data
-	we mean list of databases, tables, jobs, indexes etc. this is to reduce load during more frequent collectors such as the performance collector.
-	For obvious reasons, we would not want to collect list of tables every minute as that would be pointless however, in case of less frequent jobs such as disk collector 
-	and index collection, or those more time consuming and resource heavy, by exception, we will run meta data collection part of the data collector job rather than the standard meta-config job 
-	SQLWATCH tries to be as lightweight as possible and will not collect any data unles required.
-*/
+/* normally, the SQLWATCH-INTERNAL-META-CONFIG runs any metadata config procedures that collect reference data every hour. by reference data
+	we mean list of databases, tables, jobs, indexes etc. this is to reduce load during more frequent collectors such as the performance collector, 
+	we would not want to collect list of tables every minute as that would be pointless.
+	however, in case of less frequent jobs such as disk collector and index collection, this can be quite time consuming and resource heavy and therefore, 
+	by exception, we will run it as part of the index collect job rather than the standard meta-config job */
 
 
 insert into #steps

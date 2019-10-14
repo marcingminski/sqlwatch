@@ -61,15 +61,6 @@ insert into #jobs
 			('SQLWATCH-LOGGER-AGENT-HISTORY',	4,		1,			4,				10,				0,					1,					20180101,	99991231, 0,			235959,		1)
 
 /* step definition */
-
-/*  Normally, the SQLWATCH-INTERNAL-META-CONFIG runs any metadata config procedures that collect reference data every hour. by reference data
-	we mean list of databases, tables, jobs, indexes etc. this is to reduce load during more frequent collectors such as the performance collector.
-	For obvious reasons, we would not want to collect list of tables every minute as that would be pointless however, in case of less frequent jobs such as disk collector 
-	and index collection, or those more time consuming and resource heavy, by exception, we will run meta data collection part of the data collector job rather than the standard meta-config job 
-	SQLWATCH tries to be as lightweight as possible and will not collect any data unles required.
-*/
-
-
 insert into #steps
 			/* step name								step_id,	job_name							subsystem,	command */
 	values	('dbo.usp_sqlwatch_logger_whoisactive',		1,			'SQLWATCH-LOGGER-WHOISACTIVE',		'TSQL',		'exec dbo.usp_sqlwatch_logger_whoisactive'),
@@ -92,21 +83,19 @@ Get-WMIObject Win32_Volume | ?{$_.DriveType -eq 3} | %{
     $VolumeName = $_.Name
     $FreeSpace = $_.Freespace
     $Capacity = $_.Capacity
-    $VolumeLabel = $_.Label
-    $FileSystem = $_.Filesystem
-    $BlockSize = $_.BlockSize
     Invoke-SqlCmd -ServerInstance "' + @server + '" -Database ' + '$(DatabaseName)' + ' -Query "
-	 exec [dbo].[usp_sqlwatch_internal_add_os_volume] 
-		@volume_name = ''$VolumeName'', 
-		@label = ''$VolumeLabel'', 
-		@file_system = ''$FileSystem'', 
-		@block_size = ''$BlockSize''
 	 exec [dbo].[usp_sqlwatch_logger_disk_utilisation_os_volume] 
 		@volume_name = ''$VolumeName'',
 		@volume_free_space_bytes = $FreeSpace,
 		@volume_total_space_bytes = $Capacity
     " 
 }'),
+			
+			/* normally, the SQLWATCH-INTERNAL-META-CONFIG runs any metadata config procedures that collect reference data every hour. by reference data
+			   we mean list of databases, tables, jobs, indexes etc. this is to reduce load during more frequent collectors such as the performance collector, 
+			   we would not want to collect list of tables every minute as that would be pointless.
+			   however, in case of less frequent jobs such as disk collector and index collection, this can be quite time consuming and resource heavy and therefore, 
+			   by exception, we will run it as part of the index collect job rather than the standard meta-config job */
 
 			('dbo.usp_sqlwatch_internal_add_index',			1,		'SQLWATCH-LOGGER-INDEXES',		'TSQL', 'exec dbo.usp_sqlwatch_internal_add_index'),
 			('dbo.usp_sqlwatch_logger_missing_index_stats',	2,		'SQLWATCH-LOGGER-INDEXES',		'TSQL', 'exec dbo.usp_sqlwatch_logger_missing_index_stats'),
@@ -119,7 +108,18 @@ Get-WMIObject Win32_Volume | ?{$_.DriveType -eq 3} | %{
 			('dbo.usp_sqlwatch_internal_add_master_file',			4,	'SQLWATCH-INTERNAL-META-CONFIG','TSQL', 'exec dbo.usp_sqlwatch_internal_add_master_file'),
 			('dbo.usp_sqlwatch_internal_add_wait_type',				5,	'SQLWATCH-INTERNAL-META-CONFIG','TSQL', 'exec dbo.usp_sqlwatch_internal_add_wait_type'),
 			('dbo.usp_sqlwatch_internal_add_memory_clerk',			6,	'SQLWATCH-INTERNAL-META-CONFIG','TSQL', 'exec dbo.usp_sqlwatch_internal_add_memory_clerk'),
-			('dbo.usp_sqlwatch_internal_add_table',					7,	'SQLWATCH-INTERNAL-META-CONFIG','TSQL', 'exec dbo.usp_sqlwatch_internal_add_table')
+			('dbo.usp_sqlwatch_internal_add_table',					7,	'SQLWATCH-INTERNAL-META-CONFIG','TSQL', 'exec dbo.usp_sqlwatch_internal_add_table'),
+
+			('Get-WMIObject Win32_Volume',					9,		'SQLWATCH-INTERNAL-META-CONFIG',		'PowerShell', N'
+Get-WMIObject Win32_Volume | ?{$_.DriveType -eq 3} | %{
+    $VolumeName = $_.Name
+    $VolumeLabel = $_.Label
+    $FileSystem = $_.Filesystem
+    $BlockSize = $_.BlockSize
+    Invoke-SqlCmd -ServerInstance "' + @server + '" -Database ' + '$(DatabaseName)' + ' -Query "
+     exec [dbo].[usp_sqlwatch_internal_add_os_volume] @volume_name = ''$VolumeName'', @label = ''$VolumeLabel'', @file_system = ''$FileSystem'', @block_size = ''$BlockSize''
+	 " 
+}')
 
 	
 /* create job and steps */

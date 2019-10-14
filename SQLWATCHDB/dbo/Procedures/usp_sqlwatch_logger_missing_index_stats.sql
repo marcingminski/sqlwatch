@@ -50,7 +50,7 @@
 --				Some DBAs may have different preference and different default FILLFACTOR 
 --				and I wouldnt want to force any config different to what they prefer.
 -- =============================================
-CREATE PROCEDURE [dbo].[usp_sqlwatch_logger_missing_indexes]
+CREATE PROCEDURE [dbo].[usp_sqlwatch_logger_missing_index_stats]
 AS
 set xact_abort on
 begin tran
@@ -80,49 +80,59 @@ begin tran
 	--------------------------------------------------------------------------------------------------------------
 	-- get missing indexes
 	--------------------------------------------------------------------------------------------------------------
-	insert into [dbo].[sqlwatch_logger_index_missing]
+	insert into [dbo].[sqlwatch_logger_index_missing_stats] ([sqlwatch_database_id],
+		[sqlwatch_table_id], [sqlwatch_missing_index_detail_id],[snapshot_time], [last_user_seek], [unique_compiles],
+		[user_seeks], [user_scans], [avg_total_user_cost], [avg_user_impact], [snapshot_type_id],[sql_instance])
 	select 
-		[server_name] = @@servername ,
+		--[server_name] = @@servername ,
 		[sqlwatch_database_id] = db.[sqlwatch_database_id], 
+		[sqlwatch_table_id] = mt.[sqlwatch_table_id],
+		[sqlwatch_missing_index_id] = mii.sqlwatch_missing_index_id,
+
 		--[database_create_date] = db.[database_create_date],
-		[object_name] = parsename(mi.[statement],2) + '.' + parsename(mi.[statement],1), 
+		--[object_name] = parsename(mi.[statement],2) + '.' + parsename(mi.[statement],1), 
 		[snapshot_time] = @snapshot_time,
-		mi.[index_handle], 
 		igs.[last_user_seek],
 		igs.[unique_compiles], 
 		igs.[user_seeks], 
 		igs.[user_scans], 
 		igs.[avg_total_user_cost], 
-		igs.[avg_user_impact], 
-		[index_tsql] = 'CREATE INDEX SQLWATCH_AUTOIDX_' + rtrim(convert(char(100),mi.[index_handle])) + 
-			'_' + convert(varchar(10),getutcdate(),112) + ' ON ' + mi.statement + ' (' + 
-			case when [equality_columns] is not null then [equality_columns] else '' end + 
-			case when [equality_columns] is not null and [inequality_columns] is not null then ', ' else '' end + 
-			case when [inequality_columns] is not null then [inequality_columns] else '' end + ') ' + 
-			case when [included_columns] is not null then 'INCLUDE (' + [included_columns] + ')' else '' end
-			+ N' WITH (' 
-				+ case when @allows_online_index = 1 then N'ONLINE=ON,' else N'' end + N'SORT_IN_TEMPDB=ON' 
-			+ N')',
-		[snapshot_type_id] = @snapshot_type
-		, @@SERVERNAME
+		igs.[avg_user_impact],
+		[snapshot_type_id] = @snapshot_type,
+		@@SERVERNAME
 	from sys.dm_db_missing_index_groups ig 
 
 		inner join sys.dm_db_missing_index_group_stats igs 
-		on igs.group_handle = ig.index_group_handle 
+			on igs.group_handle = ig.index_group_handle 
 
 		inner join sys.dm_db_missing_index_details mi 
-		on ig.index_handle = mi.index_handle
+			on ig.index_handle = mi.index_handle
 
 		inner join sys.databases sdb
-		on sdb.[name] = db_name(mi.[database_id])
-		and sdb.database_id > 4
-		and sdb.[name] not like '%ReportServer%'
+			on sdb.[name] = db_name(mi.[database_id])
+			and sdb.database_id > 4
+			and sdb.[name] not like '%ReportServer%'
 
 		inner join [dbo].[sqlwatch_meta_database] db
-		on db.[database_name] = db_name(mi.[database_id])
-		and db.[database_create_date] = sdb.[create_date]
-		and db.sql_instance = @@SERVERNAME
+			on db.[database_name] = db_name(mi.[database_id])
+			and db.[database_create_date] = sdb.[create_date]
+			and db.sql_instance = @@SERVERNAME
 
+		inner join [dbo].[sqlwatch_meta_table] mt
+			on mt.sql_instance = db.sql_instance
+			and mt.sqlwatch_database_id = db.sqlwatch_database_id
+			and mt.table_name = parsename(mi.[statement],2) + '.' + parsename(mi.[statement],1)
+
+		inner join [dbo].[sqlwatch_meta_index_missing] mii
+			on mii.sqlwatch_database_id = db.sqlwatch_database_id
+			and mii.sqlwatch_table_id = mt.sqlwatch_table_id
+			and mii.sql_instance = mt.sql_instance
+			and mii.index_handle = ig.index_handle
+			and mii.equality_columns = mi.equality_columns collate database_default
+			and mii.statement = mi.statement collate database_default
+
+	where mi.equality_columns is not null
+	and mi.statement is not null
 
 commit tran
 
