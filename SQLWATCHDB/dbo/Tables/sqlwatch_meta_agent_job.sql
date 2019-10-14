@@ -4,6 +4,7 @@
 	[job_name] nvarchar(128) not null,
 	[job_create_date] datetime not null,
 	[sqlwatch_job_id] smallint identity (-32768,1),
+	[deleted_when] datetime null,
 	constraint pk_sqlwatch_meta_agent_job primary key (
 		[sql_instance], [sqlwatch_job_id]
 		),

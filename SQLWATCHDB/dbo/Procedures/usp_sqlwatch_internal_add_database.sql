@@ -40,7 +40,7 @@ as
 		)
 	/* dropped databases are going to be updated to current = 0 */
 	when not matched by source then
-		update set [database_current] = 0
+		update set deleted_when = GETUTCDATE()
 	/* new databases are going to be inserted */
 	when not matched by target then
 		insert ([database_name], [database_create_date], [sql_instance])

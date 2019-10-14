@@ -2,9 +2,9 @@
 (
 	[database_name] nvarchar(128) not null,
 	[database_create_date] datetime not null default '1970-01-01',
-	[database_current] bit not null default 1,
 	[sql_instance] nvarchar(25) not null default @@SERVERNAME,
 	[sqlwatch_database_id] smallint identity (-32768,1) not null,
+	[deleted_when] datetime null,
 	constraint PK_database primary key clustered (
 		[sql_instance], [sqlwatch_database_id]
 	 ),
@@ -16,4 +16,4 @@
 	 --, constraint fk_database_server foreign key ([sql_instance]) references dbo.sqlwatch_config_sql_instance([sql_instance]) on delete cascade on update cascade
 )
 GO
-CREATE NONCLUSTERED INDEX idx_perf_mon_database_current ON [dbo].[sqlwatch_meta_database]([database_current])
+--CREATE NONCLUSTERED INDEX idx_perf_mon_database_current ON [dbo].[sqlwatch_meta_database]([database_current])
