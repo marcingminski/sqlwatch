@@ -73,43 +73,44 @@ insert into #steps
 			('dbo.usp_sqlwatch_logger_agent_job_history', 1,		'SQLWATCH-LOGGER-AGENT-HISTORY',		'TSQL',		'exec dbo.usp_sqlwatch_logger_agent_job_history'),
 
 			('dbo.usp_sqlwatch_internal_retention',		1,			'SQLWATCH-INTERNAL-RETENTION',		'TSQL',		'exec dbo.usp_sqlwatch_internal_retention'),
+			('dbo.usp_sqlwatch_internal_purge_deleted_items',2,		'SQLWATCH-INTERNAL-RETENTION',		'TSQL',		'exec dbo.usp_sqlwatch_internal_purge_deleted_items'),
 
 			('dbo.usp_sqlwatch_logger_disk_utilisation',1,			'SQLWATCH-LOGGER-DISK-UTILISATION',	'TSQL',		'exec dbo.usp_sqlwatch_logger_disk_utilisation'),
-			('Get-WMIObject Win32_Volume',		2,					'SQLWATCH-LOGGER-DISK-UTILISATION',	'PowerShell', N'[datetime]$snapshot_time = (Invoke-SqlCmd -ServerInstance "' + @server + '" -Database ' + '$(DatabaseName)' + ' -Query "select [snapshot_time]=max([snapshot_time]) 
-from [dbo].[sqlwatch_logger_snapshot_header]
-where snapshot_type_id = 2").snapshot_time
-
+			('Get-WMIObject Win32_Volume',		2,					'SQLWATCH-LOGGER-DISK-UTILISATION',	'PowerShell', N'
 #https://msdn.microsoft.com/en-us/library/aa394515(v=vs.85).aspx
 #driveType 3 = Local disk
+Get-WMIObject Win32_Volume | ?{$_.DriveType -eq 3} | %{
+    $VolumeName = $_.Name
+    $FreeSpace = $_.Freespace
+    $Capacity = $_.Capacity
+    Invoke-SqlCmd -ServerInstance "' + @server + '" -Database ' + '$(DatabaseName)' + ' -Query "
+	 exec [dbo].[usp_sqlwatch_logger_disk_utilisation_os_volume] 
+		@volume_name = ''$VolumeName'',
+		@volume_free_space_bytes = $FreeSpace,
+		@volume_total_space_bytes = $Capacity
+    " 
+}'),
+			('dbo.usp_sqlwatch_logger_missing_indexes',		1,			'SQLWATCH-LOGGER-INDEXES',		'TSQL', 'exec dbo.usp_sqlwatch_logger_missing_indexes'),
+			('dbo.usp_sqlwatch_logger_index_usage_stats',	2,			'SQLWATCH-LOGGER-INDEXES',		'TSQL', 'exec dbo.usp_sqlwatch_logger_index_usage_stats'),
+			('dbo.usp_sqlwatch_internal_add_database',		1,			'SQLWATCH-INTERNAL-CONFIG',		'TSQL', 'exec dbo.usp_sqlwatch_internal_add_database'),
+			('dbo.usp_sqlwatch_internal_add_job',			2,			'SQLWATCH-INTERNAL-CONFIG',		'TSQL', 'exec dbo.usp_sqlwatch_internal_add_job'),
+			('dbo.usp_sqlwatch_internal_add_performance_counter',	3,	'SQLWATCH-INTERNAL-CONFIG',		'TSQL', 'exec dbo.usp_sqlwatch_internal_add_performance_counter'),
+			('dbo.usp_sqlwatch_internal_add_master_file',			4,	'SQLWATCH-INTERNAL-CONFIG',		'TSQL', 'exec dbo.usp_sqlwatch_internal_add_master_file'),
+			('dbo.usp_sqlwatch_internal_add_wait_type',				5,	'SQLWATCH-INTERNAL-CONFIG',		'TSQL', 'exec dbo.usp_sqlwatch_internal_add_wait_type'),
+			('dbo.usp_sqlwatch_internal_add_memory_clerk',			6,	'SQLWATCH-INTERNAL-CONFIG',		'TSQL', 'exec dbo.usp_sqlwatch_internal_add_memory_clerk'),
+			
+			('Get-WMIObject Win32_Volume',					7,		'SQLWATCH-INTERNAL-CONFIG',		'PowerShell', N'
 Get-WMIObject Win32_Volume | ?{$_.DriveType -eq 3} | %{
     $VolumeName = $_.Name
     $VolumeLabel = $_.Label
     $FileSystem = $_.Filesystem
     $BlockSize = $_.BlockSize
-    $FreeSpace = $_.Freespace
-    $Capacity = $_.Capacity
-    $SnapshotTime = Get-Date $snapshot_time -format "yyyy-MM-dd HH:mm:ss.fff"
     Invoke-SqlCmd -ServerInstance "' + @server + '" -Database ' + '$(DatabaseName)' + ' -Query "
-     insert into [dbo].[sqlwatch_logger_disk_utilisation_volume](
-            [volume_name]
-           ,[volume_label]
-           ,[volume_fs]
-           ,[volume_block_size_bytes]
-           ,[volume_free_space_bytes]
-           ,[volume_total_space_bytes]
-           ,[snapshot_type_id]
-           ,[snapshot_time])
-    values (''$VolumeName'',''$VolumeLabel'',''$FileSystem'',$BlockSize,$FreeSpace,$Capacity,2,''$SnapshotTime'')
-    " 
-}'),
-			('dbo.usp_sqlwatch_logger_missing_indexes',		1,		'SQLWATCH-LOGGER-INDEXES',		'TSQL', 'exec dbo.usp_sqlwatch_logger_missing_indexes'),
-			('dbo.usp_sqlwatch_logger_index_usage_stats',	2,		'SQLWATCH-LOGGER-INDEXES',		'TSQL', 'exec dbo.usp_sqlwatch_logger_index_usage_stats'),
-			('dbo.usp_sqlwatch_internal_add_database',		1,		'SQLWATCH-INTERNAL-CONFIG',		'TSQL', 'exec dbo.usp_sqlwatch_internal_add_database'),
-			('dbo.usp_sqlwatch_internal_add_job',			2,		'SQLWATCH-INTERNAL-CONFIG',		'TSQL', 'exec dbo.usp_sqlwatch_internal_add_job'),
-			('dbo.usp_sqlwatch_internal_add_performance_counter', 3,'SQLWATCH-INTERNAL-CONFIG',		'TSQL', 'exec dbo.usp_sqlwatch_internal_add_performance_counter'),
-			('dbo.usp_sqlwatch_internal_add_master_file',		  4,'SQLWATCH-INTERNAL-CONFIG',		'TSQL', 'exec dbo.usp_sqlwatch_internal_add_master_file')
+     exec [dbo].[usp_sqlwatch_internal_add_os_volume] @volume_name = ''$VolumeName'', @label = ''$VolumeLabel'', @file_system = ''$FileSystem'', @block_size = ''$BlockSize''
+	 " 
+}')
 
-
+	
 /* create job and steps */
 select @sql = replace(replace(convert(nvarchar(max),(select ' if (select name from msdb.dbo.sysjobs where name = ''' + job_name + ''') is null 
 	begin
