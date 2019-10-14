@@ -31,4 +31,4 @@ when not matched by target then
 	insert ( [sqlwatch_database_id], [file_id], [file_type], [file_physical_name], [sql_instance], [file_name], [logical_disk] )
 	values ( source.[sqlwatch_database_id], source.[file_id], source.[type], source.[physical_name], source.[sql_instance], source.[file_name], source.[logical_disk] )
 when not matched by source then 
-	update set [is_deleted] = 1;
+	update set deleted_when = GETUTCDATE();
