@@ -405,7 +405,7 @@ using (
 	select [snapshot_type_id] = 1, [snapshot_type_desc] = 'Performance', [snapshot_retention_days] = 7
 	union 
 	/* size data logger */
-	select [snapshot_type_id] = 2, [snapshot_type_desc] = 'Disk Utilisation', [snapshot_retention_days] = 365
+	select [snapshot_type_id] = 2, [snapshot_type_desc] = 'Disk Utilisation Database', [snapshot_retention_days] = 365
 	union 
 	/* indexes */
 	select [snapshot_type_id] = 3, [snapshot_type_desc] = 'Missing indexes', [snapshot_retention_days] = 30
@@ -435,7 +435,10 @@ using (
 	select [snapshot_type_id] = 15, [snapshot_type_desc] = 'Index Histogram', [snapshot_retention_days] = 90
 	union
 	/* agent history */
-	select [snapshot_type_id] = 16, [snapshot_type_desc] = 'Agent History', [snapshot_retention_days] = 360
+	select [snapshot_type_id] = 16, [snapshot_type_desc] = 'Agent History', [snapshot_retention_days] = 365
+	union
+	/* Os volume utilisation */
+	select [snapshot_type_id] = 17, [snapshot_type_desc] = 'Disk Utilisation OS', [snapshot_retention_days] = 365
 
 ) as source
 on (source.[snapshot_type_id] = target.[snapshot_type_id])
