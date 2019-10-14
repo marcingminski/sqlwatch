@@ -132,6 +132,12 @@
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_add_performance_counter.sql" />
     <Build Include="dbo\Views\vw_sqlwatch_report_perf_os_performance_counters.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_add_master_file.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_purge_deleted_items.sql" />
+    <Build Include="dbo\Tables\sqlwatch_meta_os_volume.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_add_os_volume.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_logger_disk_utilisation_os_volume.sql" />
+    <Build Include="dbo\Tables\sqlwatch_meta_memory_clerk.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_add_memory_clerk.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />

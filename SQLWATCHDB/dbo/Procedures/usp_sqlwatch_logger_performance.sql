@@ -233,7 +233,7 @@ declare @sql nvarchar(4000)
 					sum(awe_allocated_kb) as awe_allocated_kb,
 					sum(shared_memory_reserved_kb) as shared_memory_reserved_kb,
 					sum(shared_memory_committed_kb) as shared_memory_committed_kb
-				from sys.dm_os_memory_clerks
+				from sys.dm_os_memory_clerks mc
 				group by type, memory_node_id
 				option (recompile)
 				'
@@ -285,33 +285,37 @@ declare @sql nvarchar(4000)
 		from @dm_os_memory_clerks as mc
 
 		insert into dbo.[sqlwatch_logger_perf_os_memory_clerks]
-		select 
-			snapshot_time =@date_snapshot_current,
-			total_kb=sum(mc.total_kb), 
-			allocated_kb=sum(mc.single_pages_kb + mc.multi_pages_kb),
-			--ta.total_kb_all_clerks, 
-			--mc.total_kb / convert(decimal, ta.total_kb_all_clerks) as percent_total_kb,
-			sum(ta.total_kb_all_clerks) as total_kb_all_clerks,
-			-- there are many memory clerks. we'll chart any that make up 5% of sql memory or more; less significant clerks will be lumped into an "other" bucket
-			graph_type=case when mc.total_kb / convert(decimal, ta.total_kb_all_clerks) > 0.05 then mc.[type] else N'other' end
-			,memory_available=@memory_available
-			, 1
-			, @@SERVERNAME
-		from @memory_clerks as mc
-		-- use a self-join to calculate the total memory allocated for each time interval
-		join 
-		(
+		select t.snapshot_time, t.total_kb, t.allocated_kb, t.total_kb_all_clerks, mm.sqlwatch_mem_clerk_id, t.memory_available, t.[snapshot_type_id], t.[sql_instance]
+		from (
 			select 
-				snapshot_time = @date_snapshot_current, 
-				sum (mc_ta.total_kb) as total_kb_all_clerks
-			from @memory_clerks as mc_ta
-			group by mc_ta.snapshot_time
-		) as ta on (mc.snapshot_time = ta.snapshot_time)
-		group by mc.snapshot_time, case when mc.total_kb / convert(decimal, ta.total_kb_all_clerks) > 0.05 then mc.[type] else N'other' end
-		--order by snapshot_time
+				snapshot_time =@date_snapshot_current,
+				total_kb=sum(mc.total_kb), 
+				allocated_kb=sum(mc.single_pages_kb + mc.multi_pages_kb),
+				--ta.total_kb_all_clerks, 
+				--mc.total_kb / convert(decimal, ta.total_kb_all_clerks) as percent_total_kb,
+				sum(ta.total_kb_all_clerks) as total_kb_all_clerks
+				-- there are many memory clerks. we'll chart any that make up 5% of sql memory or more; less significant clerks will be lumped into an "other" bucket
+				,graph_type=case when mc.total_kb / convert(decimal, ta.total_kb_all_clerks) > 0.05 then mc.[type] else N'OTHER' end
+				,memory_available=@memory_available
+				, [snapshot_type_id] = 1
+				, [sql_instance] = @@SERVERNAME
+			from @memory_clerks as mc
+			-- use a self-join to calculate the total memory allocated for each time interval
+			join 
+			(
+				select 
+					snapshot_time = @date_snapshot_current, 
+					sum (mc_ta.total_kb) as total_kb_all_clerks
+				from @memory_clerks as mc_ta
+				group by mc_ta.snapshot_time
+			) as ta on (mc.snapshot_time = ta.snapshot_time)
+			group by mc.snapshot_time, case when mc.total_kb / convert(decimal, ta.total_kb_all_clerks) > 0.05 then mc.[type] else N'OTHER' end
+			--order by snapshot_time
+		) t
+		inner join [dbo].[sqlwatch_meta_memory_clerk] mm
+			on mm.clerk_name = t.graph_type
+			and mm.sql_instance = @@SERVERNAME
 		option (recompile)					
-
-		delete from @memory_clerks
 
 		--------------------------------------------------------------------------------------------------------------
 		-- file stats snapshot

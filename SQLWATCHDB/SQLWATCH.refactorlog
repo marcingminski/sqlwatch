@@ -504,4 +504,25 @@
     <Property Name="ParentElementType" Value="" />
     <Property Name="NewName" Value="[sqlwatch_meta_os_volume]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="3b442a69-d643-4fd2-891c-ed8f3962cc7c" ChangeDateTime="10/13/2019 21:56:58">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_logger_disk_utilisation_volume].[volume_name]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_logger_disk_utilisation_volume]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[sqlwatch_volume_id]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="dda8f442-2d18-40d4-b4d4-fda92814de80" ChangeDateTime="10/13/2019 22:54:52">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_logger_os_volume]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_logger_disk_utilisation_os_volume]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="8c5ef77f-5949-48f0-9848-7a7245a7e270" ChangeDateTime="10/14/2019 14:22:18">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_logger_perf_os_memory_clerks].[clerk_name]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_logger_perf_os_memory_clerks]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[sqlwatch_mem_clerk_id]" />
+  </Operation>
 </Operations>
