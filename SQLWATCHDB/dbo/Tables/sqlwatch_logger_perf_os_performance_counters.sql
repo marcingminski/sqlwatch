@@ -24,6 +24,6 @@ go
 --ON [dbo].[sqlwatch_logger_perf_os_performance_counters] ([snapshot_type_id],[sql_instance],[snapshot_time])
 --INCLUDE ([performance_counter_id],[instance_name],[cntr_value],[base_cntr_value])
 
-CREATE NONCLUSTERED INDEX idx_sqlwatch_perf_counters_003
-ON [dbo].[sqlwatch_logger_perf_os_performance_counters] ([performance_counter_id],[sql_instance])
-INCLUDE ([cntr_value],[base_cntr_value])
+--CREATE NONCLUSTERED INDEX idx_sqlwatch_perf_counters_003
+--ON [dbo].[sqlwatch_logger_perf_os_performance_counters] ([performance_counter_id],[sql_instance])
+--INCLUDE ([cntr_value],[base_cntr_value])
