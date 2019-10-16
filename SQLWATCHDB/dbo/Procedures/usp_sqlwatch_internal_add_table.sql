@@ -6,6 +6,7 @@ create table ##98308FFC2C634BF98B347EECB98E3490 (
 	[TABLE_SCHEMA] [sysname] NOT NULL,
 	[TABLE_NAME] [sysname] NOT NULL,
 	[TABLE_TYPE] [varchar](10) NULL,
+	[sqlwatch_database_id] smallint,
 	constraint PK_TMP_98308FFC2C634BF98B347EECB98E3490 primary key clustered (
 		[TABLE_CATALOG], [TABLE_SCHEMA], [TABLE_NAME]
 		)
@@ -19,35 +20,23 @@ SELECT [TABLE_CATALOG],[TABLE_SCHEMA],[TABLE_NAME],[TABLE_TYPE]
 from INFORMATION_SCHEMA.TABLES
 WHERE''?'' <> ''tempdb'''
 
---update t
---	set sqlwatch_database_id = db.sqlwatch_database_id
---from ##98308FFC2C634BF98B347EECB98E3490 t
+update t
+	set sqlwatch_database_id = db.sqlwatch_database_id
+from ##98308FFC2C634BF98B347EECB98E3490 t
 
---inner join [dbo].[sqlwatch_meta_database] db
---	on db.[database_name] = TABLE_CATALOG collate database_default
+inner join [dbo].[sqlwatch_meta_database] db
+	on db.[database_name] = TABLE_CATALOG collate database_default
 
---inner join sys.databases dbs
---	on dbs.name = db.database_name collate database_default
---	and dbs.create_date = db.database_create_date
+inner join sys.databases dbs
+	on dbs.name = db.database_name collate database_default
+	and dbs.create_date = db.database_create_date
 
 /* when collecting tables we only consider name as a primary key. 
    when table is dropped and recreated with the same name, we are treating it as the same table.
    this behaviour is different to how we handle database. Quite often there are ETL processes that drop
    and re-create tabe every nigth for example */
 merge [dbo].[sqlwatch_meta_table] as target
-using (
-	select [t].[TABLE_CATALOG], [t].[TABLE_SCHEMA], [t].[TABLE_NAME], [t].[TABLE_TYPE], mdb.sqlwatch_database_id, mtb.sqlwatch_table_id
-	from ##98308FFC2C634BF98B347EECB98E3490 t
-	inner join sys.databases dbs
-		on dbs.name = t.TABLE_CATALOG 
-	inner join [dbo].[sqlwatch_meta_database] mdb
-		on mdb.database_name = dbs.name collate database_default
-		and mdb.database_create_date = dbs.create_date
-		and mdb.sql_instance = @@SERVERNAME
-	left join [dbo].[sqlwatch_meta_table] mtb
-		on mtb.sql_instance = mdb.sql_instance
-		and mtb.sqlwatch_database_id = mdb.sqlwatch_database_id
-	) as source
+using ##98308FFC2C634BF98B347EECB98E3490 as source
  on		target.sql_instance = @@SERVERNAME
  and	target.[table_name] = source.[TABLE_SCHEMA] + '.' + source.[TABLE_NAME] collate database_default
  and	target.[table_type] = source.[table_type] collate database_default

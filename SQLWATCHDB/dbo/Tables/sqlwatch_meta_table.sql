@@ -11,5 +11,8 @@
 	constraint pk_sqlwatch_meta_database_table primary key clustered (
 		[sql_instance], [sqlwatch_database_id], [sqlwatch_table_id]
 		),
+	constraint uq_sqlwatch_meta_database_table unique (
+		[sql_instance], [table_name]
+	),
 	constraint fk_sqlwatch_meta_table_database foreign key ([sql_instance],[sqlwatch_database_id]) references [dbo].[sqlwatch_meta_database] ([sql_instance],[sqlwatch_database_id]) on delete cascade
 )

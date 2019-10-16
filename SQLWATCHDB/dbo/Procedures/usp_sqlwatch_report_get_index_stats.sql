@@ -7,24 +7,10 @@
 	)
 as
 
-if @report_window is null
-set @report_window = 4
-
-if @report_end_time is null
-set @report_end_time= getutcdate()
-
-select 
-	@interval_minutes  = case when @interval_minutes  is null then report_time_interval_minutes else @interval_minutes end
-from [dbo].[ufn_sqlwatch_time_intervals](1,@interval_minutes,@report_window,@report_end_time)
-
-
 SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
  select *, collection_sequence = ROW_NUMBER() over (partition by sql_instance, sqlwatch_database_id, sqlwatch_table_id, sqlwatch_index_id, partition_id order by snapshot_time)
 into #sqlwatch_logger_index_usage_stats
 from [dbo].[sqlwatch_logger_index_usage_stats]
-where		[snapshot_time] >= DATEADD(DAY, -@report_window, @report_end_time)
-	and [snapshot_time] <= @report_end_time
-	and sql_instance = isnull(@sql_instance,sql_instance)
 
 CREATE NONCLUSTERED INDEX idx_tmp_sqlwatch_logger_index_usage_stats
 ON #sqlwatch_logger_index_usage_stats ([sqlwatch_database_id],[sqlwatch_index_id],[sql_instance],[sqlwatch_table_id])
@@ -73,3 +59,7 @@ from #sqlwatch_logger_index_usage_stats us1
 	--	on mdb.sql_instance = mtb.sql_instance
 	--	and mdb.sqlwatch_database_id = mtb.sqlwatch_database_id
 
+where	
+		us2.[snapshot_time] >= DATEADD(DAY, -@report_window, @report_end_time)
+	and us2.[snapshot_time] <= @report_end_time
+	and us2.sql_instance = isnull(@sql_instance,us2.sql_instance)

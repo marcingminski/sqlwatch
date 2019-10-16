@@ -22,26 +22,29 @@ select pc.performance_counter_id
 	, mc.counter_name
 	, mc.cntr_type
 	, pc.sql_instance
+	, s.snapshot_interval_end
+	, s.first_snapshot_time
+	, s.last_snapshot_time
 	, mdb.sqlwatch_database_id
 into #perf_counters_filtered
 from [sqlwatch_logger_perf_os_performance_counters] as pc
-
+inner join [dbo].[ufn_sqlwatch_time_intervals](1,@interval_minutes,@report_window,@report_end_time) s
+	on pc.snapshot_time = s.last_snapshot_time 
+        and s.snapshot_type_id = pc.snapshot_type_id
+		and s.sql_instance = pc.sql_instance
 inner join [dbo].[sqlwatch_meta_performance_counter] mc
 	on mc.sql_instance = pc.sql_instance
 	and mc.performance_counter_id = pc.performance_counter_id
-
 left join [dbo].[sqlwatch_meta_database] mdb
 	on mdb.sql_instance = pc.sql_instance
 	and mdb.[database_name] = pc.instance_name
 	and mdb.database_create_date <= pc.snapshot_time
-
 where pc.sql_instance = isnull(@sql_instance,pc.sql_instance)
-	and	pc.[snapshot_time] >= (select min(first_snapshot_time) from [dbo].[ufn_sqlwatch_time_intervals](1,@interval_minutes,@report_window,@report_end_time))
-	and pc.[snapshot_time] <= @report_end_time
+
 
 	select /* SQLWATCH Power BI fn_get_performance_counters */ distinct
 		 pc.[sql_instance]
-		,pc.snapshot_type_id
+		,snapshot_type_id
 		,[report_time] = snapshot_interval_end
 		,[object_name] = rtrim(ltrim(pc.[object_name]))
 		,[instance_name] = case when rtrim(ltrim(pc.[object_name])) = 'win32_perfformatteddata_perfos_processor' and rtrim(ltrim(pc.counter_name)) = 'Processor Time %' and rtrim(ltrim(isnull(pc.instance_name,'')))
@@ -57,11 +60,6 @@ where pc.sql_instance = isnull(@sql_instance,pc.sql_instance)
 			end))
 		 ,sqlwatch_database_id
 from #perf_counters_filtered as pc
-
-inner join [dbo].[ufn_sqlwatch_time_intervals](1,@interval_minutes,@report_window,@report_end_time) s
-	on pc.snapshot_time = s.last_snapshot_time 
-        and s.snapshot_type_id = pc.snapshot_type_id
-		and s.sql_instance = pc.sql_instance
 
 inner join [dbo].[sqlwatch_config_performance_counters] as sc
 on rtrim(pc.object_name) like '%' + sc.object_name
@@ -115,7 +113,7 @@ select
 		when pc.cntr_type = 65792 then isnull(pc.cntr_value,0) -- point-in-time
 		when pc.cntr_type = 537003264 then isnull(cast(100.0 as real) * pc.cntr_value / nullif(bc.cntr_value, 0),0) -- ratio
 		end)))
-	,pc.sqlwatch_database_id
+	,sqlwatch_database_id
 from #perf_counters_filtered pc
 
 INNER JOIN [dbo].[ufn_sqlwatch_time_intervals](1,@interval_minutes,@report_window,@report_end_time) s
