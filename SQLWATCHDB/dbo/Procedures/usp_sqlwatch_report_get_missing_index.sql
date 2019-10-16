@@ -9,6 +9,18 @@ as
 
 SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
 
+if @report_window is null
+set @report_window = 4
+
+if @report_end_time is null
+set @report_end_time= getutcdate()
+
+select 
+	@interval_minutes  = case when @interval_minutes  is null then report_time_interval_minutes else @interval_minutes end
+from [dbo].[ufn_sqlwatch_time_intervals](1,@interval_minutes,@report_window,@report_end_time)
+
+
+
 	--only enterprise and developer will allow online index build/rebuild
 	declare @allows_online_index bit
 	select @allows_online_index = case 
