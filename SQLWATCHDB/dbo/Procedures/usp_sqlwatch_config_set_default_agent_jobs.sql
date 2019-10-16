@@ -47,12 +47,14 @@ create table #steps (
 	step_command varchar(max)
 	)
 
+declare @enabled tinyint = 1
+set @enabled = case when object_id('dbo.sp_whoisactive') is not null then 1 else 0 end
 
 /* job definition */
 insert into #jobs
 
 			/* JOB_NAME                 freq:	type,	interval,	subday_type,	subday_intrval, relative_interval,	recurrence_factor,	start_date, end_date, start_time,	end_time,	enabled */
-	values	('SQLWATCH-LOGGER-WHOISACTIVE',		4,		1,			2,				15,				0,					0,					20180101,	99991231, 0,			235959,		0),
+	values	('SQLWATCH-LOGGER-WHOISACTIVE',		4,		1,			2,				15,				0,					0,					20180101,	99991231, 0,			235959,		@enabled),
 			('SQLWATCH-LOGGER-PERFORMANCE',		4,		1,			4,				1,				0,					1,					20180101,	99991231, 12,			235959,		1),
 			('SQLWATCH-INTERNAL-RETENTION',		4,		1,			8,				1,				0,					1,					20180101,	99991231, 20,			235959,		1),
 			('SQLWATCH-LOGGER-DISK-UTILISATION',4,		1,			8,				1,				0,					1,					20180101,	99991231, 437,			235959,		1),
