@@ -94,15 +94,15 @@ while @@FETCH_STATUS = 0
 
 			inner join [dbo].[sqlwatch_meta_table] mt
 				on mt.sql_instance = mdb.sql_instance
-				and mt.sqlwatch_database_id = mt.sqlwatch_database_id
-				and mt.table_name = s.name + ''.'' + t.name
+				and mt.sqlwatch_database_id = mdb.sqlwatch_database_id
+				and mt.table_name = s.name + ''.'' + t.name collate database_default
 
 			inner join [dbo].[sqlwatch_meta_index] mi
 				on mi.sql_instance = mdb.sql_instance
 				and mi.sqlwatch_database_id = mi.sqlwatch_database_id
 				and mi.sqlwatch_table_id = mi.sqlwatch_table_id
 '
-		--print @sql
+		print @sql
 		Print '[' + convert(varchar(23),getdate(),121) + '] Collecting index statistics for database: ' + @database_name
 		exec (@sql)
 		

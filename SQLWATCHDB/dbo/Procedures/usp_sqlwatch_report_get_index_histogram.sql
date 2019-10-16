@@ -8,7 +8,15 @@
 as
 SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
 
-	set @report_end_time = isnull(@report_end_time,getutcdate())
+if @report_window is null
+set @report_window = 4
+
+if @report_end_time is null
+set @report_end_time= getutcdate()
+
+select 
+	@interval_minutes  = case when @interval_minutes  is null then report_time_interval_minutes else @interval_minutes end
+from [dbo].[ufn_sqlwatch_time_intervals](1,@interval_minutes,@report_window,@report_end_time)
 
 	/* due to the potential size of the histogram table, we are only going to grab the most recent histogram for the report_end_time
 	   to see previous histograms, adjust report_end_time accordingly */
