@@ -26,7 +26,7 @@
           <SSIS:Property SSIS:Name="CreatorComputerName">VM-MBPWIN10-1</SSIS:Property>
           <SSIS:Property SSIS:Name="Description">
           </SSIS:Property>
-          <SSIS:Property SSIS:Name="PasswordVerifier" SSIS:Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAWTV0OIe420GdHMg0Y6455QAAAAACAAAAAAADZgAAwAAAABAAAADRSoq7ba//5lMa6amn16eIAAAAAASAAACgAAAAEAAAADtqQ0+Xq43QeXoA+U3wwRaIAAAAqzYYgH83HSUYFrW1FOpxFctgKQ7EPEI0niHgilWn5VZZg58/amZHTsD9F++sJ/EBHkiNhidkZHuozAfCuWfVoU+QoWgaTd8yO75lE9Rxap1+aUwbDECs9cjGH7BrVzhDzWYu04/tLrFHj3Hrr39JT/uyPg8qjHOikf5ZQ2a6KNaeD5jwDdKn/BQAAACVUNjhhYjrA918hm0TeoUbrxbb+Q==</SSIS:Property>
+          <SSIS:Property SSIS:Name="PasswordVerifier" SSIS:Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAWTV0OIe420GdHMg0Y6455QAAAAACAAAAAAADZgAAwAAAABAAAAAbFrj3VAn/XY5HboSKArJTAAAAAASAAACgAAAAEAAAANPQ2FopRMvtBVhfxirkNFyIAAAAsRvU2N6Hop+mjTK2cmTxBQUwOx/Rt7/MSilMlhnp8Q0CaZUXFvZj2tFJaTUMwjn3ih8HPJmGzmj/xDaxt+GQ5lJXF8brbElEdY14dW/hEnODQe5zpK2VYJHe7hVFesMBILh7GUf1RC84PzUqf6Hx2amcAe/uOLTYxAhERpb71pO0gQv+sUIEMxQAAAAepnIGd2SSwe6ALSQ84+AabFIdTg==</SSIS:Property>
           <SSIS:Property SSIS:Name="FormatVersion">1</SSIS:Property>
         </SSIS:Properties>
         <SSIS:Packages>
@@ -43,10 +43,10 @@
                 <SSIS:Property SSIS:Name="Name">control_import</SSIS:Property>
                 <SSIS:Property SSIS:Name="VersionMajor">1</SSIS:Property>
                 <SSIS:Property SSIS:Name="VersionMinor">0</SSIS:Property>
-                <SSIS:Property SSIS:Name="VersionBuild">205</SSIS:Property>
+                <SSIS:Property SSIS:Name="VersionBuild">206</SSIS:Property>
                 <SSIS:Property SSIS:Name="VersionComments">
                 </SSIS:Property>
-                <SSIS:Property SSIS:Name="VersionGUID">{AAF2F42E-A69F-4526-8D6E-35DC9EDFA8FC}</SSIS:Property>
+                <SSIS:Property SSIS:Name="VersionGUID">{21770EE9-4E94-496F-B48A-B4719FD542CF}</SSIS:Property>
                 <SSIS:Property SSIS:Name="PackageFormatVersion">6</SSIS:Property>
                 <SSIS:Property SSIS:Name="Description">
                 </SSIS:Property>
@@ -58,7 +58,7 @@
                     <SSIS:Property SSIS:Name="ID">{3061DD6C-7DCC-49A6-80E4-073CF55C063C}</SSIS:Property>
                     <SSIS:Property SSIS:Name="CreationName">
                     </SSIS:Property>
-                    <SSIS:Property SSIS:Name="Description">Number of threads for parallel collection. If this is set to &gt; 1, then multiple servers will be collected in parallel, in addition to each colelctor data flow being run in parralel, according to the MaxConcurrentExecutables parameter. Be careful as running parralel collectors may be slower than single thread. Make sure central repository can sustain the workload. Maximum allowed parralel threads are 8.</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">Number of threads for parallel collection. If this is set to &gt; 1, then multiple servers will be collected in parallel, in addition to each collector data flow being run in parallel, according to the MaxConcurrentExecutables parameter. Be careful as running parallel collectors may be slower than single thread. Make sure central repository can sustain the workload. Maximum allowed parallel threads are 8.</SSIS:Property>
                     <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Required">1</SSIS:Property>
                     <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
@@ -97,11 +97,11 @@
                     <SSIS:Property SSIS:Name="ID">{168C312A-A0AB-4A19-92CB-DA9083DB82E9}</SSIS:Property>
                     <SSIS:Property SSIS:Name="CreationName">
                     </SSIS:Property>
-                    <SSIS:Property SSIS:Name="Description">SQL User to access central repository or blank for Windows authentication</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">SQL Password to access central repository or blank for Windows authentication</SSIS:Property>
                     <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Sensitive">1</SSIS:Property>
-                    <SSIS:Property SSIS:Name="Value" SSIS:Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAWTV0OIe420GdHMg0Y6455QAAAAACAAAAAAADZgAAwAAAABAAAAC5gGOcExc1fdXZjC9HcqZjAAAAAASAAACgAAAAEAAAAEsa1yEzUnxAQN/VvoaJFrCAAAAAq38MMxvx3dTZ9vKjn3wF1Jwj82+Pc9dcdwlXpRdV/7kZ5dFiyb+Lo6yR7y13ecMfmX0np+syNoY41RnK7CivzQiwMSaSPdphGTDqQhh1mltDJAtmvkpIGaBLTxCsZU2nkL6UHtsMJ6JOTLcIwkuGbEs4flPQOsYGV01Qo0xjFWwUAAAAyIR8rC5u7uL6Dwm5R1pYzUuRt1Q=</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value" SSIS:Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAWTV0OIe420GdHMg0Y6455QAAAAACAAAAAAADZgAAwAAAABAAAAAbP67FrG8/R2/dbBBppNVLAAAAAASAAACgAAAAEAAAAAsRCmISR6jll+FdAbescZCAAAAAzDMfc8YgOStoLfibGGfBT/j8GMvFp9YTVXd/njk8WZQ2/esqY6BepTFUhe3TkiujKmNBsfVMKAxvCVemxl3PdSRp2bnekF1xvsAql83z/QZjdX39QG6n2+vny5xDGawWLyGzDkIe6yQLb6Hx0z1Y7GvuYhPX3e4Zke9jEadlHJUUAAAADKygz4cN/BNObtY3iv+iV2bb6qE=</SSIS:Property>
                     <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
                   </SSIS:Properties>
                 </SSIS:Parameter>
@@ -110,7 +110,7 @@
                     <SSIS:Property SSIS:Name="ID">{57BFCA6D-9A3D-412D-B81C-090D88A31CB1}</SSIS:Property>
                     <SSIS:Property SSIS:Name="CreationName">
                     </SSIS:Property>
-                    <SSIS:Property SSIS:Name="Description">SQL Password to access central repository or blank for Windows authentication</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">SQL User to access central repository or blank for Windows authentication</SSIS:Property>
                     <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
@@ -216,7 +216,7 @@
                     <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Sensitive">1</SSIS:Property>
-                    <SSIS:Property SSIS:Name="Value" SSIS:Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAWTV0OIe420GdHMg0Y6455QAAAAACAAAAAAADZgAAwAAAABAAAADrLzilAyYdcho5U22tehSVAAAAAASAAACgAAAAEAAAAHXfSlCM9nf4LSwf9NDTJfWAAAAAlDXqpGA40a0WaUn1zoExUyXBzeZarHcav1JHmQBqTgpX1XcAJEG02BklAfs1T/VkxOaJlLbBpEwH3w9y54tfDrLvhVfsTDitBEjVFTVg7RmZ5VAzRDUfSO5TWRDm7WiAOOWdYD+11vp7wYRgBmMSgRDWTr/8I/Hl1vTHqSh3s4UUAAAAqsHqJvfJc+QxUy1VMparyV1+5ro=</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value" SSIS:Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAWTV0OIe420GdHMg0Y6455QAAAAACAAAAAAADZgAAwAAAABAAAAA9EBw/YNod0O5xhVzoiI83AAAAAASAAACgAAAAEAAAAGMsIdPoeYY7gxOcqmRx60+AAAAAcVaJUWI5cWw9D8Mr3NBDChnBr/5xMP0ov4hulc43u1t9A9+vLTEA+CN2609/YoLYUSoN38LQlbqmCZeRSupP11SZ/BivGn9DjdoIKj+imIUvdIuVW8kl32Dz6+xY2PzhZy3Vf4yDlZRa6L72acHapO4q7fUGFNK7DuAnRpANn1kUAAAAeLhv1oE06zuiDSlcSZRgflTu/qQ=</SSIS:Property>
                     <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
                   </SSIS:Properties>
                 </SSIS:Parameter>
@@ -268,7 +268,7 @@
                     <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Sensitive">1</SSIS:Property>
-                    <SSIS:Property SSIS:Name="Value" SSIS:Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAWTV0OIe420GdHMg0Y6455QAAAAACAAAAAAADZgAAwAAAABAAAABgeDZ+UcaDmrmQ77wvRCkcAAAAAASAAACgAAAAEAAAADtX+BhLQwf+XQMJw1yOr7GAAAAAAXAq9Oi9M7fA2Se+++0FWqVk30SxEZ1lBksKIjlxP5IievXXakRtwxYtCyW2ielFRVbcyIL+aXhcAQ68KQXKSPfrFW7WfZt5em/2hOW2Hf7Z/gM7mC16s5TlFYK0lUZCVoWMEmtO207GQyAYCD693iLd/4tNOksnZ9+PGShQndIUAAAANuTb3KhjT286VGzNBGbozm3qAfc=</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value" SSIS:Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAWTV0OIe420GdHMg0Y6455QAAAAACAAAAAAADZgAAwAAAABAAAAC1nL1ux7OmY9boW3XiYcD8AAAAAASAAACgAAAAEAAAAN/FYIHf78XkXNyliI1t1EiAAAAAdAEPvoe9wIPqLvvDGAe2n3qKkLvbYX3Tl3X3nWl/HO+TUAT2dp4sLjZIazq0JMYtdZ9e6LIggKs9UMUxnfbiRXRfgyR2F6IT9WXVkT5BZi1kd0AmBN6ThP0bedqJDdQOGKFJRE9ycVrp7WbQiy6QYRjnwLRc0ZLrskgzZJHZIsQUAAAAG4adsrH2ysQRPC9kR3sF3XINELE=</SSIS:Property>
                     <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
                   </SSIS:Properties>
                 </SSIS:Parameter>

@@ -13,8 +13,8 @@
   DTS:MaxConcurrentExecutables="99"
   DTS:ObjectName="control_import"
   DTS:PackageType="5"
-  DTS:VersionBuild="205"
-  DTS:VersionGUID="{AAF2F42E-A69F-4526-8D6E-35DC9EDFA8FC}">
+  DTS:VersionBuild="206"
+  DTS:VersionGUID="{21770EE9-4E94-496F-B48A-B4719FD542CF}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">6</DTS:Property>
   <DTS:ConnectionManagers>
@@ -40,7 +40,7 @@
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAWTV0OIe420GdHMg0Y6455QAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAADtoE2nV7oyuiO6Sqqk1ebQAAAAAASAAACgAAAAEAAAAN5IGkx253IxwrftDugRJIcYAAAAK83HP0+qE8vrQ/TEG9gpx1cM5OlQg8AXFAAAAOPiRGI5uliGxP3y0IwBtRuDmjA9</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAWTV0OIe420GdHMg0Y6455QAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAADkMOOf3Vd7kUMbdVM2/vz2AAAAAASAAACgAAAAEAAAAIOWn/STg5hloWFTz/oWuN0YAAAAr1B7H7ChSaQZtgRGI8xQeXPmqUQ14J4KFAAAAJ6+aD4iAIiaUi7TafEQ0fI5OakF</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -49,7 +49,7 @@
     <DTS:PackageParameter
       DTS:CreationName=""
       DTS:DataType="3"
-      DTS:Description="Number of threads for parallel collection. If this is set to &gt; 1, then multiple servers will be collected in parallel, in addition to each colelctor data flow being run in parralel, according to the MaxConcurrentExecutables parameter. Be careful as running parralel collectors may be slower than single thread. Make sure central repository can sustain the workload. Maximum allowed parralel threads are 8."
+      DTS:Description="Number of threads for parallel collection. If this is set to &gt; 1, then multiple servers will be collected in parallel, in addition to each collector data flow being run in parallel, according to the MaxConcurrentExecutables parameter. Be careful as running parallel collectors may be slower than single thread. Make sure central repository can sustain the workload. Maximum allowed parallel threads are 8."
       DTS:DTSID="{3061DD6C-7DCC-49A6-80E4-073CF55C063C}"
       DTS:ObjectName="number_of_parallel_collectors"
       DTS:Required="True">
@@ -82,7 +82,7 @@
     <DTS:PackageParameter
       DTS:CreationName=""
       DTS:DataType="8"
-      DTS:Description="SQL User to access central repository or blank for Windows authentication"
+      DTS:Description="SQL Password to access central repository or blank for Windows authentication"
       DTS:DTSID="{168C312A-A0AB-4A19-92CB-DA9083DB82E9}"
       DTS:ObjectName="repository_password"
       DTS:Sensitive="True">
@@ -91,13 +91,13 @@
         <DTS:Property
           DTS:DataType="8"
           DTS:Name="ParameterValue"
-          Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAWTV0OIe420GdHMg0Y6455QAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAA5RKG8FfNK/sjiqgu9MlJUAAAAAASAAACgAAAAEAAAAH4Y8BdwmdQoaf3jIieX3T4YAAAAv4WLe1GAtxFQmO25wt9RIewHV83jC0QLFAAAAO6td7dVVweqBY5OLM0qztLbH3uo</DTS:Property>
+          Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAWTV0OIe420GdHMg0Y6455QAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAADdMkXD6Ty+FwJ1E+sc4tvAAAAAASAAACgAAAAEAAAAE9goohMzjeJoKms6IHg0l8YAAAAHEbQhbxFQbLe7hCmtULwfA+LUfjd0YBdFAAAABU99aphM0I5/conBWRnu0zypIXq</DTS:Property>
       </DTS:Property>
     </DTS:PackageParameter>
     <DTS:PackageParameter
       DTS:CreationName=""
       DTS:DataType="8"
-      DTS:Description="SQL Password to access central repository or blank for Windows authentication"
+      DTS:Description="SQL User to access central repository or blank for Windows authentication"
       DTS:DTSID="{57BFCA6D-9A3D-412D-B81C-090D88A31CB1}"
       DTS:ObjectName="repository_user_name">
       <DTS:Property
@@ -2358,7 +2358,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="begin transaction"
-              DTS:ThreadHint="0">
+              DTS:ThreadHint="21">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -2374,7 +2374,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="commit"
-              DTS:ThreadHint="2">
+              DTS:ThreadHint="23">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -2390,7 +2390,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="error"
-              DTS:ThreadHint="1">
+              DTS:ThreadHint="22">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -2451,7 +2451,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="get task"
-              DTS:ThreadHint="0">
+              DTS:ThreadHint="21">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -2479,7 +2479,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="success"
-              DTS:ThreadHint="0">
+              DTS:ThreadHint="21">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -2588,7 +2588,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="begin transaction"
-              DTS:ThreadHint="3">
+              DTS:ThreadHint="6">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -2604,7 +2604,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="commit"
-              DTS:ThreadHint="5">
+              DTS:ThreadHint="8">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -2620,7 +2620,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="error"
-              DTS:ThreadHint="4">
+              DTS:ThreadHint="7">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -2681,7 +2681,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="get task"
-              DTS:ThreadHint="3">
+              DTS:ThreadHint="6">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -2709,7 +2709,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="success"
-              DTS:ThreadHint="3">
+              DTS:ThreadHint="6">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -2818,7 +2818,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="begin transaction"
-              DTS:ThreadHint="6">
+              DTS:ThreadHint="0">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -2834,7 +2834,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="commit"
-              DTS:ThreadHint="8">
+              DTS:ThreadHint="2">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -2850,7 +2850,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="error"
-              DTS:ThreadHint="6">
+              DTS:ThreadHint="1">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -2911,7 +2911,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="get task"
-              DTS:ThreadHint="6">
+              DTS:ThreadHint="0">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -2939,7 +2939,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="success"
-              DTS:ThreadHint="7">
+              DTS:ThreadHint="0">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3278,7 +3278,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="begin transaction"
-              DTS:ThreadHint="12">
+              DTS:ThreadHint="18">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3294,7 +3294,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="commit"
-              DTS:ThreadHint="14">
+              DTS:ThreadHint="20">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3310,7 +3310,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="error"
-              DTS:ThreadHint="13">
+              DTS:ThreadHint="19">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3371,7 +3371,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="get task"
-              DTS:ThreadHint="12">
+              DTS:ThreadHint="18">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3399,7 +3399,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="success"
-              DTS:ThreadHint="12">
+              DTS:ThreadHint="18">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3508,7 +3508,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="begin transaction"
-              DTS:ThreadHint="15">
+              DTS:ThreadHint="12">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3524,7 +3524,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="commit"
-              DTS:ThreadHint="17">
+              DTS:ThreadHint="14">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3540,7 +3540,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="error"
-              DTS:ThreadHint="15">
+              DTS:ThreadHint="13">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3601,7 +3601,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="get task"
-              DTS:ThreadHint="15">
+              DTS:ThreadHint="12">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3629,7 +3629,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="success"
-              DTS:ThreadHint="16">
+              DTS:ThreadHint="12">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3738,7 +3738,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="begin transaction"
-              DTS:ThreadHint="18">
+              DTS:ThreadHint="3">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3754,7 +3754,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="commit"
-              DTS:ThreadHint="20">
+              DTS:ThreadHint="5">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3770,7 +3770,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="error"
-              DTS:ThreadHint="18">
+              DTS:ThreadHint="4">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3831,7 +3831,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="get task"
-              DTS:ThreadHint="18">
+              DTS:ThreadHint="3">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3859,7 +3859,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="success"
-              DTS:ThreadHint="19">
+              DTS:ThreadHint="3">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3968,7 +3968,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="begin transaction"
-              DTS:ThreadHint="21">
+              DTS:ThreadHint="15">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3984,7 +3984,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="commit"
-              DTS:ThreadHint="23">
+              DTS:ThreadHint="17">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -4000,7 +4000,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="error"
-              DTS:ThreadHint="22">
+              DTS:ThreadHint="16">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -4061,7 +4061,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="get task"
-              DTS:ThreadHint="21">
+              DTS:ThreadHint="15">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -4089,7 +4089,7 @@ if object_id ('tempdb..##import_sqlwatch_logger_xes_waits_stats') is null   begi
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="success"
-              DTS:ThreadHint="21">
+              DTS:ThreadHint="15">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
