@@ -11,7 +11,7 @@ as
   where mc.counter_name is null
 
   insert into [dbo].[sqlwatch_meta_performance_counter] ([sql_instance],[object_name],[counter_name],[cntr_type])
-  select pc.[sql_instance],pc.[object_name],pc.[counter_name],pc.[cntr_type] 
+  select pc.[sql_instance],pc.[object_name],pc.[counter_name],pc.[cntr_type]
   from (
 	select [sql_instance] = @@SERVERNAME, [object_name] = 'win32_perfformatteddata_perfos_processor', [counter_name] = 'Processor Time %', [cntr_type] = 65792
 	) pc

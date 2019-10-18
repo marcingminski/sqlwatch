@@ -29,6 +29,19 @@ Post-Deployment Script Template
 --	end
 
 
+--------------------------------------------------------------------------------------
+--
+--------------------------------------------------------------------------------------
+if (select count(*) from [dbo].[sqlwatch_meta_server]) = 0
+	begin
+		insert into dbo.[sqlwatch_meta_server] ([physical_name],[servername], [service_name], [local_net_address], [local_tcp_port], [utc_offset_minutes])
+		select convert(sysname,SERVERPROPERTY('ComputerNamePhysicalNetBIOS'))
+			, convert(sysname,@@SERVERNAME), convert(sysname,@@SERVICENAME), convert(varchar(50),local_net_address), convert(varchar(50),local_tcp_port)
+			, DATEDIFF(mi, GETUTCDATE(), GETDATE())
+		from sys.dm_exec_connections where session_id = @@spid
+	end
+
+
 /* Since version beta 6 these objects are no longer required. They have been removed from the Project however,
 	as SQLWATCH can be installed in the existing database the dacpac deployment does not drop objects not in the Project.
 	This is to prevent removing any non-SQLWATCH objects. For this reason we have to handle objects removal manually */
@@ -95,17 +108,7 @@ inner join sys.databases db
 /* now add new databases */
 exec [dbo].[usp_sqlwatch_internal_add_database]
 
---------------------------------------------------------------------------------------
---
---------------------------------------------------------------------------------------
-if (select count(*) from [dbo].[sqlwatch_meta_server]) = 0
-	begin
-		insert into dbo.[sqlwatch_meta_server] 
-		select convert(sysname,SERVERPROPERTY('ComputerNamePhysicalNetBIOS'))
-			, convert(sysname,@@SERVERNAME), convert(sysname,@@SERVICENAME), convert(varchar(50),local_net_address), convert(varchar(50),local_tcp_port)
-			, DATEDIFF(mi, GETUTCDATE(), GETDATE())
-		from sys.dm_exec_connections where session_id = @@spid
-	end
+
 
 --------------------------------------------------------------------------------------
 --
