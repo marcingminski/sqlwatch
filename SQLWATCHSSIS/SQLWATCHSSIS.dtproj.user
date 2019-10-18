@@ -4,12 +4,12 @@
     <Configuration>
       <Name>Development</Name>
       <Options>
-        <ServerName>sql-test-1\sql2016</ServerName>
+        <ServerName>192.168.168.62</ServerName>
         <PathOnServer>/SSISDB/SQLWATCH/SQLWATCHSSIS</PathOnServer>
         <UserIDs />
         <UserPasswords />
         <OfflineMode>false</OfflineMode>
-        <ProgressReporting>true</ProgressReporting>
+        <ProgressReporting>false</ProgressReporting>
         <ParameterConfigurationSensitiveValues>
           <ConfigurationSetting>
             <Id>LastModifiedTime</Id>

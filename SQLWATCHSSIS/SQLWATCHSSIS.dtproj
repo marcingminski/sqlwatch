@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <DeploymentModel>Project</DeploymentModel>
-  <ProductVersion>15.0.1300.375</ProductVersion>
+  <ProductVersion>15.0.1301.433</ProductVersion>
   <SchemaVersion>9.0.1.0</SchemaVersion>
   <State>$base64$PFNvdXJjZUNvbnRyb2xJbmZvIHhtbG5zOnhzZD0iaHR0cDovL3d3dy53My5vcmcvMjAwMS9YTUxTY2hlbWEiIHhtbG5zOnhzaT0iaHR0cDovL3d3dy53My5vcmcvMjAwMS9YTUxTY2hlbWEtaW5zdGFuY2UiIHhtbG5zOmRkbDI9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDAzL2VuZ2luZS8yIiB4bWxuczpkZGwyXzI9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDAzL2VuZ2luZS8yLzIiIHhtbG5zOmRkbDEwMF8xMDA9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDA4L2VuZ2luZS8xMDAvMTAwIiB4bWxuczpkZGwyMDA9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDEwL2VuZ2luZS8yMDAiIHhtbG5zOmRkbDIwMF8yMDA9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDEwL2VuZ2luZS8yMDAvMjAwIiB4bWxuczpkZGwzMDA9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDExL2VuZ2luZS8zMDAiIHhtbG5zOmRkbDMwMF8zMDA9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDExL2VuZ2luZS8zMDAvMzAwIiB4bWxuczpkZGw0MDA9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDEyL2VuZ2luZS80MDAiIHhtbG5zOmRkbDQwMF80MDA9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDEyL2VuZ2luZS80MDAvNDAwIiB4bWxuczpkZGw1MDA9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDEzL2VuZ2luZS81MDAiIHhtbG5zOmRkbDUwMF81MDA9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYW5hbHlzaXNzZXJ2aWNlcy8yMDEzL2VuZ2luZS81MDAvNTAwIiB4bWxuczpkd2Q9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vRGF0YVdhcmVob3VzZS9EZXNpZ25lci8xLjAiPg0KICA8RW5hYmxlZD5mYWxzZTwvRW5hYmxlZD4NCiAgPFByb2plY3ROYW1lPjwvUHJvamVjdE5hbWU+DQogIDxBdXhQYXRoPjwvQXV4UGF0aD4NCiAgPExvY2FsUGF0aD48L0xvY2FsUGF0aD4NCiAgPFByb3ZpZGVyPjwvUHJvdmlkZXI+DQo8L1NvdXJjZUNvbnRyb2xJbmZvPg==</State>
   <Database>
@@ -26,7 +26,7 @@
           <SSIS:Property SSIS:Name="CreatorComputerName">VM-MBPWIN10-1</SSIS:Property>
           <SSIS:Property SSIS:Name="Description">
           </SSIS:Property>
-          <SSIS:Property SSIS:Name="PasswordVerifier" SSIS:Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAubFpPoP9EEaKbPsHw8xL0wAAAAACAAAAAAADZgAAwAAAABAAAAA/1Ye3hoMUe0aO/iwARWjDAAAAAASAAACgAAAAEAAAAJ6rw5dBiF3AoQ3B/sdlaaqIAAAA3vdkHuid8EgEJAOYTPjib1JMohcUfFSqeQYDOQp7tP01I+KaF83b1OAC9UUmGjhor+/7ff5mGQeaq5Oyt4QQnCKDOp2TSCdWx77HRZlfmQPSBx9UEfyMT4h+MqcS24uIUy0uXEjspzeKIO7jZrIF8bVXpsgBgzsVl7WQHf16alVDPsBToGSydxQAAAARPyFPhxtYw5LUUOvTI3MHmUqCMQ==</SSIS:Property>
+          <SSIS:Property SSIS:Name="PasswordVerifier" SSIS:Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAWTV0OIe420GdHMg0Y6455QAAAAACAAAAAAADZgAAwAAAABAAAADRSoq7ba//5lMa6amn16eIAAAAAASAAACgAAAAEAAAADtqQ0+Xq43QeXoA+U3wwRaIAAAAqzYYgH83HSUYFrW1FOpxFctgKQ7EPEI0niHgilWn5VZZg58/amZHTsD9F++sJ/EBHkiNhidkZHuozAfCuWfVoU+QoWgaTd8yO75lE9Rxap1+aUwbDECs9cjGH7BrVzhDzWYu04/tLrFHj3Hrr39JT/uyPg8qjHOikf5ZQ2a6KNaeD5jwDdKn/BQAAACVUNjhhYjrA918hm0TeoUbrxbb+Q==</SSIS:Property>
           <SSIS:Property SSIS:Name="FormatVersion">1</SSIS:Property>
         </SSIS:Properties>
         <SSIS:Packages>
@@ -43,10 +43,10 @@
                 <SSIS:Property SSIS:Name="Name">control_import</SSIS:Property>
                 <SSIS:Property SSIS:Name="VersionMajor">1</SSIS:Property>
                 <SSIS:Property SSIS:Name="VersionMinor">0</SSIS:Property>
-                <SSIS:Property SSIS:Name="VersionBuild">203</SSIS:Property>
+                <SSIS:Property SSIS:Name="VersionBuild">205</SSIS:Property>
                 <SSIS:Property SSIS:Name="VersionComments">
                 </SSIS:Property>
-                <SSIS:Property SSIS:Name="VersionGUID">{FE895E1D-B493-498B-B483-22E30784CB63}</SSIS:Property>
+                <SSIS:Property SSIS:Name="VersionGUID">{AAF2F42E-A69F-4526-8D6E-35DC9EDFA8FC}</SSIS:Property>
                 <SSIS:Property SSIS:Name="PackageFormatVersion">6</SSIS:Property>
                 <SSIS:Property SSIS:Name="Description">
                 </SSIS:Property>
@@ -88,7 +88,7 @@
                     <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Required">1</SSIS:Property>
                     <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
-                    <SSIS:Property SSIS:Name="Value">192.168.2.12\sql2016</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">192.168.168.62</SSIS:Property>
                     <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
                   </SSIS:Properties>
                 </SSIS:Parameter>
@@ -101,7 +101,7 @@
                     <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Sensitive">1</SSIS:Property>
-                    <SSIS:Property SSIS:Name="Value" SSIS:Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAubFpPoP9EEaKbPsHw8xL0wAAAAACAAAAAAADZgAAwAAAABAAAAAMcPcU9zswd8oBH19J22JxAAAAAASAAACgAAAAEAAAAKnozOwvTRI/ixl0/m0+6C6AAAAAmfz+srq1sJSDMoelq1uKzS3jHeRk0g7RmFIPtAq/3eP3ejLJcAgsIhX7Ay9KEmSHM/sNMX9XKosdByVW+zWIIJhR1z95otnfFKqBUMkcHJTtBXCi+h5ADbD7ppCwzKjCNdmdSnVE9Ncc7rfhQWvXFAFan5VSdpX5PjwAUPbtox4UAAAApuR4Gds2QikS3Pm3PCpOXGVs1OY=</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value" SSIS:Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAWTV0OIe420GdHMg0Y6455QAAAAACAAAAAAADZgAAwAAAABAAAAC5gGOcExc1fdXZjC9HcqZjAAAAAASAAACgAAAAEAAAAEsa1yEzUnxAQN/VvoaJFrCAAAAAq38MMxvx3dTZ9vKjn3wF1Jwj82+Pc9dcdwlXpRdV/7kZ5dFiyb+Lo6yR7y13ecMfmX0np+syNoY41RnK7CivzQiwMSaSPdphGTDqQhh1mltDJAtmvkpIGaBLTxCsZU2nkL6UHtsMJ6JOTLcIwkuGbEs4flPQOsYGV01Qo0xjFWwUAAAAyIR8rC5u7uL6Dwm5R1pYzUuRt1Q=</SSIS:Property>
                     <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
                   </SSIS:Properties>
                 </SSIS:Parameter>
@@ -114,8 +114,7 @@
                     <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
-                    <SSIS:Property SSIS:Name="Value">
-                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">sa</SSIS:Property>
                     <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
                   </SSIS:Properties>
                 </SSIS:Parameter>
@@ -172,10 +171,10 @@
                 <SSIS:Property SSIS:Name="Name">import_remote_data</SSIS:Property>
                 <SSIS:Property SSIS:Name="VersionMajor">1</SSIS:Property>
                 <SSIS:Property SSIS:Name="VersionMinor">0</SSIS:Property>
-                <SSIS:Property SSIS:Name="VersionBuild">659</SSIS:Property>
+                <SSIS:Property SSIS:Name="VersionBuild">829</SSIS:Property>
                 <SSIS:Property SSIS:Name="VersionComments">
                 </SSIS:Property>
-                <SSIS:Property SSIS:Name="VersionGUID">{F9CE31AD-0392-4574-915D-F1100A801F0F}</SSIS:Property>
+                <SSIS:Property SSIS:Name="VersionGUID">{C3C23562-E7BE-43CD-B2C7-B1C09533230E}</SSIS:Property>
                 <SSIS:Property SSIS:Name="PackageFormatVersion">6</SSIS:Property>
                 <SSIS:Property SSIS:Name="Description">
                 </SSIS:Property>
@@ -187,7 +186,7 @@
                     <SSIS:Property SSIS:Name="ID">{D3F93949-E888-45B8-A411-B77FF6ABE205}</SSIS:Property>
                     <SSIS:Property SSIS:Name="CreationName">
                     </SSIS:Property>
-                    <SSIS:Property SSIS:Name="Description">Offset in minutes to increase delta timeslice. By default only data since last snapshot will be collected from the remote instance. We may increase this and go further beyond that to cover any gaps. Behind the scanes this translates to [snapshot_time] &gt;= dateadd(minute,-@last_snapshot_offset_minutes,[last_snapshot_time])</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">NOT USED !!!  Offset in minutes to increase delta timeslice. By default only data since last snapshot will be collected from the remote instance. We may increase this and go further beyond that to cover any gaps. Behind the scanes this translates to [snapshot_time] &gt;= dateadd(minute,-@last_snapshot_offset_minutes,[last_snapshot_time])</SSIS:Property>
                     <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
@@ -204,7 +203,7 @@
                     <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Required">1</SSIS:Property>
                     <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
-                    <SSIS:Property SSIS:Name="Value">linux.docker.home.local,14331</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">192.168.168.129</SSIS:Property>
                     <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
                   </SSIS:Properties>
                 </SSIS:Parameter>
@@ -217,7 +216,7 @@
                     <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Sensitive">1</SSIS:Property>
-                    <SSIS:Property SSIS:Name="Value" SSIS:Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAubFpPoP9EEaKbPsHw8xL0wAAAAACAAAAAAADZgAAwAAAABAAAADC50Gq5NU2gmhzj8ObUBRxAAAAAASAAACgAAAAEAAAAL9o9z8tt+cQPVTf+k9TerSAAAAAIBsqTOq8xfHEjlV+dn+AfuGCRvwlZYS09mujgFFmbiuFcOtoM/LRcVba+9pp1ffoCaCRxYiWQpUqRd3NkmiOTpZSvTJ0j9KzQshE5HHrjG7Qpi1eK6L8sJO3F/j3pDqcOeq1DYl4gycPbGSEyhg8rFPiBUv2eu8iZu9CXlD2T6AUAAAAjjQNhRhShJRvDICrFoZWqTLgnns=</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value" SSIS:Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAWTV0OIe420GdHMg0Y6455QAAAAACAAAAAAADZgAAwAAAABAAAADrLzilAyYdcho5U22tehSVAAAAAASAAACgAAAAEAAAAHXfSlCM9nf4LSwf9NDTJfWAAAAAlDXqpGA40a0WaUn1zoExUyXBzeZarHcav1JHmQBqTgpX1XcAJEG02BklAfs1T/VkxOaJlLbBpEwH3w9y54tfDrLvhVfsTDitBEjVFTVg7RmZ5VAzRDUfSO5TWRDm7WiAOOWdYD+11vp7wYRgBmMSgRDWTr/8I/Hl1vTHqSh3s4UUAAAAqsHqJvfJc+QxUy1VMparyV1+5ro=</SSIS:Property>
                     <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
                   </SSIS:Properties>
                 </SSIS:Parameter>
@@ -230,7 +229,7 @@
                     <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
-                    <SSIS:Property SSIS:Name="Value">sqlwatchuser</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">sa</SSIS:Property>
                     <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
                   </SSIS:Properties>
                 </SSIS:Parameter>
@@ -256,7 +255,7 @@
                     <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Required">1</SSIS:Property>
                     <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
-                    <SSIS:Property SSIS:Name="Value">192.168.2.12\sql2016</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">192.168.168.62</SSIS:Property>
                     <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
                   </SSIS:Properties>
                 </SSIS:Parameter>
@@ -269,7 +268,7 @@
                     <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Sensitive">1</SSIS:Property>
-                    <SSIS:Property SSIS:Name="Value" SSIS:Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAubFpPoP9EEaKbPsHw8xL0wAAAAACAAAAAAADZgAAwAAAABAAAAA9n1RcZUZClRJ+mlapMNiGAAAAAASAAACgAAAAEAAAALT9U2lmPMDv3QCg4GI0ytCAAAAA3II6sPMTFHB7ssseunACKfWJTQqH5vONVS89rLCbtC9boDdzlp5vEA38W5i79RhcZYwVguozSBk7rPRyNNE/QkczlSo3OvoWrfeTEK2eohUut8F1cnbsHvJpWBIXQEvp5V2rKlUrIQKE+c9Ie4QujczgKDWiLvt+CDEuzLle4nIUAAAAp7WHSppzTE72xcEFgqs+ZtfVSbU=</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value" SSIS:Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAWTV0OIe420GdHMg0Y6455QAAAAACAAAAAAADZgAAwAAAABAAAABgeDZ+UcaDmrmQ77wvRCkcAAAAAASAAACgAAAAEAAAADtX+BhLQwf+XQMJw1yOr7GAAAAAAXAq9Oi9M7fA2Se+++0FWqVk30SxEZ1lBksKIjlxP5IievXXakRtwxYtCyW2ielFRVbcyIL+aXhcAQ68KQXKSPfrFW7WfZt5em/2hOW2Hf7Z/gM7mC16s5TlFYK0lUZCVoWMEmtO207GQyAYCD693iLd/4tNOksnZ9+PGShQndIUAAAANuTb3KhjT286VGzNBGbozm3qAfc=</SSIS:Property>
                     <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
                   </SSIS:Properties>
                 </SSIS:Parameter>
@@ -282,8 +281,7 @@
                     <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
-                    <SSIS:Property SSIS:Name="Value">
-                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">sa</SSIS:Property>
                     <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
                   </SSIS:Properties>
                 </SSIS:Parameter>
@@ -682,6 +680,12 @@
         <ConnectionSecurityMappings />
         <DatabaseStorageLocations />
         <TargetServerVersion>SQLServer2012</TargetServerVersion>
+        <AzureMode>false</AzureMode>
+        <LinkedAzureTenantId />
+        <LinkedAzureAccountId />
+        <LinkedAzureSSISIR />
+        <LinkedAzureStorage />
+        <RemoteExecutionFolder />
         <ParameterConfigurationValues>
           <ConfigurationSetting>
             <Id>LastModifiedTime</Id>
