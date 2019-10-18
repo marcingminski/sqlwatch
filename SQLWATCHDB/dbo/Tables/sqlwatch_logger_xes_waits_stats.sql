@@ -22,7 +22,9 @@
 	constraint fk_logger_xes_waits_snapshot_header foreign key ([snapshot_time],[snapshot_type_id],[sql_instance]) references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time],[snapshot_type_id],[sql_instance]) on delete cascade on update cascade,
 	constraint [pk_logger_xes_waits] primary key (
 		[snapshot_time],[snapshot_type_id],[sql_instance], [activity_id], [activity_sequence]
-		)
+		),
+	constraint fk_sqlwatch_logger_xes_waits_stats_server foreign key ([sql_instance])
+		references [dbo].[sqlwatch_meta_server] ([servername]) on delete cascade
 )
 go
 CREATE NONCLUSTERED INDEX idx_sqlwatch_xes_wait_stats_001

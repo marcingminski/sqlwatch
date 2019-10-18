@@ -21,8 +21,10 @@
 	constraint fk_logger_perf_os_schedulers foreign key ([snapshot_time],[snapshot_type_id],[sql_instance]) references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time],[snapshot_type_id],[sql_instance]) on delete cascade  on update cascade,
 	constraint pk_logger_perf_os_schedulers primary key clustered (
 		[snapshot_time] ASC, [snapshot_type_id],  [sql_instance]
-	)
-) ON [PRIMARY]
+	),
+	constraint fk_sqlwatch_logger_perf_os_schedulers_server foreign key ([sql_instance])
+		references [dbo].[sqlwatch_meta_server] ([servername]) on delete cascade
+) 
 GO
 
 CREATE NONCLUSTERED INDEX idx_sqlwatch_os_schedulers_001
