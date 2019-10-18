@@ -48,7 +48,7 @@ create table #steps (
 	)
 
 declare @enabled tinyint = 1
-set @enabled = case when object_id('dbo.sp_whoisactive') is not null then 1 else 0 end
+set @enabled = case when object_id('master.dbo.sp_whoisactive') is not null then 1 else 0 end
 
 /* job definition */
 insert into #jobs
