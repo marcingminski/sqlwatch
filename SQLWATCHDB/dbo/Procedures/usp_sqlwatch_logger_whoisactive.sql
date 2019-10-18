@@ -57,10 +57,15 @@ begin tran
 			-- to apply any additional filtering:
 
 			set @snapshot_time = getutcdate()
-			insert into dbo.[sqlwatch_logger_snapshot_header] (snapshot_time, snapshot_type_id)
+			insert into dbo.[sqlwatch_logger_snapshot_header]  ([snapshot_time], [snapshot_type_id])
 			select @snapshot_time, @snapshot_type_id
 
-			insert into [dbo].[sqlwatch_logger_whoisactive]
+			insert into [dbo].[sqlwatch_logger_whoisactive] ([snapshot_time],[start_time],
+					 [session_id],[status],[percent_complete],[host_name]
+					,[database_name],[program_name],[sql_text],[sql_command],[login_name]
+					,[open_tran_count],[wait_info],[blocking_session_id],[blocked_session_count]
+					,[CPU],[used_memory],[tempdb_current],[tempdb_allocations],[reads]
+					,[writes],[physical_reads],[login_time],[snapshot_type_id],[sql_instance])
 			select   [snapshot_time] = @snapshot_time
 					,[start_time],[session_id],[status],[percent_complete],[host_name]
 					,[database_name],[program_name],[sql_text],[sql_command],[login_name]

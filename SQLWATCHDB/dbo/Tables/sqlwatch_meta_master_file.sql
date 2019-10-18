@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[sqlwatch_meta_master_file]
 (
-	[sqlwatch_database_id] smallint,
-	[sqlwatch_master_file_id] smallint identity (-32768,1) not null,
+	[sqlwatch_database_id] uniqueidentifier not null,
+	[sqlwatch_master_file_id] uniqueidentifier not null default newsequentialid(),
 	--[database_create_date] datetime,
 	[file_id] int,
 	[file_type] tinyint,

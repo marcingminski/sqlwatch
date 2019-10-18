@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[sqlwatch_logger_perf_os_performance_counters]
 (
-	[performance_counter_id] smallint not null,
+	[performance_counter_id] uniqueidentifier not null,
 	[instance_name] nvarchar(128) not null,
 	--[counter_name] nvarchar(128) not null,
 	[cntr_value] bigint not null,
@@ -10,7 +10,9 @@
 	[snapshot_type_id] tinyint not null default 1 ,
 	[sql_instance] nvarchar(25) not null default @@SERVERNAME,
 	constraint fk_sql_perf_mon_perf_counters_snapshot_header foreign key ([snapshot_time],[snapshot_type_id],[sql_instance]) references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time],[snapshot_type_id],[sql_instance]) on delete cascade on update cascade,
-	constraint [pk_sql_perf_mon_perf_counters] primary key ([snapshot_time] asc, [snapshot_type_id],[sql_instance], [performance_counter_id] asc, [instance_name] asc)
+	constraint [pk_sql_perf_mon_perf_counters] primary key ([snapshot_time] asc, [snapshot_type_id],[sql_instance], [performance_counter_id] asc, [instance_name] asc),
+	constraint [fk_sqlwatch_logger_perf_os_performance_counters_server] foreign key ([sql_instance])
+		references [dbo].[sqlwatch_meta_server] ([servername]) on delete cascade
 )
 go
 

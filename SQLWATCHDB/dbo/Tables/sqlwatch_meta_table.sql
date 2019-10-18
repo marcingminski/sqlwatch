@@ -1,8 +1,8 @@
 ﻿CREATE TABLE [dbo].[sqlwatch_meta_table]
 (
 	[sql_instance] nvarchar(25) not null,
-	[sqlwatch_database_id] smallint not null,
-	[sqlwatch_table_id] int identity (-2147483648,1) not null,
+	[sqlwatch_database_id] uniqueidentifier not null,
+	[sqlwatch_table_id] uniqueidentifier not null default newsequentialid(),
 	[table_name] nvarchar(128),
 	[table_type] nvarchar(128),
 	[date_added] datetime default getutcdate(),

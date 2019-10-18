@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[sqlwatch_logger_disk_utilisation_database]
 (
-	[sqlwatch_database_id] smallint not null,
+	[sqlwatch_database_id] uniqueidentifier not null ,
 	[database_size_bytes] bigint,
 	[unallocated_space_bytes] bigint,
 	[reserved_bytes] bigint,

@@ -22,5 +22,7 @@
 	constraint fk_logger_perf_xes_blockers foreign key ([snapshot_time],[snapshot_type_id],[sql_instance]) references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time],[snapshot_type_id],[sql_instance]) on delete cascade  on update cascade,
 	constraint pk_logger_perf_xes_blockers primary key clustered (
 		[snapshot_time], [snapshot_type_id], [attach_activity_id], [attach_activity_sequence], [sql_instance]
-	)
+	),
+	constraint fk_sqlwatch_logger_xes_blockers_server foreign key ([sql_instance])
+		references [dbo].[sqlwatch_meta_server] ([servername]) on delete cascade
 )

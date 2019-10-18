@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[sqlwatch_logger_perf_os_wait_stats]
 (
-	[wait_type_id] smallint not null,
+	[wait_type_id] uniqueidentifier not null,
 	[waiting_tasks_count] bigint not null,
 	[wait_time_ms] bigint not null,
 	[max_wait_time_ms] bigint not null,
@@ -12,7 +12,10 @@
 	constraint [pk_sql_perf_mon_wait_stats] primary key (
 		[snapshot_time] asc, [snapshot_type_id] asc, [sql_instance] asc, [wait_type_id] asc
 		),
-	constraint fk_sqlwatch_logger_perf_os_wait_stats_wait_type_id foreign key ([sql_instance], [wait_type_id]) references [dbo].[sqlwatch_meta_wait_stats] ( [sql_instance], [wait_type_id] )
+	constraint fk_sqlwatch_logger_perf_os_wait_stats_wait_type_id foreign key ([sql_instance], [wait_type_id]) 
+		references [dbo].[sqlwatch_meta_wait_stats] ( [sql_instance], [wait_type_id] ),
+	constraint fk_sqlwatch_logger_perf_os_wait_stats_server foreign key ([sql_instance])
+		references [dbo].[sqlwatch_meta_server] ([servername]) on delete cascade
 ) 
 
 go

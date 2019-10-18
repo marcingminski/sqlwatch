@@ -287,7 +287,8 @@ declare @sql nvarchar(4000)
 		from @dm_os_memory_clerks as mc
 
 		insert into dbo.[sqlwatch_logger_perf_os_memory_clerks]
-		select t.snapshot_time, t.total_kb, t.allocated_kb, t.total_kb_all_clerks, mm.sqlwatch_mem_clerk_id, t.memory_available, t.[snapshot_type_id], t.[sql_instance]
+		select t.snapshot_time, t.total_kb, t.allocated_kb, t.total_kb_all_clerks, mm.sqlwatch_mem_clerk_id, t.memory_available
+			, t.[snapshot_type_id], t.[sql_instance]
 		from (
 			select 
 				snapshot_time =@date_snapshot_current,

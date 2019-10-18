@@ -602,4 +602,39 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[usp_sqlwatch_logger_missing_index_stats]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="bdae82a6-9633-4bf5-b11e-add0e72ed501" ChangeDateTime="10/16/2019 21:17:25">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_meta_agent_job].[sqlwatch_job_id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_meta_agent_job]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[job_id]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="c6fe0180-9723-4aa4-b0b1-f0095ef11922" ChangeDateTime="10/16/2019 21:18:10">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_meta_agent_job_step].[sqlwatch_job_id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_meta_agent_job_step]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[job_id]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="0a657c12-5c20-4189-b95f-1cd1682e7920" ChangeDateTime="10/16/2019 21:18:30">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_meta_agent_job_step].[job_id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_meta_agent_job_step]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[sqlwatch_job_id]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="d533d371-d70b-4e88-a437-026b0b1e180e" ChangeDateTime="10/16/2019 21:18:45">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_meta_agent_job].[job_id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_meta_agent_job]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[sqlwatch_job_id]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="117c0089-ee08-4b11-bd9d-7593b4459785" ChangeDateTime="10/18/2019 12:59:17">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_logger_whoisactive].[skey]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_logger_whoisactive]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[sqlwatch_whoisactive_record_id]" />
+  </Operation>
 </Operations>

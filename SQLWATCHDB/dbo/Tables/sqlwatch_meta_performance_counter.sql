@@ -4,7 +4,7 @@
 	[object_name] nvarchar(128) not null,
 	[counter_name] nvarchar(128) not null,
 	[cntr_type] int not null,
-	[performance_counter_id] smallint identity (-32768,1) not null,
+	[performance_counter_id] uniqueidentifier not null default newsequentialid(),
 	constraint pk_sqlwatch_meta_performance_counter primary key (
 		[sql_instance], [performance_counter_id]
 		),
