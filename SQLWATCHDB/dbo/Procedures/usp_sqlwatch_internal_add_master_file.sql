@@ -25,10 +25,11 @@ using (
 		source.file_id = target.file_id
 	and source.[file_name] = target.[file_name] collate database_default
 	and source.physical_name = target.file_physical_name collate database_default
-	and	target.sql_instance = @@SERVERNAME
+	and	source.sql_instance = target.sql_instance
  )
 when not matched by target then
 	insert ( [sqlwatch_database_id], [file_id], [file_type], [file_physical_name], [sql_instance], [file_name], [logical_disk] )
-	values ( source.[sqlwatch_database_id], source.[file_id], source.[type], source.[physical_name], source.[sql_instance], source.[file_name], source.[logical_disk] )
-when not matched by source then 
-	update set deleted_when = GETUTCDATE();
+	values ( source.[sqlwatch_database_id], source.[file_id], source.[type], source.[physical_name], source.[sql_instance], source.[file_name], source.[logical_disk] );
+
+--when not matched by source and target.sql_instance = @@SERVERNAME then 
+--	update set deleted_when = GETUTCDATE();

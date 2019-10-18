@@ -7,8 +7,8 @@ create table ##DB61B2CD92324E4B89019FFA7BEF1010 (
 	index_type_desc nvarchar(128),
 	[table_name] nvarchar(128),
 	[database_name] nvarchar(128),
-	sqlwatch_database_id smallint null,
-	sqlwatch_table_id int null
+	sqlwatch_database_id uniqueidentifier null,
+	sqlwatch_table_id uniqueidentifier null
 )
 
 create unique clustered index icx_tmp_DB61B2CD92324E4B89019FFA7BEF1010 on ##DB61B2CD92324E4B89019FFA7BEF1010 ([table_name],[database_name],index_id)
@@ -58,8 +58,8 @@ when matched then
 		index_type_desc = case when source.index_type_desc <> target.index_type_desc collate database_default then source.index_type_desc else target.index_type_desc end collate database_default,
 		date_updated = case when source.index_id <> target.index_id or source.index_type_desc <> target.index_type_desc collate database_default then GETUTCDATE() else date_updated end
 
-when not matched by source then
-	update set date_deleted = GETUTCDATE()
+--when not matched by source and target.sql_instance = @@SERVERNAME then
+--	update set date_deleted = GETUTCDATE()
 
 	                           --a new index could have been added since we collected tables.
 when not matched by target and source.sqlwatch_table_id is not null then

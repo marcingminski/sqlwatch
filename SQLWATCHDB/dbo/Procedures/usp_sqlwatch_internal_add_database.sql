@@ -31,8 +31,8 @@ as
 			and source.[sql_instance] = target.[sql_instance]
 		)
 	/* dropped databases are going to be updated to current = 0 */
-	when not matched by source then
-		update set deleted_when = GETUTCDATE()
+	--when not matched by source and target.sql_instance = @@SERVERNAME then
+	--	update set deleted_when = GETUTCDATE()
 	/* new databases are going to be inserted */
 	when not matched by target then
 		insert ([database_name], [database_create_date], [sql_instance])
