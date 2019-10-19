@@ -14,8 +14,8 @@
 	constraint [pk_sql_perf_mon_os_memory_clerks] primary key (
 		[snapshot_time], [snapshot_type_id], [sql_instance], [sqlwatch_mem_clerk_id]
 		),
-	constraint fk_sqlwatch_logger_perf_os_memory_clerks_server foreign key ([sql_instance])
-		references [dbo].[sqlwatch_meta_server] ([servername]) on delete cascade
+	constraint fk_sqlwatch_logger_perf_os_memory_clerks_meta foreign key ([sql_instance], [sqlwatch_mem_clerk_id])
+		references [dbo].[sqlwatch_meta_memory_clerk] ([sql_instance], [sqlwatch_mem_clerk_id]) on delete cascade
 )
 go
 CREATE NONCLUSTERED INDEX idx_sqlwatch_os_memory_clerks_001

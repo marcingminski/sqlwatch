@@ -17,7 +17,7 @@
 		references [dbo].[sqlwatch_meta_master_file] ([sql_instance], [sqlwatch_database_id], [sqlwatch_master_file_id]) on delete cascade,
 	constraint fk_sql_perf_mon_file_stats_snapshot_header foreign key ([snapshot_time],[snapshot_type_id], [sql_instance]) references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time],[snapshot_type_id], [sql_instance]) on delete cascade on update cascade,
 	constraint pk_sql_perf_mon_file_stats primary key clustered (
-		[snapshot_time], [sql_instance], [sqlwatch_master_file_id]
+		[sql_instance], [snapshot_time], [sqlwatch_database_id], [sqlwatch_master_file_id], [snapshot_type_id]
 	)
 )
 go

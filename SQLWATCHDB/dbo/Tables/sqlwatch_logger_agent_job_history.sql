@@ -11,7 +11,7 @@
 	[snapshot_time] datetime not null,
 	[snapshot_type_id] tinyint not null,
 	constraint pk_sqlwatch_logger_agent_job_history primary key (
-		[sql_instance], [sqlwatch_job_id], [sqlwatch_job_step_id], [sysjobhistory_instance_id]
+		[sql_instance], [snapshot_time], [sqlwatch_job_id], [sqlwatch_job_step_id], [sysjobhistory_instance_id], [snapshot_type_id]
 		),
 	constraint fk_sqlwatch_logger_agent_job_history_job foreign key ([sql_instance],[sqlwatch_job_id],[sqlwatch_job_step_id]) 
 		references [dbo].[sqlwatch_meta_agent_job_step] (sql_instance, [sqlwatch_job_id], sqlwatch_job_step_id) on delete cascade,
