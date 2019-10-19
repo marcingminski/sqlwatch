@@ -111,9 +111,10 @@ Get-WMIObject Win32_Volume | ?{$_.DriveType -eq 3} | %{
 }'),
 
 			('dbo.usp_sqlwatch_internal_add_index',			1,		'SQLWATCH-LOGGER-INDEXES',		'TSQL', 'exec dbo.usp_sqlwatch_internal_add_index'),
-			('dbo.usp_sqlwatch_logger_missing_index_stats',	2,		'SQLWATCH-LOGGER-INDEXES',		'TSQL', 'exec dbo.usp_sqlwatch_logger_missing_index_stats'),
-			('dbo.usp_sqlwatch_logger_index_usage_stats',	3,		'SQLWATCH-LOGGER-INDEXES',		'TSQL', 'exec dbo.usp_sqlwatch_logger_index_usage_stats'),
-			('dbo.usp_sqlwatch_logger_index_histogram',		4,		'SQLWATCH-LOGGER-INDEXES',		'TSQL', 'exec dbo.usp_sqlwatch_logger_index_histogram'),
+			('dbo.usp_sqlwatch_internal_add_index_missing',	2,		'SQLWATCH-LOGGER-INDEXES',		'TSQL', 'exec dbo.usp_sqlwatch_internal_add_index_missing'),	
+			('dbo.usp_sqlwatch_logger_missing_index_stats',	3,		'SQLWATCH-LOGGER-INDEXES',		'TSQL', 'exec dbo.usp_sqlwatch_logger_missing_index_stats'),
+			('dbo.usp_sqlwatch_logger_index_usage_stats',	4,		'SQLWATCH-LOGGER-INDEXES',		'TSQL', 'exec dbo.usp_sqlwatch_logger_index_usage_stats'),
+			('dbo.usp_sqlwatch_logger_index_histogram',		5,		'SQLWATCH-LOGGER-INDEXES',		'TSQL', 'exec dbo.usp_sqlwatch_logger_index_histogram'),
 			
 			('dbo.usp_sqlwatch_internal_add_database',		1,			'SQLWATCH-INTERNAL-META-CONFIG','TSQL', 'exec dbo.usp_sqlwatch_internal_add_database'),
 			('dbo.usp_sqlwatch_internal_add_job',			2,			'SQLWATCH-INTERNAL-META-CONFIG','TSQL', 'exec dbo.usp_sqlwatch_internal_add_job'),
