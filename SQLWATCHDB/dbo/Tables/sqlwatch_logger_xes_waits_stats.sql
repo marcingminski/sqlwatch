@@ -9,8 +9,8 @@
 	[sql_text] varchar(max),
 	[snapshot_time] datetime not null,
 	[snapshot_type_id] tinyint not null default 8 ,
-	[activity_id] uniqueidentifier not null default newid(),
-	[activity_sequence] int not null default 0,
+	[activity_id] uniqueidentifier null default newid(),
+	[activity_sequence] int null default 0,
 	[username] varchar(255) null,
 	[database_name] varchar(255) null,
 	[client_hostname] varchar(255) null,
@@ -19,9 +19,10 @@
 	[activity_seqeuence_xfer] int null,
 	[event_name] [varchar](255) null,
 	[sql_instance] nvarchar(25) not null default @@SERVERNAME,
+	[sqlwatch_activity_id] uniqueidentifier default newsequentialid(),
 	constraint fk_logger_xes_waits_snapshot_header foreign key ([snapshot_time],[snapshot_type_id],[sql_instance]) references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time],[snapshot_type_id],[sql_instance]) on delete cascade on update cascade,
 	constraint [pk_logger_xes_waits] primary key (
-		[snapshot_time],[snapshot_type_id],[sql_instance], [activity_id], [activity_sequence]
+		[snapshot_time],[snapshot_type_id],[sql_instance], [sqlwatch_activity_id]
 		),
 	constraint fk_sqlwatch_logger_xes_waits_stats_server foreign key ([sql_instance])
 		references [dbo].[sqlwatch_meta_server] ([servername]) on delete cascade

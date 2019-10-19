@@ -637,4 +637,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="[sqlwatch_whoisactive_record_id]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="7ad82200-ab3c-4bb5-8c59-476348634b60" ChangeDateTime="10/19/2019 17:34:17">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_logger_xes_waits_stats].[activity_id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_logger_xes_waits_stats]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[sqlwatch_activity_id]" />
+  </Operation>
 </Operations>
