@@ -20,10 +20,13 @@
 	[partition_id] bigint not null default 0, --so we can add a column in previous versions of sqlwatch versions without having to backfill partition_ids
 	constraint [pk_index_usage_stats] primary key clustered ([snapshot_time], [sql_instance], [sqlwatch_database_id], [sqlwatch_table_id], [sqlwatch_index_id], [partition_id], [snapshot_type_id]),
 	--constraint [fk_index_usage_stats_database] foreign key ([sql_instance], [sqlwatch_database_id]) references [dbo].[sqlwatch_meta_database] ([sql_instance], [sqlwatch_database_id]) on delete cascade on update cascade,
-	constraint fk_sqlwatch_logger_index_usage_stats_table foreign key ([sql_instance],[sqlwatch_database_id],[sqlwatch_table_id]) 
-		references [dbo].[sqlwatch_meta_table] ([sql_instance],[sqlwatch_database_id],[sqlwatch_table_id]) on delete cascade,
+	--constraint fk_sqlwatch_logger_index_usage_stats_table foreign key ([sql_instance],[sqlwatch_database_id],[sqlwatch_table_id]) 
+	--	references [dbo].[sqlwatch_meta_table] ([sql_instance],[sqlwatch_database_id],[sqlwatch_table_id]) on delete cascade,
 	constraint [fk_index_usage_stats_header] foreign key ([snapshot_time],[snapshot_type_id], [sql_instance]) 
-		references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time],[snapshot_type_id], [sql_instance]) on delete cascade on update cascade
+		references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time],[snapshot_type_id], [sql_instance]) on delete cascade on update cascade,
+	constraint fk_sqlwatch_logger_index_usage_stats_index foreign key ([sql_instance],[sqlwatch_database_id], [sqlwatch_table_id], [sqlwatch_index_id])
+		references [dbo].[sqlwatch_meta_index] ([sql_instance],[sqlwatch_database_id], [sqlwatch_table_id], [sqlwatch_index_id]) on delete cascade
+
 )
 go
 
