@@ -16,6 +16,8 @@ declare @percent_processor_time real
 declare @date_snapshot_current datetime
 declare @date_snapshot_previous datetime
 
+declare @snapshot_type_id tinyint = 1
+
 
 declare @sql nvarchar(4000) 
 
@@ -58,12 +60,12 @@ declare @sql nvarchar(4000)
 		--------------------------------------------------------------------------------------------------------------
 		select @date_snapshot_previous = max([snapshot_time])
 		from [dbo].[sqlwatch_logger_snapshot_header] (nolock) --so we dont get blocked by central repository. this is safe at this point.
-		where snapshot_type_id = 1
+		where snapshot_type_id = @snapshot_type_id
 		and sql_instance = @@SERVERNAME
 		
 		set @date_snapshot_current = getutcdate();
 		insert into [dbo].[sqlwatch_logger_snapshot_header] (snapshot_time, snapshot_type_id)
-		values (@date_snapshot_current, 1)		
+		values (@date_snapshot_current, @snapshot_type_id)		
 		--------------------------------------------------------------------------------------------------------------
 		-- 1. get cpu
 		--------------------------------------------------------------------------------------------------------------
@@ -109,7 +111,7 @@ declare @sql nvarchar(4000)
 			,base_cntr_value=bc.cntr_value
 			--,pc.cntr_type
 			,snapshot_time=@date_snapshot_current
-			, 1
+			, @snapshot_type_id
 			, @@SERVERNAME
 			,[cntr_value_calculated] = convert(real,(
 				case 
@@ -169,9 +171,9 @@ declare @sql nvarchar(4000)
 			and mc.[counter_name] = rtrim(pc.[counter_name]) collate database_default
 			and mc.[sql_instance] = @@SERVERNAME
 
-		inner join [dbo].[sqlwatch_logger_perf_os_performance_counters] prev --previous
+		left join [dbo].[sqlwatch_logger_perf_os_performance_counters] prev --previous
 			on prev.sql_instance = @@SERVERNAME
-			and prev.snapshot_type_id = 1
+			and prev.snapshot_type_id = @snapshot_type_id
 			and prev.performance_counter_id = mc.performance_counter_id
 			and prev.instance_name = rtrim(pc.instance_name) collate database_default
 			and prev.snapshot_time = @date_snapshot_previous
@@ -185,7 +187,7 @@ declare @sql nvarchar(4000)
 		insert into dbo.[sqlwatch_logger_perf_os_schedulers]
 			select 
 				  snapshot_time = @date_snapshot_current
-				, snapshot_type_id = 1
+				, snapshot_type_id = @snapshot_type_id
 				, scheduler_count = sum(case when is_online = 1 then 1 else 0 end)
 				, [idle_scheduler_count] = sum(convert(int,is_idle))
 				, current_tasks_count = sum(current_tasks_count)
@@ -316,7 +318,7 @@ declare @sql nvarchar(4000)
 				-- there are many memory clerks. we'll chart any that make up 5% of sql memory or more; less significant clerks will be lumped into an "other" bucket
 				,graph_type=case when mc.total_kb / convert(decimal, ta.total_kb_all_clerks) > 0.05 then mc.[type] else N'OTHER' end
 				,memory_available=@memory_available
-				, [snapshot_type_id] = 1
+				, [snapshot_type_id] = @snapshot_type_id
 				, [sql_instance] = @@SERVERNAME
 			from @memory_clerks as mc
 			-- use a self-join to calculate the total memory allocated for each time interval
@@ -339,24 +341,40 @@ declare @sql nvarchar(4000)
 		--------------------------------------------------------------------------------------------------------------
 		-- file stats snapshot
 		--------------------------------------------------------------------------------------------------------------
-		insert into dbo.[sqlwatch_logger_perf_file_stats]
+		insert into dbo.[sqlwatch_logger_perf_file_stats] (
+			[sqlwatch_database_id]
+           ,[sqlwatch_master_file_id]
+		   ,[num_of_reads],[num_of_bytes_read],[io_stall_read_ms],[num_of_writes],[num_of_bytes_written],[io_stall_write_ms],[size_on_disk_bytes]
+		   ,[snapshot_time]
+		   ,[snapshot_type_id]
+		   ,[sql_instance]
+		   
+		   , [num_of_reads_delta]
+		   , [num_of_bytes_read_delta]
+		   , [io_stall_read_ms_delta]
+		   , [num_of_writes_delta]
+		   , [num_of_bytes_written_delta]
+		   , [io_stall_write_ms_delta]
+		   , [size_on_disk_bytes_delta]
+		   , [delta_seconds]
+		   )
 		select 
-			[sqlwatch_database_id] = sd.sqlwatch_database_id
-			,[sqlwatch_master_file_id] = mf.sqlwatch_master_file_id
-			--, [database_create_date] = d.create_date 
-			--, f.name as logical_file_name, f.type_desc, 
-			--,cast (case
-			--when left (ltrim (f.physical_name), 2) = '\\' 
-			--		then left (ltrim (f.physical_name), charindex ('\', ltrim (f.physical_name), charindex ('\', ltrim (f.physical_name), 3) + 1) - 1)
-			--	when charindex ('\', ltrim(f.physical_name), 3) > 0 
-			--		then upper (left (ltrim (f.physical_name), charindex ('\', ltrim (f.physical_name), 3) - 1))
-			--	else f.physical_name
-			--end as varchar(255)) as logical_disk, 
-			,fs.num_of_reads, fs.num_of_bytes_read, fs.io_stall_read_ms, fs.num_of_writes, fs.num_of_bytes_written, 
-			fs.io_stall_write_ms, fs.size_on_disk_bytes,
-			snapshot_time=@date_snapshot_current
-			, 1
+			 sd.sqlwatch_database_id
+			,mf.sqlwatch_master_file_id
+			,fs.num_of_reads, fs.num_of_bytes_read, fs.io_stall_read_ms, fs.num_of_writes, fs.num_of_bytes_written, fs.io_stall_write_ms, fs.size_on_disk_bytes
+			, snapshot_time=@date_snapshot_current
+			, @snapshot_type_id
 			, @@SERVERNAME
+
+			, [num_of_reads_delta] = convert(real,case when fs.num_of_reads > prevfs.num_of_reads then fs.num_of_reads - prevfs.num_of_reads else 0 end)
+			, [num_of_bytes_read_delta] = convert(real,case when fs.num_of_bytes_read > prevfs.num_of_bytes_read then fs.num_of_bytes_read - prevfs.num_of_bytes_read else 0 end)
+			, [io_stall_read_ms_delta] = convert(real,case when fs.io_stall_read_ms > prevfs.io_stall_read_ms then fs.io_stall_read_ms - prevfs.io_stall_read_ms else 0 end)
+			, [num_of_writes_delta]= convert(real,case when fs.num_of_writes > prevfs.num_of_writes then fs.num_of_writes - prevfs.num_of_writes else 0 end)
+			, [num_of_bytes_written_delta] = convert(real,case when fs.num_of_bytes_written > prevfs.num_of_bytes_written then fs.num_of_bytes_written - prevfs.num_of_bytes_written else 0 end)
+			, [io_stall_write_ms_delta] = convert(real,case when fs.io_stall_write_ms > prevfs.io_stall_write_ms then fs.io_stall_write_ms - prevfs.io_stall_write_ms else 0 end)
+			, [size_on_disk_bytes_delta] = convert(real,case when fs.size_on_disk_bytes > prevfs.size_on_disk_bytes then fs.size_on_disk_bytes - prevfs.size_on_disk_bytes else 0 end)
+			, [delta_seconds] = datediff(second,@date_snapshot_previous,@date_snapshot_current)
+
 		from sys.dm_io_virtual_file_stats (default, default) as fs
 		inner join sys.master_files as f 
 			on fs.database_id = f.database_id 
@@ -371,22 +389,45 @@ declare @sql nvarchar(4000)
 			and sd.sql_instance = @@SERVERNAME
 
 		inner join [dbo].[sqlwatch_meta_master_file] mf
-			on mf.sql_instance = @@SERVERNAME
+			on mf.sql_instance = sd.sql_instance
 			and mf.sqlwatch_database_id = sd.sqlwatch_database_id
 			and mf.file_name = convert(nvarchar(128),f.name) collate database_default
 			and mf.[file_physical_name] = convert(nvarchar(260),f.physical_name) collate database_default
+
+		/* 2019-10-21 pushing delta calculation to collector to improve reporting performance */
+		left join [dbo].[sqlwatch_logger_perf_file_stats] (nolock) prevfs
+			on prevfs.sql_instance = mf.sql_instance
+			and prevfs.sqlwatch_database_id = mf.sqlwatch_database_id
+			and prevfs.sqlwatch_master_file_id = mf.sqlwatch_master_file_id
+			and prevfs.snapshot_type_id = @snapshot_type_id
+			and prevfs.snapshot_time = @date_snapshot_previous
 
 
 		--------------------------------------------------------------------------------------------------------------
 		-- wait stats snapshot
 		--------------------------------------------------------------------------------------------------------------
 		insert into [dbo].[sqlwatch_logger_perf_os_wait_stats]
-		select [wait_type_id], [waiting_tasks_count], [wait_time_ms],[max_wait_time_ms], [signal_wait_time_ms], [snapshot_time]=@date_snapshot_current, 1, @@SERVERNAME
+		select 
+			ms.[wait_type_id], ws.[waiting_tasks_count], ws.[wait_time_ms],ws.[max_wait_time_ms], ws.[signal_wait_time_ms]
+		, [snapshot_time]=@date_snapshot_current, @snapshot_type_id, @@SERVERNAME
+
+		, [waiting_tasks_count_delta] = convert(real,case when ws.[waiting_tasks_count] > wsprev.[waiting_tasks_count] then ws.[waiting_tasks_count] - wsprev.[waiting_tasks_count] else 0 end)
+		, [wait_time_ms_delta] = convert(real,case when ws.[wait_time_ms] > wsprev.[wait_time_ms] then ws.[wait_time_ms] - wsprev.[wait_time_ms] else 0 end)
+		, [max_wait_time_ms_delta] = convert(real,case when ws.[max_wait_time_ms] > wsprev.[max_wait_time_ms] then ws.[max_wait_time_ms] - wsprev.[max_wait_time_ms] else 0 end)
+		, [signal_wait_time_ms_delta] = convert(real,case when ws.[signal_wait_time_ms] > wsprev.[signal_wait_time_ms] then ws.[signal_wait_time_ms] - wsprev.[signal_wait_time_ms] else 0 end)
+		, [delta_seconds] = datediff(second,@date_snapshot_previous,@date_snapshot_current)
 		from sys.dm_os_wait_stats ws
 		inner join [dbo].[sqlwatch_meta_wait_stats] ms
 			on ms.[wait_type] = ws.[wait_type] collate database_default
 			and ms.[sql_instance] = @@SERVERNAME
-		where waiting_tasks_count + wait_time_ms + max_wait_time_ms + signal_wait_time_ms > 0
+
+		left join [dbo].[sqlwatch_logger_perf_os_wait_stats] wsprev
+			on wsprev.sql_instance = ms.sql_instance
+			and wsprev.wait_type_id = ms.wait_type_id
+			and wsprev.snapshot_type_id = @snapshot_type_id
+			and wsprev.snapshot_time = @date_snapshot_previous
+
+		where ws.waiting_tasks_count + ws.wait_time_ms + ws.max_wait_time_ms + ws.signal_wait_time_ms > 0
 
 		--------------------------------------------------------------------------------------------------------------
 		-- XE waits
