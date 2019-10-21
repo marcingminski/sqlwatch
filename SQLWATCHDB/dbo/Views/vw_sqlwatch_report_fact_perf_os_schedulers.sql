@@ -1,4 +1,4 @@
-﻿CREATE VIEW [dbo].[vw_sqlwatch_report_perf_os_schedulers] with schemabinding
+﻿CREATE VIEW [dbo].[vw_sqlwatch_report_fact_perf_os_schedulers] with schemabinding
 as
 SELECT [report_time] = convert(smalldatetime,[snapshot_time])
       ,[snapshot_type_id]

@@ -1,4 +1,4 @@
-﻿CREATE VIEW [dbo].[vw_sqlwatch_report_index_missing_stats] with schemabinding
+﻿CREATE VIEW [dbo].[vw_sqlwatch_report_fact_index_missing_stats] with schemabinding
 as
 SELECT ims.[sqlwatch_database_id]
       ,ims.[sqlwatch_table_id]

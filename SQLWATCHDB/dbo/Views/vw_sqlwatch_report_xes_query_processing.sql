@@ -1,4 +1,4 @@
-﻿CREATE VIEW [dbo].[vw_sqlwatch_report_xes_query_processing] with schemabinding
+﻿CREATE VIEW [dbo].[vw_sqlwatch_report_fact_xes_query_processing] with schemabinding
 as
 SELECT [event_time]
       ,[max_workers]

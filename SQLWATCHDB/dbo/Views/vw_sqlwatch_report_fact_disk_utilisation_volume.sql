@@ -1,4 +1,4 @@
-﻿CREATE VIEW [dbo].[vw_sqlwatch_report_disk_utilisation_volume] with schemabinding
+﻿CREATE VIEW [dbo].[vw_sqlwatch_report_fact_disk_utilisation_volume] with schemabinding
 as
 
 SELECT uv.[sqlwatch_volume_id]

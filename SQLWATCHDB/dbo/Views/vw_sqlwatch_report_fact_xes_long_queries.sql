@@ -1,4 +1,4 @@
-﻿CREATE VIEW [dbo].[vw_sqlwatch_report_xes_long_queries] with schemabinding
+﻿CREATE VIEW [dbo].[vw_sqlwatch_report_fact_xes_long_queries] with schemabinding
 as
 
 SELECT [activity_id]

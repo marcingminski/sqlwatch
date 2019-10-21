@@ -644,4 +644,130 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="[sqlwatch_activity_id]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="5105a89b-28b9-4fa3-88e3-12c3bfd0e457" ChangeDateTime="10/21/2019 00:33:45">
+    <Property Name="ElementName" Value="[dbo].[vw_sqlwatch_dim_server]" />
+    <Property Name="ElementType" Value="SqlView" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[vw_sqlwatch_report_dim_server]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="429755a8-570b-49f9-b6bd-0f448be7f3bb" ChangeDateTime="10/21/2019 00:40:26">
+    <Property Name="ElementName" Value="[dbo].[vw_sqlwatch_report_agent_job_history]" />
+    <Property Name="ElementType" Value="SqlView" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[vw_sqlwatch_report_fact_agent_job_history]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="e82657ac-b23a-476c-9e21-e48c3c7dd02a" ChangeDateTime="10/21/2019 00:40:35">
+    <Property Name="ElementName" Value="[dbo].[vw_sqlwatch_report_disk_utilisation_database]" />
+    <Property Name="ElementType" Value="SqlView" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[vw_sqlwatch_report_fact_disk_utilisation_database]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="5f5fc572-36b3-400b-9c55-c8b0934869a6" ChangeDateTime="10/21/2019 00:40:41">
+    <Property Name="ElementName" Value="[dbo].[vw_sqlwatch_report_disk_utilisation_volume]" />
+    <Property Name="ElementType" Value="SqlView" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[vw_sqlwatch_report_fact_disk_utilisation_volume]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="22786f35-aac3-4882-b6c9-e9f4784d3f5d" ChangeDateTime="10/21/2019 00:40:48">
+    <Property Name="ElementName" Value="[dbo].[vw_sqlwatch_report_index_missing_stats]" />
+    <Property Name="ElementType" Value="SqlView" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[vw_sqlwatch_report_fact_index_missing_stats]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="25139829-53fd-4105-9c19-942e87a09eca" ChangeDateTime="10/21/2019 00:41:03">
+    <Property Name="ElementName" Value="[dbo].[vw_sqlwatch_report_index_usage_stats]" />
+    <Property Name="ElementType" Value="SqlView" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[vw_sqlwatch_report_fact_index_usage_stats]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="de62fb14-8c2b-4940-99db-97df1d0c07ad" ChangeDateTime="10/21/2019 00:41:08">
+    <Property Name="ElementName" Value="[dbo].[vw_sqlwatch_report_index_usage_stats_histogram]" />
+    <Property Name="ElementType" Value="SqlView" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[vw_sqlwatch_report_fact_index_usage_stats_histogram]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="e9891d72-0ff4-4c02-860d-4af652a7d4cb" ChangeDateTime="10/21/2019 00:41:14">
+    <Property Name="ElementName" Value="[dbo].[vw_sqlwatch_report_perf_file_stats]" />
+    <Property Name="ElementType" Value="SqlView" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[vw_sqlwatch_report_fact_perf_file_stats]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="a5fd75f2-25db-4578-85e5-cb7db1226283" ChangeDateTime="10/21/2019 00:41:20">
+    <Property Name="ElementName" Value="[dbo].[vw_sqlwatch_report_perf_os_memory_clerks]" />
+    <Property Name="ElementType" Value="SqlView" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[vw_sqlwatch_report_fact_perf_os_memory_clerks]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="68e1fc48-76c2-4a8d-b77b-f705151b1bd8" ChangeDateTime="10/21/2019 00:41:27">
+    <Property Name="ElementName" Value="[dbo].[vw_sqlwatch_report_perf_os_performance_counters]" />
+    <Property Name="ElementType" Value="SqlView" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[vw_sqlwatch_report_fact_perf_os_performance_counters]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="5e06281e-8ca0-4b35-b32b-348aa433ef15" ChangeDateTime="10/21/2019 00:41:40">
+    <Property Name="ElementName" Value="[dbo].[vw_sqlwatch_report_perf_os_process_memory]" />
+    <Property Name="ElementType" Value="SqlView" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[vw_sqlwatch_report_fact_perf_os_process_memory]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="0eeccca6-a4b4-409c-9a2b-d9aeec20f369" ChangeDateTime="10/21/2019 00:41:46">
+    <Property Name="ElementName" Value="[dbo].[vw_sqlwatch_report_perf_os_schedulers]" />
+    <Property Name="ElementType" Value="SqlView" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[vw_sqlwatch_report_fact_perf_os_schedulers]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="7b8d85d5-d119-47e6-a417-a3680b9437fc" ChangeDateTime="10/21/2019 00:41:53">
+    <Property Name="ElementName" Value="[dbo].[vw_sqlwatch_report_perf_os_wait_stats]" />
+    <Property Name="ElementType" Value="SqlView" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[vw_sqlwatch_report_fact_perf_os_wait_stats]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="661bf75d-7fd4-468c-9f15-33bd5c535254" ChangeDateTime="10/21/2019 00:41:59">
+    <Property Name="ElementName" Value="[dbo].[vw_sqlwatch_report_whoisactive]" />
+    <Property Name="ElementType" Value="SqlView" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[vw_sqlwatch_report_fact_whoisactive]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="0976f9de-b9d3-4f76-bb9d-b21a1ac92942" ChangeDateTime="10/21/2019 00:42:06">
+    <Property Name="ElementName" Value="[dbo].[vw_sqlwatch_report_xes_blockers]" />
+    <Property Name="ElementType" Value="SqlView" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[vw_sqlwatch_report_fact_xes_blockers]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="5f39ceaa-b21d-424b-a47f-5b08ea0a2f5b" ChangeDateTime="10/21/2019 00:42:11">
+    <Property Name="ElementName" Value="[dbo].[vw_sqlwatch_report_xes_iosubsystem]" />
+    <Property Name="ElementType" Value="SqlView" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[vw_sqlwatch_report_fact_xes_iosubsystem]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="27049d6c-4e2f-4a07-8272-76eba80701ff" ChangeDateTime="10/21/2019 00:42:16">
+    <Property Name="ElementName" Value="[dbo].[vw_sqlwatch_report_xes_long_queries]" />
+    <Property Name="ElementType" Value="SqlView" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[vw_sqlwatch_report_fact_xes_long_queries]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="f6016a03-d107-4b3a-bc4d-06a905e80b2a" ChangeDateTime="10/21/2019 00:42:24">
+    <Property Name="ElementName" Value="[dbo].[vw_sqlwatch_report_xes_query_processing]" />
+    <Property Name="ElementType" Value="SqlView" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[vw_sqlwatch_report_fact_xes_query_processing]" />
+  </Operation>
 </Operations>

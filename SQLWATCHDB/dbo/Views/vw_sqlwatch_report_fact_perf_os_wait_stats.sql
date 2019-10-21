@@ -1,4 +1,4 @@
-﻿CREATE VIEW [dbo].[vw_sqlwatch_report_perf_os_wait_stats] with schemabinding
+﻿CREATE VIEW [dbo].[vw_sqlwatch_report_fact_perf_os_wait_stats] with schemabinding
 as
  with cte_wait_times as (
  		 select

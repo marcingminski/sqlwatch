@@ -1,4 +1,4 @@
-﻿CREATE VIEW [dbo].[vw_sqlwatch_report_index_usage_stats] with schemabinding
+﻿CREATE VIEW [dbo].[vw_sqlwatch_report_fact_index_usage_stats] with schemabinding
 as
 with cte_index_sequence as (
 	select [sqlwatch_database_id], [sqlwatch_table_id], [sqlwatch_index_id], [used_pages_count], [user_seeks], [user_scans], [user_lookups], [user_updates]

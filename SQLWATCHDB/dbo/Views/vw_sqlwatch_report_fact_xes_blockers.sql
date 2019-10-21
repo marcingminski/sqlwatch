@@ -1,4 +1,4 @@
-﻿CREATE VIEW [dbo].[vw_sqlwatch_report_xes_blockers] with schemabinding
+﻿CREATE VIEW [dbo].[vw_sqlwatch_report_fact_xes_blockers] with schemabinding
 as
 
 SELECT [attach_activity_id]

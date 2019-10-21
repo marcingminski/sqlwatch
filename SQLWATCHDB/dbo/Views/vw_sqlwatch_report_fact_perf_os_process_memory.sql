@@ -1,4 +1,4 @@
-﻿CREATE VIEW [dbo].[vw_sqlwatch_report_perf_os_process_memory] with schemabinding
+﻿CREATE VIEW [dbo].[vw_sqlwatch_report_fact_perf_os_process_memory] with schemabinding
 as
 SELECT [report_time] = convert(smalldatetime,[snapshot_time])
       ,[physical_memory_in_use_kb]

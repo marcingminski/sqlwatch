@@ -1,4 +1,4 @@
-﻿CREATE VIEW [dbo].[vw_sqlwatch_report_whoisactive] with schemabinding
+﻿CREATE VIEW [dbo].[vw_sqlwatch_report_fact_whoisactive] with schemabinding
 as
 SELECT [sqlwatch_whoisactive_record_id]
       ,[report_time] = convert(smalldatetime,[snapshot_time])

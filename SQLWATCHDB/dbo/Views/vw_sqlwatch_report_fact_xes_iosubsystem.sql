@@ -1,4 +1,4 @@
-﻿CREATE VIEW [dbo].[vw_sqlwatch_report_xes_iosubsystem] with schemabinding
+﻿CREATE VIEW [dbo].[vw_sqlwatch_report_fact_xes_iosubsystem] with schemabinding
 as
 SELECT [event_time]
       ,[io_latch_timeouts]

@@ -1,4 +1,4 @@
-﻿CREATE VIEW [dbo].[vw_sqlwatch_report_agent_job_history] with schemabinding
+﻿CREATE VIEW [dbo].[vw_sqlwatch_report_fact_agent_job_history] with schemabinding
 as
 select 
 	  aj.sql_instance
