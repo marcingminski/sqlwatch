@@ -16,7 +16,7 @@ select @snapshot_time, @snapshot_type_id
 insert into [dbo].[sqlwatch_logger_agent_job_history] (sql_instance, sqlwatch_job_id, sqlwatch_job_step_id, sysjobhistory_instance_id, sysjobhistory_step_id,
 	run_duration_s, run_date, run_status, snapshot_time, snapshot_type_id)
 select sql_instance=@@SERVERNAME, mj.[sqlwatch_job_id], js.sqlwatch_job_step_id, instance_id, step_id,
- run_duration_s = ((jh.run_duration/10000*3600 + (jh.run_duration/100)%100*60 + run_duration%100 + 31 )),
+ run_duration_s = ((jh.run_duration/10000*3600 + (jh.run_duration/100)%100*60 + run_duration%100 )),
  run_date = msdb.dbo.agent_datetime(jh.run_date, jh.run_time),
  jh.run_status,
  snapshot_time = @snapshot_time, 
