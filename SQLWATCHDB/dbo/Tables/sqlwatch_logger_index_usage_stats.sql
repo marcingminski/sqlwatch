@@ -18,6 +18,13 @@
 	[index_disabled] bit null,
 	[sql_instance] nvarchar(25) not null default @@SERVERNAME,
 	[partition_id] bigint not null default 0, --so we can add a column in previous versions of sqlwatch versions without having to backfill partition_ids
+
+	[used_pages_count_delta] real null,
+	[user_seeks_delta] real null,
+	[user_scans_delta] real null,
+	[user_updates_delta] real null,
+	[delta_seconds_delta] int null,
+
 	constraint [pk_index_usage_stats] primary key clustered ([snapshot_time], [sql_instance], [sqlwatch_database_id], [sqlwatch_table_id], [sqlwatch_index_id], [partition_id], [snapshot_type_id]),
 	--constraint [fk_index_usage_stats_database] foreign key ([sql_instance], [sqlwatch_database_id]) references [dbo].[sqlwatch_meta_database] ([sql_instance], [sqlwatch_database_id]) on delete cascade on update cascade,
 	--constraint fk_sqlwatch_logger_index_usage_stats_table foreign key ([sql_instance],[sqlwatch_database_id],[sqlwatch_table_id]) 

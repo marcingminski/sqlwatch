@@ -8,6 +8,7 @@ declare @snapshot_time datetime = getutcdate();
 declare @snapshot_type tinyint = 14
 declare @database_name sysname
 declare @sql varchar(max)
+declare @date_snapshot_previous datetime
 
 declare @object_id int
 declare @index_name sysname
@@ -15,6 +16,12 @@ declare @index_id int
 declare @object_name nvarchar(256)
 
 set nocount on ;
+
+select @date_snapshot_previous = max([snapshot_time])
+	from [dbo].[sqlwatch_logger_snapshot_header] (nolock) --so we dont get blocked by central repository. this is safe at this point.
+	where snapshot_type_id = @snapshot_type
+	and sql_instance = @@SERVERNAME
+
 
 /* step 1, get indexes from each database.
    we're creating snapshot timestamp here and because index collection may take few minutes,
@@ -41,18 +48,14 @@ while @@FETCH_STATUS = 0
 		set @sql = 'insert into [dbo].[sqlwatch_logger_index_usage_stats] (
 	sqlwatch_database_id, [sqlwatch_index_id], [used_pages_count],
 	user_seeks, user_scans, user_lookups, user_updates, last_user_seek, last_user_scan, last_user_lookup, last_user_update,
-	stats_date, snapshot_time, snapshot_type_id, index_disabled, partition_id, [sqlwatch_table_id]
+	stats_date, snapshot_time, snapshot_type_id, index_disabled, partition_id, [sqlwatch_table_id],
+
+	[used_pages_count_delta], [user_seeks_delta], [user_scans_delta], [user_updates_delta], [delta_seconds_delta]
 	)
 			select 
-				--database_name=dbs.name,
-				--database_create_date=dbs.create_date,
 				mdb.sqlwatch_database_id,
 				mi.[sqlwatch_index_id],
-				--[object_name] = object_schema_name(ixus.object_id,dbs.database_id) + ''.'' + object_name(ixus.object_id,dbs.database_id),
-				--ix.[index_id],
-				--[index_name] = ix.[name],
 				ps.[used_page_count],
-				--[index_type] = ix.[type],
 				ixus.[user_seeks],
 				ixus.[user_scans],
 				ixus.[user_lookups],
@@ -67,6 +70,12 @@ while @@FETCH_STATUS = 0
 				[is_disabled]=ix.is_disabled,
 				ps.partition_id,
 				mt.sqlwatch_table_id
+
+				, [used_pages_count_delta] = case when ps.[used_page_count] > usprev.[used_pages_count] then ps.[used_page_count] - usprev.[used_pages_count] else 0 end
+				, [user_seeks_delta] = case when ixus.[user_seeks] > usprev.[user_seeks] then ixus.[user_seeks] - usprev.[user_seeks] else 0 end
+				, [user_scans_delta] = case when ixus.[user_scans] > usprev.[user_scans] then ixus.[user_scans] - usprev.[user_scans] else 0 end
+				, [user_updates_delta] = case when ixus.[user_updates] > usprev.[user_updates] then ixus.[user_updates] - usprev.[user_updates] else 0 end
+				, [delta_seconds_delta] = datediff(second,''' + convert(varchar(23),@date_snapshot_previous,121) + ''',''' + convert(varchar(23),@snapshot_time,121) + ''')
 			from sys.dm_db_index_usage_stats ixus
 
 			inner join sys.databases dbs
@@ -101,6 +110,14 @@ while @@FETCH_STATUS = 0
 				on mi.sql_instance = mdb.sql_instance
 				and mi.sqlwatch_database_id = mi.sqlwatch_database_id
 				and mi.sqlwatch_table_id = mi.sqlwatch_table_id
+
+			left join [dbo].[sqlwatch_logger_index_usage_stats] usprev
+				on usprev.sql_instance = mi.sql_instance
+				and usprev.sqlwatch_database_id = mi.sqlwatch_database_id
+				and usprev.sqlwatch_table_id = mi.sqlwatch_table_id
+				and usprev.sqlwatch_index_id = mi.sqlwatch_index_id
+				and usprev.snapshot_type_id = ' + convert(varchar(5),@snapshot_type) + '
+				and usprev.snapshot_time = ''' + convert(varchar(23),@date_snapshot_previous,121) + '''
 '
 		print @sql
 		Print '[' + convert(varchar(23),getdate(),121) + '] Collecting index statistics for database: ' + @database_name
