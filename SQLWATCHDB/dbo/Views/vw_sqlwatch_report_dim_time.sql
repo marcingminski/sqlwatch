@@ -31,8 +31,8 @@ select distinct report_time=snapshot_time
 			when convert(date,snapshot_time) = dateadd(month,-1,convert(date,current_utc_date)) then 'Same Day Last Month'
 			--when convert(date,snapshot_time) between dateadd(day,-7,convert(date,current_utc_date)) and convert(date,current_utc_date) then 'Last 7 days'
 			--when convert(date,snapshot_time) between dateadd(day,-30,convert(date,current_utc_date)) and convert(date,current_utc_date) then 'Last 30 days' 
-			when datepart(year,snapshot_time) = datepart(year,current_utc_date) and datename (wk, snapshot_time) = datename (wk, current_utc_date) - 1 then 'Previous Week'
-			when datepart(year,snapshot_time) = datepart(year,current_utc_date) and datepart(month, snapshot_time) = datepart(month, current_utc_date) - 1 then 'Previous Month'
-			else 'Other' end
+			--when datepart(year,snapshot_time) = datepart(year,current_utc_date) and datename (wk, snapshot_time) = datename (wk, current_utc_date) - 1 then 'Previous Week'
+			--when datepart(year,snapshot_time) = datepart(year,current_utc_date) and datepart(month, snapshot_time) = datepart(month, current_utc_date) - 1 then 'Previous Month'
+			else '' end
 
 from cte_snapshots
