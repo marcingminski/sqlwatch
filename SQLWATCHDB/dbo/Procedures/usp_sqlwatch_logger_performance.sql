@@ -99,7 +99,7 @@ declare @sql nvarchar(4000)
 		--------------------------------------------------------------------------------------------------------------
 
 		insert into dbo.[sqlwatch_logger_perf_os_performance_counters] ([performance_counter_id],[instance_name], [cntr_value], [base_cntr_value],
-			[snapshot_time], [snapshot_type_id], [sql_instance])
+			[snapshot_time], [snapshot_type_id], [sql_instance], [cntr_value_calculated])
 		select
 			 --[object_name] = rtrim(pc.[object_name])
 			 mc.[performance_counter_id]
@@ -111,6 +111,14 @@ declare @sql nvarchar(4000)
 			,snapshot_time=@date_snapshot_current
 			, 1
 			, @@SERVERNAME
+			,[cntr_value_calculated] = convert(real,(
+				case 
+					when mc.object_name = 'Batch Resp Statistics' then case when pc.cntr_value > prev.cntr_value then cast((pc.cntr_value - prev.cntr_value) as real) else 0 end -- delta absolute
+					when mc.cntr_type = 65792 then isnull(prev.cntr_value,0) -- point-in-time
+					when mc.cntr_type = 272696576 then case when (pc.cntr_value > prev.cntr_value) then (pc.cntr_value - prev.cntr_value) / cast(datediff(second,prev.snapshot_time,@date_snapshot_current) as real) else 0 end -- delta rate
+					when mc.cntr_type = 537003264 then isnull(cast(100.0 as real) * prev.cntr_value / nullif(pc.cntr_value, 0),0) -- ratio
+					when mc.cntr_type = 1073874176 then isnull(case when pc.cntr_value > prev.cntr_value then isnull((pc.cntr_value - prev.cntr_value) / nullif(pc.cntr_value - bc.cntr_value, 0) / cast(datediff(second,prev.snapshot_time,@date_snapshot_current) as real), 0) else 0 end,0) -- delta ratio
+				end))
 		from (
 			select * from sys.dm_os_performance_counters
 			union all
@@ -160,6 +168,14 @@ declare @sql nvarchar(4000)
 			on mc.[object_name] = rtrim(pc.[object_name]) collate database_default
 			and mc.[counter_name] = rtrim(pc.[counter_name]) collate database_default
 			and mc.[sql_instance] = @@SERVERNAME
+
+		inner join [dbo].[sqlwatch_logger_perf_os_performance_counters] prev --previous
+			on prev.sql_instance = @@SERVERNAME
+			and prev.snapshot_type_id = 1
+			and prev.performance_counter_id = mc.performance_counter_id
+			and prev.instance_name = rtrim(pc.instance_name) collate database_default
+			and prev.snapshot_time = @date_snapshot_previous
+
 		where sc.collect = 1
 		option (recompile)
 
