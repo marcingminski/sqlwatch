@@ -1,7 +1,6 @@
 ﻿CREATE VIEW [dbo].[vw_sqlwatch_report_fact_perf_os_schedulers] with schemabinding
 as
-SELECT [report_time] = convert(smalldatetime,[snapshot_time])
-      ,[snapshot_type_id]
+SELECT report_time
       ,[scheduler_count]
       ,[idle_scheduler_count]
       ,[current_tasks_count]
@@ -18,5 +17,9 @@ SELECT [report_time] = convert(smalldatetime,[snapshot_time])
       ,[failed_to_create_worker]
       ,[total_cpu_usage_ms]
       ,[total_scheduler_delay_ms]
-      ,[sql_instance]
-  FROM [dbo].[sqlwatch_logger_perf_os_schedulers]
+      ,os.[sql_instance]
+  FROM [dbo].[sqlwatch_logger_perf_os_schedulers] os
+        inner join dbo.sqlwatch_logger_snapshot_header sh
+		on sh.sql_instance = os.sql_instance
+		and sh.snapshot_time = os.[snapshot_time]
+		and sh.snapshot_type_id = os.snapshot_type_id

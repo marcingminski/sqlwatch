@@ -17,6 +17,10 @@ SELECT [attach_activity_id]
       ,[blocking_client_app_name]
       ,[blocking_client_hostname]
       ,[report_xml]
-      ,[report_time] = convert(smalldatetime,[snapshot_time])
-      ,[sql_instance]
-  FROM [dbo].[sqlwatch_logger_xes_blockers]
+      ,report_time
+      ,xb.[sql_instance]
+  FROM [dbo].[sqlwatch_logger_xes_blockers] xb
+	inner join dbo.sqlwatch_logger_snapshot_header sh
+		on sh.sql_instance = xb.sql_instance
+		and sh.snapshot_time = xb.[snapshot_time]
+		and sh.snapshot_type_id = xb.snapshot_type_id

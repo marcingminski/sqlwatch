@@ -7,6 +7,10 @@ SELECT [event_time]
       ,[pending_tasks]
       ,[unresolvable_deadlocks]
       ,[deadlocked_scheduler]
-      ,[report_time] = convert(smalldatetime,[snapshot_time])
-      ,[sql_instance]
-  FROM [dbo].[sqlwatch_logger_xes_query_processing]
+      ,report_time
+      ,qp.[sql_instance]
+  FROM [dbo].[sqlwatch_logger_xes_query_processing] qp
+  	inner join dbo.sqlwatch_logger_snapshot_header sh
+		on sh.sql_instance = qp.sql_instance
+		and sh.snapshot_time = qp.[snapshot_time]
+		and sh.snapshot_type_id = qp.snapshot_type_id

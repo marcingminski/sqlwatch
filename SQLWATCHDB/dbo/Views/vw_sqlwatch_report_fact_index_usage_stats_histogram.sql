@@ -10,7 +10,11 @@ SELECT ih.[sqlwatch_database_id]
       ,ih.[EQ_ROWS]
       ,ih.[DISTINCT_RANGE_ROWS]
       ,ih.[AVG_RANGE_ROWS]
-      ,[report_time] = convert(smalldatetime,ih.[snapshot_time])
+      ,report_time
       ,ih.[collection_time]
       ,ih.[sql_instance]
   FROM [dbo].[sqlwatch_logger_index_usage_stats_histogram] ih
+    inner join dbo.sqlwatch_logger_snapshot_header sh
+		on sh.sql_instance = ih.sql_instance
+		and sh.snapshot_time = ih.[snapshot_time]
+		and sh.snapshot_type_id = ih.snapshot_type_id

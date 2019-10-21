@@ -1,7 +1,7 @@
 ﻿CREATE VIEW [dbo].[vw_sqlwatch_report_fact_whoisactive] with schemabinding
 as
 SELECT [sqlwatch_whoisactive_record_id]
-      ,[report_time] = convert(smalldatetime,[snapshot_time])
+      ,report_time
       ,[start_time]
       ,[session_id]
       ,[status]
@@ -24,5 +24,9 @@ SELECT [sqlwatch_whoisactive_record_id]
       ,[writes]
       ,[physical_reads]
       ,[login_time]
-      ,[sql_instance]
-  FROM [dbo].[sqlwatch_logger_whoisactive]
+      ,wi.[sql_instance]
+  FROM [dbo].[sqlwatch_logger_whoisactive] wi
+          inner join dbo.sqlwatch_logger_snapshot_header sh
+		on sh.sql_instance = wi.sql_instance
+		and sh.snapshot_time = wi.[snapshot_time]
+		and sh.snapshot_type_id = wi.snapshot_type_id

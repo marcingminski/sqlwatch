@@ -24,6 +24,10 @@ SELECT [activity_id]
       ,[client_app_name]
       ,[duration_ms]
       ,[wait_type]
-      ,[report_time] = convert(smalldatetime,[snapshot_time])
-      ,[sql_instance]
-  FROM [dbo].[sqlwatch_logger_xes_long_queries]
+      ,report_time
+      ,xq.[sql_instance]
+  FROM [dbo].[sqlwatch_logger_xes_long_queries] xq
+  	inner join dbo.sqlwatch_logger_snapshot_header sh
+		on sh.sql_instance = xq.sql_instance
+		and sh.snapshot_time = xq.[snapshot_time]
+		and sh.snapshot_type_id = xq.snapshot_type_id

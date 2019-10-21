@@ -15,6 +15,7 @@ select
 			when 3 then 'Canceled'
 			when 4 then 'In Progress'
 		else 'Unknown Status' end
+	,report_time
 from [dbo].[sqlwatch_meta_agent_job] aj
 
 inner join [dbo].[sqlwatch_meta_agent_job_step] js
@@ -25,3 +26,8 @@ inner join [dbo].[sqlwatch_logger_agent_job_history] jh
 	on jh.[sql_instance] = aj.[sql_instance]
 	and jh.[sqlwatch_job_id] = js.[sqlwatch_job_id]
 	and jh.[sqlwatch_job_step_id] = js.[sqlwatch_job_step_id]
+
+	inner join dbo.sqlwatch_logger_snapshot_header sh
+		on sh.sql_instance = jh.sql_instance
+		and sh.snapshot_time = jh.[snapshot_time]
+		and sh.snapshot_type_id = jh.snapshot_type_id
