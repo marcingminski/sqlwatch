@@ -53,7 +53,7 @@ while @@FETCH_STATUS = 0
 	[used_pages_count_delta], [user_seeks_delta], [user_scans_delta], [user_updates_delta], [delta_seconds_delta]
 	)
 			select 
-				mdb.sqlwatch_database_id,
+				mi.sqlwatch_database_id,
 				mi.[sqlwatch_index_id],
 				ps.[used_page_count],
 				ixus.[user_seeks],
@@ -69,7 +69,7 @@ while @@FETCH_STATUS = 0
 				[snapshot_type_id] = ' + convert(varchar(5),@snapshot_type) + ',
 				[is_disabled]=ix.is_disabled,
 				ps.partition_id,
-				mt.sqlwatch_table_id
+				mi.sqlwatch_table_id
 
 				, [used_pages_count_delta] = case when ps.[used_page_count] > usprev.[used_pages_count] then ps.[used_page_count] - usprev.[used_pages_count] else 0 end
 				, [user_seeks_delta] = case when ixus.[user_seeks] > usprev.[user_seeks] then ixus.[user_seeks] - usprev.[user_seeks] else 0 end
@@ -96,18 +96,8 @@ while @@FETCH_STATUS = 0
 			inner join ' + quotename(@database_name) + '.sys.schemas s 
 				on s.[schema_id] = t.[schema_id]
 
-			inner join [dbo].[sqlwatch_meta_database] mdb
-				on mdb.sql_instance = ''' + @@SERVERNAME + '''
-				and mdb.database_name = dbs.name collate database_default
-				and mdb.database_create_date = dbs.create_date
-
-			inner join [dbo].[sqlwatch_meta_table] mt
-				on mt.sql_instance = mdb.sql_instance
-				and mt.sqlwatch_database_id = mdb.sqlwatch_database_id
-				and mt.table_name = s.name + ''.'' + t.name collate database_default
-
 			inner join [dbo].[sqlwatch_meta_index] mi
-				on mi.sql_instance = mdb.sql_instance
+				on mi.sql_instance = @@SERVERNAME
 				and mi.sqlwatch_database_id = mi.sqlwatch_database_id
 				and mi.sqlwatch_table_id = mi.sqlwatch_table_id
 
@@ -118,6 +108,7 @@ while @@FETCH_STATUS = 0
 				and usprev.sqlwatch_index_id = mi.sqlwatch_index_id
 				and usprev.snapshot_type_id = ' + convert(varchar(5),@snapshot_type) + '
 				and usprev.snapshot_time = ''' + convert(varchar(23),@date_snapshot_previous,121) + '''
+				and usprev.partition_id = ps.partition_id
 '
 		print @sql
 		Print '[' + convert(varchar(23),getdate(),121) + '] Collecting index statistics for database: ' + @database_name
