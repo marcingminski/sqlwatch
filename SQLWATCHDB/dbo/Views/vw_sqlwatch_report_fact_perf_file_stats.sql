@@ -15,7 +15,7 @@ AS
 		  ,[size_on_disk_bytes]
 		  ,[snapshot_time]
 		  ,[sql_instance]
-		  ,[num_of_reads_prev] = lag([num_of_bytes_read]) over (partition by sql_instance, [sqlwatch_database_id], [sqlwatch_master_file_id] order by snapshot_time)
+		  ,[num_of_reads_prev] = lag([num_of_reads]) over (partition by sql_instance, [sqlwatch_database_id], [sqlwatch_master_file_id] order by snapshot_time)
 		  ,[num_of_bytes_read_prev] = lag([num_of_bytes_read]) over (partition by sql_instance, [sqlwatch_database_id], [sqlwatch_master_file_id] order by snapshot_time)
 		  ,[io_stall_read_ms_prev] = lag([io_stall_read_ms]) over (partition by sql_instance, [sqlwatch_database_id], [sqlwatch_master_file_id] order by snapshot_time)
 		  ,[num_of_writes_prev] = lag([num_of_writes]) over (partition by sql_instance, [sqlwatch_database_id], [sqlwatch_master_file_id] order by snapshot_time)
