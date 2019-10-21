@@ -22,7 +22,7 @@ select distinct report_time=snapshot_time
 	, year_week = convert(char(4),datepart(year,snapshot_time)) + '-' + right('WK' + convert(char(2),datename (wk, snapshot_time)),4)
 	, relative_date_label = case 
 			--when snapshot_time > dateadd(hour,-1,current_utc_date) then 'Last 1 hour'
-			when snapshot_time > dateadd(hour,-4,current_utc_date) then 'Last 4 hours'
+			--when snapshot_time > dateadd(hour,-4,current_utc_date) then 'Last 4 hours'
 			--when snapshot_time > dateadd(hour,-12,current_utc_date) then 'Last 12 hours'
 			--when snapshot_time > dateadd(hour,-24,current_utc_date) then 'Last 24 hours'
 			when convert(date,snapshot_time) = convert(date,current_utc_date) then 'Today'
