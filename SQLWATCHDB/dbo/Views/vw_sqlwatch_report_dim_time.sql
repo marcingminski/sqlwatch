@@ -5,7 +5,7 @@ with cte_snapshots as (
 	select distinct snapshot_time=convert(smalldatetime,snapshot_time), current_utc_date = convert(smalldatetime,getutcdate())
 	from dbo.sqlwatch_logger_snapshot_header
 )
-select distinct snapshot_time=snapshot_time
+select distinct report_time=snapshot_time
 	, date = convert(date,snapshot_time)
 	, year = datepart(year,snapshot_time)
 	, month = datepart(month, snapshot_time)
