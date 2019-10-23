@@ -47,6 +47,7 @@ using (
 	left join [dbo].[sqlwatch_meta_table] mtb
 		on mtb.sql_instance = mdb.sql_instance
 		and mtb.sqlwatch_database_id = mdb.sqlwatch_database_id
+		and mtb.table_name = t.TABLE_SCHEMA + '.' + t.TABLE_NAME collate database_default
 	) as source
  on		target.sql_instance = @@SERVERNAME
  and	target.[table_name] = source.[TABLE_SCHEMA] + '.' + source.[TABLE_NAME] collate database_default
