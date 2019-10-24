@@ -10,7 +10,7 @@
 	--, constraint fk_snapshot_header_sql_instance foreign key (sql_instance) references dbo.sqlwatch_config_sql_instance (sql_instance) on delete cascade on update cascade
 )
 go
-
+create nonclustered index idx_sqlwatch_logger_snapshot_header_report_time on [dbo].[sqlwatch_logger_snapshot_header] ([report_time])
 --create nonclustered index idx_snapshot_type_id on [dbo].[sqlwatch_logger_snapshot_header]([snapshot_type_id])
 go
 
