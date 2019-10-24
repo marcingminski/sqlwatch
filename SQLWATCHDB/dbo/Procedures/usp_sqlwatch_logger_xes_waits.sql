@@ -47,7 +47,7 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 				cross apply targetdata.nodes('//RingBufferTarget/event') AS xed (event_data)
 			--where xed.event_data.value('(@name)[1]', 'varchar(255)') in ('wait_info','wait_info_external')
 		)
-		insert into [dbo].[sqlwatch_logger_xes_waits_stats] (event_time, wait_type_id, [event_name], duration, signal_duration, username, sql_text, session_id, database_name,
+		insert into [dbo].[sqlwatch_logger_xes_waits_stats] (event_time, wait_type_id, [event_name], duration, signal_duration, username, tx.sql_text, session_id, database_name,
 			client_hostname, client_app_name, activity_id, activity_sequence, [activity_id_xfer], [activity_seqeuence_xfer], snapshot_time, snapshot_type_id)
 		select tx.event_time, mws.wait_type_id, tx.[event_name], tx.duration, tx.signal_duration, tx.username, tx.sql_text, tx.session_id, tx.database_name,
 			tx.client_hostname, tx.client_app_name

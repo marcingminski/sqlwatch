@@ -6,7 +6,7 @@
 	[duration] bigint,
 	[signal_duration] bigint,
 	[wait_resource] varchar(255),
-	[sql_text_id] varchar(max),
+	[sql_text] varchar(max),
 	[snapshot_time] datetime2(0) not null,
 	[snapshot_type_id] tinyint not null default 8 ,
 	[activity_id] uniqueidentifier null default newid(),
