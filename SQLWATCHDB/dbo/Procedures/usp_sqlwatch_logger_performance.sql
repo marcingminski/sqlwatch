@@ -33,27 +33,27 @@ declare @sql nvarchar(4000)
 		--------------------------------------------------------------------------------------------------------------
 		-- get available memory on the server
 		--------------------------------------------------------------------------------------------------------------
-		select @sql_memory_mb = convert(int,value) from sys.configurations where name = 'max server memory (mb)'
+		--select @sql_memory_mb = convert(int,value) from sys.configurations where name = 'max server memory (mb)'
 
-		if @product_version_major < 11
-			begin
-				--sql < 2012
-				exec sp_executesql N'select @osmemorymb=physical_memory_in_bytes/1024/1024  from sys.dm_os_sys_info', N'@osmemorymb int out', @os_memory_mb out
-			end
-		else
-			begin
-				exec sp_executesql N'select @osmemorymb=physical_memory_kb/1024 from sys.dm_os_sys_info', N'@osmemorymb int out', @os_memory_mb out
-			end
+		--if @product_version_major < 11
+		--	begin
+		--		--sql < 2012
+		--		exec sp_executesql N'select @osmemorymb=physical_memory_in_bytes/1024/1024  from sys.dm_os_sys_info', N'@osmemorymb int out', @os_memory_mb out
+		--	end
+		--else
+		--	begin
+		--		exec sp_executesql N'select @osmemorymb=physical_memory_kb/1024 from sys.dm_os_sys_info', N'@osmemorymb int out', @os_memory_mb out
+		--	end
 
-		/* get the smallest memory available. 
-		   if SQL SERVER is unlimited it will show 2147483647 and thus the memory will be limited by the OS.
-	       equally, if SQL SERVER IS LIMITED byt more than OS, the memory will still be limited to what OS can give.
-		   if SQL IS LIMITED to less than OS has available, this will be the memory avaialble to SQL */
-		select @memory_available=min(memory_available) from (
-			select memory_available=@sql_memory_mb
-			union all
-			select memory_available=@os_memory_mb
-		) m
+		--/* get the smallest memory available. 
+		--   if SQL SERVER is unlimited it will show 2147483647 and thus the memory will be limited by the OS.
+	 --      equally, if SQL SERVER IS LIMITED byt more than OS, the memory will still be limited to what OS can give.
+		--   if SQL IS LIMITED to less than OS has available, this will be the memory avaialble to SQL */
+		--select @memory_available=min(memory_available) from (
+		--	select memory_available=@sql_memory_mb
+		--	union all
+		--	select memory_available=@os_memory_mb
+		--) m
 
 		--------------------------------------------------------------------------------------------------------------
 		-- set the basics
@@ -309,32 +309,33 @@ declare @sql nvarchar(4000)
 			, t.[snapshot_type_id], t.[sql_instance]
 		from (
 			select 
-				snapshot_time =@date_snapshot_current,
-				total_kb=sum(mc.total_kb), 
-				allocated_kb=sum(mc.single_pages_kb + mc.multi_pages_kb),
+				snapshot_time =@date_snapshot_current
+				, total_kb=mc.total_kb
+				--total_kb=sum(mc.total_kb), 
+				--allocated_kb=sum(mc.single_pages_kb + mc.multi_pages_kb),
+				, allocated_kb=mc.single_pages_kb + mc.multi_pages_kb
 				--ta.total_kb_all_clerks, 
 				--mc.total_kb / convert(decimal, ta.total_kb_all_clerks) as percent_total_kb,
-				sum(ta.total_kb_all_clerks) as total_kb_all_clerks
+				--sum(ta.total_kb_all_clerks) as total_kb_all_clerks
 				-- there are many memory clerks. we'll chart any that make up 5% of sql memory or more; less significant clerks will be lumped into an "other" bucket
-				,graph_type=case when mc.total_kb / convert(decimal, ta.total_kb_all_clerks) > 0.05 then mc.[type] else N'OTHER' end
-				,memory_available=@memory_available
+				--,graph_type=case when mc.total_kb / convert(decimal, ta.total_kb_all_clerks) > 0.05 then mc.[type] else N'OTHER' end
+				, mc.[type]
+				--,memory_available=@memory_available
 				, [snapshot_type_id] = @snapshot_type_id
 				, [sql_instance] = @@SERVERNAME
 			from @memory_clerks as mc
 			-- use a self-join to calculate the total memory allocated for each time interval
-			join 
-			(
-				select 
-					snapshot_time = @date_snapshot_current, 
-					sum (mc_ta.total_kb) as total_kb_all_clerks
-				from @memory_clerks as mc_ta
-				group by mc_ta.snapshot_time
-			) as ta on (mc.snapshot_time = ta.snapshot_time)
-			group by mc.snapshot_time, case when mc.total_kb / convert(decimal, ta.total_kb_all_clerks) > 0.05 then mc.[type] else N'OTHER' end
+			--outer apply 
+			--(
+			--	select 
+			--		sum (mc_ta.total_kb) as total_kb_all_clerks
+			--	from @memory_clerks as mc_ta
+			--) as ta 
+			--group by mc.snapshot_time, case when mc.total_kb / convert(decimal, ta.total_kb_all_clerks) > 0.05 then mc.[type] else N'OTHER' end
 			--order by snapshot_time
 		) t
 		inner join [dbo].[sqlwatch_meta_memory_clerk] mm
-			on mm.clerk_name = t.graph_type
+			on mm.clerk_name = t.[type] collate database_default
 			and mm.sql_instance = @@SERVERNAME
 		option (recompile)					
 

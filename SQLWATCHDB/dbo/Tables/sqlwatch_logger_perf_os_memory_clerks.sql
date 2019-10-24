@@ -3,9 +3,7 @@
 	[snapshot_time] datetime2(0) not null,
 	[total_kb] bigint,
 	[allocated_kb] bigint,
-	[total_kb_all_clerks] bigint,
 	[sqlwatch_mem_clerk_id] smallint,
-	[memory_available] int,
 	[snapshot_type_id] tinyint not null default 1 ,
 	[sql_instance] varchar(32) not null default @@SERVERNAME,
 	constraint fk_sql_perf_mon_os_memory_clerks_snapshot_header foreign key ([snapshot_time],[sql_instance],[snapshot_type_id]) 
