@@ -18,7 +18,7 @@
 	[total_cpu_usage_ms] [bigint] NULL,
 	[total_scheduler_delay_ms] [bigint] NULL,
 	[sql_instance] varchar(32) not null default @@SERVERNAME,
-	constraint fk_logger_perf_os_schedulers foreign key ([snapshot_time],[snapshot_type_id],[sql_instance]) references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time],[snapshot_type_id],[sql_instance]) on delete cascade  on update cascade,
+	constraint fk_logger_perf_os_schedulers foreign key ([snapshot_time],[sql_instance],[snapshot_type_id]) references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time],[sql_instance],[snapshot_type_id]) on delete cascade  on update cascade,
 	constraint pk_logger_perf_os_schedulers primary key clustered (
 		[snapshot_time] ASC, [snapshot_type_id],  [sql_instance]
 	),

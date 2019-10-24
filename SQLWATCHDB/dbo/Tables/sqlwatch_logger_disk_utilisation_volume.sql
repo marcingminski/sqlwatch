@@ -10,5 +10,5 @@
 		snapshot_time, [snapshot_type_id], [sql_instance], [sqlwatch_volume_id]
 		),
 	constraint fk_sqlwatch_logger_disk_utilisation_volume_id foreign key ([sql_instance], [sqlwatch_volume_id]) references [dbo].[sqlwatch_meta_os_volume] ([sql_instance], [sqlwatch_volume_id]) on delete cascade,
-	constraint FK_disk_util_vol_snapshot_header foreign key ([snapshot_time],[snapshot_type_id],[sql_instance]) references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time],[snapshot_type_id],[sql_instance]) on delete cascade on update cascade
+	constraint FK_disk_util_vol_snapshot_header foreign key ([snapshot_time],[sql_instance],[snapshot_type_id]) references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time],[sql_instance],[snapshot_type_id]) on delete cascade on update cascade
 )

@@ -24,8 +24,8 @@
 		references [dbo].[sqlwatch_meta_index_missing] ([sql_instance], [sqlwatch_database_id], [sqlwatch_table_id], [sqlwatch_missing_index_id]) on delete cascade,
 	
 	constraint fk_logger_missing_indexes_snapshot_header
-		foreign key ([snapshot_time],[snapshot_type_id],[sql_instance])
-		references [dbo].[sqlwatch_logger_snapshot_header] ([snapshot_time],[snapshot_type_id],[sql_instance])
+		foreign key ([snapshot_time],[sql_instance],[snapshot_type_id])
+		references [dbo].[sqlwatch_logger_snapshot_header] ([snapshot_time],[sql_instance],[snapshot_type_id])
 		on delete cascade on update cascade
 )
 go

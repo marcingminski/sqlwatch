@@ -19,8 +19,8 @@
 		references [dbo].[sqlwatch_meta_database] ([sql_instance],[sqlwatch_database_id])
 		on delete cascade,
 	constraint FK_logger_disk_util_database_snapshot 
-		foreign key ([snapshot_time],[snapshot_type_id],[sql_instance])
-		references [dbo].[sqlwatch_logger_snapshot_header] ([snapshot_time],[snapshot_type_id],[sql_instance])
+		foreign key ([snapshot_time],[sql_instance],[snapshot_type_id])
+		references [dbo].[sqlwatch_logger_snapshot_header] ([snapshot_time],[sql_instance],[snapshot_type_id])
 		on delete cascade on update cascade
 )
 go

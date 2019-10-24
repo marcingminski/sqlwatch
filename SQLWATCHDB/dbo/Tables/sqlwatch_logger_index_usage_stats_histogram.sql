@@ -16,8 +16,8 @@
 	 constraint [pk_sqlwatch_logger_index_usage_stats_histogram_index] foreign key ([sql_instance], [sqlwatch_database_id], [sqlwatch_table_id], [sqlwatch_index_id]) 
 		references [dbo].[sqlwatch_meta_index] ([sql_instance], [sqlwatch_database_id], [sqlwatch_table_id], [sqlwatch_index_id]) on delete cascade,
 	 --constraint [fk_logger_index_stats_histogram_database] foreign key ([sql_instance], [sqlwatch_database_id]) references [dbo].[sqlwatch_meta_database] ([sql_instance], [sqlwatch_database_id]) on delete cascade on update cascade,
-	 constraint [fk_logger_index_stats_histogram] foreign key ([snapshot_time],[snapshot_type_id], [sql_instance]) 
-		references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time],[snapshot_type_id], [sql_instance]) on delete cascade on update cascade
+	 constraint [fk_logger_index_stats_histogram] foreign key ([snapshot_time], [sql_instance], [snapshot_type_id]) 
+		references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time], [sql_instance], [snapshot_type_id]) on delete cascade on update cascade
 	 )
 	 go
 

@@ -29,7 +29,7 @@
 	[snapshot_time] datetime2(0) not null,
 	[snapshot_type_id] tinyint not null default 7,
 	[sql_instance] varchar(32) not null default @@SERVERNAME,
-	constraint fk_logger_perf_xes_long_queries foreign key ([snapshot_time],[snapshot_type_id],[sql_instance]) references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time],[snapshot_type_id],[sql_instance]) on delete cascade  on update cascade,
+	constraint fk_logger_perf_xes_long_queries foreign key ([snapshot_time],[sql_instance],[snapshot_type_id]) references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time],[sql_instance],[snapshot_type_id]) on delete cascade  on update cascade,
 	constraint pk_logger_perf_xes_long_queries primary key nonclustered (
 		[snapshot_time], [snapshot_type_id], [activity_id], [activity_sequence],[sql_instance]
 	),
