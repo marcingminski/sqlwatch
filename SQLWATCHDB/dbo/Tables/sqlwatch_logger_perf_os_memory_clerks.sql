@@ -18,6 +18,6 @@
 		references [dbo].[sqlwatch_meta_memory_clerk] ([sql_instance], [sqlwatch_mem_clerk_id]) on delete cascade
 )
 go
-CREATE NONCLUSTERED INDEX idx_sqlwatch_os_memory_clerks_001
-ON [dbo].[sqlwatch_logger_perf_os_memory_clerks] ([sql_instance])
-INCLUDE ([snapshot_time],[snapshot_type_id])
+--CREATE NONCLUSTERED INDEX idx_sqlwatch_os_memory_clerks_001
+--ON [dbo].[sqlwatch_logger_perf_os_memory_clerks] ([sql_instance])
+--INCLUDE ([snapshot_time],[snapshot_type_id])

@@ -13,4 +13,4 @@
 		references [dbo].[sqlwatch_meta_server] ([servername]) on delete cascade
 )
 go
-create nonclustered index idx_whoisactive on [dbo].[sqlwatch_logger_whoisactive] ([snapshot_time])
+--create nonclustered index idx_whoisactive on [dbo].[sqlwatch_logger_whoisactive] ([snapshot_time])

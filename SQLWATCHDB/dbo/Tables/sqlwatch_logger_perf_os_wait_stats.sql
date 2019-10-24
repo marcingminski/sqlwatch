@@ -30,6 +30,6 @@ go
 --INCLUDE ([wait_type_id],[waiting_tasks_count],[wait_time_ms],[max_wait_time_ms],[signal_wait_time_ms],[snapshot_time],[snapshot_type_id])
 --GO
 
-CREATE NONCLUSTERED INDEX idx_sqlwatch_index_usage_stats_002
-ON [dbo].[sqlwatch_logger_perf_os_wait_stats] ([wait_type_id],[sql_instance])
-INCLUDE ([waiting_tasks_count],[wait_time_ms],[max_wait_time_ms],[signal_wait_time_ms])
+--CREATE NONCLUSTERED INDEX idx_sqlwatch_index_usage_stats_002
+--ON [dbo].[sqlwatch_logger_perf_os_wait_stats] ([wait_type_id],[sql_instance])
+--INCLUDE ([waiting_tasks_count],[wait_time_ms],[max_wait_time_ms],[signal_wait_time_ms])

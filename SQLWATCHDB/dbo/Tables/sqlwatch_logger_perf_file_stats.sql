@@ -31,11 +31,11 @@
 )
 go
 
-CREATE NONCLUSTERED INDEX idx_sqlwatch_perf_file_stats_001
-ON [dbo].[sqlwatch_logger_perf_file_stats] ([sql_instance])
-INCLUDE ([snapshot_time],[snapshot_type_id])
-GO
+--CREATE NONCLUSTERED INDEX idx_sqlwatch_perf_file_stats_001
+--ON [dbo].[sqlwatch_logger_perf_file_stats] ([sql_instance])
+--INCLUDE ([snapshot_time],[snapshot_type_id])
+--GO
 
-CREATE NONCLUSTERED INDEX idx_sqlwatch_perf_file_stats_002
-ON [dbo].[sqlwatch_logger_perf_file_stats] ([sqlwatch_master_file_id],[sql_instance])
-INCLUDE ([sqlwatch_database_id],[num_of_reads],[num_of_bytes_read],[io_stall_read_ms],[num_of_writes],[num_of_bytes_written],[io_stall_write_ms],[size_on_disk_bytes])
+--CREATE NONCLUSTERED INDEX idx_sqlwatch_perf_file_stats_002
+--ON [dbo].[sqlwatch_logger_perf_file_stats] ([sqlwatch_master_file_id],[sql_instance])
+--INCLUDE ([sqlwatch_database_id],[num_of_reads],[num_of_bytes_read],[io_stall_read_ms],[num_of_writes],[num_of_bytes_written],[io_stall_write_ms],[size_on_disk_bytes])

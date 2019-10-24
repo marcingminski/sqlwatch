@@ -28,6 +28,6 @@
 		references [dbo].[sqlwatch_meta_server] ([servername]) on delete cascade
 )
 go
-CREATE NONCLUSTERED INDEX idx_sqlwatch_xes_wait_stats_001
-ON [dbo].[sqlwatch_logger_xes_waits_stats] ([sql_instance])
-INCLUDE ([snapshot_time],[snapshot_type_id])
+--CREATE NONCLUSTERED INDEX idx_sqlwatch_xes_wait_stats_001
+--ON [dbo].[sqlwatch_logger_xes_waits_stats] ([sql_instance])
+--INCLUDE ([snapshot_time],[snapshot_type_id])

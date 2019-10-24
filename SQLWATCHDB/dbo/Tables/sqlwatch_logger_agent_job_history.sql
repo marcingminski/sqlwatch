@@ -20,4 +20,4 @@
 )
 go
 
-create nonclustered index idx_sqlwatch_logger_agent_job_history_001 on dbo.sqlwatch_logger_agent_job_history (run_date)
+--create nonclustered index idx_sqlwatch_logger_agent_job_history_001 on dbo.sqlwatch_logger_agent_job_history (run_date)

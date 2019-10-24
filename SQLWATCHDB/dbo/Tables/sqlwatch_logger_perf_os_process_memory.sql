@@ -24,6 +24,6 @@
 ) 
 GO
 
-CREATE NONCLUSTERED INDEX idx_sqlwatch_os_process_memory_001
-ON [dbo].[sqlwatch_logger_perf_os_process_memory] ([sql_instance])
-INCLUDE ([snapshot_time],[snapshot_type_id])
+--CREATE NONCLUSTERED INDEX idx_sqlwatch_os_process_memory_001
+--ON [dbo].[sqlwatch_logger_perf_os_process_memory] ([sql_instance])
+--INCLUDE ([snapshot_time],[snapshot_type_id])

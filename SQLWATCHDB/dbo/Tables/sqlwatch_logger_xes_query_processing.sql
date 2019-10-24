@@ -19,6 +19,6 @@
 )
 go
 
-CREATE NONCLUSTERED INDEX idx_sqlwatch_xes_query_processing_001
-ON [dbo].[sqlwatch_logger_xes_query_processing] ([sql_instance])
-INCLUDE ([snapshot_time],[snapshot_type_id])
+--CREATE NONCLUSTERED INDEX idx_sqlwatch_xes_query_processing_001
+--ON [dbo].[sqlwatch_logger_xes_query_processing] ([sql_instance])
+--INCLUDE ([snapshot_time],[snapshot_type_id])

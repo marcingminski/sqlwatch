@@ -17,6 +17,6 @@
 )
 go
 
-CREATE NONCLUSTERED INDEX idx_sqlwatch_xes_iosubsystem_001
-ON [dbo].[sqlwatch_logger_xes_iosubsystem] ([sql_instance])
-INCLUDE ([snapshot_time],[snapshot_type_id])
+--CREATE NONCLUSTERED INDEX idx_sqlwatch_xes_iosubsystem_001
+--ON [dbo].[sqlwatch_logger_xes_iosubsystem] ([sql_instance])
+--INCLUDE ([snapshot_time],[snapshot_type_id])

@@ -27,6 +27,6 @@
 ) 
 GO
 
-CREATE NONCLUSTERED INDEX idx_sqlwatch_os_schedulers_001
-ON [dbo].[sqlwatch_logger_perf_os_schedulers] ([sql_instance])
-INCLUDE ([snapshot_time],[snapshot_type_id])	
+--CREATE NONCLUSTERED INDEX idx_sqlwatch_os_schedulers_001
+--ON [dbo].[sqlwatch_logger_perf_os_schedulers] ([sql_instance])
+--INCLUDE ([snapshot_time],[snapshot_type_id])	
