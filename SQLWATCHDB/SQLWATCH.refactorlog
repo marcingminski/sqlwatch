@@ -784,4 +784,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="[sql_instance]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="60445268-0211-4e51-b36d-ab3ee5807679" ChangeDateTime="10/24/2019 10:46:05">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_meta_server].[sql_instance]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_meta_server]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[servername]" />
+  </Operation>
 </Operations>

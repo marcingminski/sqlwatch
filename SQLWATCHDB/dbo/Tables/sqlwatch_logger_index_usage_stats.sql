@@ -13,10 +13,10 @@
 	[last_user_lookup] [datetime] NULL,
 	[last_user_update] [datetime] NULL,
 	[stats_date] [datetime] NULL,
-	[snapshot_time] [datetime] NOT NULL,
+	[snapshot_time] datetime2(0) NOT NULL,
 	[snapshot_type_id] [tinyint] NOT NULL,
 	[index_disabled] bit null,
-	[sql_instance] nvarchar(25) not null default @@SERVERNAME,
+	[sql_instance] varchar(32) not null default @@SERVERNAME,
 	[partition_id] bigint not null default 0, --so we can add a column in previous versions of sqlwatch versions without having to backfill partition_ids
 
 	[used_pages_count_delta] real null,

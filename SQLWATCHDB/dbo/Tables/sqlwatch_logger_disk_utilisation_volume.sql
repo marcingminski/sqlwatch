@@ -3,9 +3,9 @@
 	[sqlwatch_volume_id] smallint not null ,
 	[volume_free_space_bytes] bigint,
 	[volume_total_space_bytes] bigint,
-	[snapshot_time] datetime not null,
+	[snapshot_time] datetime2(0) not null,
 	[snapshot_type_id] tinyint,
-	[sql_instance] nvarchar(25) not null default @@SERVERNAME,
+	[sql_instance] varchar(32) not null default @@SERVERNAME,
 	constraint PK_disk_util_vol primary key clustered (
 		snapshot_time, [snapshot_type_id], [sql_instance], [sqlwatch_volume_id]
 		),

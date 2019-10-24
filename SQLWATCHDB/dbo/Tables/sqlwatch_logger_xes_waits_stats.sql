@@ -7,7 +7,7 @@
 	[signal_duration] bigint,
 	[wait_resource] varchar(255),
 	[sql_text] varchar(max),
-	[snapshot_time] datetime not null,
+	[snapshot_time] datetime2(0) not null,
 	[snapshot_type_id] tinyint not null default 8 ,
 	[activity_id] uniqueidentifier null default newid(),
 	[activity_sequence] int null default 0,
@@ -18,14 +18,14 @@
 	[activity_id_xfer] uniqueidentifier null,
 	[activity_seqeuence_xfer] int null,
 	[event_name] [varchar](255) null,
-	[sql_instance] nvarchar(25) not null default @@SERVERNAME,
+	[sql_instance] varchar(32) not null default @@SERVERNAME,
 	[sqlwatch_activity_id] bigint identity(1,1),
 	constraint fk_logger_xes_waits_snapshot_header foreign key ([snapshot_time],[snapshot_type_id],[sql_instance]) references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time],[snapshot_type_id],[sql_instance]) on delete cascade on update cascade,
 	constraint [pk_logger_xes_waits] primary key (
 		[snapshot_time],[snapshot_type_id],[sql_instance], [sqlwatch_activity_id]
 		),
 	constraint fk_sqlwatch_logger_xes_waits_stats_server foreign key ([sql_instance])
-		references [dbo].[sqlwatch_meta_server] ([sql_instance]) on delete cascade
+		references [dbo].[sqlwatch_meta_server] ([servername]) on delete cascade
 )
 go
 CREATE NONCLUSTERED INDEX idx_sqlwatch_xes_wait_stats_001

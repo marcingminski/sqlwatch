@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[sqlwatch_logger_perf_os_schedulers](
-	[snapshot_time] [datetime] NOT NULL,
+	[snapshot_time] datetime2(0) NOT NULL,
 	[snapshot_type_id] [tinyint] NOT NULL default 1,
 	[scheduler_count] [smallint] null,
 	[idle_scheduler_count] smallint null,
@@ -17,13 +17,13 @@
 	[failed_to_create_worker] int NULL,
 	[total_cpu_usage_ms] [bigint] NULL,
 	[total_scheduler_delay_ms] [bigint] NULL,
-	[sql_instance] nvarchar(25) not null default @@SERVERNAME,
+	[sql_instance] varchar(32) not null default @@SERVERNAME,
 	constraint fk_logger_perf_os_schedulers foreign key ([snapshot_time],[snapshot_type_id],[sql_instance]) references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time],[snapshot_type_id],[sql_instance]) on delete cascade  on update cascade,
 	constraint pk_logger_perf_os_schedulers primary key clustered (
 		[snapshot_time] ASC, [snapshot_type_id],  [sql_instance]
 	),
 	constraint fk_sqlwatch_logger_perf_os_schedulers_server foreign key ([sql_instance])
-		references [dbo].[sqlwatch_meta_server] ([sql_instance]) on delete cascade
+		references [dbo].[sqlwatch_meta_server] ([servername]) on delete cascade
 ) 
 GO
 

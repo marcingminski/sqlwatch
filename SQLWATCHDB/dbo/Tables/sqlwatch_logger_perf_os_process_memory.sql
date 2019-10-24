@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[sqlwatch_logger_perf_os_process_memory]
 (
-	[snapshot_time] [datetime] NOT NULL,
+	[snapshot_time] datetime2(0) NOT NULL,
 	[physical_memory_in_use_kb] [bigint] NOT NULL,
 	[large_page_allocations_kb] [bigint] NOT NULL,
 	[locked_page_allocations_kb] [bigint] NOT NULL,
@@ -14,13 +14,13 @@
 	[process_physical_memory_low] [bit] NOT NULL,
 	[process_virtual_memory_low] [bit] NOT NULL,
 	[snapshot_type_id] tinyint not null default 1 ,
-	[sql_instance] nvarchar(25) not null default @@SERVERNAME,
+	[sql_instance] varchar(32) not null default @@SERVERNAME,
 	constraint fk_sql_perf_mon_os_process_memory_snapshot_header foreign key ([snapshot_time],[snapshot_type_id],[sql_instance]) references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time],[snapshot_type_id],[sql_instance]) on delete cascade  on update cascade,
 	constraint pk_sql_perf_mon_os_process_memory primary key clustered (
 		[snapshot_time], [snapshot_type_id], [sql_instance]
 	),
 	constraint fk_sqlwatch_logger_perf_os_process_memory_server foreign key ([sql_instance])
-		references [dbo].[sqlwatch_meta_server] ([sql_instance]) on delete cascade
+		references [dbo].[sqlwatch_meta_server] ([servername]) on delete cascade
 ) 
 GO
 

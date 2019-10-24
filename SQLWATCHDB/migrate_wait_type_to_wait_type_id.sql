@@ -5,7 +5,7 @@ begin tran fred
 
 	create table [dbo].[sqlwatch_meta_wait_stats]
 	(
-		[sql_instance] nvarchar(25) not null,
+		[sql_instance] varchar(32) not null,
 		[wait_type] nvarchar(60) not null, 
 		[wait_type_id] smallint identity (-32768,1) not null,
 		constraint pk_sqlwatch_meta_wait_stats primary key (

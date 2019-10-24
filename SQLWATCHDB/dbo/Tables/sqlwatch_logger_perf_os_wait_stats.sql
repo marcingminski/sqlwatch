@@ -5,9 +5,9 @@
 	[wait_time_ms] bigint not null,
 	[max_wait_time_ms] bigint not null,
 	[signal_wait_time_ms] bigint not null,
-	[snapshot_time] datetime not null,
+	[snapshot_time] datetime2(0) not null,
 	[snapshot_type_id] tinyint not null default 1 ,
-	[sql_instance] nvarchar(25) not null default @@SERVERNAME,
+	[sql_instance] varchar(32) not null default @@SERVERNAME,
 
 	[waiting_tasks_count_delta] real null,
 	[wait_time_ms_delta] real null,

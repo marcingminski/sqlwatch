@@ -5,7 +5,7 @@ as
 	declare @databases table (
 		[database_name] sysname not null,
 		[database_create_date] datetime not null default '1970-01-01',
-		[sql_instance] nvarchar(25) not null
+		[sql_instance] varchar(32) not null
 		primary key clustered (
 		 [database_name],[database_create_date], [sql_instance]
 	 )

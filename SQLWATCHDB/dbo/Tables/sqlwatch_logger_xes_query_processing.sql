@@ -7,15 +7,15 @@
 	[pending_tasks] bigint,
 	[unresolvable_deadlocks] int,
 	[deadlocked_scheduler] int,
-	[snapshot_time] datetime not null,
+	[snapshot_time] datetime2(0) not null,
 	[snapshot_type_id] tinyint not null default 1 ,
-	[sql_instance] nvarchar(25) not null default @@SERVERNAME,
+	[sql_instance] varchar(32) not null default @@SERVERNAME,
 	constraint fk_logger_xe_query_processing_snapshot_header foreign key ([snapshot_time],[snapshot_type_id],[sql_instance]) references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time],[snapshot_type_id],[sql_instance]) on delete cascade  on update cascade,
 	constraint [pk_logger_xe_query_processing] primary key (
 		[snapshot_time], [snapshot_type_id], [sql_instance], [event_time]
 		),
 	constraint fk_sqlwatch_logger_xes_query_processing_server foreign key ([sql_instance])
-		references [dbo].[sqlwatch_meta_server] ([sql_instance]) on delete cascade
+		references [dbo].[sqlwatch_meta_server] ([servername]) on delete cascade
 )
 go
 

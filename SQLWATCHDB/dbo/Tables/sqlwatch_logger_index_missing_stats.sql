@@ -4,7 +4,7 @@
 	[sqlwatch_table_id] int not null,
 	[sqlwatch_missing_index_id] int not null,
 	[sqlwatch_missing_index_stats_id] int identity(1,1),
-	[snapshot_time] datetime,
+	[snapshot_time] datetime2(0),
 	[last_user_seek] datetime,
 	[unique_compiles] bigint,
 	[user_seeks] bigint,
@@ -12,7 +12,7 @@
 	[avg_total_user_cost] float,
 	[avg_user_impact] float,
 	[snapshot_type_id] tinyint,
-	[sql_instance] nvarchar(25) not null default @@SERVERNAME,
+	[sql_instance] varchar(32) not null default @@SERVERNAME,
 	constraint pk_logger_missing_indexes primary key clustered (
 		[sql_instance], [snapshot_time], [sqlwatch_database_id], [sqlwatch_table_id], [sqlwatch_missing_index_id], [sqlwatch_missing_index_stats_id], [snapshot_type_id]
 	),

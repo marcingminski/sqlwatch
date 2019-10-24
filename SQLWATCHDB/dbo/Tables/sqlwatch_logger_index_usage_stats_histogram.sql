@@ -8,10 +8,10 @@
 	[EQ_ROWS] [real] NULL,
 	[DISTINCT_RANGE_ROWS] [real] NULL,
 	[AVG_RANGE_ROWS] [real] NULL,
-	[snapshot_time] [datetime] NOT NULL,
+	[snapshot_time] datetime2(0) NOT NULL,
 	[snapshot_type_id] [tinyint] NOT NULL,
 	[collection_time] datetime,
-	[sql_instance] nvarchar(25) not null default @@SERVERNAME,
+	[sql_instance] varchar(32) not null default @@SERVERNAME,
 	 constraint [pk_logger_index_stats_histogram] primary key nonclustered ([snapshot_time],[sql_instance], [sqlwatch_database_id], [sqlwatch_table_id], [sqlwatch_index_id], [sqlwatch_stat_range_id], [snapshot_type_id]),
 	 constraint [pk_sqlwatch_logger_index_usage_stats_histogram_index] foreign key ([sql_instance], [sqlwatch_database_id], [sqlwatch_table_id], [sqlwatch_index_id]) 
 		references [dbo].[sqlwatch_meta_index] ([sql_instance], [sqlwatch_database_id], [sqlwatch_table_id], [sqlwatch_index_id]) on delete cascade,

@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[sqlwatch_meta_agent_job_step]
 (
-	[sql_instance] nvarchar(25) not null,
+	[sql_instance] varchar(32) not null,
 	[sqlwatch_job_id] smallint not null ,
 	[step_name] nvarchar(128) not null,
 	[sqlwatch_job_step_id] int identity(1,1),

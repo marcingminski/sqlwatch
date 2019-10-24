@@ -10,9 +10,9 @@
 	[num_of_bytes_written] bigint not null,
 	[io_stall_write_ms] bigint not null,
 	[size_on_disk_bytes] bigint not null,
-	[snapshot_time] datetime not null,
+	[snapshot_time] datetime2(0) not null,
 	[snapshot_type_id] tinyint not null default 1 ,
-	[sql_instance] nvarchar(25) not null default @@SERVERNAME,
+	[sql_instance] varchar(32) not null default @@SERVERNAME,
 
 	[num_of_reads_delta] real null,
 	[num_of_bytes_read_delta] real null,

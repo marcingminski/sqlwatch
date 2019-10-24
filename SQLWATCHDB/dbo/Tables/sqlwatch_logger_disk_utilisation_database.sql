@@ -9,9 +9,9 @@
 	[unused_bytes] bigint,
 	[log_size_total_bytes] bigint,
 	[log_size_used_bytes] bigint,
-	[snapshot_time] datetime,
+	[snapshot_time] datetime2(0),
 	[snapshot_type_id] tinyint,
-	[sql_instance] nvarchar(25) default @@SERVERNAME,
+	[sql_instance] varchar(32) default @@SERVERNAME,
 	constraint PK_logger_disk_util_database
 		primary key clustered ([snapshot_time],[snapshot_type_id],[sql_instance], [sqlwatch_database_id]),
 	constraint FK_logger_disk_util_database_database

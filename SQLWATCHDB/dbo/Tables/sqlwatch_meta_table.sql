@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[sqlwatch_meta_table]
 (
-	[sql_instance] nvarchar(25) not null,
+	[sql_instance] varchar(32) not null,
 	[sqlwatch_database_id] smallint not null,
 	[sqlwatch_table_id] int identity(1,1) not null,
 	[table_name] nvarchar(128),

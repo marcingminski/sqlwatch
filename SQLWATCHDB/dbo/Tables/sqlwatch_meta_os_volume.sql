@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[sqlwatch_meta_os_volume]
 (
-	[sql_instance] nvarchar(25) not null default @@SERVERNAME,
+	[sql_instance] varchar(32) not null default @@SERVERNAME,
 	[sqlwatch_volume_id] smallint identity(1,1) not null,
 	[volume_name] nvarchar(255) not null,
 	[label] nvarchar(255) not null,
@@ -13,5 +13,5 @@
 		[sql_instance], [sqlwatch_volume_id]
 		),
 	constraint fk_sqlwatch_meta_os_volume_server foreign key ([sql_instance])
-		references [dbo].[sqlwatch_meta_server] ([sql_instance]) on delete cascade
+		references [dbo].[sqlwatch_meta_server] ([servername]) on delete cascade
 )

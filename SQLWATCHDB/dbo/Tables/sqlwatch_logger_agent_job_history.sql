@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[sqlwatch_logger_agent_job_history]
 (
-	[sql_instance] nvarchar(25) not null,
+	[sql_instance] varchar(32) not null,
 	[sqlwatch_job_id] smallint,
 	[sqlwatch_job_step_id] int,
 	[sysjobhistory_instance_id] int not null,
@@ -8,7 +8,7 @@
 	[run_duration_s] int not null,
 	[run_date] datetime not null,
 	[run_status] tinyint not null,
-	[snapshot_time] datetime not null,
+	[snapshot_time] datetime2(0) not null,
 	[snapshot_type_id] tinyint not null,
 	constraint pk_sqlwatch_logger_agent_job_history primary key (
 		[sql_instance], [snapshot_time], [sqlwatch_job_id], [sqlwatch_job_step_id], [sysjobhistory_instance_id], [snapshot_type_id]

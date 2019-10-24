@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[sqlwatch_config_sql_instance]
 (
-	[sql_instance] nvarchar(25) default @@SERVERNAME,
+	[sql_instance] varchar(32) default @@SERVERNAME,
 	[hostname] nvarchar(25) null,
 	[sql_port] smallint null,
 	[sqlwatch_database_name] sysname default DB_NAME(),

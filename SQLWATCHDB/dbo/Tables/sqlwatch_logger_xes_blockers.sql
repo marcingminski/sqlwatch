@@ -16,13 +16,13 @@
 	[blocking_client_app_name] sysname,
 	[blocking_client_hostname] sysname,
 	[report_xml] xml,
-	[snapshot_time] datetime,
+	[snapshot_time] datetime2(0),
 	[snapshot_type_id] tinyint,
-	[sql_instance] nvarchar(25) not null default @@SERVERNAME,
+	[sql_instance] varchar(32) not null default @@SERVERNAME,
 	constraint fk_logger_perf_xes_blockers foreign key ([snapshot_time],[snapshot_type_id],[sql_instance]) references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time],[snapshot_type_id],[sql_instance]) on delete cascade  on update cascade,
 	constraint pk_logger_perf_xes_blockers primary key clustered (
 		[snapshot_time], [snapshot_type_id], [attach_activity_id], [attach_activity_sequence], [sql_instance]
 	),
 	constraint fk_sqlwatch_logger_xes_blockers_server foreign key ([sql_instance])
-		references [dbo].[sqlwatch_meta_server] ([sql_instance]) on delete cascade
+		references [dbo].[sqlwatch_meta_server] ([servername]) on delete cascade
 )
