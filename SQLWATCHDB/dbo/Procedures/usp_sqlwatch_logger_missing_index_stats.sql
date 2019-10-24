@@ -81,7 +81,7 @@ begin tran
 	-- get missing indexes
 	--------------------------------------------------------------------------------------------------------------
 	insert into [dbo].[sqlwatch_logger_index_missing_stats] ([sqlwatch_database_id],
-		[sqlwatch_table_id], [sqlwatch_missing_index_detail_id],[snapshot_time], [last_user_seek], [unique_compiles],
+		[sqlwatch_table_id], [sqlwatch_missing_index_id],[snapshot_time], [last_user_seek], [unique_compiles],
 		[user_seeks], [user_scans], [avg_total_user_cost], [avg_user_impact], [snapshot_type_id],[sql_instance])
 	select 
 		--[server_name] = @@servername ,

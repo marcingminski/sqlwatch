@@ -62,7 +62,7 @@ from [dbo].[ufn_sqlwatch_time_intervals](1,@interval_minutes,@report_window,@rep
 		on im.sql_instance = mi.sql_instance
 		and im.[sqlwatch_database_id] = mi.[sqlwatch_database_id]
 		and im.[sqlwatch_table_id] = mi.[sqlwatch_table_id]
-		and im.[sqlwatch_missing_index_id] = mi.sqlwatch_missing_index_detail_id
+		and im.[sqlwatch_missing_index_id] = mi.[sqlwatch_missing_index_id]
 
 
 
