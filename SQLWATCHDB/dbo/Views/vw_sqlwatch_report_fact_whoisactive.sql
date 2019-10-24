@@ -24,9 +24,9 @@ SELECT [sqlwatch_whoisactive_record_id]
       ,[writes]
       ,[physical_reads]
       ,[login_time]
-      ,wi.[sql_instance]
-  FROM [dbo].[sqlwatch_logger_whoisactive] wi
-          inner join dbo.sqlwatch_logger_snapshot_header sh
-		on sh.sql_instance = wi.sql_instance
-		and sh.snapshot_time = wi.[snapshot_time]
-		and sh.snapshot_type_id = wi.snapshot_type_id
+      ,d.[sql_instance]
+  FROM [dbo].[sqlwatch_logger_whoisactive] d
+  	inner join dbo.sqlwatch_logger_snapshot_header h
+		on  h.snapshot_time = d.[snapshot_time]
+		and h.snapshot_type_id = d.snapshot_type_id
+		and h.sql_instance = d.sql_instance

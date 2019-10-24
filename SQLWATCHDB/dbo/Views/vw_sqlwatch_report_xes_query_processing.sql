@@ -8,9 +8,9 @@ SELECT [event_time]
       ,[unresolvable_deadlocks]
       ,[deadlocked_scheduler]
       ,report_time
-      ,qp.[sql_instance]
-  FROM [dbo].[sqlwatch_logger_xes_query_processing] qp
-  	inner join dbo.sqlwatch_logger_snapshot_header sh
-		on sh.sql_instance = qp.sql_instance
-		and sh.snapshot_time = qp.[snapshot_time]
-		and sh.snapshot_type_id = qp.snapshot_type_id
+      ,d.[sql_instance]
+  FROM [dbo].[sqlwatch_logger_xes_query_processing] d
+  	inner join dbo.sqlwatch_logger_snapshot_header h
+		on  h.snapshot_time = d.[snapshot_time]
+		and h.snapshot_type_id = d.snapshot_type_id
+		and h.sql_instance = d.sql_instance

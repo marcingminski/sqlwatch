@@ -18,9 +18,9 @@ SELECT [attach_activity_id]
       ,[blocking_client_hostname]
       ,[report_xml]
       ,report_time
-      ,xb.[sql_instance]
-  FROM [dbo].[sqlwatch_logger_xes_blockers] xb
-	inner join dbo.sqlwatch_logger_snapshot_header sh
-		on sh.sql_instance = xb.sql_instance
-		and sh.snapshot_time = xb.[snapshot_time]
-		and sh.snapshot_type_id = xb.snapshot_type_id
+      ,d.[sql_instance]
+  FROM [dbo].[sqlwatch_logger_xes_blockers] d
+  	inner join dbo.sqlwatch_logger_snapshot_header h
+		on  h.snapshot_time = d.[snapshot_time]
+		and h.snapshot_type_id = d.snapshot_type_id
+		and h.sql_instance = d.sql_instance
