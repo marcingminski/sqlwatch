@@ -11,6 +11,7 @@ SELECT udb.[sqlwatch_database_id]
       ,udb.[log_size_used_bytes]
       ,sh.report_time
       ,udb.[sql_instance]
+	  ,pbi_sqlwatch_database_id = udb.sql_instance + '.DB.' + convert(varchar(10),udb.sqlwatch_database_id)
   FROM [dbo].[sqlwatch_logger_disk_utilisation_database] udb
 	inner join dbo.sqlwatch_logger_snapshot_header sh
 		on sh.sql_instance = udb.sql_instance

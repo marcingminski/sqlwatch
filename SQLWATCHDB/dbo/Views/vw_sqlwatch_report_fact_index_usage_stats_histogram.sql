@@ -13,6 +13,8 @@ SELECT ih.[sqlwatch_database_id]
       ,report_time
       ,ih.[collection_time]
       ,ih.[sql_instance]
+	  ,pbi_sqlwatch_index_id = ih.sql_instance + '.DB.' + convert(varchar(10),ih.sqlwatch_database_id) + '.TBL.' + convert(varchar(10),ih.[sqlwatch_table_id]) +'.IDX.' + convert(varchar(10),ih.sqlwatch_index_id)
+
   FROM [dbo].[sqlwatch_logger_index_usage_stats_histogram] ih
     inner join dbo.sqlwatch_logger_snapshot_header sh
 		on sh.sql_instance = ih.sql_instance

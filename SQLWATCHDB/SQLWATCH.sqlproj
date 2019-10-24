@@ -178,6 +178,7 @@
     <Build Include="dbo\Views\vw_sqlwatch_report_dim_agent_job_step.sql" />
     <Build Include="dbo\Views\vw_sqlwatch_report_dim_os_volume.sql" />
     <Build Include="dbo\Views\vw_sqlwatch_report_dim_index_missing.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_config_set_index_compression.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />

@@ -1,7 +1,7 @@
 ﻿CREATE VIEW [dbo].[vw_sqlwatch_report_dim_server] with schemabinding
 as
 SELECT [physical_name]
-      ,[servername]
+      ,[sql_instance]
       ,[service_name]
       ,[local_net_address]
       ,[local_tcp_port]

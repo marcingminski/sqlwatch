@@ -770,4 +770,18 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[vw_sqlwatch_report_fact_xes_query_processing]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="b0d4691f-4b3b-4622-b656-44acd23ff1db" ChangeDateTime="10/23/2019 22:40:08">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_logger_index_missing_stats].[sqlwatch_missing_index_detail_id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_logger_index_missing_stats]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[sqlwatch_missing_index_id]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="5bfa1819-c4f8-4951-a11f-ab9254f2c1fe" ChangeDateTime="10/24/2019 01:00:56">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_meta_server].[servername]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_meta_server]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[sql_instance]" />
+  </Operation>
 </Operations>

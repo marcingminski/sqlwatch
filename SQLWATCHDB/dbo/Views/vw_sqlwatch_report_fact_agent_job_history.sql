@@ -16,6 +16,8 @@ select
 			when 4 then 'In Progress'
 		else 'Unknown Status' end
 	,report_time
+
+	,[pbi_sqlwatch_job_id] = aj.[sql_instance] + '.JOB.' + convert(varchar(10),aj.[sqlwatch_job_id])
 from [dbo].[sqlwatch_meta_agent_job] aj
 
 inner join [dbo].[sqlwatch_meta_agent_job_step] js

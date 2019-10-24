@@ -34,7 +34,7 @@ Post-Deployment Script Template
 --------------------------------------------------------------------------------------
 if (select count(*) from [dbo].[sqlwatch_meta_server]) = 0
 	begin
-		insert into dbo.[sqlwatch_meta_server] ([physical_name],[servername], [service_name], [local_net_address], [local_tcp_port], [utc_offset_minutes])
+		insert into dbo.[sqlwatch_meta_server] ([physical_name],[sql_instance], [service_name], [local_net_address], [local_tcp_port], [utc_offset_minutes])
 		select convert(sysname,SERVERPROPERTY('ComputerNamePhysicalNetBIOS'))
 			, convert(sysname,@@SERVERNAME), convert(sysname,@@SERVICENAME), convert(varchar(50),local_net_address), convert(varchar(50),local_tcp_port)
 			, DATEDIFF(mi, GETUTCDATE(), GETDATE())
