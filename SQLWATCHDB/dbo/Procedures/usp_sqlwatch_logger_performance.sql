@@ -310,12 +310,23 @@ declare @sql nvarchar(4000)
 		from (
 			select 
 				snapshot_time =@date_snapshot_current
-				, total_kb=mc.total_kb
-				, allocated_kb=mc.single_pages_kb + mc.multi_pages_kb
-				, mc.[type]
+				, total_kb=sum(mc.total_kb)
+				, allocated_kb=sum(mc.single_pages_kb + mc.multi_pages_kb)
+				 -- There are many memory clerks. We will log any that make up 5% of sql memory or more; less significant clerks will be lumped into an "other" bucket
+				 -- this approach will save storage whilst retaining enough detail for troubleshooting. 
+				 -- if you want to see more or less clerks, you can adjust it here, or even remove entirely to log all clerks
+				 -- In my test enviroment, the summary of all clerks, i.e. a clerk across all nodes and addresses will give approx 87 rows, 
+				 -- the below approach gives ~6 rows on average but your mileage will vary.
+				, [type] = case when mc.total_kb / convert(decimal, ta.total_kb_all_clerks) > 0.05 then mc.[type] else N'OTHER' end
 				, [snapshot_type_id] = @snapshot_type_id
 				, [sql_instance] = @@SERVERNAME
 			from @memory_clerks as mc
+			outer apply 
+			(	select 
+					sum (mc_ta.total_kb) as total_kb_all_clerks
+				from @memory_clerks as mc_ta
+			) as ta
+			group by mc.snapshot_time, case when mc.total_kb / convert(decimal, ta.total_kb_all_clerks) > 0.05 then mc.[type] else N'OTHER' end
 		) t
 		inner join [dbo].[sqlwatch_meta_memory_clerk] mm
 			on mm.clerk_name = t.[type] collate database_default
