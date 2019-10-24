@@ -380,6 +380,7 @@ declare @sql nvarchar(4000)
 		-- ideally, this needs similar approach to the memory clerks where we only capture waits that actually matter.
 		-- or those that make up 95% of waits and ignore the noise. There is still a lot of noise despite the filter:
 		-- ws.waiting_tasks_count + ws.wait_time_ms + ws.max_wait_time_ms + ws.signal_wait_time_ms > 0
+		-- some waits are significant but have no delta over longer period of time.
 		--------------------------------------------------------------------------------------------------------------
 		insert into [dbo].[sqlwatch_logger_perf_os_wait_stats]
 		select 
