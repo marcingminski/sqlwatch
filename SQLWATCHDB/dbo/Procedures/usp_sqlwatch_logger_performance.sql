@@ -305,34 +305,17 @@ declare @sql nvarchar(4000)
 		from @dm_os_memory_clerks as mc
 
 		insert into dbo.[sqlwatch_logger_perf_os_memory_clerks]
-		select t.snapshot_time, t.total_kb, t.allocated_kb, t.total_kb_all_clerks, mm.sqlwatch_mem_clerk_id, t.memory_available
+		select t.snapshot_time, t.total_kb, t.allocated_kb,  mm.sqlwatch_mem_clerk_id
 			, t.[snapshot_type_id], t.[sql_instance]
 		from (
 			select 
 				snapshot_time =@date_snapshot_current
 				, total_kb=mc.total_kb
-				--total_kb=sum(mc.total_kb), 
-				--allocated_kb=sum(mc.single_pages_kb + mc.multi_pages_kb),
 				, allocated_kb=mc.single_pages_kb + mc.multi_pages_kb
-				--ta.total_kb_all_clerks, 
-				--mc.total_kb / convert(decimal, ta.total_kb_all_clerks) as percent_total_kb,
-				--sum(ta.total_kb_all_clerks) as total_kb_all_clerks
-				-- there are many memory clerks. we'll chart any that make up 5% of sql memory or more; less significant clerks will be lumped into an "other" bucket
-				--,graph_type=case when mc.total_kb / convert(decimal, ta.total_kb_all_clerks) > 0.05 then mc.[type] else N'OTHER' end
 				, mc.[type]
-				--,memory_available=@memory_available
 				, [snapshot_type_id] = @snapshot_type_id
 				, [sql_instance] = @@SERVERNAME
 			from @memory_clerks as mc
-			-- use a self-join to calculate the total memory allocated for each time interval
-			--outer apply 
-			--(
-			--	select 
-			--		sum (mc_ta.total_kb) as total_kb_all_clerks
-			--	from @memory_clerks as mc_ta
-			--) as ta 
-			--group by mc.snapshot_time, case when mc.total_kb / convert(decimal, ta.total_kb_all_clerks) > 0.05 then mc.[type] else N'OTHER' end
-			--order by snapshot_time
 		) t
 		inner join [dbo].[sqlwatch_meta_memory_clerk] mm
 			on mm.clerk_name = t.[type] collate database_default
