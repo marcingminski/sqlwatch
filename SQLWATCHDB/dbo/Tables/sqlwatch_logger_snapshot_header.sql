@@ -11,7 +11,7 @@
 )
 go
 
-create nonclustered index idx_snapshot_type_id on [dbo].[sqlwatch_logger_snapshot_header]([snapshot_type_id])
+--create nonclustered index idx_snapshot_type_id on [dbo].[sqlwatch_logger_snapshot_header]([snapshot_type_id])
 go
 
 --CREATE NONCLUSTERED INDEX idx_sqlwatch_snapshot_header_001
