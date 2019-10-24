@@ -3,8 +3,6 @@ as
 SELECT [report_time]
       ,omc.[total_kb]
       ,omc.[allocated_kb]
-      ,omc.[total_kb_all_clerks]
-      ,omc.[memory_available]
       ,omc.[sql_instance]
 	  ,mdc.clerk_name
   FROM [dbo].[sqlwatch_logger_perf_os_memory_clerks] omc
