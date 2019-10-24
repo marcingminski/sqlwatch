@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[sqlwatch_logger_perf_os_performance_counters]
 (
-	[performance_counter_id] uniqueidentifier not null,
+	[performance_counter_id] smallint not null,
 	[instance_name] nvarchar(128) not null,
 	--[counter_name] nvarchar(128) not null,
 	[cntr_value] bigint not null,

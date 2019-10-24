@@ -1,8 +1,8 @@
 ﻿CREATE TABLE [dbo].[sqlwatch_logger_index_usage_stats]
 (
-	[sqlwatch_database_id] uniqueidentifier not null,
-	[sqlwatch_table_id] uniqueidentifier not null,
-	[sqlwatch_index_id] uniqueidentifier not null,
+	[sqlwatch_database_id] smallint not null,
+	[sqlwatch_table_id] int not null,
+	[sqlwatch_index_id] int not null,
 	[used_pages_count] [bigint] NULL,
 	[user_seeks] [bigint] NOT NULL,
 	[user_scans] [bigint] NOT NULL,

@@ -1,9 +1,9 @@
 ﻿CREATE TABLE [dbo].[sqlwatch_meta_index_missing]
 (
 	[sql_instance] nvarchar(25) not null default @@SERVERNAME,
-	[sqlwatch_database_id] uniqueidentifier not null,
-	[sqlwatch_table_id] uniqueidentifier not null,
-	[sqlwatch_missing_index_id] uniqueidentifier not null default newsequentialid(),
+	[sqlwatch_database_id] smallint not null,
+	[sqlwatch_table_id] int not null,
+	[sqlwatch_missing_index_id] int identity(1,1) not null,
 	[equality_columns] nvarchar(max),
 	[inequality_columns] nvarchar(max),
 	[included_columns] nvarchar(max),

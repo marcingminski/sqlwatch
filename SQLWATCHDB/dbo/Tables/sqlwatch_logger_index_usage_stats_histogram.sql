@@ -1,8 +1,8 @@
 ﻿CREATE TABLE [dbo].[sqlwatch_logger_index_usage_stats_histogram] (
-	[sqlwatch_database_id] uniqueidentifier not null,
-	[sqlwatch_table_id] uniqueidentifier not null,
-	[sqlwatch_index_id] uniqueidentifier not null,
-	[sqlwatch_stat_range_id] uniqueidentifier not null default newsequentialid(),
+	[sqlwatch_database_id] smallint not null,
+	[sqlwatch_table_id] int not null,
+	[sqlwatch_index_id] int not null,
+	[sqlwatch_stat_range_id] bigint identity(1,1) not null,
 	[RANGE_HI_KEY] nvarchar(max) NULL,
 	[RANGE_ROWS] [real] NULL,
 	[EQ_ROWS] [real] NULL,

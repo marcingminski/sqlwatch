@@ -1,8 +1,8 @@
 ﻿CREATE TABLE [dbo].[sqlwatch_logger_agent_job_history]
 (
 	[sql_instance] nvarchar(25) not null,
-	[sqlwatch_job_id] uniqueidentifier,
-	[sqlwatch_job_step_id] uniqueidentifier,
+	[sqlwatch_job_id] smallint,
+	[sqlwatch_job_step_id] int,
 	[sysjobhistory_instance_id] int not null,
 	[sysjobhistory_step_id] int not null,
 	[run_duration_s] int not null,

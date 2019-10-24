@@ -13,9 +13,9 @@ declare @index_name sysname
 declare @index_id int
 declare @object_name nvarchar(256)
 
-declare @sqlwatch_database_id uniqueidentifier
-declare @sqlwatch_table_id uniqueidentifier
-declare @sqlwatch_index_id uniqueidentifier
+declare @sqlwatch_database_id smallint
+declare @sqlwatch_table_id int
+declare @sqlwatch_index_id int
 
 set nocount on ;
 
@@ -31,9 +31,9 @@ create table #stats (
 	DISTINCT_RANGE_ROWS sql_variant,
 	AVG_RANGE_ROWS sql_variant,
 	[collection_time] datetime,
-	[sqlwatch_database_id] uniqueidentifier,
-	[sqlwatch_table_id] uniqueidentifier,
-	[sqlwatch_index_id] uniqueidentifier
+	[sqlwatch_database_id] smallint,
+	[sqlwatch_table_id] int,
+	[sqlwatch_index_id] int
 )
 
 

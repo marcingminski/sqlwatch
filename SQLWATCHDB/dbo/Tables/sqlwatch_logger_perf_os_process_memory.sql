@@ -20,7 +20,7 @@
 		[snapshot_time], [snapshot_type_id], [sql_instance]
 	),
 	constraint fk_sqlwatch_logger_perf_os_process_memory_server foreign key ([sql_instance])
-		references [dbo].[sqlwatch_meta_server] ([servername]) on delete cascade
+		references [dbo].[sqlwatch_meta_server] ([sql_instance]) on delete cascade
 ) 
 GO
 

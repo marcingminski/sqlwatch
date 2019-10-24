@@ -1,8 +1,8 @@
 ﻿CREATE TABLE [dbo].[sqlwatch_logger_perf_file_stats]
 (
-	[sqlwatch_database_id] uniqueidentifier not null,
+	[sqlwatch_database_id] smallint not null,
 	--[database_create_date] datetime not null default '1900-01-01',
-	[sqlwatch_master_file_id] uniqueidentifier not null,
+	[sqlwatch_master_file_id] smallint not null,
 	[num_of_reads] bigint not null,
 	[num_of_bytes_read] bigint not null,
 	[io_stall_read_ms] bigint not null,

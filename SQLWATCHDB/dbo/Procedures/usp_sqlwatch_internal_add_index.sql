@@ -7,8 +7,8 @@ create table ##DB61B2CD92324E4B89019FFA7BEF1010 (
 	index_type_desc nvarchar(128),
 	[table_name] nvarchar(128),
 	[database_name] nvarchar(128),
-	sqlwatch_database_id uniqueidentifier null,
-	sqlwatch_table_id uniqueidentifier null
+	sqlwatch_database_id smallint null,
+	sqlwatch_table_id int null
 )
 
 create unique clustered index icx_tmp_DB61B2CD92324E4B89019FFA7BEF1010 on ##DB61B2CD92324E4B89019FFA7BEF1010 ([table_name],[database_name],index_id)

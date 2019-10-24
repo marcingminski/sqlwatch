@@ -4,7 +4,7 @@
 	[total_kb] bigint,
 	[allocated_kb] bigint,
 	[total_kb_all_clerks] bigint,
-	[sqlwatch_mem_clerk_id] uniqueidentifier,
+	[sqlwatch_mem_clerk_id] smallint,
 	[memory_available] int,
 	[snapshot_type_id] tinyint not null default 1 ,
 	[sql_instance] nvarchar(25) not null default @@SERVERNAME,

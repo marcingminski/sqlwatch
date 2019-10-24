@@ -24,5 +24,5 @@
 		[snapshot_time], [snapshot_type_id], [attach_activity_id], [attach_activity_sequence], [sql_instance]
 	),
 	constraint fk_sqlwatch_logger_xes_blockers_server foreign key ([sql_instance])
-		references [dbo].[sqlwatch_meta_server] ([servername]) on delete cascade
+		references [dbo].[sqlwatch_meta_server] ([sql_instance]) on delete cascade
 )

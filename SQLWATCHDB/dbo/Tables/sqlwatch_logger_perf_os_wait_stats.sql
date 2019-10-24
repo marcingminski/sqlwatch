@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[sqlwatch_logger_perf_os_wait_stats]
 (
-	[wait_type_id] uniqueidentifier not null,
+	[wait_type_id] smallint not null,
 	[waiting_tasks_count] bigint not null,
 	[wait_time_ms] bigint not null,
 	[max_wait_time_ms] bigint not null,
