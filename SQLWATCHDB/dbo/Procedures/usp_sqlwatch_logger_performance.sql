@@ -427,8 +427,11 @@ declare @sql nvarchar(4000)
 				and wsprev.snapshot_type_id = @snapshot_type_id
 				and wsprev.snapshot_time = @date_snapshot_previous
 
-		/* there are covering indexes that will force seek so this should only ever delete small amount of rows
-		   the key is to show waits in stacked up bar so if there are no data points we have no bar. 
+		/* There are covering indexes that will force seek so this should only ever delete small amount of rows.
+		   The total number of waits are the same regardless of how busy the server is or how many databases.
+		   On the busy server with lots of wait time, you will likely have less waits with 0 waiting tasks
+		   
+		   The key is to show waits in stacked up bar so if there are no data points we have no bar. 
 		   if we showed it in a line chart we would have had broken line and gaps.
 		*/
 		delete from [dbo].[sqlwatch_logger_perf_os_wait_stats]
