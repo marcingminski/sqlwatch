@@ -9,11 +9,11 @@
 	[snapshot_type_id] tinyint not null default 1 ,
 	[sql_instance] varchar(32) not null default @@SERVERNAME,
 
-	[waiting_tasks_count_delta] real null,
-	[wait_time_ms_delta] real null,
-	[max_wait_time_ms_delta] real null,
-	[signal_wait_time_ms_delta] real null,
-	[delta_seconds] int null,
+	[waiting_tasks_count_delta] real not null,
+	[wait_time_ms_delta] real not null,
+	[max_wait_time_ms_delta] real not null,
+	[signal_wait_time_ms_delta] real not null,
+	[delta_seconds] int not null,
 	constraint fk_sql_perf_mon_wait_stats_snapshot_header foreign key ([snapshot_time],[sql_instance],[snapshot_type_id]) references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time],[sql_instance],[snapshot_type_id]) on delete cascade  on update cascade,
 	constraint [pk_sql_perf_mon_wait_stats] primary key (
 		[snapshot_time] asc, [snapshot_type_id] asc, [sql_instance] asc, [wait_type_id] asc
@@ -23,6 +23,10 @@
 ) 
 
 go
+create nonclustered index idx_sqlwatch_logger_perf_os_wait_stats_waiting_count on [dbo].[sqlwatch_logger_perf_os_wait_stats] ([waiting_tasks_count])
+go
+
+create nonclustered index idx_sqlwatch_logger_perf_os_wait_stats_waiting_count_delta on [dbo].[sqlwatch_logger_perf_os_wait_stats] ([waiting_tasks_count_delta])
 
 /* aid filtering by server in the central repository */
 --CREATE NONCLUSTERED INDEX idx_sqlwatch_wait_stats_001

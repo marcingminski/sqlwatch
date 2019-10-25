@@ -374,34 +374,61 @@ declare @sql nvarchar(4000)
 
 
 		--------------------------------------------------------------------------------------------------------------
-		-- wait stats snapshot
-		-- READ ME!!
-		-- Currently we are capturing all waits that had a wait (if that makes sense)
-		-- ideally, this needs similar approach to the memory clerks where we only capture waits that actually matter.
-		-- or those that make up 95% of waits and ignore the noise. There is still a lot of noise despite the filter:
-		-- ws.waiting_tasks_count + ws.wait_time_ms + ws.max_wait_time_ms + ws.signal_wait_time_ms > 0
-		-- some waits are significant but have no delta over longer period of time.
+		/*	wait stats snapshot
+			 READ ME!!
+
+			 In previous versions we were capturing all waits that had a wait (waiting_tasks_count > 0)
+			 ideally, this needs similar approach to the memory clerks where we only capture waits that actually matter.
+			 or those that make up 95% of waits and ignore the noise. There is still a lot of noise despite the filter:
+			 ws.waiting_tasks_count + ws.wait_time_ms + ws.max_wait_time_ms + ws.signal_wait_time_ms > 0
+			 some waits are significant but have no delta over longer period of time.
+
+			 However, the difficulty is, if we only record those that have had positive delta we may lose some waits
+			 imagine the following scenario:
+
+			 SNAPSHOT1, WAIT1,  [waiting_tasks_count] = 1,	[waiting_tasks_count_delta] = 0
+			 SNAPSHOT2, WAIT1,	[waiting_tasks_count] = 2,  [waiting_tasks_count_delta] = 2-1 = 1
+
+			 if we only record those with positive delta, we would have never captured the first occurence and thus
+			 the second occurence would have had zero delta and we would not record it either. 
+
+			 Also, because we are currently only capturing those with positive task count, there could be the following:
+
+			 SNAPSHOT1, WAIT1,  [waiting_tasks_count] = 0,	[waiting_tasks_count_delta] = 0
+			 SNAPSHOT2, WAIT1,	[waiting_tasks_count] = 100,  [waiting_tasks_count_delta] = 100 - 0 = 100
+
+			 but, what we are going to show is this:
+
+			 --> NOT CAPTURED:	SNAPSHOT1, WAIT1,	[waiting_tasks_count] = 0,		[waiting_tasks_count_delta] = 0
+								SNAPSHOT2, WAIT1,	[waiting_tasks_count] = 100,	[waiting_tasks_count_delta] = 0
+
+		     one way to solve is it to delete old snapshots that either have zero delta or zer0 waiting task count and 
+			 only keep all values in the most recent snapshot
+		*/
 		--------------------------------------------------------------------------------------------------------------
 		insert into [dbo].[sqlwatch_logger_perf_os_wait_stats]
-		select 
-			ms.[wait_type_id], ws.[waiting_tasks_count], ws.[wait_time_ms],ws.[max_wait_time_ms], ws.[signal_wait_time_ms]
-		, [snapshot_time]=@date_snapshot_current, @snapshot_type_id, @@SERVERNAME
+			select 
+				ms.[wait_type_id], ws.[waiting_tasks_count], ws.[wait_time_ms],ws.[max_wait_time_ms], ws.[signal_wait_time_ms]
+			, [snapshot_time]=@date_snapshot_current, @snapshot_type_id, @@SERVERNAME
 
-		, [waiting_tasks_count_delta] = convert(real,case when ws.[waiting_tasks_count] > wsprev.[waiting_tasks_count] then ws.[waiting_tasks_count] - wsprev.[waiting_tasks_count] else 0 end)
-		, [wait_time_ms_delta] = convert(real,case when ws.[wait_time_ms] > wsprev.[wait_time_ms] then ws.[wait_time_ms] - wsprev.[wait_time_ms] else 0 end)
-		, [max_wait_time_ms_delta] = convert(real,case when ws.[max_wait_time_ms] > wsprev.[max_wait_time_ms] then ws.[max_wait_time_ms] - wsprev.[max_wait_time_ms] else 0 end)
-		, [signal_wait_time_ms_delta] = convert(real,case when ws.[signal_wait_time_ms] > wsprev.[signal_wait_time_ms] then ws.[signal_wait_time_ms] - wsprev.[signal_wait_time_ms] else 0 end)
-		, [delta_seconds] = datediff(second,@date_snapshot_previous,@date_snapshot_current)
-		from sys.dm_os_wait_stats ws
-		inner join [dbo].[sqlwatch_meta_wait_stats] ms
-			on ms.[wait_type] = ws.[wait_type] collate database_default
-			and ms.[sql_instance] = @@SERVERNAME
+			, [waiting_tasks_count_delta] = convert(real,case when ws.[waiting_tasks_count] > wsprev.[waiting_tasks_count] then ws.[waiting_tasks_count] - wsprev.[waiting_tasks_count] else 0 end)
+			, [wait_time_ms_delta] = convert(real,case when ws.[wait_time_ms] > wsprev.[wait_time_ms] then ws.[wait_time_ms] - wsprev.[wait_time_ms] else 0 end)
+			, [max_wait_time_ms_delta] = convert(real,case when ws.[max_wait_time_ms] > wsprev.[max_wait_time_ms] then ws.[max_wait_time_ms] - wsprev.[max_wait_time_ms] else 0 end)
+			, [signal_wait_time_ms_delta] = convert(real,case when ws.[signal_wait_time_ms] > wsprev.[signal_wait_time_ms] then ws.[signal_wait_time_ms] - wsprev.[signal_wait_time_ms] else 0 end)
+			, [delta_seconds] = datediff(second,@date_snapshot_previous,@date_snapshot_current)
+			from sys.dm_os_wait_stats ws
+			inner join [dbo].[sqlwatch_meta_wait_stats] ms
+				on ms.[wait_type] = ws.[wait_type] collate database_default
+				and ms.[sql_instance] = @@SERVERNAME
 
-		left join [dbo].[sqlwatch_logger_perf_os_wait_stats] wsprev
-			on wsprev.sql_instance = ms.sql_instance
-			and wsprev.wait_type_id = ms.wait_type_id
-			and wsprev.snapshot_type_id = @snapshot_type_id
-			and wsprev.snapshot_time = @date_snapshot_previous
+			left join [dbo].[sqlwatch_logger_perf_os_wait_stats] wsprev
+				on wsprev.sql_instance = ms.sql_instance
+				and wsprev.wait_type_id = ms.wait_type_id
+				and wsprev.snapshot_type_id = @snapshot_type_id
+				and wsprev.snapshot_time = @date_snapshot_previous
 
-		where ws.waiting_tasks_count + ws.wait_time_ms + ws.max_wait_time_ms + ws.signal_wait_time_ms > 0
+		delete from [dbo].[sqlwatch_logger_perf_os_wait_stats]
+		where [waiting_tasks_count] = 0 or [waiting_tasks_count_delta] = 0
+		and snapshot_time < @date_snapshot_previous
+		and sql_instance = @@SERVERNAME
 commit tran
