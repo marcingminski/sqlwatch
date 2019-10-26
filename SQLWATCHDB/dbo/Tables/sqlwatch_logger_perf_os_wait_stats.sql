@@ -1,10 +1,10 @@
 ﻿CREATE TABLE [dbo].[sqlwatch_logger_perf_os_wait_stats]
 (
 	[wait_type_id] smallint not null,
-	[waiting_tasks_count] bigint not null,
-	[wait_time_ms] bigint not null,
-	[max_wait_time_ms] bigint not null,
-	[signal_wait_time_ms] bigint not null,
+	[waiting_tasks_count] real not null,
+	[wait_time_ms] real not null,
+	[max_wait_time_ms] real not null,
+	[signal_wait_time_ms] real not null,
 	[snapshot_time] datetime2(0) not null,
 	[snapshot_type_id] tinyint not null default 1 ,
 	[sql_instance] varchar(32) not null default @@SERVERNAME,
@@ -23,10 +23,14 @@
 ) 
 
 go
-create nonclustered index idx_sqlwatch_logger_perf_os_wait_stats_waiting_count on [dbo].[sqlwatch_logger_perf_os_wait_stats] ([waiting_tasks_count])
+
+create nonclustered index idx_sqlwatch_logger_perf_os_wait_stats_waiting_count_delta 
+on [dbo].[sqlwatch_logger_perf_os_wait_stats] ([waiting_tasks_count_delta]) where [waiting_tasks_count_delta] = 0
 go
 
-create nonclustered index idx_sqlwatch_logger_perf_os_wait_stats_waiting_count_delta on [dbo].[sqlwatch_logger_perf_os_wait_stats] ([waiting_tasks_count_delta])
+create nonclustered index idx_sqlwatch_logger_perf_os_wait_stats_wait_type_id on [dbo].[sqlwatch_logger_perf_os_wait_stats] ([sql_instance], [wait_type_id])
+go
+
 
 /* aid filtering by server in the central repository */
 --CREATE NONCLUSTERED INDEX idx_sqlwatch_wait_stats_001
