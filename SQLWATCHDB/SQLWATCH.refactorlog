@@ -791,4 +791,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="[servername]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="024ecf0c-68d2-45e8-8e62-baa8372f7d9c" ChangeDateTime="10/25/2019 18:21:42">
+    <Property Name="ElementName" Value="[dbo].[vw_sqlwatch_report_xes_waits_stats]" />
+    <Property Name="ElementType" Value="SqlView" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[vw_sqlwatch_report_fact_xes_waits_stats]" />
+  </Operation>
 </Operations>
