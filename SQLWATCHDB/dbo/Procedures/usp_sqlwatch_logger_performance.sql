@@ -13,8 +13,8 @@ declare @os_memory_mb int
 declare @memory_available int
 declare @percent_idle_time real
 declare @percent_processor_time real
-declare @date_snapshot_current datetime
-declare @date_snapshot_previous datetime
+declare @date_snapshot_current datetime2(0)
+declare @date_snapshot_previous datetime2(0)
 
 declare @snapshot_type_id tinyint = 1
 
@@ -331,7 +331,13 @@ declare @sql nvarchar(4000)
 		select 
 			 sd.sqlwatch_database_id
 			,mf.sqlwatch_master_file_id
-			,fs.num_of_reads, fs.num_of_bytes_read, fs.io_stall_read_ms, fs.num_of_writes, fs.num_of_bytes_written, fs.io_stall_write_ms, fs.size_on_disk_bytes
+			,num_of_reads = convert(real,fs.num_of_reads)
+			, num_of_bytes_read = convert(real,fs.num_of_bytes_read)
+			, io_stall_read_ms = convert(real,fs.io_stall_read_ms)
+			, num_of_writes = convert(real,fs.num_of_writes)
+			, num_of_bytes_written = convert(real,fs.num_of_bytes_written)
+			, io_stall_write_ms = convert(real,fs.io_stall_write_ms)
+			, size_on_disk_bytes = convert(real,fs.size_on_disk_bytes)
 			, snapshot_time=@date_snapshot_current
 			, @snapshot_type_id
 			, @@SERVERNAME
@@ -406,36 +412,44 @@ declare @sql nvarchar(4000)
 			 only keep all values in the most recent snapshot
 		*/
 		--------------------------------------------------------------------------------------------------------------
+		insert into [dbo].[sqlwatch_stage_perf_os_wait_stats]
+		select * , @date_snapshot_current
+		from sys.dm_os_wait_stats
+
 		insert into [dbo].[sqlwatch_logger_perf_os_wait_stats]
 			select 
-				ms.[wait_type_id], ws.[waiting_tasks_count], ws.[wait_time_ms],ws.[max_wait_time_ms], ws.[signal_wait_time_ms]
-			, [snapshot_time]=@date_snapshot_current, @snapshot_type_id, @@SERVERNAME
+				[wait_type_id] = convert(real,ms.[wait_type_id])
+				, [waiting_tasks_count] = convert(real,ws.[waiting_tasks_count])
+				, [wait_time_ms] = convert(real,ws.[wait_time_ms])
+				, [max_wait_time_ms] = convert(real,ws.[max_wait_time_ms])
+				, [signal_wait_time_ms] = convert(real,ws.[signal_wait_time_ms])
+				
+				, [snapshot_time]=@date_snapshot_current
+				, @snapshot_type_id, @@SERVERNAME
 
 			, [waiting_tasks_count_delta] = convert(real,case when ws.[waiting_tasks_count] > wsprev.[waiting_tasks_count] then ws.[waiting_tasks_count] - wsprev.[waiting_tasks_count] else 0 end)
 			, [wait_time_ms_delta] = convert(real,case when ws.[wait_time_ms] > wsprev.[wait_time_ms] then ws.[wait_time_ms] - wsprev.[wait_time_ms] else 0 end)
 			, [max_wait_time_ms_delta] = convert(real,case when ws.[max_wait_time_ms] > wsprev.[max_wait_time_ms] then ws.[max_wait_time_ms] - wsprev.[max_wait_time_ms] else 0 end)
 			, [signal_wait_time_ms_delta] = convert(real,case when ws.[signal_wait_time_ms] > wsprev.[signal_wait_time_ms] then ws.[signal_wait_time_ms] - wsprev.[signal_wait_time_ms] else 0 end)
 			, [delta_seconds] = datediff(second,@date_snapshot_previous,@date_snapshot_current)
-			from sys.dm_os_wait_stats ws
+			from [dbo].[sqlwatch_stage_perf_os_wait_stats] ws
 			inner join [dbo].[sqlwatch_meta_wait_stats] ms
 				on ms.[wait_type] = ws.[wait_type] collate database_default
 				and ms.[sql_instance] = @@SERVERNAME
 
-			left join [dbo].[sqlwatch_logger_perf_os_wait_stats] wsprev
-				on wsprev.sql_instance = ms.sql_instance
-				and wsprev.wait_type_id = ms.wait_type_id
-				and wsprev.snapshot_type_id = @snapshot_type_id
+			left join [dbo].[sqlwatch_stage_perf_os_wait_stats] wsprev
+				on wsprev.wait_type = ws.wait_type
 				and wsprev.snapshot_time = @date_snapshot_previous
 
-		/* There are covering indexes that will force seek so this should only ever delete small amount of rows.
-		   The total number of waits are the same regardless of how busy the server is or how many databases.
-		   On the busy server with lots of wait time, you will likely have less waits with 0 waiting tasks
-		   
-		   The key is to show waits in stacked up bar so if there are no data points we have no bar. 
-		   if we showed it in a line chart we would have had broken line and gaps.
-		*/
-		delete from [dbo].[sqlwatch_logger_perf_os_wait_stats]
-		where [waiting_tasks_count] = 0 or [waiting_tasks_count_delta] = 0
-		and snapshot_time < @date_snapshot_previous
-		and sql_instance = @@SERVERNAME
+			where ws.snapshot_time = @date_snapshot_current
+			and ws.[waiting_tasks_count] - wsprev.[waiting_tasks_count]  > 0
+
+		delete from [dbo].[sqlwatch_stage_perf_os_wait_stats]
+		where snapshot_time < @date_snapshot_current
+		--and sql_instance = @@SERVERNAME
+
+
+		/*  */
+
+
 commit tran
