@@ -12,8 +12,8 @@ SELECT d.[sqlwatch_database_id]
       ,[avg_total_user_cost]
       ,[avg_user_impact]
       ,d.[sql_instance]
-	  ,pbi_sqlwatch_missing_index_id = d.sql_instance + '.DB.' + convert(varchar(10),d.sqlwatch_database_id) + '.TBL.' + convert(varchar(10),d.[sqlwatch_table_id]) +'.MIDX.' + convert(varchar(10),d.sqlwatch_missing_index_id)
-
+ --for backward compatibility with existing pbi, this column will become report_time as we could be aggregating many snapshots in a report_period
+, d.snapshot_time
   FROM [dbo].[sqlwatch_logger_index_missing_stats] d
   	inner join dbo.sqlwatch_logger_snapshot_header h
 		on  h.snapshot_time = d.[snapshot_time]

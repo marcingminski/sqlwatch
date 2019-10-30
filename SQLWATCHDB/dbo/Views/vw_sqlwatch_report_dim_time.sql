@@ -34,7 +34,7 @@ select distinct report_time
 			--when datepart(year,snapshot_time) = datepart(year,current_utc_date) and datename (wk, snapshot_time) = datename (wk, current_utc_date) - 1 then 'Previous Week'
 			--when datepart(year,snapshot_time) = datepart(year,current_utc_date) and datepart(month, snapshot_time) = datepart(month, current_utc_date) - 1 then 'Previous Month'
 			else '' end
-	, interval_minutes_5 = convert(time,dateadd(minute,(datediff(minute,0, report_time)/ 5) * 5,0))
-	, interval_minutes_15 = convert(time,dateadd(minute,(datediff(minute,0, report_time)/ 15) * 15,0))
-	, interval_minutes_60 = convert(time,dateadd(minute,(datediff(minute,0, report_time)/ 60) * 60,0))
+	, interval_minutes_5 = convert(smalldatetime,dateadd(minute,(datediff(minute,0, report_time)/ 5) * 5,0))
+	, interval_minutes_15 = convert(smalldatetime,dateadd(minute,(datediff(minute,0, report_time)/ 15) * 15,0))
+	, interval_minutes_60 = convert(smalldatetime,dateadd(minute,(datediff(minute,0, report_time)/ 60) * 60,0))
 from cte_snapshots

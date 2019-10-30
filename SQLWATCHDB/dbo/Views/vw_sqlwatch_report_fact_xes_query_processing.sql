@@ -9,6 +9,8 @@ SELECT [event_time]
       ,[deadlocked_scheduler]
       ,report_time
       ,d.[sql_instance]
+ --for backward compatibility with existing pbi, this column will become report_time as we could be aggregating many snapshots in a report_period
+, d.snapshot_time
   FROM [dbo].[sqlwatch_logger_xes_query_processing] d
   	inner join dbo.sqlwatch_logger_snapshot_header h
 		on  h.snapshot_time = d.[snapshot_time]

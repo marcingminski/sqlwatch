@@ -4,6 +4,8 @@ select report_time, d.[sql_instance], m.wait_type
 , [waiting_tasks_count_delta], [wait_time_ms_delta], [max_wait_time_ms_delta], [signal_wait_time_ms_delta]
 , wait_category = isnull(cw.wait_category,'Other')
 , report_include = isnull(cw.report_include,1)
+ --for backward compatibility with existing pbi, this column will become report_time as we could be aggregating many snapshots in a report_period
+, d.snapshot_time
 from [dbo].[sqlwatch_logger_perf_os_wait_stats] d
   	
 	inner join dbo.sqlwatch_logger_snapshot_header h

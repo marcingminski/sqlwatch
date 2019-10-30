@@ -11,7 +11,8 @@ SELECT d.[sqlwatch_database_id]
       ,d.[log_size_used_bytes]
       ,h.report_time
       ,d.[sql_instance]
-	  ,pbi_sqlwatch_database_id = d.sql_instance + '.DB.' + convert(varchar(10),d.sqlwatch_database_id)
+ --for backward compatibility with existing pbi, this column will become report_time as we could be aggregating many snapshots in a report_period
+, d.snapshot_time
   FROM [dbo].[sqlwatch_logger_disk_utilisation_database] d
   	inner join dbo.sqlwatch_logger_snapshot_header h
 		on  h.snapshot_time = d.[snapshot_time]

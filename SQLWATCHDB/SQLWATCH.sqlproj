@@ -183,6 +183,7 @@
     <Build Include="dbo\Views\vw_sqlwatch_report_fact_xes_waits_stats.sql" />
     <Build Include="dbo\Tables\sqlwatch_config_wait_stats.sql" />
     <Build Include="dbo\Tables\sqlwatch_stage_perf_os_wait_stats.sql" />
+    <Build Include="dbo\Functions\ufn_sqlwatch_get_time_group.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />

@@ -798,4 +798,11 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[vw_sqlwatch_report_fact_xes_waits_stats]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="01b8e80c-2db9-49a9-b4bc-1c13c350a536" ChangeDateTime="10/29/2019 10:25:22">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_logger_index_usage_stats].[delta_seconds_delta]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_logger_index_usage_stats]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[delta_seconds]" />
+  </Operation>
 </Operations>

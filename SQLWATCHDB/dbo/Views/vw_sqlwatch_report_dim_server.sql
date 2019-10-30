@@ -8,6 +8,7 @@ SELECT [physical_name]
       ,[local_tcp_port]
       ,d.[utc_offset_minutes]
 	  ,c.environment
+	  ,d.sql_version 
   FROM [dbo].[sqlwatch_meta_server] d
   inner join dbo.sqlwatch_config_sql_instance c
 	on d.servername = c.sql_instance

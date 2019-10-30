@@ -13,10 +13,21 @@ SELECT d.[sqlwatch_database_id]
       ,report_time
       ,d.[collection_time]
       ,d.[sql_instance]
-	  ,pbi_sqlwatch_index_id = d.sql_instance + '.DB.' + convert(varchar(10),d.sqlwatch_database_id) + '.TBL.' + convert(varchar(10),d.[sqlwatch_table_id]) +'.IDX.' + convert(varchar(10),d.sqlwatch_index_id)
-
+	  ,is_latest = case when d.snapshot_time = t.snapshot_time and d.sql_instance = t.sql_instance then 1 else 0 end
+ --for backward compatibility with existing pbi, this column will become report_time as we could be aggregating many snapshots in a report_period
+, d.snapshot_time
   FROM [dbo].[sqlwatch_logger_index_usage_stats_histogram] d
   	inner join dbo.sqlwatch_logger_snapshot_header h
 		on  h.snapshot_time = d.[snapshot_time]
 		and h.snapshot_type_id = d.snapshot_type_id
 		and h.sql_instance = d.sql_instance
+
+	outer apply (
+		select sql_instance 
+			, snapshot_time=max(snapshot_time)
+			, snapshot_type_id 
+		from dbo.sqlwatch_logger_snapshot_header h
+		where sql_instance = d.sql_instance
+		and snapshot_type_id = d.snapshot_type_id
+		group by sql_instance, snapshot_type_id
+		) t

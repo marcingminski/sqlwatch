@@ -34,10 +34,11 @@ Post-Deployment Script Template
 --------------------------------------------------------------------------------------
 if (select count(*) from [dbo].[sqlwatch_meta_server]) = 0
 	begin
-		insert into dbo.[sqlwatch_meta_server] ([physical_name],[servername], [service_name], [local_net_address], [local_tcp_port], [utc_offset_minutes])
+		insert into dbo.[sqlwatch_meta_server] ([physical_name],[servername], [service_name], [local_net_address], [local_tcp_port], [utc_offset_minutes], [sql_version])
 		select convert(sysname,SERVERPROPERTY('ComputerNamePhysicalNetBIOS'))
 			, convert(sysname,@@SERVERNAME), convert(sysname,@@SERVICENAME), convert(varchar(50),local_net_address), convert(varchar(50),local_tcp_port)
 			, DATEDIFF(mi, GETUTCDATE(), GETDATE())
+			, @@VERSION
 		from sys.dm_exec_connections where session_id = @@spid
 	end
 
@@ -737,6 +738,60 @@ then update
 when not matched by target then
 	insert (wait_type, wait_category, report_include)
 	values (source.wait_type, source.wait_category, source.report_include);
+
+--------------------------------------------------------------------------------------
+-- perf counters poster
+-- TO DO this sloud integrate into the [sqlwatch_config_performance_counters]
+--------------------------------------------------------------------------------------
+--declare @poster table (
+--	[object_name] nvarchar(128) not null,
+--	[counter_name] nvarchar(128) not null,
+--	[desired_value_desc] varchar(100),
+--	[desired_value] varchar(100),
+--	[description] varchar(2048)
+--)
+--insert into @poster
+--values
+-- ('SQLServer:Access Methods','Full Scans/sec','1 Full Scan/sec per 1000 Index Searches/sec','0.001','Monitors the number of full scans on tables or indexes. Ignore unless high CPU coincides with high scan rates. High scan rates may be caused by missing indexes, very small tables, or requests for too many records. A sudden increase in this value may indicate a statistics threshold has been reached, resulting in an index no longer being used.')
+--,('SQLServer:SQL Statistics','Batch Requests/Sec','','','Number of batch requests received per second, and is a good general indicator for the activity level of the SQL Server. This counter is highly dependent on the hardware and quality of code running on the server. The more powerful the hardware, the higher this number can be, even on poorly coded applications. A value of 1000 batch requests/sec is easily attainable though a typical 100Mbs NIC can only handle about 3000 batch requests/sec.Many other counter thresh- olds depend upon batch requests/sec while, in some cases, a low (or high) number does not point to poor processing power. You should frequently use this counter in combination with other counters, such as processor utilization or user connections.In version 2000, “Transactions/ sec” was the counter most often used to measure overall activity, while versions 2005 and later use “Batch Requests/sec”. Versions 2005 prior to SP2, measure this counter differently and may lead to some misunderstandings. Read the footnote for more details.')
+--,('SQLServer:SQL Statistics','SQL Compilations/sec','< 10% of the number of Batch Re- quests/Sec','0.1','Number of times that Transact-SQL compilations occurred, per second (including recompiles). The lower this value is the better. High values often indicate excessive adhoc querying and should be as low as possible. If excessive adhoc querying is happening, try rewriting the queries as procedures or invoke the queries using sp_ex- ecuteSQL. When rewriting isn’t possible, consider using a plan guide or setting the database to parameterization forced mode.')
+--,('SQLServer:SQL Statistics','SQL Re-Compila- tions/sec','< 10% of the number of SQL Compila- tions/sec','0.1','Number of times, per second, that Transact-SQL objects attempted to be executed but had to be recompiled before completion. This number should be at or near zero, since recompiles can cause deadlocks and exclusive compile locks. This counter’s value should follow in proportion to “Batch Requests/sec” and “SQL Compilations/ sec”. This needs to be nil in your system as much as possible.')
+--,('SQLServer:Access Methods','Page Splits/sec','< 20 per 100 Batch Requests/Sec','0.2','Monitors the number of page splits per second which occur due to overflowing index pages and should be as low as possible. To avoid page splits, review table and index design to reduce non-sequential inserts or implement fillfactor and pad_index to leave more empty space per page. NOTE: A high value for this counter is not bad in situations where many new pages are being created, since it includes new page allocations.')
+--,('SQLServer:Access Methods','Index Searches/sec','1 Full Scan/sec per 1000 Index Searches/sec','0.001','Monitors the number of index searches when doing range scans, single index record fetches, and repositioning within an index. The threshold recommendation is strictly for OLTP workloads.')
+--,('SQL Server:Buffer Manager','Free list stalls/sec','< 2','2','Monitors the number of requests per second where data requests stall because no buffers are available. Any value above 2 means SQL Server needs more memory.number of requests per second where data requests stall because no buffers are available. Any value above 2 means SQL Server needs more memory.')
+--,('SQL Server:Buffer Manager','Lazy writes/sec','< 20','20','Monitors the number of times per second that the Lazy Writer process moves dirty pages from the buffer to disk as it frees up buffer space. Lower is better with zero being ideal. When greater than 20, this counter indicates a need for more memory.')
+--,('SQL Server:Buffer Manager','Page reads/sec','< 90','90','Number of physical database page reads issued per second. Normal OLTP workloads support 80 – 90 per second, but higher values may be a yellow flag for poor indexing or insufficient memory.')
+--,('SQL Server:Buffer Manager','Page lookups/sec','(Page lookups/ sec) / (Batch Requests/ sec) < 100','100','The number of requests to find a page in the buffer pool. When the ratio of batch requests to page lookups crests 100, you may have inefficient execution plans or too many adhoc queries.')
+--,('SQL Server:Buffer Manager','Page writes/sec','< 90','90','Number of database pages physically written to disk per second. Normal OLTP workloads support 80 – 90 per second. Values over 90 should be crossed checked with “lazy writer/sec” and “checkpoint” counters. If the other counters are also high, then it may indicate insufficient memory.')
+--,('SQL Server:Locks','Average Wait Time (ms)','<500','500','The average wait time, in milliseconds, for each lock request that had to wait. An average wait time longer than 500ms may indicate excessive blocking. This value should generally correlate to “Lock Waits/sec” and move up or down with it accordingly.')
+--,('SQL Server:Locks','Lock Requests/sec','<1000','1000','The number of new locks and locks converted per second. This metric’s value should generally correspond to “Batch Re- quests/sec”. Values > 1000 may indicate queries are accessing very large numbers of rows and may benefit from tuning.')
+--,('SQL Server:Locks','Lock Timeouts/sec','<1','1','Shows the number of lock requests per second that timed out, including internal requests for NOWAIT locks. A value greater than zero might indicate that user queries are not completing. The lower this value is, the better.')
+--,('SQL Server:Locks','Lock Waits/sec','0','0.1','How many times users waited to acquire a lock over the past second. Values greater than zero indicate at least some blocking is occurring, while a value of zero can quickly eliminate blocking as a potential root-cause problem. As with “Lock Wait Time”, lock waits are not recorded by Perf- Mon until after the lock event completes.')
+--,('SQL Server:Latches','Latch Waits/sec','(Total Latch Wait Time) / (Latch Waits/ Sec) < 10','10','The number of latches in the last second that had to wait. Latches are lightweight means of holding a very transient server resource, such as an address in memory.')
+--,('SQL Server:Buffer Manager','Readahead pages/sec','< 20% of Page Reads/ sec','0.2','Number of data pages read per second in anticipation of their use. If this value is makes up even a sizeable minority of total Page Reads/sec (say, greater than 20% of total page reads), you may have too many physical reads occurring.')
+--,('SQL Server:Locks','Number of Deadlocks/sec','<1','1','Number of lock requests, per second, which resulted in a deadlock. Since only a COMMIT, ROLLBACK, or deadlock can terminate a transaction (excluding failures or errors), this is an important value to track. Excessive deadlocking indicates a table or index design error or bad application design.')
+--,('SQLServer:Memory Manager','Memory Grants Outstanding','','','Total number of processes per second that have successfully acquired a workspace memory grant.')
+--,('SQLServer:Memory Manager','Memory Grants Pending','<1','1','Total number of processes per second waiting for a workspace memory grant. Numbers higher than 0 indicate a lack of memory.')
+--,('SQLServer:Memory Manager','Total Server Memory (KB)','','','Shows the amount of memory that SQL Server is currently using. This value should grow until its equal to Target Server Memory, as it popu- lates its caches and loads pages into memory. When it has finished, SQL Server is said to be in a “steady-state”. Until it is in steady-state, per- formance may be slow and IO may be higher.')
+--,('SQLServer:Memory Manager','Target Server Memory (KB)','','','Shows the amount of memory that SQL Server wants to use based on the configured Max Server Memory.')
+--,('SQLServer:Memory Manager','Stolen Server Memory (KB)','','','Tells how many pages were “stolen” from the buffer pool to satisfy other memory needs, such as plan cache and workspace memory. This number is a good metric to determine how much data is flowing into SQL Server caches and should remain proportionate to “Batch Requests/sec”. Also remember to look for where these stolen pages might be stolen from – optimizer memory, lock memory, and so forth.')
+--,('SQL Server:Buffer Manager','Buffer cache hit ratio','100','100','Long a stalwart counter used by SQL Server DBAs, this counter is no longer very useful. It monitors the percentage of data requests answer from the buffer cache since the last reboot. However, other counters are much better for showing current memory pressure that this one because it blows the curve. For example, PLE (page life expectancy) might suddenly drop from 2000 to 70, while buffer cache hit ration moves only from 98.2 to 98.1. Only be concerned by this counter if it’s value is regularly below 90 (for OLTP) or 80 (for very large OLAP).')
+--,('SQLServer:Buffer Node','Page life expectancy','>300','300','Tells, on average, how many seconds SQL Server expects a data page to stay in cache. The target on an OLTP system should be at least 300 (5 min). When under 300, this may indicate poor index design (leading to increased disk I/O and less effective use of memory) or, simply, a potential shortage of memory.')
+--,('SQLServer:General Statistics','Logins/sec','<2','2','The number of user logins per second. Any value over 2 may indicate insufficient connection pooling.')
+--,('SQLServer:SQL Errors','Errors/sec','0','0','Number of errors per second which takes a database offline or kills a user connection, respectively. Since these are severe errors, they should occur very infrequently.')
+--,('SQL Server:Databases','Log Growths','0','0','Total number of times the transaction log for the database has been expanded. Each time the transaction log grows, all user activity must halt until the log growth completes. Therefore, you want log growths to occur during predefined maintenance windows rather than during gen- eral working hours.')
+--,('SQLServer:SQL Statistics','Auto-Param Attempts/sec','','','Number of auto-parameterization attempts per second. Total should be the sum of the failed, safe, and unsafe auto-parameterizations. Auto-parameterization occurs when an instance of SQL Server attempts to reuse a cached plan for a previously executed query that is similar to, but not the same as, the current query. For more information, see Auto- parameterization in the SQL Server Books On-Line (BOL).')
+--,('SQLServer:SQL Statistics','Failed Auto-Params/sec','','','Number of failed auto-parameterization attempts per second. This should be small.')
+
+--merge [dbo].[sqlwatch_config_performance_counters_poster] as target
+--using @poster as source
+--on source.[object_name] = target.[object_name]
+--and source.[counter_name] = target.[counter_name]
+--and @@SERVERNAME = target.[sql_instance]
+
+--when not matched then
+--	insert ([object_name], [counter_name], [desired_value_desc], [desired_value], [description], [sql_instance])
+--	values (source.[object_name], source.[counter_name], source.[desired_value_desc], source.[desired_value], source.[description], @@SERVERNAME);
 
 --------------------------------------------------------------------------------------
 --
