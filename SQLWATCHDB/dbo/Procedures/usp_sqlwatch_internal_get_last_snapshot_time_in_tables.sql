@@ -28,6 +28,7 @@ group by sql_instance;'
 			AND T.TABLE_SCHEMA = C.TABLE_SCHEMA
 			AND T.TABLE_NAME = C.TABLE_NAME
 		WHERE C.COLUMN_NAME = 'snapshot_time'
+		AND T.TABLE_NAME like 'sqlwatch_logger%'
 		AND T.TABLE_TYPE = 'BASE TABLE'
 
 print @sql
