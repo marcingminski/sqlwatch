@@ -50,7 +50,7 @@ while @@FETCH_STATUS = 0
 	user_seeks, user_scans, user_lookups, user_updates, last_user_seek, last_user_scan, last_user_lookup, last_user_update,
 	stats_date, snapshot_time, snapshot_type_id, index_disabled, partition_id, [sqlwatch_table_id],
 
-	[used_pages_count_delta], [user_seeks_delta], [user_scans_delta], [user_updates_delta], [delta_seconds_delta]
+	[used_pages_count_delta], [user_seeks_delta], [user_scans_delta], [user_updates_delta], [delta_seconds], [user_lookups_delta]
 	)
 			select 
 				mi.sqlwatch_database_id,
@@ -76,6 +76,7 @@ while @@FETCH_STATUS = 0
 				, [user_scans_delta] = case when ixus.[user_scans] > usprev.[user_scans] then ixus.[user_scans] - usprev.[user_scans] else 0 end
 				, [user_updates_delta] = case when ixus.[user_updates] > usprev.[user_updates] then ixus.[user_updates] - usprev.[user_updates] else 0 end
 				, [delta_seconds_delta] = datediff(second,''' + convert(varchar(23),@date_snapshot_previous,121) + ''',''' + convert(varchar(23),@snapshot_time,121) + ''')
+				, [user_lookups_delta] = case when ixus.[user_lookups] > usprev.[user_lookups] then ixus.[user_lookups] - usprev.[user_lookups] else 0 end
 			from sys.dm_db_index_usage_stats ixus
 
 			inner join sys.databases dbs
