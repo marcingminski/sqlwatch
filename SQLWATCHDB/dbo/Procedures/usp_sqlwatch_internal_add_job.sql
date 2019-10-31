@@ -12,9 +12,9 @@ BEGIN TRAN
 		)
 	when not matched by target then
 		insert (sql_instance, job_name, job_create_date)
-		values (@@SERVERNAME, source.name, source.date_created)
-	when not matched by source then
-		update set deleted_when = GETUTCDATE();
+		values (@@SERVERNAME, source.name, source.date_created);
+	--when not matched by source then
+	--	update set deleted_when = GETUTCDATE();
 
 	--insert into [dbo].[sqlwatch_meta_agent_job] (sql_instance, job_name, job_create_date)
 	--select sql_instance=@@SERVERNAME, name, date_created
