@@ -80,6 +80,8 @@ insert into #steps
 			('dbo.usp_sqlwatch_logger_xes_waits',		2,			'SQLWATCH-LOGGER-PERFORMANCE',		'TSQL',		'exec dbo.usp_sqlwatch_logger_xes_waits'),
 			('dbo.usp_sqlwatch_logger_xes_blockers',	3,			'SQLWATCH-LOGGER-PERFORMANCE',		'TSQL',		'exec dbo.usp_sqlwatch_logger_xes_blockers'),
 			('dbo.usp_sqlwatch_logger_xes_diagnostics',	4,			'SQLWATCH-LOGGER-PERFORMANCE',		'TSQL',		'exec dbo.usp_sqlwatch_logger_xes_diagnostics'),
+			('dbo.usp_sqlwatch_logger_xes_long_queries',5,			'SQLWATCH-LOGGER-PERFORMANCE',		'TSQL',		'exec dbo.usp_sqlwatch_logger_xes_long_queries'),
+			
 
 			('dbo.usp_sqlwatch_logger_agent_job_history', 1,		'SQLWATCH-LOGGER-AGENT-HISTORY',		'TSQL',		'exec dbo.usp_sqlwatch_logger_agent_job_history'),
 
