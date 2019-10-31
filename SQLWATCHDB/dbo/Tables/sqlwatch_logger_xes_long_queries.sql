@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[sqlwatch_logger_xes_long_queries](
-	--[long_query_id] bigint identity (-9223372036854775808,1),
-	[activity_id] int identity(1,1),
+	[long_query_id] bigint identity (0,1),
+	[activity_id] uniqueidentifier,
 	[activity_sequence] smallint,
 	[activity_id_xfer] uniqueidentifier,
 	[activity_seqeuence_xfer] smallint,
