@@ -102,6 +102,11 @@ while @@FETCH_STATUS = 0
 				and mi.sqlwatch_database_id = mi.sqlwatch_database_id
 				and mi.sqlwatch_table_id = mi.sqlwatch_table_id
 
+			inner join [dbo].[sqlwatch_meta_database] mdb
+				on mdb.sqlwatch_database_id = mi.sqlwatch_database_id
+				and mdb.database_name = dbs.name collate database_default
+				and mdb.database_create_date = dbs.create_date
+
 			left join [dbo].[sqlwatch_logger_index_usage_stats] usprev
 				on usprev.sql_instance = mi.sql_instance
 				and usprev.sqlwatch_database_id = mi.sqlwatch_database_id
