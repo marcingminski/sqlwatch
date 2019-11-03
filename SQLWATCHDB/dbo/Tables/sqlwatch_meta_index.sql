@@ -16,6 +16,6 @@
 	constraint fk_sqlwatch_meta_index foreign key ([sql_instance],[sqlwatch_database_id],[sqlwatch_table_id]) 
 		references [dbo].[sqlwatch_meta_table] ([sql_instance],[sqlwatch_database_id],[sqlwatch_table_id]) on delete cascade,
 	constraint uq_sqlwatch_meta_index unique (
-		[sql_instance], [sqlwatch_database_id], [index_name]
+		[sql_instance], [sqlwatch_database_id], [sqlwatch_table_id], [index_name]
 		)
 )
