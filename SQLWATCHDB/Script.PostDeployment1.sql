@@ -443,6 +443,10 @@ using (
 	union
 	/* Os volume utilisation */
 	select [snapshot_type_id] = 17, [snapshot_type_desc] = 'Disk Utilisation OS', [snapshot_retention_days] = 365
+	union
+	/* Alert history */
+	select [snapshot_type_id] = 18, [snapshot_type_desc] = 'Alert Checks', [snapshot_retention_days] = 2
+
 
 ) as source
 on (source.[snapshot_type_id] = target.[snapshot_type_id])
@@ -822,10 +826,38 @@ if (select count(*) from [dbo].[sqlwatch_logger_snapshot_header]
 
 
 --------------------------------------------------------------------------------------
---
+-- load default alerts
 --------------------------------------------------------------------------------------
+if (select count(*) from [dbo].[sqlwatch_config_alert_target] ) = 0
+	begin
+		set identity_insert [dbo].[sqlwatch_config_alert_target] on 
+		insert into [dbo].[sqlwatch_config_alert_target]([target_id],[target_type],[target_address],[target_attributes])
+		values	(1, 'sp_send_dbmail', 'dba@yourcompany.com','@profile_name = ''DB mail profile'''),
+				(2, 'Pushover', 'https://api.pushover.net/1/messages.json','token = "YOURAPPTOKEN"
+user = "YOURUSERTOKEN"'''),
+				(3, 'Send-MailMessage', 'dba@yourcompany.com','From = "sqlwatch@yourcompany.com" 
+SmtpServer = "smtp.yourcompany.com"''')
+		set identity_insert [dbo].[sqlwatch_config_alert_target] off
+	end
+
+declare @alerts as table (
+	[sql_instance] [varchar](32) NOT NULL,
+	[header] [nvarchar](50) NOT NULL,
+	[description] [nvarchar](2048) NULL,
+	[query] [nvarchar](max) NOT NULL,
+	[warning_threshold] [varchar](100) NULL,
+	[critical_threshold] [varchar](100) NULL,
+	[check_frequency_minutes] [smallint] NULL,
+	[recipients] [nvarchar](255) NULL,
+	[profile_name] [nvarchar](255) NULL,
+	[retrigger_minutes] [smallint] NULL,
+	[rule_enabled] [bit] NOT NULL,
+	[send_recovery] [bit] NOT NULL,
+	[trigger_on_every_change] [bit] NOT NULL
+	)
 
 
+--------------------------------------------------------------------------------------
 --setup jobs
 --we have to switch database to msdb but we also need to know which db jobs should run in so have to capture current database:
 declare @server nvarchar(255)

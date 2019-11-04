@@ -60,7 +60,11 @@ insert into #jobs
 			('SQLWATCH-LOGGER-DISK-UTILISATION',4,		1,			8,				1,				0,					1,					20180101,	99991231, 437,			235959,		1),
 			('SQLWATCH-LOGGER-INDEXES',			4,		1,			8,				6,				0,					1,					20180101,	99991231, 420,			235959,		1),
 			('SQLWATCH-INTERNAL-META-CONFIG',	4,		1,			8,				1,				0,					1,					20180101,	99991231, 26,			235959,		1),
-			('SQLWATCH-LOGGER-AGENT-HISTORY',	4,		1,			4,				10,				0,					1,					20180101,	99991231, 0,			235959,		1)
+			('SQLWATCH-LOGGER-AGENT-HISTORY',	4,		1,			4,				10,				0,					1,					20180101,	99991231, 0,			235959,		1),
+			('SQLWATCH-ALERTS',					4,		1,			4,				1,				0,					1,					20180101,	99991231, 45,			235959,		1)
+
+
+			
 
 /* step definition */
 
@@ -81,6 +85,68 @@ insert into #steps
 			('dbo.usp_sqlwatch_logger_xes_blockers',	3,			'SQLWATCH-LOGGER-PERFORMANCE',		'TSQL',		'exec dbo.usp_sqlwatch_logger_xes_blockers'),
 			('dbo.usp_sqlwatch_logger_xes_diagnostics',	4,			'SQLWATCH-LOGGER-PERFORMANCE',		'TSQL',		'exec dbo.usp_sqlwatch_logger_xes_diagnostics'),
 			('dbo.usp_sqlwatch_logger_xes_long_queries',5,			'SQLWATCH-LOGGER-PERFORMANCE',		'TSQL',		'exec dbo.usp_sqlwatch_logger_xes_long_queries'),
+
+			('dbo.usp_sqlwatch_internal_process_checks',1,			'SQLWATCH-ALERTS',					'TSQL',		'exec dbo.usp_sqlwatch_internal_process_checks'),
+			('Send Message',							2,			'SQLWATCH-ALERTS',					'PowerShell','
+$output = "x"
+while ($output -ne $null) { 
+	$output = Invoke-SqlCmd -ServerInstance "' + @server + '" -Database ' + '$(DatabaseName)' + ' -Query "set xact_abort on
+	begin tran
+		;with cte_get_message as (
+		  select top 1 *
+		  from [dbo].[sqlwatch_meta_alert_notify_queue]
+		  where send_status = 0
+		  order by notify_timestamp
+		)
+		update cte_get_message
+			set send_status = 1
+			output deleted.[message_payload], deleted.target_type, deleted.notify_id
+			where send_status = 0
+	commit tran"
+
+	$status = ""
+	$notify_id = $output.notify_id
+    $operation = ""
+	$ErrorOutput = ""
+	
+	if ( $output -ne $null) {
+		if ( $output.target_type -eq "sp_send_dbmail" ) {
+			$status = Invoke-SqlCmd -ServerInstance "' + @server + '" -Database ' + '$(DatabaseName)' + ' -Query $output.message_payload
+            if ($status.error -eq 0) {
+                $operation = "delete"
+            } else {
+                $operation = "update"
+			}
+		}
+
+		if ( $output.target_type -eq "Pushover" ) {
+			$status = Invoke-Expression $output.message_payload
+			if ($status.status -eq "1") {
+				$operation = "delete"  
+			} else {
+				$operation = "update"
+			}
+		}
+
+		if ( $output.target_type -eq "Send-MailMessage" ) {
+		    Invoke-Expression $output.message_payload
+			$ErrorOutput = $Error[0].Exception.Message
+            if ($ErrorOutput -ne "") {
+				$operation = "update"
+            } else {
+                $operation = "delete"
+			}
+		}
+
+       if ($operation -eq "delete") {
+ 			$query = "delete from [dbo].[sqlwatch_meta_alert_notify_queue] where notify_id = $notify_id"
+        } else {
+			$query = "update [dbo].[sqlwatch_meta_alert_notify_queue] set send_status = 2, [send_error_message] = ''$ErrorOutput'' where notify_id = $notify_id"   
+        }
+		Invoke-SqlCmd -ServerInstance "' + @server + '" -Database ' + '$(DatabaseName)' + ' -Query $query
+	}
+}'),
+			
 			
 
 			('dbo.usp_sqlwatch_logger_agent_job_history', 1,		'SQLWATCH-LOGGER-AGENT-HISTORY',		'TSQL',		'exec dbo.usp_sqlwatch_logger_agent_job_history'),

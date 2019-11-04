@@ -805,4 +805,214 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="[delta_seconds]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="d546d714-39e4-4f31-9eb5-4bbcf836dbec" ChangeDateTime="11/01/2019 15:59:14">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_config_alert_rules].[success_result]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_config_alert_rules]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[success_value]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="a1748fd8-4dae-484a-b5ef-aa4221ae55be" ChangeDateTime="11/01/2019 22:48:44">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_config_alert_rules].[repeat_minutes]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_config_alert_rules]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[retrigger_minutes]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="c89f1d90-99e0-4faf-9173-11d8d801d6f6" ChangeDateTime="11/02/2019 00:10:28">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_config_alert_rules].[rule_id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_config_alert_rules]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[check_id]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="fea60208-936d-4c3a-aaf5-880bf5f73fe9" ChangeDateTime="11/02/2019 00:10:44">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_config_alert_rules]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[sqlwatch_config_alert_checks]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="71716bdd-3938-49b6-9568-303bcbe7728c" ChangeDateTime="11/02/2019 00:11:46">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_config_alert_checks]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[sqlwatch_config_alert_check]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="206989b7-323d-4916-9fb5-55fe6bfa53f3" ChangeDateTime="11/02/2019 21:15:00">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_config_alert_check].[retrigger_on_every_change]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_config_alert_check]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[trigger_on_every_change]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="ea512dc5-e5b9-4014-9c28-3b01997c39ed" ChangeDateTime="11/02/2019 23:55:40">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_config_alert_check].[rule_enabled]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_config_alert_check]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[check_enabled]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="993ae067-aa61-4cec-9889-aae88e800954" ChangeDateTime="11/02/2019 23:57:59">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_config_alert_check].[trigger_on_every_change]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_config_alert_check]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[email_every_change]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="b050222b-5af1-4ed8-a84e-08071885ea65" ChangeDateTime="11/02/2019 23:59:28">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_config_alert_check].[retrigger_minutes]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_config_alert_check]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[resend_period_minutes]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="94a23fe1-7127-492d-b42e-7b743a86f382" ChangeDateTime="11/03/2019 00:08:48">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_config_alert_check].[header]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_config_alert_check]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[alert_name]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="e162f183-8db9-46db-987a-ed36dcbfe2ae" ChangeDateTime="11/03/2019 00:08:59">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_config_alert_check].[alert_name]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_config_alert_check]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[check_name]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="66427c25-41f6-4745-8970-ea33afc5edb7" ChangeDateTime="11/03/2019 00:09:10">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_config_alert_check].[description]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_config_alert_check]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[check_description]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="05bec324-fb5c-4b33-9dfb-d1e16cec4cef" ChangeDateTime="11/03/2019 00:09:17">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_config_alert_check].[query]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_config_alert_check]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[check_query]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="27aac38a-15eb-445e-ad18-41f664ed1ab6" ChangeDateTime="11/03/2019 00:09:39">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_config_alert_check].[recipients]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_config_alert_check]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[email_recipients]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="e630dbd1-6dac-49c7-a373-6eb5e4fa2ecd" ChangeDateTime="11/03/2019 00:09:45">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_config_alert_check].[profile_name]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_config_alert_check]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[email_profile_name]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="4624f7f6-d897-473d-963e-7a12093a3f69" ChangeDateTime="11/03/2019 00:09:57">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_config_alert_check].[resend_period_minutes]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_config_alert_check]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[email_resend_period_minutes]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="2fe0af28-4f00-412a-911f-3aa1b464baff" ChangeDateTime="11/03/2019 00:10:07">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_config_alert_check].[send_email]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_config_alert_check]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[email_send]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="70fbce49-26b2-4e0d-bfdd-358e4a1f21f4" ChangeDateTime="11/03/2019 00:10:14">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_config_alert_check].[send_recovery]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_config_alert_check]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[email_send_recovery]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="a6ebc795-49d8-4c6e-bacf-99fa52f74fe5" ChangeDateTime="11/03/2019 00:10:37">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_config_alert_check].[critical_threshold]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_config_alert_check]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[threshold_critical]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="4679b575-504d-4d31-bea5-385214ea06fa" ChangeDateTime="11/03/2019 00:11:04">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_config_alert_check].[warning_threshold]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_config_alert_check]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[threshold_warning]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="43fc5423-1255-439b-b72f-5ced3b0d1422" ChangeDateTime="11/03/2019 00:12:06">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_config_alert_check].[threshold_warning]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_config_alert_check]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[check_threshold_warning]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="d4a76e0f-3f08-4933-aad1-c529add58048" ChangeDateTime="11/03/2019 00:12:12">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_config_alert_check].[threshold_critical]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_config_alert_check]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[check_threshold_critical]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="5ec83a87-8f57-4b90-b96c-b4015d752e02" ChangeDateTime="11/03/2019 19:45:06">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_logger_alert].[check_item]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_logger_alert]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[check_attribute]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="4275fd4f-aae5-488b-bd6e-d5f9b44e962c" ChangeDateTime="11/03/2019 21:39:41">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_config_add_check_jobs]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_config_add_default_checks]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="c0794e51-98c6-4fd8-a7b7-8b4107714e03" ChangeDateTime="11/04/2019 11:18:54">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_logger_alert]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[sqlwatch_logger_alert_check]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="ea4a8114-caf4-4804-8abb-f267da294272" ChangeDateTime="11/04/2019 11:20:34">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_config_alert_target].[target_profile]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_config_alert_target]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[target_attributes]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="6eeae60f-a420-41fa-9cdb-d61b75928b20" ChangeDateTime="11/04/2019 11:29:59">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_meta_alert_target_queue]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[sqlwatch_meta_alert_notify_queue]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="13255035-b013-4b2b-9e22-910a19c7fd7d" ChangeDateTime="11/04/2019 12:10:22">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_internal_process_alerts]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_internal_process_checks]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="ad75535b-5f09-4602-99bd-ad8d5d00a9db" ChangeDateTime="11/04/2019 15:50:50">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_meta_alert_notify_queue].[message_status]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_meta_alert_notify_queue]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[send_status]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="b714d40c-ae78-4d39-b5e8-8ef56a79bd8b" ChangeDateTime="11/04/2019 15:51:02">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_meta_alert_notify_queue].[sending_error]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_meta_alert_notify_queue]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[send_error_message]" />
+  </Operation>
 </Operations>
