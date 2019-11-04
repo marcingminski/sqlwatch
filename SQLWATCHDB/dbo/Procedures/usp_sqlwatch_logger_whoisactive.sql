@@ -19,7 +19,7 @@ begin tran
 	-- or deadlocked transactions into a table -- or XE to save to xml - but this could cause trouble parsing large
 	-- xmls.
 	--------------------------------------------------------------------------------------------------------------
-	if object_id('master.dbo.sp_whoisactive') is not null
+	if object_id('master.dbo.sp_whoisactive') is not null or object_id('dbo.sp_whoisactive') is not null
 		begin
 			create table [##SQLWATCH_7A2124DA-B485-4C43-AE04-65D61E6A157C] (
 				[snapshot_time] datetime2(0) not null
