@@ -8,7 +8,7 @@ SQLWATCH is a SQL Server Performance and capacity data collector with Power BI d
 
 # Resources
 * How to get started https://sqlwatch.io/get 
-* Documentation https://sqlwatch.io/docs
+* Documentation https://docs.sqlwatch.io
 * Our Slack channel for discussion, asking questions, solving problems https://sqlcommunity.slack.com/messages/CCCETQBFZ
 
 # Architecture
