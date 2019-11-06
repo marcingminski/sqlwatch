@@ -33,7 +33,10 @@ declare @check_status varchar(50),
 		@send_recovery bit,
 		@send_email bit = 1,
 		@retrigger_on_every_change bit,
-		@target_type varchar(50)
+		@target_type varchar(50),
+		@error_message nvarchar(max) = '',
+		@trigger_limit_hour tinyint, --max number of messages per hour
+		@trigger_current_count smallint
 
 declare @email_subject nvarchar(255),
 		@email_body nvarchar(4000),
@@ -47,7 +50,7 @@ declare @snapshot_type_id tinyint = 18,
 declare @mail_return_code int
 
 declare @check_output as table (
-	value decimal(28,2)
+	value decimal(28,2) not null
 	)
 
 insert into [dbo].[sqlwatch_logger_snapshot_header]
@@ -70,24 +73,27 @@ select	  ac.[check_id]
 		, ac.[check_threshold_critical]
 		, ac.[sql_instance]
 		, isnull(last_check_status,'')
-		, t.target_address
-		, t.[target_attributes]
+		, t.[delivery_target_address]
+		, t.[delivery_target_attributes]
 		, [last_check_value]
 		, isnull([last_status_change_date],'1970-01-01')
-		, [trigger_repeat_period_minutes]
-		, isnull([last_trigger_date],'1970-01-01')
-		, [trigger_recovery]
-		, [trigger_every_fail]
-		, ac.[trigger_enabled]
-		, [target_type]
+		, [delivery_repeat_period_minutes]
+		, isnull(last_notification_sent,'1970-01-01')
+		, [deliver_recovery]
+		, [deliver_every_failure]
+		, ac.[delivery_enabled]
+		, [delivery_target_type]
+		, [max_deliveries_per_hour]
+		, [last_hour_trigger_count] = total_notifications_in_last_hour
 from [dbo].[sqlwatch_config_alert_check] ac
 
-	left join dbo.sqlwatch_meta_alert ma
+	left join [dbo].[vw_sqlwatch_report_dim_alert] ma
 	on ac.sql_instance = ma.sql_instance
 	and ac.check_id = ma.check_id
 
-	left join [dbo].[sqlwatch_config_alert_target] t
-		on t.target_id = ac.target_id
+	left join [dbo].[sqlwatch_config_delivery_target] t
+		on t.[delivery_target_id] = ac.[delivery_target_id]
+
 where [check_enabled] = 1
 and datediff(minute,isnull([last_check_date],'1970-01-01'),getdate()) >= isnull([check_frequency_minutes],0)
 
@@ -95,7 +101,7 @@ open cur_rules
   
 fetch next from cur_rules 
 into @rule_id, @header, @description , @sql, @warning, @critical, @sql_instance, @last_check_status, @recipients, @target_attributes, @previous_value, @last_status_change, @retrigger_time
-	, @last_trigger_time, @send_recovery, @retrigger_on_every_change, @send_email, @target_type
+	, @last_trigger_time, @send_recovery, @retrigger_on_every_change, @send_email, @target_type, @trigger_limit_hour, @trigger_current_count
   
 while @@FETCH_STATUS = 0  
 begin
@@ -105,12 +111,30 @@ begin
 	set @check_output_value = null
 	delete from @check_output
 
+	-- override send_email flag based on the trigger (message) limit per hour:
+	set @send_email = case when @send_email = 1 and isnull(@trigger_current_count,0) <= @trigger_limit_hour then 1 else 0 end
+
 	-------------------------------------------------------------------------------------------------------------------
 	-- execute check and log output in variable:
 	-------------------------------------------------------------------------------------------------------------------
 	set @check_start_time = SYSDATETIME()
-	insert into @check_output ([value])
-	exec sp_executesql @sql
+
+	begin try
+		insert into @check_output ([value])
+		exec sp_executesql @sql
+	end try
+	begin catch
+		select @error_message = @error_message + '
+' + convert(varchar(23),getdate(),121) + ': CheckID: ' + convert(varchar(10),@rule_id) + ': ' + ERROR_MESSAGE()
+
+		update	[dbo].[sqlwatch_meta_alert]
+		set last_check_date = getdate(),
+			last_check_status = 'CHECK ERROR'
+		where [check_id] = @rule_id
+		and sql_instance = @@SERVERNAME
+
+		goto ProcessNextCheck
+	end catch
 
 	set @check_exec_time_ms = convert(real,datediff(MICROSECOND,@check_start_time,SYSDATETIME()) * 1000.0)
 
@@ -124,148 +148,96 @@ begin
 	--	2. we can have a trigger if someone creates new databsae in which case, the critical would be greater than desired value
 	--	3. we can have a trigger that checks for a number of databases and any change is critical either greater or lower.
 	-------------------------------------------------------------------------------------------------------------------
-Print 'Check id: ' + convert(varchar(50),@rule_id)
 
-if @critical is not null and @check_status is null
-	begin
-		if left(@critical,2) = '<=' 
-			begin
-				if @check_output_value <= convert(decimal(28,2),replace(@critical,'<=',''))
-					set @check_status = 'CRITICAL'
-			end
-		else if left(@critical,2) = '>='
-			begin
-				if @check_output_value >= convert(decimal(28,2),replace(@critical,'>=','')) 
-					set @check_status = 'CRITICAL'
-			end
-		else if left(@critical,2) = '<>'
-			begin
-				if @check_output_value <> convert(decimal(28,2),replace(@critical,'<>','')) 
-					set @check_status = 'CRITICAL'
-			end
+--if @critical is not null and @check_status is null
 
-		else if left(@critical,1) = '>'
-			begin
-				if @check_output_value > convert(decimal(28,2),replace(@critical,'>','')) 
-					set @check_status = 'CRITICAL'
-			end
-		else if left(@critical,1) = '<'
-			begin
-				if @check_output_value < convert(decimal(28,2),replace(@critical,'<','')) 
-					set @check_status = 'CRITICAL'
-			end
-		else if left(@critical,1) = '='
-			begin
-				if @check_output_value = convert(decimal(28,2),replace(@critical,'=','')) 
-					set @check_status = 'CRITICAL'
-			end
-		else
-			begin
-				if @check_output_value = convert(decimal(28,2),@critical) 
-					set @check_status = 'CRITICAL'
-			end
-	end
 
-Print 'CRITICAL: ' + isnull(convert(varchar(100),@check_output_value),'NULL') + ' ' + @check_status
+select @check_status = case when @critical is not null and @check_status is null and [dbo].[ufn_sqlwatch_get_check_status] ( @critical, @check_output_value ) = 1 then 'CRITICAL' end
+select @check_status = case when @warning is not null and @check_status is null and [dbo].[ufn_sqlwatch_get_check_status] ( @critical, @check_output_value ) = 1 then 'WARNING' end
 
-if @warning is not null and @check_status is null
-	begin
-		if left(@warning,2) = '<=' 
-			begin
-				if @check_output_value <= convert(decimal(28,2),replace(@warning,'<=',''))
-					set @check_status = 'WARNING'
-			end
-		else if left(@warning,2) = '>='
-			begin
-				if @check_output_value >= convert(decimal(28,2),replace(@warning,'>=','')) 
-					set @check_status = 'WARNING'
-			end
-		else if left(@warning,2) = '<>'
-			begin
-				if @check_output_value <> convert(decimal(28,2),replace(@warning,'<>','')) 
-					set @check_status = 'WARNING'
-			end
 
-		else if left(@warning,1) = '>'
-			begin
-				if @check_output_value > convert(decimal(28,2),replace(@warning,'>','')) 
-					set @check_status = 'WARNING'
-			end
-		else if left(@warning,1) = '<'
-			begin
-				if @check_output_value < convert(decimal(28,2),replace(@warning,'<','')) 
-					set @check_status = 'WARNING'
-			end
-		else if left(@warning,1) = '='
-			begin
-				if @check_output_value = convert(decimal(28,2),replace(@warning,'=','')) 
-					set @check_status = 'WARNING'
-			end
-		else
-			begin
-				if @check_output_value = convert(decimal(28,2),@warning) 
-					set @check_status = 'WARNING'
-			end
-	end
-
-Print 'WARNING: ' + isnull(convert(varchar(100),@check_output_value),'NULL') + ' ' + @check_status
-
---if @success is not null and @check_status is null
+--if @warning is not null and @check_status is null
 --	begin
---		if left(@success,2) = '<='
+--		select @check_status = case when [dbo].[ufn_sqlwatch_get_check_status] ( @critical, @check_output_value ) = 1 then 'CRITICAL' end
+--	end
+	--begin
+	--	if left(@critical,2) = '<=' 
+	--		begin
+	--			if @check_output_value <= convert(decimal(28,2),replace(@critical,'<=',''))
+	--				set @check_status = 'CRITICAL'
+	--		end
+	--	else if left(@critical,2) = '>='
+	--		begin
+	--			if @check_output_value >= convert(decimal(28,2),replace(@critical,'>=','')) 
+	--				set @check_status = 'CRITICAL'
+	--		end
+	--	else if left(@critical,2) = '<>'
+	--		begin
+	--			if @check_output_value <> convert(decimal(28,2),replace(@critical,'<>','')) 
+	--				set @check_status = 'CRITICAL'
+	--		end
+
+	--	else if left(@critical,1) = '>'
+	--		begin
+	--			if @check_output_value > convert(decimal(28,2),replace(@critical,'>','')) 
+	--				set @check_status = 'CRITICAL'
+	--		end
+	--	else if left(@critical,1) = '<'
+	--		begin
+	--			if @check_output_value < convert(decimal(28,2),replace(@critical,'<','')) 
+	--				set @check_status = 'CRITICAL'
+	--		end
+	--	else if left(@critical,1) = '='
+	--		begin
+	--			if @check_output_value = convert(decimal(28,2),replace(@critical,'=','')) 
+	--				set @check_status = 'CRITICAL'
+	--		end
+	--	else
+	--		begin
+	--			if @check_output_value = convert(decimal(28,2),@critical) 
+	--				set @check_status = 'CRITICAL'
+	--		end
+	--end
+
+--if @warning is not null and @check_status is null
+--	begin
+--		if left(@warning,2) = '<=' 
 --			begin
---				if @check_output_value <= convert(decimal(28,2),replace(@success,'<=','')) 
---				set @check_status = 'OK'
+--				if @check_output_value <= convert(decimal(28,2),replace(@warning,'<=',''))
+--					set @check_status = 'WARNING'
 --			end
---		else if left(@success,2) = '>='
+--		else if left(@warning,2) = '>='
 --			begin
---				if @check_output_value >= convert(decimal(28,2),replace(@success,'>=','')) 
---				set @check_status = 'OK'
+--				if @check_output_value >= convert(decimal(28,2),replace(@warning,'>=','')) 
+--					set @check_status = 'WARNING'
 --			end
---		else if left(@success,2) = '<>'
+--		else if left(@warning,2) = '<>'
 --			begin
---				if @check_output_value <> convert(decimal(28,2),replace(@success,'<>','')) 
---				set @check_status = 'OK'
+--				if @check_output_value <> convert(decimal(28,2),replace(@warning,'<>','')) 
+--					set @check_status = 'WARNING'
 --			end
 
---		else if left(@success,1) = '>'
+--		else if left(@warning,1) = '>'
 --			begin
---				if @check_output_value > convert(decimal(28,2),replace(@success,'>','')) 
---				set @check_status = 'OK'
+--				if @check_output_value > convert(decimal(28,2),replace(@warning,'>','')) 
+--					set @check_status = 'WARNING'
 --			end
---		else if left(@success,1) = '<'
+--		else if left(@warning,1) = '<'
 --			begin
---				if @check_output_value < convert(decimal(28,2),replace(@success,'<','')) 
---				set @check_status = 'OK'
+--				if @check_output_value < convert(decimal(28,2),replace(@warning,'<','')) 
+--					set @check_status = 'WARNING'
 --			end
-
---		--finally, if we are comparing eequal values, if the check output is not exactly
---		--what we are expecting we must set it to CRITICAL
---		else if left(@success,1) = '='
+--		else if left(@warning,1) = '='
 --			begin
---				if @check_output_value = convert(decimal(28,2),replace(@success,'=','')) 
---					begin
---						set @check_status = 'OK'
---					end
---				else
---					begin
---						set @check_status = 'CRITICAL'
---					end
+--				if @check_output_value = convert(decimal(28,2),replace(@warning,'=','')) 
+--					set @check_status = 'WARNING'
 --			end
 --		else
 --			begin
---				if @check_output_value = convert(decimal(28,2),@success) 
---					begin
---						set @check_status = 'OK'
---					end
---				else
---					begin
---						set @check_status = 'CRITICAL'
---					end
+--				if @check_output_value = convert(decimal(28,2),@warning) 
+--					set @check_status = 'WARNING'
 --			end
 --	end
-
-Print 'OK: ' + isnull(convert(varchar(100),@check_output_value),'NULL') + ' ' + @check_status
 
 --if @success is null and @check_status is still null after having evaluated all conditions we are assuming OK status
 --it will likely mean that it is not critical, nor warning so must be ok
@@ -288,19 +260,6 @@ if @check_status is null and @critical is null
 	and sql_instance = @@SERVERNAME
 
 	-------------------------------------------------------------------------------------------------------------------
-	-- log alert in logger table and move on to the next item
-	-------------------------------------------------------------------------------------------------------------------
-	insert into [dbo].[sqlwatch_logger_alert_check]
-	values (@@SERVERNAME, @snapshot_date, @snapshot_type_id, @rule_id, @check_output_value, case when @check_status = 'OK' then 1 else 0 end, case when @mail_return_code = 0 then 1 else 0 end, @check_exec_time_ms)
-
-
-
-
-
-
-
-
-	-------------------------------------------------------------------------------------------------------------------
 	-- BUILD PAYLOAD
 	-------------------------------------------------------------------------------------------------------------------
 	if @send_email = 1
@@ -314,8 +273,9 @@ if @check_status is null and @critical is null
 			-- if previous status is NOT ok and current status is OK the check has recovered from fail to success.
 			-- we can send an email notyfing DBAs that the problem has gone away
 			-------------------------------------------------------------------------------------------------------------------
-			if @last_check_status <> 'OK' and @check_status = 'OK'
+			if @last_check_status <> '' and @last_check_status <> 'OK' and @check_status = 'OK'
 				begin
+					Print @last_check_status
 					set @send_email = @send_recovery
 					set @email_subject = 'RECOVERED (OK): ' + @header + ' on ' + @sql_instance 
 				end
@@ -334,7 +294,7 @@ if @check_status is null and @critical is null
 			-------------------------------------------------------------------------------------------------------------------
 			-- when the current status is not OK and the previous status has changed, it is a new notification:
 			-------------------------------------------------------------------------------------------------------------------
-			else if @check_status <> 'OK' and isnull(@last_check_status,'') <> @check_status
+			else if @check_status <> 'OK' and @last_check_status <> @check_status
 				begin
 					set @email_subject = @header + ': ' + @check_status + ' on ' + @sql_instance
 				end
@@ -350,22 +310,33 @@ if @check_status is null and @critical is null
 				end
 
 			-------------------------------------------------------------------------------------------------------------------
-			-- finally, if the previous status is the same as current status and no retrigger defined we are not doing anything.
+			-- if the previous status is null and current status is OK it probably a new check and we are not doing anything.
 			-------------------------------------------------------------------------------------------------------------------
-			else if @last_check_status = @check_status and (@retrigger_time is null or datediff(minute,@last_trigger_time,getdate()) < @retrigger_time)
+			else if @check_status = 'OK' and  @last_check_status = ''
 				begin
-					print 'Check id: ' + convert(varchar(10),@rule_id) + ': no action'
-					goto ProcessNextCheck
+					set @send_email = 0
+				end
+
+			-------------------------------------------------------------------------------------------------------------------
+			-- if the previous status is the same as current status and no retrigger defined we are not doing anything.
+			-------------------------------------------------------------------------------------------------------------------
+			else if @last_check_status <> '' and @last_check_status = @check_status and (@retrigger_time is null or datediff(minute,@last_trigger_time,getdate()) < @retrigger_time)
+				begin
+					--print 'Check id: ' + convert(varchar(10),@rule_id) + ': no action'
+					set @send_email = 0
 				end
 			else
 				begin
-					print 'Check id: ' + convert(varchar(10),@rule_id) + ': UNDEFINED'
-					goto ProcessNextCheck
+					--print 'Check id: ' + convert(varchar(10),@rule_id) + ': UNDEFINED'
+					set @send_email = 0
 				end
 
 			-------------------------------------------------------------------------------------------------------------------
 			-- set email content
 			-------------------------------------------------------------------------------------------------------------------
+			if @send_email = 0
+				goto SkipEmail
+
 			set @email_body = '
 Check: ' + @header + ' (CheckId:' + convert(varchar(50),@rule_id) + ')
 
@@ -403,75 +374,46 @@ Email sent from SQLWATCH on host: ' + @@SERVERNAME +'
 https://docs.sqlwatch.io '
 
 
-			update	[dbo].[sqlwatch_meta_alert]
-			set last_trigger_date = getdate()
-			where [check_id] = @rule_id
-
-
-			if @target_type = 'sp_send_dbmail' and @email_subject is not null and @email_body is not null and @recipients is not null
+			if @email_subject is not null and @email_body is not null and @recipients is not null
 				begin
-					set @msg_payload = 'declare @rtn int
-exec @rtn = msdb.dbo.sp_send_dbmail @recipients = ''' + @recipients + ''',
-@subject = ''' + @email_subject + ''',
-@body = ''' + replace(@email_body,'''','''''') + ''',
-' + @target_attributes + '
-select error=@rtn'
-
+					set @msg_payload = [dbo].[ufn_sqlwatch_get_delivery_command] (@recipients, @email_subject, @email_body, @target_attributes, @target_type)
 					-------------------------------------------------------------------------------------------------------------------
 					-- insert into message queue table:
 					-------------------------------------------------------------------------------------------------------------------
-					insert into [dbo].[sqlwatch_meta_alert_notify_queue]([sql_instance], [notify_timestamp], [check_id], [target_type], [message_payload], [send_status])
+					insert into [dbo].[sqlwatch_meta_delivery_queue]([sql_instance], [time_queued], [check_id], [delivery_target_type], [delivery_command], [delivery_status])
 					values (@@SERVERNAME, sysdatetime(), @rule_id, @target_type, @msg_payload, 0)
-				end
-
-
-			if upper(@target_type) = upper('PUSHOVER') and @email_subject is not null and @email_body is not null and @recipients is not null
-				begin
-					set @msg_payload = '$uri = "' + @recipients + '"
-$parameters = @{
- ' + @target_attributes + '
-  message = "' + @email_subject + '
- ' + replace(@email_body,'''','''''') + '"}
-  
-  $parameters | Invoke-RestMethod -Uri $uri -Method Post'
-
-					-------------------------------------------------------------------------------------------------------------------
-					-- insert into message queue table:
-					-------------------------------------------------------------------------------------------------------------------
-					insert into [dbo].[sqlwatch_meta_alert_notify_queue]([sql_instance], [notify_timestamp], [check_id], [target_type], [message_payload], [send_status])
-					values (@@SERVERNAME, sysdatetime(), @rule_id, @target_type, @msg_payload, 0)
-				end
-
-
-			if upper(@target_type) = upper('Send-MailMessage') and @email_subject is not null and @email_body is not null and @recipients is not null
-				begin
-					set @msg_payload = '
-$parameters = @{
-To = "' + @recipients + '"
-Subject = "' + @email_subject + '"
-Body = "' + @email_body + '"
- ' + @target_attributes + '
- }
-Send-MailMessage @parameters'
-
-  					-------------------------------------------------------------------------------------------------------------------
-					-- insert into message queue table:
-					-------------------------------------------------------------------------------------------------------------------
-					insert into [dbo].[sqlwatch_meta_alert_notify_queue]([sql_instance], [notify_timestamp], [check_id], [target_type], [message_payload], [send_status])
-					values (@@SERVERNAME, sysdatetime(), @rule_id, @target_type, @msg_payload, 0)
-
 				end
 		end
 
+	-------------------------------------------------------------------------------------------------------------------
+	-- log alert in logger table and move on to the next item
+
+	-- at this point, the @send_email flag is an indication whether the notification has been requested or not and  NOT
+	-- whether it was successfuly delivered. delivery happens in another step and currently there is no feedback.
+	-- However, if the notification fails and we get hold of the status code, we will keep failed notifications in the queue table.
+	-------------------------------------------------------------------------------------------------------------------
+	SkipEmail:
+
+	insert into [dbo].[sqlwatch_logger_alert_check] (sql_instance, snapshot_time, snapshot_type_id, check_id, 
+		check_result, check_pass, delivery_trigger, check_exec_time_ms)
+	values (@@SERVERNAME, @snapshot_date, @snapshot_type_id, @rule_id, @check_output_value, case when @check_status = 'OK' then 1 else 0 end, @send_email, @check_exec_time_ms)
 
 	ProcessNextCheck:
 
-
 	fetch next from cur_rules 
 	into @rule_id, @header, @description , @sql, @warning, @critical, @sql_instance, @last_check_status, @recipients, @target_attributes, @previous_value, @last_status_change, @retrigger_time
-		, @last_trigger_time, @send_recovery, @retrigger_on_every_change, @send_email, @target_type
+		, @last_trigger_time, @send_recovery, @retrigger_on_every_change, @send_email, @target_type, @trigger_limit_hour, @trigger_current_count
 	
 end
 
 close cur_rules
 deallocate cur_rules
+
+
+if nullif(@error_message,'') is not null
+	begin
+		set @error_message = 'Errors during check execution: 
+' + @error_message
+
+		raiserror (@error_message,16,1)
+	end
