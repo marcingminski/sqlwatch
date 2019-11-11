@@ -444,9 +444,14 @@ using (
 	/* Os volume utilisation */
 	select [snapshot_type_id] = 17, [snapshot_type_desc] = 'Disk Utilisation OS', [snapshot_retention_days] = 365
 	union
-	/* Alert history */
-	select [snapshot_type_id] = 18, [snapshot_type_desc] = 'Alert Checks', [snapshot_retention_days] = 2
-
+	/* Checks History */
+	select [snapshot_type_id] = 18, [snapshot_type_desc] = 'Checks', [snapshot_retention_days] = 2
+	union
+	/* Actions History */
+	select [snapshot_type_id] = 19, [snapshot_type_desc] = 'Actions', [snapshot_retention_days] = 2
+	union
+	/* Reports History */
+	select [snapshot_type_id] = 20, [snapshot_type_desc] = 'Reports', [snapshot_retention_days] = 2
 
 ) as source
 on (source.[snapshot_type_id] = target.[snapshot_type_id])
@@ -826,19 +831,124 @@ if (select count(*) from [dbo].[sqlwatch_logger_snapshot_header]
 
 
 --------------------------------------------------------------------------------------
--- load default alerts
+-- load default report styles:
 --------------------------------------------------------------------------------------
-if (select count(*) from [dbo].[sqlwatch_config_alert_target] ) = 0
+if not exists (select * from [dbo].[sqlwatch_config_report_style] where [report_style_id] = 1)
 	begin
-		set identity_insert [dbo].[sqlwatch_config_alert_target] on 
-		insert into [dbo].[sqlwatch_config_alert_target]([target_id],[target_type],[target_address],[target_attributes])
-		values	(1, 'sp_send_dbmail', 'dba@yourcompany.com','@profile_name = ''DB mail profile'''),
-				(2, 'Pushover', 'https://api.pushover.net/1/messages.json','token = "YOURAPPTOKEN"
-user = "YOURUSERTOKEN"'''),
-				(3, 'Send-MailMessage', 'dba@yourcompany.com','From = "sqlwatch@yourcompany.com" 
-SmtpServer = "smtp.yourcompany.com"''')
-		set identity_insert [dbo].[sqlwatch_config_alert_target] off
+		set identity_insert [dbo].[sqlwatch_config_report_style] on
+		insert into [dbo].[sqlwatch_config_report_style] ([report_style_id], [style])
+		values (1,'body {font-family: "Trebuchet MS",Helvetica,sans-serif; font-size: 12px;}
+table.sqlwatchtbl { border: 1px solid #AAAAAA; background-color: #FEFEFE; width: 100%; text-align: left; border-collapse: collapse; }
+table.sqlwatchtbl td, table.sqlwatchtbl th { border: 1px solid #AAAAAA; padding: 3px 3px; }
+table.sqlwatchtbl tbody td { color: #333333; }
+table.sqlwatchtbl tr:nth-child(even) { background: #EEEEEE; }
+table.sqlwatchtbl thead { background: #7C008C; }
+table.sqlwatchtbl thead th { font-size: 12px; font-weight: bold; color: #FFFFFF;}')
+		set identity_insert [dbo].[sqlwatch_config_report_style] off
 	end
+
+--------------------------------------------------------------------------------------
+-- load reports 
+--------------------------------------------------------------------------------------
+if (select count(*) from [dbo].[sqlwatch_config_report]) = 0
+	begin
+		set identity_insert [dbo].[sqlwatch_config_report] on 
+		insert into [dbo].[sqlwatch_config_report]
+				   ([report_id]
+				   ,[report_title]
+				   ,[report_description]
+				   ,[report_definition]
+				   ,[report_definition_type]
+				   ,[report_active]
+				   ,[report_batch_id]
+				   ,[report_style_id])
+		values 
+
+			(1,'Indexes with high fragmentation','Lisf ot indexes where the fragmentation is above 30% and page count greater than 1000. 
+Index fragmentation can impact performance and should be minimum. You should be running index maintenance often. 
+A very good and free index maintenance solution is Ola Hallengren''s Maintenance Solution'
+			, 'SELECT [Table] = s.[name] +''.''+t.[name]
+ ,[Index] = i.NAME 
+ ,[Type] = index_type_desc
+ ,[Fragmentation] = convert(decimal(10,2),avg_fragmentation_in_percent)
+ ,[Records] = record_count
+ ,[Pages] = page_count
+FROM sys.dm_db_index_physical_stats(DB_ID(), NULL, NULL, NULL, ''SAMPLED'') ips
+INNER JOIN sys.tables t on t.[object_id] = ips.[object_id]
+INNER JOIN sys.schemas s on t.[schema_id] = s.[schema_id]
+INNER JOIN sys.indexes i ON (ips.object_id = i.object_id) AND (ips.index_id = i.index_id)
+WHERE avg_fragmentation_in_percent > 30
+and page_count > 1000','Query',1,null,1),
+
+			(2,'Failed Agent Jobs (5m) on ' + @@SERVERNAME,'List jobs that are enabled and have failed in the last 5 minutes. 
+Note that if a job runs frequently there is a possibility that in the small amount of time between the check (trigger) has completed and this report sent out, the job could have run again and suceeded and the number of failed jobs may differ between the check notification and this report.',
+'select 
+	[Job] = sj.name,
+	[Step] = sjs.step_name,
+	[Message] = sjh.[message],
+	[Run Time] = msdb.dbo.agent_datetime(sjh.run_date, sjh.run_time)
+FROM msdb.dbo.sysjobhistory sjh
+inner join msdb.dbo.sysjobs sj 
+	on sjh.job_id = sj.job_id
+inner join msdb.dbo.sysjobsteps sjs
+	on sjs.job_id = sj.job_id
+	and sjh.step_id = sjs.step_id
+where sjh.step_id > 0
+    and msdb.dbo.agent_datetime(sjh.run_date, sjh.run_time) > dateadd(minute,-5,getdate())
+	and sjh.run_status = 0','Query',1,null,1)
+
+		set identity_insert [dbo].[sqlwatch_config_report] off
+	end
+
+--------------------------------------------------------------------------------------
+-- load default actions
+--------------------------------------------------------------------------------------
+if (select count(*) from [dbo].[sqlwatch_config_action] ) = 0
+	begin
+		set identity_insert [dbo].[sqlwatch_config_action] on 
+		insert into [dbo].[sqlwatch_config_action]([action_id],[action_description],[action_exec_type],[action_exec],[action_report_id],[action_enabled])
+		values	(1, 'Send to DBA using sp_send_mail', 'T-SQL','exec msdb.dbo.sp_send_dbmail @recipients = ''dba@yourcompany.com'',
+@subject = ''{SUBJECT}'',
+@body = ''{BODY}'',
+@profile_name=''DBA''',null,1),
+
+				(2, 'Send to Pushover', 'PowerShell','$uri = "https://api.pushover.net/1/messages.json"
+$parameters = @{
+  token = "YOUR_TOKEN"
+  user = "USER_TOKEN"
+  message = "{SUBJECT} {BODY}"
+}
+$parameters | Invoke-RestMethod -Uri $uri -Method Post',null,1),
+
+				(3, 'Send to Client using Send-MailMessage and external SMTP', 'PowerShell','Send-MailMessage -From ''DBA <dba@yourcompany.com>'' -To ''dba@yourcompany.com'' -Subject "{SUBJECT}" -Body "{BODY}" -SmtpServer "smtp.yourcompany.com"',null,0),
+
+				(4, 'Save Business Report to Shared Drive', 'PowerShell','"{BODY}" | Out-File -FilePath \\yourshare\Folder\export.csv',null,0),
+
+				(5, 'Push Alert to ZABBIX', 'PowerShell','zabbix_sender.exe -z zabbix.yourcompany.com -s "' + @@SERVERNAME + '" -k your.check.name -o "{BODY}"',null,0),
+
+				(6, 'Run Failed Agent Jobs Reprot', 'T-SQL',null,2,1),
+
+				(7, 'Send to DBA using sp_send_mail (HTML)', 'T-SQL','exec msdb.dbo.sp_send_dbmail @recipients = ''dba@yourcompany.com'',
+				@subject = ''{SUBJECT}'',
+				@body = ''{BODY}'',
+				@profile_name=''DBA'',
+				@body_format = ''HTML''',null,1)
+
+		set identity_insert [dbo].[sqlwatch_config_action] off
+	end
+
+--------------------------------------------------------------------------------------
+-- assosiate reports with actions
+--------------------------------------------------------------------------------------
+if (select count(*) from [dbo].[sqlwatch_config_report_action]) = 0
+	begin
+		insert into [dbo].[sqlwatch_config_report_action]
+		values (@@SERVERNAME,2,1)
+	end
+
+exec [dbo].[usp_sqlwatch_config_add_default_checks]
+
+
 
 declare @alerts as table (
 	[sql_instance] [varchar](32) NOT NULL,
