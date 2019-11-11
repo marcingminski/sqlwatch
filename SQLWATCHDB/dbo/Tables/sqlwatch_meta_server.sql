@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[sqlwatch_meta_server]
 (
 	[physical_name] nvarchar(128),
-	[servername] varchar(32),
+	[servername] varchar(32) not null,
 	[service_name] nvarchar(128),
 	[local_net_address] varchar(50),
 	[local_tcp_port] varchar(50),
