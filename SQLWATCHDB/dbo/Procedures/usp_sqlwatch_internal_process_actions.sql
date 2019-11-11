@@ -153,7 +153,7 @@ if @action_type  <> 'NONE'
 				exec [dbo].[usp_sqlwatch_internal_process_reports] @report_id = @report_id
 
 				set @action_attributes = '{
-ReportId="' + convert(varchar(10),@report_id) + '
+ReportId="' + convert(varchar(10),@report_id) + '"
 }'
 			end
 		else
