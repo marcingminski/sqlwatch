@@ -3,6 +3,7 @@ as
 
 select m.[object_name], m.[counter_name], [instance_name], [cntr_value_raw]=[cntr_value], report_time, d.[sql_instance], [cntr_value_calculated]
 	--, pcp.desired_value_desc, pcp.desired_value, pcp.description
+	, [aggregation_interval_minutes] = 1
 from [dbo].[sqlwatch_logger_perf_os_performance_counters] d
   	
 	inner join dbo.sqlwatch_logger_snapshot_header h
@@ -20,5 +21,19 @@ from [dbo].[sqlwatch_logger_perf_os_performance_counters] d
 	--	and pcp.counter_name = m.counter_name
 
 	where m.cntr_type <> 1073939712
+
+
+	/* aggregated data. we are going to have to specify aggregataion level for every select */
+	union all
+
+	select m.[object_name], m.[counter_name], [instance_name], [cntr_value]=null
+	, report_time=[snapshot_time]
+	, d.[sql_instance]
+	, [cntr_value_calculated]
+	, [trend_interval_minutes] 
+	from [dbo].[sqlwatch_trend_perf_os_performance_counters] d
+	inner join [dbo].[sqlwatch_meta_performance_counter] m
+		on m.sql_instance = d.sql_instance
+		and m.performance_counter_id = d.performance_counter_id
 
  
