@@ -137,13 +137,13 @@ select [sql_instance] = @@SERVERNAME
 	,  [check_query] = 'select count (distinct blocked_spid)
   FROM dbo.sqlwatch_logger_xes_blockers
   where blocking_start_time > dateadd(minute,-5,getdate())'
-	,  [check_frequency_minutes] = 5
+	,  [check_frequency_minutes] = null
 	,  [check_threshold_warning] = null
 	,  [check_threshold_critical] = '>0'
 	,  [check_enabled] = 1
-	,  [action_id] = 1
+	,  [action_id] = 5
 	,  [action_enabled] = 1
-	,  [action_every_failure] = 0
+	,  [action_every_failure] = 1
 	,  [notify_recovery]= 0
 	,  [action_repeat_period_minutes] = null
 	,  [action_hourly_limit] = 10

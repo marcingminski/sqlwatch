@@ -880,7 +880,7 @@ INNER JOIN sys.indexes i ON (ips.object_id = i.object_id) AND (ips.index_id = i.
 WHERE avg_fragmentation_in_percent > 30
 and page_count > 1000','Query',1,null,1),
 
-			(2,'Failed Agent Jobs (5m) on ' + @@SERVERNAME,'List jobs that are enabled and have failed in the last 5 minutes. 
+			(2,'Agent Jobs failed in the last 5 minutes','List jobs that are enabled and have failed in the last 5 minutes. 
 Note that if a job runs frequently there is a possibility that in the small amount of time between the check (trigger) has completed and this report sent out, the job could have run again and suceeded and the number of failed jobs may differ between the check notification and this report.',
 'select 
 	[Job] = sj.name,
@@ -895,7 +895,65 @@ inner join msdb.dbo.sysjobsteps sjs
 	and sjh.step_id = sjs.step_id
 where sjh.step_id > 0
     and msdb.dbo.agent_datetime(sjh.run_date, sjh.run_time) > dateadd(minute,-5,getdate())
-	and sjh.run_status = 0','Query',1,null,1)
+	and sjh.run_status = 0','Query',1,null,1),
+
+
+			(4,'Agent Jobs failed in the last 5 minutes','List of SQL Server Agent Jobs that are enabled and have failed in the last 5 minutes',
+';with cte_failed_jobs as (
+select 
+	[Job] = sj.name,
+	[Step] = sjs.step_name,
+	[Message] = sjh.[message],
+	[Run Time] = msdb.dbo.agent_datetime(sjh.run_date, sjh.run_time)
+FROM msdb.dbo.sysjobhistory sjh
+inner join msdb.dbo.sysjobs sj 
+	on sjh.job_id = sj.job_id
+inner join msdb.dbo.sysjobsteps sjs
+	on sjs.job_id = sj.job_id
+	and sjh.step_id = sjs.step_id
+where sjh.step_id > 0
+    and msdb.dbo.agent_datetime(sjh.run_date, sjh.run_time) > dateadd(minute,-5,getdate())
+	and sjh.run_status = 0
+)
+select 
+	''<h3>JOB: '' + c1.[Job] + ''</h3>'' +
+	( select char(10) + ''<p>Step: '' + c2.[Step] + '' executed on: '' + convert(varchar(23),c2.[Run Time],121) + char(10) + ''<br>Message: <span style="color:red;">'' + c2.[Message] + ''</span></p>''
+	from cte_failed_jobs c2
+	where c1.[Job] = c2.[Job]
+	order by [Run Time]
+	for xml path(''''), type).value(''.'', ''nvarchar(MAX)'')
+	 t
+from cte_failed_jobs c1
+group by c1.[Job]','Template',1,null,1),
+
+
+			(5,'Blocked Processes in the last 5 minutes','List of blocking chains in the last 5 minutes.',
+';with cte_blocking as (
+	SELECT *, rn=ROW_NUMBER() over (order by blocking_start_time)
+	  FROM [dbo].[vw_sqlwatch_report_fact_xes_blockers]
+	  WHERE blocking_start_time > dateadd(minute,-5,getdate())
+)
+select (select 
+	''<hr>
+<h3>Blocking SPID: '' + convert(varchar(10),c1.blocking_spid) + ''</h3>
+Database Name: <b>['' + c1.[database_name] + '']</b>
+<br>Blocking App: <b>'' + + c1.blocking_client_app_name + ''</b>
+<br>Blocking Host: <b>'' + c1.blocking_client_hostname + ''</b>
+<br>Blocking SQL: <span style="display:block;background:#ddd; margin-top:0.8em;padding-left:10px;padding-bottom:1em;white-space: pre;" ><code>'' + c1.blocking_sql + ''</code></span></p>
+'' +
+	( select char(10) + ''<p style="margin-left:25px;background:red;padding:10px;">
+Blocking start time: '' + convert(varchar(23),c2.[blocking_start_time],121) + char(10) + ''
+<br>Blocked SPID: <b>'' + convert(varchar(10),c2.blocked_spid) + ''</b>
+<br>Blocked SQL: <span style="display:block;background:#ddd; margin-top:0.8em;padding-left:10px;padding-bottom:1em;white-space: pre;" ><code>'' + c2.[blocked_sql] + ''</code></span></p>''
+	from cte_blocking c2
+	where c1.rn = c2.rn
+	order by rn
+	for xml path(''''), type).value(''.'', ''nvarchar(MAX)'')
+	 t
+from cte_blocking c1
+group by c1.blocking_spid, c1.[database_name], c1.blocking_client_app_name, c1.blocking_client_hostname, c1.blocking_sql, rn
+order by rn
+for xml path(''''), type).value(''.'', ''nvarchar(MAX)'')','Template',1,null,1)
 
 		set identity_insert [dbo].[sqlwatch_config_report] off
 	end
@@ -926,13 +984,15 @@ $parameters | Invoke-RestMethod -Uri $uri -Method Post',null,1),
 
 				(5, 'Push Alert to ZABBIX', 'PowerShell','zabbix_sender.exe -z zabbix.yourcompany.com -s "' + @@SERVERNAME + '" -k your.check.name -o "{BODY}"',null,0),
 
-				(6, 'Run Failed Agent Jobs Reprot', 'T-SQL',null,2,1),
+				(6, 'Run Failed Agent Jobs Report', 'T-SQL',null,2,1),
 
 				(7, 'Send to DBA using sp_send_mail (HTML)', 'T-SQL','exec msdb.dbo.sp_send_dbmail @recipients = ''dba@yourcompany.com'',
 				@subject = ''{SUBJECT}'',
 				@body = ''{BODY}'',
 				@profile_name=''DBA'',
-				@body_format = ''HTML''',null,1)
+				@body_format = ''HTML''',null,1),
+
+				(8, 'Run Blocking Process Report', 'T-SQL',null,5,1)
 
 		set identity_insert [dbo].[sqlwatch_config_action] off
 	end
