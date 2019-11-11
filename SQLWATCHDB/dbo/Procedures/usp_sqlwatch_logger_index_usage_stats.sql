@@ -35,7 +35,7 @@ values (@snapshot_time, @snapshot_type)
 declare c_db cursor for
 select [name] from sys.databases
 where database_id > 4 and state_desc = 'ONLINE'
-and [name] not like '%ReportingServer%'
+and [name] not like '%ReportServer%'
 
 open c_db
 

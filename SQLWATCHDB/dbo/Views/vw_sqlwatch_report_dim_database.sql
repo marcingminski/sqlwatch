@@ -66,7 +66,7 @@ as
 			when [database_size_bytes_current] / 1024.0 < 1000 then convert(varchar(100),convert(decimal(10,2),[database_size_bytes_current] / 1024.0 )) + ' KB'
 			when [database_size_bytes_current] / 1024.0 / 1024.0 < 1000 then convert(varchar(100),convert(decimal(10,2),[database_size_bytes_current] / 1024.0 / 1024.0)) + ' MB'
 			when [database_size_bytes_current] / 1024.0 / 1024.0 / 1024.0 < 1000 then convert(varchar(100),convert(decimal(10,2),[database_size_bytes_current] / 1024.0 / 1024.0 / 1024.0)) + ' GB' 
-			else convert(varchar(100),convert(decimal(10,2),[database_size_bytes_current] / 1024.0 / 1024.0 / 1024.0)) + ' TB' 
+			else convert(varchar(100),convert(decimal(10,2),[database_size_bytes_current] / 1024.0 / 1024.0 / 1024.0 / 1024.0)) + ' TB' 
 			end
 	, [growth_bytes_per_day_formatted] = case
 			when database_growth_bytes_per_day / 1024.0 < 1000 then convert(varchar(100),convert(decimal(10,2),database_growth_bytes_per_day / 1024.0 )) + ' KB / Day'
@@ -79,7 +79,7 @@ as
 			when [log_size_total_bytes_current] / 1024.0 < 1000 then convert(varchar(100),convert(decimal(10,2),[log_size_total_bytes_current] / 1024.0 )) + ' KB'
 			when [log_size_total_bytes_current] / 1024.0 / 1024.0 < 1000 then convert(varchar(100),convert(decimal(10,2),[log_size_total_bytes_current] / 1024.0 / 1024.0)) + ' MB'
 			when [log_size_total_bytes_current] / 1024.0 / 1024.0 / 1024.0 < 1000 then convert(varchar(100),convert(decimal(10,2),[log_size_total_bytes_current] / 1024.0 / 1024.0 / 1024.0)) + ' GB' 
-			else convert(varchar(100),convert(decimal(10,2),[log_size_total_bytes_current] / 1024.0 / 1024.0 / 1024.0)) + ' TB' 
+			else convert(varchar(100),convert(decimal(10,2),[log_size_total_bytes_current] / 1024.0 / 1024.0 / 1024.0 / 1024.0)) + ' TB' 
 			end
 
 	, [log_growth_bytes_per_day_formatted] = case
