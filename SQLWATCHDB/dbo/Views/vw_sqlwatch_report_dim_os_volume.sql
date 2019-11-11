@@ -62,7 +62,7 @@
 			when volume_total_space_bytes_current / 1024.0 < 1000 then convert(varchar(100),convert(decimal(10,2),volume_total_space_bytes_current / 1024.0 )) + ' KB'
 			when volume_total_space_bytes_current / 1024.0 / 1024.0 < 1000 then convert(varchar(100),convert(decimal(10,2),volume_total_space_bytes_current / 1024.0 / 1024.0)) + ' MB'
 			when volume_total_space_bytes_current / 1024.0 / 1024.0 / 1024.0 < 1000 then convert(varchar(100),convert(decimal(10,2),volume_total_space_bytes_current / 1024.0 / 1024.0 / 1024.0)) + ' GB' 
-			else convert(varchar(100),convert(decimal(10,2),volume_total_space_bytes_current / 1024.0 / 1024.0 / 1024.0)) + ' TB' 
+			else convert(varchar(100),convert(decimal(10,2),volume_total_space_bytes_current / 1024.0 / 1024.0 / 1024.0 / 1024.0)) + ' TB' 
 			end
 	, [free_space_formatted] = case
 			when [volume_free_space_bytes_current] / 1024.0 < 1000 then convert(varchar(100),convert(decimal(10,2),[volume_free_space_bytes_current] / 1024.0 )) + ' KB'
