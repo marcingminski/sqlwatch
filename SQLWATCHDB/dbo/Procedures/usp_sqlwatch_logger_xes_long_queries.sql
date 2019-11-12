@@ -58,7 +58,7 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 		--where xed.event_data.value('(@name)[1]', 'varchar(255)') not in ( 'wait_info', 'wait_info_external')
 
 
-		insert into dbo.[sqlwatch_logger_xes_long_queries]([activity_id], [activity_sequence], [activity_id_xfer], [activity_seqeuence_xfer], [event_time], event_name, session_id, database_name, cpu_time, physical_reads, logical_reads, writes, spills, offset, offset_end, statement, username, 
+		insert into dbo.[sqlwatch_logger_xes_long_queries]([activity_id], [activity_sequence], [activity_id_xfer], [activity_sequence_xfer], [event_time], event_name, session_id, database_name, cpu_time, physical_reads, logical_reads, writes, spills, offset, offset_end, statement, username, 
 			sql_text, object_name, client_hostname, client_app_name, duration_ms, wait_type, snapshot_time, snapshot_type_id)
 
 		select 

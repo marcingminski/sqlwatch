@@ -1,9 +1,9 @@
 ﻿CREATE TABLE [dbo].[sqlwatch_logger_xes_long_queries](
 	[long_query_id] bigint identity (0,1),
 	[activity_id] uniqueidentifier,
-	[activity_sequence] smallint,
+	[activity_sequence] bigint,
 	[activity_id_xfer] uniqueidentifier,
-	[activity_seqeuence_xfer] smallint,
+	[activity_sequence_xfer] bigint,
 	--[event_time_start] datetime not null,
 	[event_time] [datetime] not null,
 	[event_name] [varchar](255) not null,

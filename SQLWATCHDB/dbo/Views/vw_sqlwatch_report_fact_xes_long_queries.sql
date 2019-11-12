@@ -4,7 +4,7 @@ as
 SELECT [activity_id]
       ,[activity_sequence]
       ,[activity_id_xfer]
-      ,[activity_seqeuence_xfer]
+      ,[activity_sequence_xfer]
       ,[event_time]
       ,[event_name]
       ,[session_id]
