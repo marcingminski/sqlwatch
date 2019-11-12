@@ -102,6 +102,12 @@ while @@FETCH_STATUS = 0
 				and mi.sqlwatch_database_id = mi.sqlwatch_database_id
 				and mi.sqlwatch_table_id = mi.sqlwatch_table_id
 
+			/* https://github.com/marcingminski/sqlwatch/issues/110 */
+			inner join [dbo].[sqlwatch_meta_table] mt
+				on mt.sql_instance = mdb.sql_instance
+				and mt.sqlwatch_database_id = mdb.sqlwatch_database_id
+				and mt.table_name = s.name + ''.'' + t.name collate database_default
+
 			inner join [dbo].[sqlwatch_meta_database] mdb
 				on mdb.sqlwatch_database_id = mi.sqlwatch_database_id
 				and mdb.database_name = dbs.name collate database_default
