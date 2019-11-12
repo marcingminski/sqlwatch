@@ -145,12 +145,6 @@
     <Build Include="dbo\Procedures\usp_sqlwatch_logger_index_histogram.sql" />
     <Build Include="dbo\Tables\sqlwatch_meta_index_missing.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_add_index_missing.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_report_get_performance_counters.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_report_get_wait_stats.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_report_get_file_stats.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_report_get_missing_index.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_report_get_index_stats.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_report_get_index_histogram.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_config_set_table_compression.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_get_last_snapshot_time.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_get_last_snapshot_time_in_tables.sql" />
