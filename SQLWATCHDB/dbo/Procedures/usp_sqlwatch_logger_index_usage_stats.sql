@@ -31,10 +31,21 @@ select @date_snapshot_previous = max([snapshot_time])
 insert into [dbo].[sqlwatch_logger_snapshot_header] (snapshot_time, snapshot_type_id)
 values (@snapshot_time, @snapshot_type)
 
-/* step 1 , collect indexes from all databases */
+/* step 2 , collect indexes from all databases 
+   https://github.com/marcingminski/sqlwatch/issues/107 */
 declare c_db cursor for
-select [name] from sys.databases
-where database_id > 4 and state_desc = 'ONLINE'
+select [name] --, hars.role_desc, ar.secondary_role_allow_connections_desc
+from sys.databases d
+left join sys.dm_hadr_availability_replica_states hars 
+	on d.replica_id = hars.replica_id
+left join sys.availability_replicas ar 
+	on d.replica_id = ar.replica_id
+where database_id > 4
+and state_desc = 'ONLINE'
+and ( 
+		(hars.role_desc = 'PRIMARY' OR hars.role_desc IS NULL)
+	or  (hars.role_desc = 'SECONDARY' AND ar.secondary_role_allow_connections_desc IN ('READ_ONLY','ALL'))
+)
 and [name] not like '%ReportServer%'
 
 open c_db
