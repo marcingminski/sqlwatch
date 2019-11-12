@@ -1631,4 +1631,11 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[vw_sqlwatch_report_dim_check]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="f2eadd11-65e8-4ceb-a578-fc1558789d48" ChangeDateTime="11/12/2019 13:13:18">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_logger_xes_long_queries].[activity_seqeuence_xfer]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_logger_xes_long_queries]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[activity_sequence_xfer]" />
+  </Operation>
 </Operations>
