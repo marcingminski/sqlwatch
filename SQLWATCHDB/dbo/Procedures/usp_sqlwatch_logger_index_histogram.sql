@@ -89,7 +89,11 @@ while @@FETCH_STATUS = 0
 		set @sql = 'use [' + @database_name + ']; 
 --extra check if the table and index still exist. since we are collecting histogram for indexes already collected in sqlwatch,
 --there could be a situation where index was deleted from Sql Server before SQLWATCH was upated and the below would have thrown an error.
-if object_id(''' + @object_name + ''') is not null and object_id(''' + @index_name + ''') is not null
+if exists (
+		select *
+		from sys.indexes 
+		where object_id = object_id(''' + @object_name + ''')
+		and name=''' + @index_name + ''')
 	begin
 		dbcc show_statistics (''' + @object_name + ''',''' + @index_name + ''') with  HISTOGRAM
 		Print ''['' + convert(varchar(23),getdate(),121) + ''] Collecting index histogram for idnex: ' + @index_name + '''
