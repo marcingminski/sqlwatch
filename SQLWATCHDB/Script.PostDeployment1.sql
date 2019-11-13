@@ -1024,7 +1024,7 @@ where sjh.step_id > 0
     and msdb.dbo.agent_datetime(sjh.run_date, sjh.run_time) > dateadd(minute,-5,getdate())
 	and sjh.run_status = 0
 )
-select 
+select (select +
 	''<h3>JOB: '' + c1.[Job] + ''</h3>'' +
 	( select char(10) + ''<p>Step: '' + c2.[Step] + '' executed on: '' + convert(varchar(23),c2.[Run Time],121) + char(10) + ''<br>Message: <span style="color:red;">'' + c2.[Message] + ''</span></p>''
 	from cte_failed_jobs c2
@@ -1033,7 +1033,8 @@ select
 	for xml path(''''), type).value(''.'', ''nvarchar(MAX)'')
 	 t
 from cte_failed_jobs c1
-group by c1.[Job]','Template',1,null,1),
+group by c1.[Job]
+for xml path(''), type).value(''.'', ''nvarchar(MAX)'')','Template',1,null,1),
 
 
 			(5,'Blocked Processes in the last 5 minutes','List of blocking chains in the last 5 minutes.',
