@@ -861,8 +861,8 @@ Previous change: {LAST_STATUS_CHANGE}
 SQL instance: {SQL_INSTANCE}
 Alert time: {CHECK_TIME}
 
-Warning threshold: {TRESHOLD_WARNING}
-Critical threshold: {TRESHOLD_CRITICAL}
+Warning threshold: {THRESHOLD_WARNING}
+Critical threshold: {THRESHOLD_CRITICAL}
 
 --- Check Description:
 
@@ -890,8 +890,8 @@ Previous change: {LAST_STATUS_CHANGE}
 SQL instance: {SQL_INSTANCE}
 Alert time: {CHECK_TIME}
 
-Warning threshold: {TRESHOLD_WARNING}
-Critical threshold: {TRESHOLD_CRITICAL}
+Warning threshold: {THRESHOLD_WARNING}
+Critical threshold: {THRESHOLD_CRITICAL}
 
 --- Check Description:
 
@@ -919,8 +919,8 @@ Previous change: {LAST_STATUS_CHANGE}
 SQL instance: {SQL_INSTANCE}
 Alert time: {CHECK_TIME}
 
-Warning threshold: {TRESHOLD_WARNING}
-Critical threshold: {TRESHOLD_CRITICAL}
+Warning threshold: {HTRESHOLD_WARNING}
+Critical threshold: {THRESHOLD_CRITICAL}
 
 --- Check Description:
 

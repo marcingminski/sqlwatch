@@ -185,8 +185,8 @@ ReportId="' + convert(varchar(10),@report_id) + '"
 											,'{CHECK_LAST_STATUS}',isnull(mc.last_check_status,'N/A'))
 										,'{LAST_STATUS_CHANGE}',isnull(convert(varchar(23),mc.last_status_change_date,121),'Never'))
 									,'{CHECK_TIME}',convert(varchar(23),getdate(),121))
-								,'{TRESHOLD_WARNING}',isnull(cc.check_threshold_warning,''))
-							,'{TRESHOLD_CRITICAL}',isnull(cc.check_threshold_critical,''))
+								,'{THRESHOLD_WARNING}',isnull(cc.check_threshold_warning,''))
+							,'{THRESHOLD_CRITICAL}',isnull(cc.check_threshold_critical,''))
 						,'{CHECK_DESCRIPTION}',isnull(cc.check_description,''))
 					,'{CHECK_QUERY}',isnull(cc.check_query,''))
 
