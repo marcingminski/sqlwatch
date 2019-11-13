@@ -1077,7 +1077,7 @@ if (select count(*) from [dbo].[sqlwatch_config_action] ) = 0
 		values	(1, 'Send to DBA using sp_send_mail', 'T-SQL','exec msdb.dbo.sp_send_dbmail @recipients = ''dba@yourcompany.com'',
 @subject = ''{SUBJECT}'',
 @body = ''{BODY}'',
-@profile_name=''DBA''',null,1),
+@profile_name=''DBA''',null,0),
 
 				(2, 'Send to Pushover', 'PowerShell','$uri = "https://api.pushover.net/1/messages.json"
 $parameters = @{
@@ -1085,7 +1085,7 @@ $parameters = @{
   user = "USER_TOKEN"
   message = "{SUBJECT} {BODY}"
 }
-$parameters | Invoke-RestMethod -Uri $uri -Method Post',null,1),
+$parameters | Invoke-RestMethod -Uri $uri -Method Post',null,0),
 
 				(3, 'Send to Client using Send-MailMessage and external SMTP', 'PowerShell','Send-MailMessage -From ''DBA <dba@yourcompany.com>'' -To ''dba@yourcompany.com'' -Subject "{SUBJECT}" -Body "{BODY}" -SmtpServer "smtp.yourcompany.com"',null,0),
 
@@ -1093,15 +1093,15 @@ $parameters | Invoke-RestMethod -Uri $uri -Method Post',null,1),
 
 				(5, 'Push Alert to ZABBIX', 'PowerShell','zabbix_sender.exe -z zabbix.yourcompany.com -s "' + @@SERVERNAME + '" -k your.check.name -o "{BODY}"',null,0),
 
-				(6, 'Run Failed Agent Jobs Report', 'T-SQL',null,2,1),
+				(6, 'Run Failed Agent Jobs Report', 'T-SQL',null,2,0),
 
 				(7, 'Send to DBA using sp_send_mail (HTML)', 'T-SQL','exec msdb.dbo.sp_send_dbmail @recipients = ''dba@yourcompany.com'',
 				@subject = ''{SUBJECT}'',
 				@body = ''{BODY}'',
 				@profile_name=''DBA'',
-				@body_format = ''HTML''',null,1),
+				@body_format = ''HTML''',null,0),
 
-				(8, 'Run Blocking Process Report', 'T-SQL',null,5,1)
+				(8, 'Run Blocking Process Report', 'T-SQL',null,5,0)
 
 		set identity_insert [dbo].[sqlwatch_config_action] off
 	end
