@@ -831,6 +831,115 @@ if (select count(*) from [dbo].[sqlwatch_logger_snapshot_header]
 
 
 --------------------------------------------------------------------------------------
+-- default action template
+--------------------------------------------------------------------------------------
+if not exists (select * from [dbo].[sqlwatch_config_check_action_template])
+	begin
+		set identity_insert [dbo].[sqlwatch_config_check_action_template] on
+		insert into [dbo].[sqlwatch_config_check_action_template](
+				   [action_template_id]
+				  ,[action_template_description]
+				  ,[action_template_fail_subject]
+				  ,[action_template_fail_body]
+				  ,[action_template_repeat_subject]
+				  ,[action_template_repeat_body]
+				  ,[action_template_recover_subject]
+				  ,[action_template_recover_body])
+		select
+		 [action_template_id] = 1
+		,[action_template_description] = 'Default notification template'
+		,[action_template_fail_subject] = '{CHECK_STATUS}: {CHECK_NAME} on {SQL_INSTANCE}'
+		,[action_template_fail_body] = 'Check: {CHECK_NAME} ( CheckId: {CHECK_ID} )
+
+Current status:  {CHECK_STATUS}
+Current value: {CHECK_VALUE}
+
+Previous value: {CHECK_LAST_VALUE}
+Previous status: {CHECK_LAST_STATUS}
+Previous change: {LAST_STATUS_CHANGE}
+
+SQL instance: {SQL_INSTANCE}
+Alert time: {CHECK_TIME}
+
+Warning threshold: {TRESHOLD_WARNING}
+Critical threshold: {TRESHOLD_CRITICAL}
+
+--- Check Description:
+
+{CHECK_DESCRIPTION}
+
+--- Check Query:
+
+{CHECK_QUERY}
+
+---
+
+
+Sent from SQLWATCH on host: {SQL_INSTANCE}
+https://docs.sqlwatch.io '
+		,[action_template_repeat_subject] = 'REPEATED: {CHECK_STATUS}: {CHECK_NAME} on {SQL_INSTANCE}'
+		,[action_template_repeat_body] = 'Check: {CHECK_NAME} ( CheckId: {CHECK_ID} )
+
+Current status:  {CHECK_STATUS}
+Current value: {CHECK_VALUE}
+
+Previous value: {CHECK_LAST_VALUE}
+Previous status: {CHECK_LAST_STATUS}
+Previous change: {LAST_STATUS_CHANGE}
+
+SQL instance: {SQL_INSTANCE}
+Alert time: {CHECK_TIME}
+
+Warning threshold: {TRESHOLD_WARNING}
+Critical threshold: {TRESHOLD_CRITICAL}
+
+--- Check Description:
+
+{CHECK_DESCRIPTION}
+
+--- Check Query:
+
+{CHECK_QUERY}
+
+---
+
+
+Sent from SQLWATCH on host: {SQL_INSTANCE}
+https://docs.sqlwatch.io '
+		,[action_template_recover_subject] = 'RECOVERED: {CHECK_STATUS}: {CHECK_NAME} on {SQL_INSTANCE}'
+		,[action_template_recover_body]	= 'Check: {CHECK_NAME} ( CheckId: {CHECK_ID} )
+
+Current status:  {CHECK_STATUS}
+Current value: {CHECK_VALUE}
+
+Previous value: {CHECK_LAST_VALUE}
+Previous status: {CHECK_LAST_STATUS}
+Previous change: {LAST_STATUS_CHANGE}
+
+SQL instance: {SQL_INSTANCE}
+Alert time: {CHECK_TIME}
+
+Warning threshold: {TRESHOLD_WARNING}
+Critical threshold: {TRESHOLD_CRITICAL}
+
+--- Check Description:
+
+{CHECK_DESCRIPTION}
+
+--- Check Query:
+
+{CHECK_QUERY}
+
+---
+
+
+Sent from SQLWATCH on host: {SQL_INSTANCE}
+https://docs.sqlwatch.io '
+
+		set identity_insert [dbo].[sqlwatch_config_check_action_template] off
+	end
+
+--------------------------------------------------------------------------------------
 -- load default report styles:
 --------------------------------------------------------------------------------------
 if not exists (select * from [dbo].[sqlwatch_config_report_style] where [report_style_id] = 1)
