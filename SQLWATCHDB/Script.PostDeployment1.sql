@@ -833,7 +833,7 @@ if (select count(*) from [dbo].[sqlwatch_logger_snapshot_header]
 --------------------------------------------------------------------------------------
 -- default action template
 --------------------------------------------------------------------------------------
-if not exists (select * from [dbo].[sqlwatch_config_check_action_template])
+if not exists (select * from [dbo].[sqlwatch_config_check_action_template] where [action_template_id] = -1)
 	begin
 		set identity_insert [dbo].[sqlwatch_config_check_action_template] on
 		insert into [dbo].[sqlwatch_config_check_action_template](
@@ -846,7 +846,7 @@ if not exists (select * from [dbo].[sqlwatch_config_check_action_template])
 				  ,[action_template_recover_subject]
 				  ,[action_template_recover_body])
 		select
-		 [action_template_id] = 1
+		 [action_template_id] = -1
 		,[action_template_description] = 'Default notification template'
 		,[action_template_fail_subject] = '{CHECK_STATUS}: {CHECK_NAME} on {SQL_INSTANCE}'
 		,[action_template_fail_body] = 'Check: {CHECK_NAME} ( CheckId: {CHECK_ID} )
@@ -942,11 +942,11 @@ https://docs.sqlwatch.io '
 --------------------------------------------------------------------------------------
 -- load default report styles:
 --------------------------------------------------------------------------------------
-if not exists (select * from [dbo].[sqlwatch_config_report_style] where [report_style_id] = 1)
+if not exists (select * from [dbo].[sqlwatch_config_report_style] where [report_style_id] = -1)
 	begin
 		set identity_insert [dbo].[sqlwatch_config_report_style] on
 		insert into [dbo].[sqlwatch_config_report_style] ([report_style_id], [style])
-		values (1,'body {font-family: "Trebuchet MS",Helvetica,sans-serif; font-size: 12px;}
+		values (-1,'body {font-family: "Trebuchet MS",Helvetica,sans-serif; font-size: 12px;}
 table.sqlwatchtbl { border: 1px solid #AAAAAA; background-color: #FEFEFE; width: 100%; text-align: left; border-collapse: collapse; }
 table.sqlwatchtbl td, table.sqlwatchtbl th { border: 1px solid #AAAAAA; padding: 3px 3px; }
 table.sqlwatchtbl tbody td { color: #333333; }
@@ -957,58 +957,95 @@ table.sqlwatchtbl thead th { font-size: 12px; font-weight: bold; color: #FFFFFF;
 	end
 
 --------------------------------------------------------------------------------------
--- load reports 
+-- load default actions that DO NOT call reports
 --------------------------------------------------------------------------------------
-if (select count(*) from [dbo].[sqlwatch_config_report]) = 0
-	begin
-		set identity_insert [dbo].[sqlwatch_config_report] on 
-		insert into [dbo].[sqlwatch_config_report]
-				   ([report_id]
-				   ,[report_title]
-				   ,[report_description]
-				   ,[report_definition]
-				   ,[report_definition_type]
-				   ,[report_active]
-				   ,[report_batch_id]
-				   ,[report_style_id])
-		values 
+exec [dbo].[usp_sqlwatch_user_add_action]
+	 @action_id = -1
+	,@action_description = 'Send Email to DBAs using sp_send_mail  (HTML)'
+	,@action_exec_type = 'T-SQL'
+	,@action_exec = 'exec msdb.dbo.sp_send_dbmail @recipients = ''dba@yourcompany.com'',
+@subject = ''{SUBJECT}'',
+@body = ''{BODY}'',
+@profile_name=''DBA'',
+@body_format = ''HTML'''
+	,@action_enabled = 0
 
-			(1,'Indexes with high fragmentation','Lisf ot indexes where the fragmentation is above 30% and page count greater than 1000. 
-Index fragmentation can impact performance and should be minimum. You should be running index maintenance often. 
-A very good and free index maintenance solution is Ola Hallengren''s Maintenance Solution'
-			, 'SELECT [Table] = s.[name] +''.''+t.[name]
- ,[Index] = i.NAME 
- ,[Type] = index_type_desc
- ,[Fragmentation] = convert(decimal(10,2),avg_fragmentation_in_percent)
- ,[Records] = record_count
- ,[Pages] = page_count
-FROM sys.dm_db_index_physical_stats(DB_ID(), NULL, NULL, NULL, ''SAMPLED'') ips
-INNER JOIN sys.tables t on t.[object_id] = ips.[object_id]
-INNER JOIN sys.schemas s on t.[schema_id] = s.[schema_id]
-INNER JOIN sys.indexes i ON (ips.object_id = i.object_id) AND (ips.index_id = i.index_id)
-WHERE avg_fragmentation_in_percent > 30
-and page_count > 1000','Query',1,null,1),
+exec [dbo].[usp_sqlwatch_user_add_action]
+	 @action_id = -2
+	,@action_description = 'Send Email to DBAs using sp_send_mail'
+	,@action_exec_type = 'T-SQL'
+	,@action_exec = 'exec msdb.dbo.sp_send_dbmail @recipients = ''dba@yourcompany.com'',
+@subject = ''{SUBJECT}'',
+@body = ''{BODY}'',
+@profile_name=''DBA'''
+	,@action_enabled = 0
 
-			(2,'Agent Jobs failed in the last 5 minutes','List jobs that are enabled and have failed in the last 5 minutes. 
-Note that if a job runs frequently there is a possibility that in the small amount of time between the check (trigger) has completed and this report sent out, the job could have run again and suceeded and the number of failed jobs may differ between the check notification and this report.',
-'select 
-	[Job] = sj.name,
-	[Step] = sjs.step_name,
-	[Message] = sjh.[message],
-	[Run Time] = msdb.dbo.agent_datetime(sjh.run_date, sjh.run_time)
-FROM msdb.dbo.sysjobhistory sjh
-inner join msdb.dbo.sysjobs sj 
-	on sjh.job_id = sj.job_id
-inner join msdb.dbo.sysjobsteps sjs
-	on sjs.job_id = sj.job_id
-	and sjh.step_id = sjs.step_id
-where sjh.step_id > 0
-    and msdb.dbo.agent_datetime(sjh.run_date, sjh.run_time) > dateadd(minute,-5,getdate())
-	and sjh.run_status = 0','Query',1,null,1),
+exec [dbo].[usp_sqlwatch_user_add_action]
+	 @action_id = -3
+	,@action_description = 'Push notifiction via Pushover'
+	,@action_exec_type = 'PowerShell'
+	,@action_exec = '$uri = "https://api.pushover.net/1/messages.json"
+$parameters = @{
+  token = "YOUR_TOKEN"
+  user = "USER_TOKEN"
+  message = "{SUBJECT} {BODY}"
+}
+$parameters | Invoke-RestMethod -Uri $uri -Method Post'
+	,@action_enabled = 0
 
+exec [dbo].[usp_sqlwatch_user_add_action]
+	 @action_id = -4
+	,@action_description = 'Send Email using Send-MailMessage and external SMTP'
+	,@action_exec_type = 'PowerShell'
+	,@action_exec = 'Send-MailMessage -From ''DBA <dba@yourcompany.com>'' -To ''dba@yourcompany.com'' -Subject "{SUBJECT}" -Body "{BODY}" -SmtpServer "smtp.yourcompany.com"'
+	,@action_enabled = 0
 
-			(4,'Agent Jobs failed in the last 5 minutes','List of SQL Server Agent Jobs that are enabled and have failed in the last 5 minutes',
-';with cte_failed_jobs as (
+exec [dbo].[usp_sqlwatch_user_add_action]
+	 @action_id = -5
+	,@action_description = 'Save File on Shared Drive'
+	,@action_exec_type = 'PowerShell'
+	,@action_exec = '"{BODY}" | Out-File -FilePath \\yourshare\Folder\export.csv'
+	,@action_enabled = 0
+
+exec [dbo].[usp_sqlwatch_user_add_action]
+	 @action_id = -6
+	,@action_description = 'Send Alert to ZABBIX'
+	,@action_exec_type = 'PowerShell'
+	,@action_exec = 'zabbix_sender.exe -z zabbix.yourcompany.com -s "SQL_INSTANCE" -k your.check.name -o "{BODY}"'
+	,@action_enabled = 0
+
+--------------------------------------------------------------------------------------
+-- load default reports 
+--------------------------------------------------------------------------------------
+
+		--Indexes with high fragmentation
+		exec [dbo].[usp_sqlwatch_user_add_report] 
+			 @report_id = -1
+			,@report_title = 'Indexes with high fragmentation'
+			,@report_description = 'Lisf ot indexes where the fragmentation is above 30% and page count greater than 1000. 
+		Index fragmentation can impact performance and should be minimum. You should be running index maintenance often. 
+		A very good and free index maintenance solution is Ola Hallengren''s Maintenance Solution'
+			,@report_definition = 'SELECT [Table] = s.[name] +''.''+t.[name]
+		 ,[Index] = i.NAME 
+		 ,[Type] = index_type_desc
+		 ,[Fragmentation] = convert(decimal(10,2),avg_fragmentation_in_percent)
+		 ,[Records] = record_count
+		 ,[Pages] = page_count
+		FROM sys.dm_db_index_physical_stats(DB_ID(), NULL, NULL, NULL, ''SAMPLED'') ips
+		INNER JOIN sys.tables t on t.[object_id] = ips.[object_id]
+		INNER JOIN sys.schemas s on t.[schema_id] = s.[schema_id]
+		INNER JOIN sys.indexes i ON (ips.object_id = i.object_id) AND (ips.index_id = i.index_id)
+		WHERE avg_fragmentation_in_percent > 30
+		and page_count > 1000'
+			,@report_definition_type = 'Query'
+			,@report_action_id  = -1
+
+		--Agent Jobs failed in the last 5 minutes
+		exec [dbo].[usp_sqlwatch_user_add_report] 
+			 @report_id = -2
+			,@report_title = 'Agent Jobs failed in the last 5 minutes'
+			,@report_description = 'List of SQL Server Agent Jobs that are enabled and have failed in the last 5 minutes'
+			,@report_definition = ';with cte_failed_jobs as (
 select 
 	[Job] = sj.name,
 	[Step] = sjs.step_name,
@@ -1034,11 +1071,16 @@ select (select +
 	 t
 from cte_failed_jobs c1
 group by c1.[Job]
-for xml path(''), type).value(''.'', ''nvarchar(MAX)'')','Template',1,null,1),
+for xml path(''), type).value(''.'', ''nvarchar(MAX)'')'
+			,@report_definition_type = 'Template'
+			,@report_action_id  = -1
 
-
-			(5,'Blocked Processes in the last 5 minutes','List of blocking chains in the last 5 minutes.',
-';with cte_blocking as (
+		--Blocked Processes in the last 5 minutes
+		exec [dbo].[usp_sqlwatch_user_add_report] 
+			 @report_id = -3
+			,@report_title = 'Blocked Processes in the last 5 minutes'
+			,@report_description = 'List of blocking chains in the last 5 minutes.'
+			,@report_definition = ';with cte_blocking as (
 	SELECT *, rn=ROW_NUMBER() over (order by blocking_start_time)
 	  FROM [dbo].[vw_sqlwatch_report_fact_xes_blockers]
 	  WHERE blocking_start_time > dateadd(minute,-5,getdate())
@@ -1063,78 +1105,209 @@ Blocking start time: '' + convert(varchar(23),c2.[blocking_start_time],121) + ch
 from cte_blocking c1
 group by c1.blocking_spid, c1.[database_name], c1.blocking_client_app_name, c1.blocking_client_hostname, c1.blocking_sql, rn
 order by rn
-for xml path(''''), type).value(''.'', ''nvarchar(MAX)'')','Template',1,null,1)
+for xml path(''''), type).value(''.'', ''nvarchar(MAX)'')'
+			,@report_definition_type = 'Template'
+			,@report_action_id  = -1
 
-		set identity_insert [dbo].[sqlwatch_config_report] off
-	end
 
---------------------------------------------------------------------------------------
--- load default actions
---------------------------------------------------------------------------------------
-if (select count(*) from [dbo].[sqlwatch_config_action] ) = 0
-	begin
-		set identity_insert [dbo].[sqlwatch_config_action] on 
-		insert into [dbo].[sqlwatch_config_action]([action_id],[action_description],[action_exec_type],[action_exec],[action_report_id],[action_enabled])
-		values	(1, 'Send to DBA using sp_send_mail', 'T-SQL','exec msdb.dbo.sp_send_dbmail @recipients = ''dba@yourcompany.com'',
-@subject = ''{SUBJECT}'',
-@body = ''{BODY}'',
-@profile_name=''DBA''',null,0),
-
-				(2, 'Send to Pushover', 'PowerShell','$uri = "https://api.pushover.net/1/messages.json"
-$parameters = @{
-  token = "YOUR_TOKEN"
-  user = "USER_TOKEN"
-  message = "{SUBJECT} {BODY}"
-}
-$parameters | Invoke-RestMethod -Uri $uri -Method Post',null,0),
-
-				(3, 'Send to Client using Send-MailMessage and external SMTP', 'PowerShell','Send-MailMessage -From ''DBA <dba@yourcompany.com>'' -To ''dba@yourcompany.com'' -Subject "{SUBJECT}" -Body "{BODY}" -SmtpServer "smtp.yourcompany.com"',null,0),
-
-				(4, 'Save Business Report to Shared Drive', 'PowerShell','"{BODY}" | Out-File -FilePath \\yourshare\Folder\export.csv',null,0),
-
-				(5, 'Push Alert to ZABBIX', 'PowerShell','zabbix_sender.exe -z zabbix.yourcompany.com -s "' + @@SERVERNAME + '" -k your.check.name -o "{BODY}"',null,0),
-
-				(6, 'Run Failed Agent Jobs Report', 'T-SQL',null,2,0),
-
-				(7, 'Send to DBA using sp_send_mail (HTML)', 'T-SQL','exec msdb.dbo.sp_send_dbmail @recipients = ''dba@yourcompany.com'',
-				@subject = ''{SUBJECT}'',
-				@body = ''{BODY}'',
-				@profile_name=''DBA'',
-				@body_format = ''HTML''',null,0),
-
-				(8, 'Run Blocking Process Report', 'T-SQL',null,5,0)
-
-		set identity_insert [dbo].[sqlwatch_config_action] off
-	end
+		--Disk utilisation report
+		exec [dbo].[usp_sqlwatch_user_add_report] 
+			 @report_id = -4
+			,@report_title = 'Disk Utilisation Report'
+			,@report_description = ''
+			,@report_definition = 'select [volume_name]
+      ,[days_until_full]
+      ,[total_space_formatted]
+      ,[free_space_formatted]
+      ,[growth_bytes_per_day_formatted]
+      ,[free_space_percentage_formatted]
+  from [dbo].[vw_sqlwatch_report_dim_os_volume]'
+			,@report_definition_type = 'Query'
+			,@report_action_id  = -1
 
 --------------------------------------------------------------------------------------
--- assosiate reports with actions
+-- now load actions that call reports we have just created
 --------------------------------------------------------------------------------------
-if (select count(*) from [dbo].[sqlwatch_config_report_action]) = 0
-	begin
-		insert into [dbo].[sqlwatch_config_report_action]
-		values (@@SERVERNAME,2,1)
-	end
+exec [dbo].[usp_sqlwatch_user_add_action]
+	 @action_id = -7
+	,@action_description = 'Run Failed Agent Jobs Report'
+	,@action_exec_type = 'T-SQL'
+	,@action_report_id = -2
+	,@action_enabled = 1
 
-exec [dbo].[usp_sqlwatch_config_add_default_checks]
+exec [dbo].[usp_sqlwatch_user_add_action]
+	 @action_id = -8
+	,@action_description = 'Run Blocked Process Report'
+	,@action_exec_type = 'T-SQL'
+	,@action_report_id = -3
+	,@action_enabled = 1
 
+exec [dbo].[usp_sqlwatch_user_add_action]
+	 @action_id = -9
+	,@action_description = 'Run Disk Utilisation Report'
+	,@action_exec_type = 'T-SQL'
+	,@action_report_id = -4
+	,@action_enabled = 1
 
+-------------------------------------------------------------------------------------
+-- Load default checks
+--------------------------------------------------------------------------------------
+exec [dbo].[usp_sqlwatch_user_add_check]
+	 @check_id = -1
+	,@check_name = 'Agent Jobs failed in the last 5 minutes' 
+	,@check_description = 'One or more SQL Server Agent Jobs have failed in the last 5 minutes.
+If the action has been set to trigger a report you should soon get another alert with list of failed jobs.'
+	,@check_query = 'select count(*)
+from msdb.dbo.sysjobhistory 
+where msdb.dbo.agent_datetime(run_date, run_time) > dateadd(minute,-5,getdate())
+and run_status = 0'
+	,@check_frequency_minutes = 5
+	,@check_threshold_warning = null
+	,@check_threshold_critical = '>0'
+	,@check_enabled = 1
+	,@check_action_id = -7
 
-declare @alerts as table (
-	[sql_instance] [varchar](32) NOT NULL,
-	[header] [nvarchar](50) NOT NULL,
-	[description] [nvarchar](2048) NULL,
-	[query] [nvarchar](max) NOT NULL,
-	[warning_threshold] [varchar](100) NULL,
-	[critical_threshold] [varchar](100) NULL,
-	[check_frequency_minutes] [smallint] NULL,
-	[recipients] [nvarchar](255) NULL,
-	[profile_name] [nvarchar](255) NULL,
-	[retrigger_minutes] [smallint] NULL,
-	[rule_enabled] [bit] NOT NULL,
-	[send_recovery] [bit] NOT NULL,
-	[trigger_on_every_change] [bit] NOT NULL
-	)
+	,@action_every_failure = 1
+	,@action_recovery = 0
+	,@action_repeat_period_minutes = null
+	,@action_hourly_limit = 10
+	,@action_template_id = -1
+
+--------------------------------------------------------------------------------------
+exec [dbo].[usp_sqlwatch_user_add_check]
+	 @check_id = -2
+	,@check_name = 'Blocking detected in the last 5 minutes'
+	,@check_description = 'In the last 5 minutes there has been blocked processes.
+Blocking means processes are stuck and unable to carry any work, could cause downtime or major outage.'
+	,@check_query = 'select count (distinct blocked_spid)
+from dbo.sqlwatch_logger_xes_blockers
+where blocking_start_time > dateadd(minute,-5,getdate())'
+	,@check_frequency_minutes = 5
+	,@check_threshold_warning = null
+	,@check_threshold_critical = '>0'
+	,@check_enabled = 1
+	,@check_action_id = -8
+
+	,@action_every_failure = 1
+	,@action_recovery = 0
+	,@action_repeat_period_minutes = null
+	,@action_hourly_limit = 10
+	,@action_template_id = -1
+
+--------------------------------------------------------------------------------------
+exec [dbo].[usp_sqlwatch_user_add_check]
+	 @check_id = -3
+	,@check_name = 'High CPU Utilistaion % in the last 5 minutes'
+	,@check_description = 'In the past 5 minutes, the average CPU utilistaion was higher than expected'
+	,@check_query = 'select avg(cntr_value_calculated) 
+from dbo.vw_sqlwatch_report_fact_perf_os_performance_counters
+where counter_name = ''Processor Time %''
+and report_time > dateadd(minute,-5,getutcdate())'
+	,@check_frequency_minutes = 5
+	,@check_threshold_warning = '>60'
+	,@check_threshold_critical = '>80'
+	,@check_enabled = 1
+	,@check_action_id = -1
+
+	,@action_every_failure = 0
+	,@action_recovery = 1
+	,@action_repeat_period_minutes = null
+	,@action_hourly_limit = 10
+	,@action_template_id = -1
+
+--------------------------------------------------------------------------------------
+exec [dbo].[usp_sqlwatch_user_add_check]
+	 @check_id = -4
+	,@check_name = 'SQL Server has been restarted.'
+	,@check_description = 'SQL Server has been restared in the last 60 minutes.'
+	,@check_query = 'select datediff(minute,sqlserver_start_time,getdate()) from sys.dm_os_sys_info'
+	,@check_frequency_minutes = 10
+	,@check_threshold_warning = null
+	,@check_threshold_critical = '<60'
+	,@check_enabled = 1
+	,@check_action_id = -1
+
+	,@action_every_failure = 0
+	,@action_recovery = 0
+	,@action_repeat_period_minutes = null
+	,@action_hourly_limit = 10
+	,@action_template_id = -1
+
+--------------------------------------------------------------------------------------
+exec [dbo].[usp_sqlwatch_user_add_check]
+	 @check_id = -5
+	,@check_name = 'Action queue is high'
+	,@check_description = 'There is a large number of items awaiting action. This could indicate a problem with the action mechanism.
+Note that in this context, the succesful action means that the item was succesfuly executed, for example sp_send_dbmail and not that the email was delivered.'
+	,@check_query = 'select count(*) from dbo.sqlwatch_meta_action_queue where exec_status <> 2'
+	,@check_frequency_minutes = 5
+	,@check_threshold_warning = null
+	,@check_threshold_critical = '>25'
+	,@check_enabled = 1
+	,@check_action_id = -1
+
+	,@action_every_failure = 0
+	,@action_recovery = 0
+	,@action_repeat_period_minutes = 60
+	,@action_hourly_limit = 10
+	,@action_template_id = -1
+
+--------------------------------------------------------------------------------------
+exec [dbo].[usp_sqlwatch_user_add_check]
+	 @check_id = -6
+	,@check_name = 'Action queue failure rate is high'
+	,@check_description = 'There is a large number of items that failed execution. This could indicate a problem with the action mechanism.'
+	,@check_query = 'select count(*) from dbo.sqlwatch_meta_action_queue where exec_status = 2'
+	,@check_frequency_minutes = 5
+	,@check_threshold_warning = null
+	,@check_threshold_critical = '>25'
+	,@check_enabled = 1
+	,@check_action_id = -1
+
+	,@action_every_failure = 0
+	,@action_recovery = 0
+	,@action_repeat_period_minutes = 60
+	,@action_hourly_limit = 10
+	,@action_template_id = -1
+
+--------------------------------------------------------------------------------------
+exec [dbo].[usp_sqlwatch_user_add_check]
+	 @check_id = -7
+	,@check_name = 'Disk Free % is low'
+	,@check_description = 'The "Free Space %" value is lower than expected. One or more disks have less than expected free space. 
+This does not mean that the disk will be full soon as it may not grow much. Please check the "days until full" value or the actual growth.'
+	,@check_query = 'select free_space_percentage
+from dbo.vw_sqlwatch_report_dim_os_volume'
+	,@check_frequency_minutes = 60
+	,@check_threshold_warning = '<0.1'
+	,@check_threshold_critical = '<0.05'
+	,@check_enabled = 1
+	,@check_action_id = -9
+
+	,@action_every_failure = 0
+	,@action_recovery = 0
+	,@action_repeat_period_minutes = 1440 --daily
+	,@action_hourly_limit = 10
+	,@action_template_id = -1
+
+--------------------------------------------------------------------------------------
+exec [dbo].[usp_sqlwatch_user_add_check]
+	 @check_id = -8
+	,@check_name = 'One of more disk will be full in few days.'
+	,@check_description = 'The "days until full" value is lower than expected. One or more disks will be full in few days.'
+	,@check_query = 'select days_until_full
+from dbo.vw_sqlwatch_report_dim_os_volume'
+	,@check_frequency_minutes = 60
+	,@check_threshold_warning = '<7'
+	,@check_threshold_critical = '<3'
+	,@check_enabled = 1
+	,@check_action_id = -9
+
+	,@action_every_failure = 0
+	,@action_recovery = 0
+	,@action_repeat_period_minutes = 1440 --daily
+	,@action_hourly_limit = 10
+	,@action_template_id = -1
 
 
 --------------------------------------------------------------------------------------

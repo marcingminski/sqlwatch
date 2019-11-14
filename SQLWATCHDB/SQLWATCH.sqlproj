@@ -202,6 +202,10 @@
     <Build Include="dbo\Tables\sqlwatch_logger_check_action.sql" />
     <Build Include="dbo\Tables\sqlwatch_config_report_style.sql" />
     <Build Include="dbo\Tables\sqlwatch_logger_report_action.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_user_add_report.sql" />
+    <Build Include="dbo\Functions\ufn_sqlwatch_split_string.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_user_add_action.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_user_add_check.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
