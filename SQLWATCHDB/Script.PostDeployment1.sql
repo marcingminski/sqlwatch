@@ -1160,7 +1160,8 @@ insert into #jobrename
 	values  ('DBA-PERF-AUTO-CONFIG',			'SQLWATCH-INTERNAL-CONFIG'),
 			('DBA-PERF-LOGGER',					'SQLWATCH-LOGGER-PERFORMANCE'),
 			('DBA-PERF-LOGGER-RETENTION',		'SQLWATCH-INTERNAL-RETENTION'),
-			('SQLWATCH-LOGGER-MISSING-INDEXES',	'SQLWATCH-LOGGER-INDEXES')
+			('SQLWATCH-LOGGER-MISSING-INDEXES',	'SQLWATCH-LOGGER-INDEXES'),
+			('SQLWATCH-INTERNAL-META-CONFIG',	'SQLWATCH-INTERNAL-CONFIG')
 
 select @sql = @sql + convert(varchar(max),' if (select name from msdb.dbo.sysjobs where name = ''' + old_job + ''') is not null
 	and (select name from msdb.dbo.sysjobs where name = ''' + new_job + ''') is null

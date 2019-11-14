@@ -61,11 +61,11 @@ insert into #jobs
 			('SQLWATCH-LOGGER-AGENT-HISTORY',	4,		1,			4,				10,				0,					1,					20180101,	99991231, 0,			235959,		1),
 
 			('SQLWATCH-INTERNAL-RETENTION',		4,		1,			8,				1,				0,					1,					20180101,	99991231, 20,			235959,		1),
-			('SQLWATCH-INTERNAL-META-CONFIG',	4,		1,			8,				1,				0,					1,					20180101,	99991231, 26,			235959,		1),
+			('SQLWATCH-INTERNAL-CONFIG',		4,		1,			8,				1,				0,					1,					20180101,	99991231, 26,			235959,		1),
 			('SQLWATCH-INTERNAL-TRENDS',		4,		1,			4,				60,				0,					1,					20180101,	99991231, 150,			235959,		1),
-			('SQLWATCH-INTERNAL-NOTIFICATION',		4,		1,			4,				60,				0,					1,					20180101,	99991231, 150,			235959,		1),
+			('SQLWATCH-INTERNAL-ACTIONS',		4,		1,			2,				15,				0,					1,					20180101,	99991231, 2,			235959,		1),
+			('SQLWATCH-INTERNAL-CHECKS',		4,		1,			4,				1,				0,					1,					20180101,	99991231, 43,			235959,		1),
 
-			('SQLWATCH-USER-ALERTS',			4,		1,			4,				1,				0,					1,					20180101,	99991231, 45,			235959,		1),
 			('SQLWATCH-USER-REPORTS',			4,		1,			1,				0,				0,					1,					20180101,	99991231, 80000,		235959,		1)
 
 
@@ -93,8 +93,9 @@ insert into #steps
 
 			('dbo.usp_sqlwatch_internal_process_reports',1,			'SQLWATCH-USER-REPORTS',			'TSQL',		'exec dbo.usp_sqlwatch_internal_process_reports @report_batch_id = 1'),
 
-			('dbo.usp_sqlwatch_internal_process_checks',1,			'SQLWATCH-USER-ALERTS',			'TSQL',		'exec dbo.usp_sqlwatch_internal_process_checks'),
-			('Send Message',							2,			'SQLWATCH-USER-ALERTS',			'PowerShell','
+			('dbo.usp_sqlwatch_internal_process_checks',1,			'SQLWATCH-INTERNAL-CHECKS',				'TSQL',		'exec dbo.usp_sqlwatch_internal_process_checks'),
+
+			('Process Actions',							1,			'SQLWATCH-INTERNAL-ACTIONS',		'PowerShell','
 $output = "x"
 while ($output -ne $null) { 
 	$output = Invoke-SqlCmd -ServerInstance "' + @server + '" -Database ' + '$(DatabaseName)' + ' -MaxCharLength 2147483647 -Query "set xact_abort on
