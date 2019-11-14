@@ -2,6 +2,8 @@
 as
 /*
 -----------------------------------------------------------------------------------------------------------------
+ !!! DEPRECATED !!!
+ 
  usp_sqlwatch_config_add_default_checks
 
  This procedure will add pre-defined checks which include:
@@ -173,7 +175,7 @@ and report_time > dateadd(minute,-5,getutcdate())'
 insert into @checks
 select [sql_instance] = @@SERVERNAME
 	,  [check_name] = 'SQL Instance Uptime'
-	,  [check_description] = 'SQL Instance has been restared in the last 60 minutes.'
+	,  [check_description] = 'SQL Server has been restared in the last 60 minutes.'
 	,  [check_query] = 'select datediff(minute,sqlserver_start_time,getdate()) from sys.dm_os_sys_info'
 	,  [check_frequency_minutes] = 10
 	,  [check_threshold_warning] = null
