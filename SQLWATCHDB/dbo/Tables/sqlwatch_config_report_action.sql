@@ -9,7 +9,7 @@
 	constraint fk_sqlwatch_config_report_action_action foreign key ([action_id])
 		references [dbo].[sqlwatch_config_action] ([action_id]),
 	constraint fk_sqlwatch_config_report_action_report foreign key ([sql_instance], [report_id])
-		references [dbo].[sqlwatch_config_report] ([sql_instance], [report_id])
+		references [dbo].[sqlwatch_config_report] ([sql_instance], [report_id]) on delete cascade
 )
 
 GO
