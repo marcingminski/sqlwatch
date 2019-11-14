@@ -1178,4 +1178,4 @@ USE [$(DatabaseName)];
 
 exec dbo.[usp_sqlwatch_config_set_default_agent_jobs]
 
-exec msdb.dbo.sp_start_job @job_name = 'SQLWATCH-INTERNAL-META-CONFIG'
+exec msdb.dbo.sp_start_job @job_name = 'SQLWATCH-INTERNAL-CONFIG'
