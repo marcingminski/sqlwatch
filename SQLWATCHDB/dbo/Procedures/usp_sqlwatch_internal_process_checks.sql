@@ -100,7 +100,8 @@ open cur_rules
 fetch next from cur_rules 
 into @check_id, @check_name, @check_description , @check_query, @check_warning_threshold, @check_critical_threshold, @previous_check_date, @previous_check_value, @previous_check_status
 
-  while @@FETCH_STATUS = 0  
+
+while @@FETCH_STATUS = 0  
 begin
 	
 
@@ -109,7 +110,7 @@ begin
 	set @actions = null
 	delete from @check_output
 
-
+	--Print 'Processing Check (Id: ' + convert(varchar(10),@check_id) + ')'
 
 	-------------------------------------------------------------------------------------------------------------------
 	-- execute check and log output in variable:
@@ -245,6 +246,8 @@ end
 close cur_rules
 deallocate cur_rules
 
+Print 'No Checks to Process'
+
 
 if nullif(@error_message,'') is not null
 	begin
@@ -253,139 +256,3 @@ if nullif(@error_message,'') is not null
 
 		raiserror (@error_message,16,1)
 	end
-
---	-------------------------------------------------------------------------------------------------------------------
---	-- BUILD PAYLOAD
---	-------------------------------------------------------------------------------------------------------------------
---	if @send_email = 1
---		begin
---			-------------------------------------------------------------------------------------------------------------------
---			-- now set the email subject and appropriate flags to indicate what is happening.
---			-- optons are below:
---			-------------------------------------------------------------------------------------------------------------------
-
---			-------------------------------------------------------------------------------------------------------------------
---			-- if previous status is NOT ok and current status is OK the check has recovered from fail to success.
---			-- we can send an email notyfing DBAs that the problem has gone away
---			-------------------------------------------------------------------------------------------------------------------
---			if @last_check_status <> '' and @last_check_status <> 'OK' and @check_status = 'OK'
---				begin
---					Print @last_check_status
---					set @send_email = @send_recovery
---					set @email_subject = 'RECOVERED (OK): ' + @check_name + ' on ' + @check_query_instance 
---				end
-
---			-------------------------------------------------------------------------------------------------------------------
---			-- retrigger if the value has changed, regardless of the status.
---			-- this is handy if we want to monitor every change after it has failed. for example we can set to monitor
---			-- if number of logins is greater than 5 so if someone creates a new login we will get an email and then every time
---			-- new login is created
---			-------------------------------------------------------------------------------------------------------------------
---			else if @check_status <> 'OK' and @retrigger_on_every_change = 1 and @check_value <> @previous_value
---				begin
---					set @email_subject = @check_name + ': ' + @check_status + ' on ' + @check_query_instance
---				end
-
---			-------------------------------------------------------------------------------------------------------------------
---			-- when the current status is not OK and the previous status has changed, it is a new notification:
---			-------------------------------------------------------------------------------------------------------------------
---			else if @check_status <> 'OK' and @last_check_status <> @check_status
---				begin
---					set @email_subject = @check_name + ': ' + @check_status + ' on ' + @check_query_instance
---				end
-
---			-------------------------------------------------------------------------------------------------------------------
---			-- if the previous status is the same as the current status we would not normally send another email
---			-- however, we can do if we set retrigger time. for example, we can be sending repeated alerts every hour so 
---			-- they do not get forgotten about. 
---			-------------------------------------------------------------------------------------------------------------------
---			else if @check_status <> 'OK' and @last_check_status = @check_status and (@retrigger_time is not null and datediff(minute,@last_trigger_time,getdate()) > @retrigger_time)
---				begin
---					set @email_subject = 'REPEATED : ' + @check_status + ' ' + @check_name + ' on ' + @check_query_instance 
---				end
-
---			-------------------------------------------------------------------------------------------------------------------
---			-- if the previous status is null and current status is OK it probably a new check and we are not doing anything.
---			-------------------------------------------------------------------------------------------------------------------
---			else if @check_status = 'OK' and  @last_check_status = ''
---				begin
---					set @send_email = 0
---				end
-
---			-------------------------------------------------------------------------------------------------------------------
---			-- if the previous status is the same as current status and no retrigger defined we are not doing anything.
---			-------------------------------------------------------------------------------------------------------------------
---			else if @last_check_status <> '' and @last_check_status = @check_status and (@retrigger_time is null or datediff(minute,@last_trigger_time,getdate()) < @retrigger_time)
---				begin
---					--print 'Check id: ' + convert(varchar(10),@check_id) + ': no action'
---					set @send_email = 0
---				end
---			else
---				begin
---					--print 'Check id: ' + convert(varchar(10),@check_id) + ': UNDEFINED'
---					set @send_email = 0
---				end
-
---			-------------------------------------------------------------------------------------------------------------------
---			-- set email content
---			-------------------------------------------------------------------------------------------------------------------
---			if @send_email = 0
---				goto SkipEmail
-
---			set @email_body = '
---Check: ' + @check_name + ' (CheckId:' + convert(varchar(50),@check_id) + ')
-
---Current status: ' + @check_status + '
---Current value: ' + convert(varchar(100),@check_value) + '
-
---Previous value: ' + convert(varchar(100),@previous_value) + '
---Previous status: ' + @last_check_status + '
---Previous change: ' + convert(varchar(23),@last_status_change,121) + '
-
---SQL instance: ' + @check_query_instance + '
---Alert time: ' + convert(varchar(23),getdate(),121) + '
-
---Warning threshold: ' + isnull(convert(varchar(100),@check_warning_threshold),'NULL') + '
---Critical threshold: ' + isnull(convert(varchar(100),@check_critical_threshold),'NULL') + '
---Retrigger time: ' + convert(varchar(50),case 
---	when @retrigger_time is null then 'With every check'
---	when @retrigger_time = 1 then 'Every 1 minute'
---	when @retrigger_time > 1 then 'Every ' + convert(varchar(10),@retrigger_time) + ' minutes'
---	else '' end) + '
---Trigger rule: ' + case when @retrigger_on_every_change = 1 then 'On every value change' else ' Trigger once per status change' end + '
-	
------ Check Description:
-
---' + @check_description + '
-
------ Check Query:
-
---' + @check_query + '
-
------
-
-
---Email sent from SQLWATCH on host: ' + @@SERVERNAME +'
---https://docs.sqlwatch.io '
-
-
---			if @email_subject is not null and @email_body is not null and @recipients is not null
---				begin
---					set @msg_payload = [dbo].[ufn_sqlwatch_get_delivery_command] (@recipients, @email_subject, @email_body, @target_attributes, @target_type)
---					-------------------------------------------------------------------------------------------------------------------
---					-- insert into message queue table:
---					-------------------------------------------------------------------------------------------------------------------
---					insert into [dbo].[sqlwatch_meta_delivery_queue]([sql_instance], [time_queued], [delivery_target_type], [delivery_command], [delivery_status])
---					values (@@SERVERNAME, sysdatetime(), @target_type, @msg_payload, 0)
---				end
---		end
-
---	-------------------------------------------------------------------------------------------------------------------
---	-- log alert in logger table and move on to the next item
-
---	-- at this point, the @send_email flag is an indication whether the notification has been requested or not and  NOT
---	-- whether it was successfuly delivered. delivery happens in another step and currently there is no feedback.
---	-- However, if the notification fails and we get hold of the status code, we will keep failed notifications in the queue table.
---	-------------------------------------------------------------------------------------------------------------------
---	SkipEmail:
-
