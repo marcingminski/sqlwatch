@@ -206,6 +206,7 @@
     <Build Include="dbo\Functions\ufn_sqlwatch_split_string.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_user_add_action.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_user_add_check.sql" />
+    <Build Include="dbo\Views\vw_sqlwatch_sys_databases.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />

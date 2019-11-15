@@ -1638,4 +1638,18 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="[activity_sequence_xfer]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="1a812103-2fd6-407a-846b-0a560464490b" ChangeDateTime="11/15/2019 01:18:28">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_meta_action_queue].[exec_status]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_meta_action_queue]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[exec_error_code]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="dd179cae-8815-40e6-8e13-bc47d983433d" ChangeDateTime="11/15/2019 01:20:34">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_meta_action_queue].[exec_error_code]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_meta_action_queue]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[exec_status]" />
+  </Operation>
 </Operations>
