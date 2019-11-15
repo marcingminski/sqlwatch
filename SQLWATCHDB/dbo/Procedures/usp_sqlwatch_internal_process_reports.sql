@@ -1,6 +1,8 @@
 ﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_internal_process_reports] (
 	@report_batch_id tinyint = null,
-	@report_id smallint = null
+	@report_id smallint = null,
+	@check_status nvarchar(50) = null,
+	@check_value decimal(28,2) = null
 	)
 as
 /*
@@ -77,6 +79,8 @@ into @sql_instance, @report_id, @report_title, @report_description, @report_defi
 while @@FETCH_STATUS = 0  
 	begin
 		set @html = ''
+		set @report_title = case when @check_status is not null then @check_status + ': ' + @report_title else @report_title end + ' on ' + @@SERVERNAME
+
 		delete from @template_build
 
 		if @definition_type = 'Query'
@@ -100,10 +104,10 @@ while @@FETCH_STATUS = 0
 
 		if @html is not null
 			begin
-				set @action_exec = replace(replace(@action_exec,'{BODY}', replace(@html,'''','''''')),'{SUBJECT}',@@SERVERNAME + ': ' + @report_title)
+				set @action_exec = replace(replace(@action_exec,'{BODY}', replace(@html,'''','''''')),'{SUBJECT}',@report_title)
 				--now insert into the delivery queue for further processing:
-				insert into [dbo].[sqlwatch_meta_action_queue] ([sql_instance], [time_queued], [action_exec_type], [action_exec], [exec_status])
-				values (@@SERVERNAME, sysdatetime(), @action_exec_type, @action_exec, 0)
+				insert into [dbo].[sqlwatch_meta_action_queue] ([sql_instance], [time_queued], [action_exec_type], [action_exec])
+				values (@@SERVERNAME, sysdatetime(), @action_exec_type, @action_exec)
 
 				Print 'Item ( Id: ' + convert(varchar(10),SCOPE_IDENTITY()) + ' ) queued.'
 			end
