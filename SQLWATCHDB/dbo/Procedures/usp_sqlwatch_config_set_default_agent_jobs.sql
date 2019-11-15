@@ -103,11 +103,11 @@ while ($output -ne $null) {
 		;with cte_get_message as (
 		  select top 1 *
 		  from [dbo].[sqlwatch_meta_action_queue]
-		  where exec_status = 0
+		  where [exec_status] is null
 		  order by [time_queued]
 		)
 		update cte_get_message
-			set exec_status = 1
+			set [exec_status] = ''PROCESSING''
 			output deleted.[action_exec], deleted.[action_exec_type], deleted.[queue_item_id]
 	commit tran"
 
@@ -119,10 +119,10 @@ while ($output -ne $null) {
 	if ( $output -ne $null) {
 		if ( $output.action_exec_type -eq "T-SQL" ) {
 			try {
-				Invoke-SqlCmd -ServerInstance "' + @server + '" -Database ' + '$(DatabaseName)' + ' -Query $output.action_exec -MaxCharLength 2147483647
+				Invoke-SqlCmd -ServerInstance "' + @server + '" -Database ' + '$(DatabaseName)' + ' -ErrorAction "Stop" -Query $output.action_exec -MaxCharLength 2147483647
 			}
 			catch {
-				$ErrorOutput = $_.Exception.Message
+				$ErrorOutput = $error[0] -replace "''", "''''"
 			}
 		}
 
@@ -136,11 +136,12 @@ while ($output -ne $null) {
 		}
 
        if ($ErrorOutput -ne "") {
- 			$query = "update [dbo].[sqlwatch_meta_action_queue] set exec_status = 2, [exec_error_message] = ''$ErrorOutput'' where queue_item_id = $queue_item_id" 
+ 			$query = "update [dbo].[sqlwatch_meta_action_queue] set [exec_status] = ''FAILED'', [exec_error_message] = ''$ErrorOutput'' where queue_item_id = $queue_item_id" 
         } else {
-			$query = "delete from [dbo].[sqlwatch_meta_action_queue] where queue_item_id = $queue_item_id"
+			$query = "update [dbo].[sqlwatch_meta_action_queue] set [exec_status] = ''OK'' where queue_item_id = $queue_item_id"
         }
 		Invoke-SqlCmd -ServerInstance "' + @server + '" -Database ' + '$(DatabaseName)' + ' -Query $query
+		Invoke-SqlCmd -ServerInstance "' + @server + '" -Database ' + '$(DatabaseName)' + ' -Query "delete from [dbo].[sqlwatch_meta_action_queue] [exec_status] = ''OK'' and [time_queued] > dateadd(day,-1,sysdatetime())"
 	}
 }'),
 			
