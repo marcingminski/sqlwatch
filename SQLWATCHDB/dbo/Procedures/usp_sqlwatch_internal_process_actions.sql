@@ -2,11 +2,13 @@
 	@sql_instance varchar(32) = @@SERVERNAME,
 	@check_id smallint,
 	@action_id smallint,
-	@check_status nvarchar(max),
+	@check_status varchar(50),
 	@check_value decimal(28,2),
 	@check_snapshot_time datetime2(0)
 	)
 as
+
+--Print '   Processing Action (Id: ' + convert(varchar(10),@action_id) + ')'
 
 /* 
 -------------------------------------------------------------------------------------------------------------------
@@ -150,7 +152,10 @@ if @action_type  <> 'NONE'
 		if @report_id is not null
 			begin
 				--if we have action that calls a report, call the report here:
-				exec [dbo].[usp_sqlwatch_internal_process_reports] @report_id = @report_id
+				exec [dbo].[usp_sqlwatch_internal_process_reports] 
+					 @report_id = @report_id
+					,@check_status = @check_status
+					,@check_value = @check_value
 
 				set @action_attributes = '{
 ReportId="' + convert(varchar(10),@report_id) + '"
@@ -188,7 +193,7 @@ ReportId="' + convert(varchar(10),@report_id) + '"
 								,'{THRESHOLD_WARNING}',isnull(cc.check_threshold_warning,''))
 							,'{THRESHOLD_CRITICAL}',isnull(cc.check_threshold_critical,''))
 						,'{CHECK_DESCRIPTION}',isnull(cc.check_description,''))
-					,'{CHECK_QUERY}',isnull(cc.check_query,''))
+					,'{CHECK_QUERY}',isnull(replace(cc.check_query,'''',''''''),''))
 
 					, @body = 
 					replace(
@@ -214,10 +219,10 @@ ReportId="' + convert(varchar(10),@report_id) + '"
 											,'{CHECK_LAST_STATUS}',isnull(mc.last_check_status,'N/A'))
 										,'{LAST_STATUS_CHANGE}',isnull(convert(varchar(23),mc.last_status_change_date,121),'Never'))
 									,'{CHECK_TIME}',convert(varchar(23),getdate(),121))
-								,'{TRESHOLD_WARNING}',isnull(cc.check_threshold_warning,'None'))
-							,'{TRESHOLD_CRITICAL}',isnull(cc.check_threshold_critical,''))
+								,'{THRESHOLD_WARNING}',isnull(cc.check_threshold_warning,'None'))
+							,'{THRESHOLD_CRITICAL}',isnull(cc.check_threshold_critical,''))
 						,'{CHECK_DESCRIPTION}',isnull(cc.check_description,''))
-					,'{CHECK_QUERY}',isnull(cc.check_query,''))
+					,'{CHECK_QUERY}',isnull(replace(cc.check_query,'''',''''''),''))
 
 				from [dbo].[sqlwatch_config_check] cc
 				inner join [dbo].[sqlwatch_meta_check] mc
@@ -236,6 +241,7 @@ Body="' + @body + '"
 				select @@SERVERNAME, [action_exec_type], replace(replace([action_exec],'{SUBJECT}',@subject),'{BODY}',@body)
 				from [dbo].[sqlwatch_config_action]
 				where action_id = @action_id
+				and [action_enabled] = 1
 			end
 		end
 
