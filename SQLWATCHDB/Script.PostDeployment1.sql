@@ -919,7 +919,7 @@ Previous change: {LAST_STATUS_CHANGE}
 SQL instance: {SQL_INSTANCE}
 Alert time: {CHECK_TIME}
 
-Warning threshold: {HTRESHOLD_WARNING}
+Warning threshold: {THRESHOLD_WARNING}
 Critical threshold: {THRESHOLD_CRITICAL}
 
 --- Check Description:
@@ -1071,7 +1071,7 @@ select (select +
 	 t
 from cte_failed_jobs c1
 group by c1.[Job]
-for xml path(''), type).value(''.'', ''nvarchar(MAX)'')'
+for xml path(''''), type).value(''.'', ''nvarchar(MAX)'')'
 			,@report_definition_type = 'Template'
 			,@report_action_id  = -1
 
@@ -1162,14 +1162,14 @@ from msdb.dbo.sysjobhistory
 where msdb.dbo.agent_datetime(run_date, run_time) > dateadd(minute,-5,getdate())
 and run_status = 0'
 	,@check_frequency_minutes = 5
-	,@check_threshold_warning = null
+	,@check_threshold_warning = NULL
 	,@check_threshold_critical = '>0'
 	,@check_enabled = 1
 	,@check_action_id = -7
 
 	,@action_every_failure = 1
 	,@action_recovery = 0
-	,@action_repeat_period_minutes = null
+	,@action_repeat_period_minutes = NULL
 	,@action_hourly_limit = 10
 	,@action_template_id = -1
 
@@ -1183,14 +1183,14 @@ Blocking means processes are stuck and unable to carry any work, could cause dow
 from dbo.sqlwatch_logger_xes_blockers
 where blocking_start_time > dateadd(minute,-5,getdate())'
 	,@check_frequency_minutes = 5
-	,@check_threshold_warning = null
+	,@check_threshold_warning = NULL
 	,@check_threshold_critical = '>0'
 	,@check_enabled = 1
 	,@check_action_id = -8
 
 	,@action_every_failure = 1
 	,@action_recovery = 0
-	,@action_repeat_period_minutes = null
+	,@action_repeat_period_minutes = NULL
 	,@action_hourly_limit = 10
 	,@action_template_id = -1
 
@@ -1207,11 +1207,11 @@ and report_time > dateadd(minute,-5,getutcdate())'
 	,@check_threshold_warning = '>60'
 	,@check_threshold_critical = '>80'
 	,@check_enabled = 1
-	,@check_action_id = -1
+	,@check_action_id = -2
 
 	,@action_every_failure = 0
 	,@action_recovery = 1
-	,@action_repeat_period_minutes = null
+	,@action_repeat_period_minutes = NULL
 	,@action_hourly_limit = 10
 	,@action_template_id = -1
 
@@ -1222,14 +1222,14 @@ exec [dbo].[usp_sqlwatch_user_add_check]
 	,@check_description = 'SQL Server has been restared in the last 60 minutes.'
 	,@check_query = 'select datediff(minute,sqlserver_start_time,getdate()) from sys.dm_os_sys_info'
 	,@check_frequency_minutes = 10
-	,@check_threshold_warning = null
+	,@check_threshold_warning = NULL
 	,@check_threshold_critical = '<60'
 	,@check_enabled = 1
-	,@check_action_id = -1
+	,@check_action_id = -2
 
 	,@action_every_failure = 0
 	,@action_recovery = 0
-	,@action_repeat_period_minutes = null
+	,@action_repeat_period_minutes = NULL
 	,@action_hourly_limit = 10
 	,@action_template_id = -1
 
@@ -1239,12 +1239,12 @@ exec [dbo].[usp_sqlwatch_user_add_check]
 	,@check_name = 'Action queue is high'
 	,@check_description = 'There is a large number of items awaiting action. This could indicate a problem with the action mechanism.
 Note that in this context, the succesful action means that the item was succesfuly executed, for example sp_send_dbmail and not that the email was delivered.'
-	,@check_query = 'select count(*) from dbo.sqlwatch_meta_action_queue where exec_status <> 2'
+	,@check_query = 'select count(*) from dbo.sqlwatch_meta_action_queue where exec_status is null or exec_status <> ''OK'''
 	,@check_frequency_minutes = 5
-	,@check_threshold_warning = null
-	,@check_threshold_critical = '>25'
+	,@check_threshold_warning = NULL
+	,@check_threshold_critical = '>10'
 	,@check_enabled = 1
-	,@check_action_id = -1
+	,@check_action_id = -2
 
 	,@action_every_failure = 0
 	,@action_recovery = 0
@@ -1257,12 +1257,12 @@ exec [dbo].[usp_sqlwatch_user_add_check]
 	 @check_id = -6
 	,@check_name = 'Action queue failure rate is high'
 	,@check_description = 'There is a large number of items that failed execution. This could indicate a problem with the action mechanism.'
-	,@check_query = 'select count(*) from dbo.sqlwatch_meta_action_queue where exec_status = 2'
+	,@check_query = 'select count(*) from dbo.sqlwatch_meta_action_queue where exec_status = ''FAILED'''
 	,@check_frequency_minutes = 5
-	,@check_threshold_warning = null
-	,@check_threshold_critical = '>25'
+	,@check_threshold_warning = NULL
+	,@check_threshold_critical = '>5'
 	,@check_enabled = 1
-	,@check_action_id = -1
+	,@check_action_id = -2
 
 	,@action_every_failure = 0
 	,@action_recovery = 0
@@ -1293,7 +1293,7 @@ from dbo.vw_sqlwatch_report_dim_os_volume'
 --------------------------------------------------------------------------------------
 exec [dbo].[usp_sqlwatch_user_add_check]
 	 @check_id = -8
-	,@check_name = 'One of more disk will be full in few days.'
+	,@check_name = 'One or more disk will be full soon.'
 	,@check_description = 'The "days until full" value is lower than expected. One or more disks will be full in few days.'
 	,@check_query = 'select days_until_full
 from dbo.vw_sqlwatch_report_dim_os_volume'
@@ -1309,6 +1309,70 @@ from dbo.vw_sqlwatch_report_dim_os_volume'
 	,@action_hourly_limit = 10
 	,@action_template_id = -1
 
+--------------------------------------------------------------------------------------
+exec [dbo].[usp_sqlwatch_user_add_check]
+	 @check_id = -9
+	,@check_name = 'Check execution time is high'
+	,@check_description = 'There are checks that take over 1 second to execute on average. 
+Make sure checks tare lightweight and do not use up lots of resources and time. 
+Checks are executed in series, in a single threaded cursor and not parralel. This means that 10 checks taking 1 second each will in total take 10 seconds to run.
+Each check should not take more than few miliseconds to run.
+You can view average check execution time in [dbo].[vw_sqlwatch_report_dim_check] and individual runs in [dbo].[sqlwatch_logger_check]'
+	,@check_query = 'SELECT max([avg_check_exec_time_ms])
+FROM [dbo].[vw_sqlwatch_report_dim_check]'
+	,@check_frequency_minutes = 15
+	,@check_threshold_warning = NULL
+	,@check_threshold_critical = '>1000'
+	,@check_enabled = 1
+	,@check_action_id = -2
+
+	,@action_every_failure = 0
+	,@action_recovery = 1
+	,@action_repeat_period_minutes = 1440 --daily
+	,@action_hourly_limit = 10
+	,@action_template_id = -1
+
+--------------------------------------------------------------------------------------
+exec [dbo].[usp_sqlwatch_user_add_check]
+	 @check_id = -10
+	,@check_name = 'Checks are failling'
+	,@check_description = 'There is one or more failed checks.
+You can view last_check_status in [dbo].[vw_sqlwatch_report_dim_check] and individual runs in [dbo].[sqlwatch_logger_check]'
+	,@check_query = 'select count(*) 
+from [dbo].[vw_sqlwatch_report_dim_check]
+where last_check_status = ''CHECK ERROR'''
+	,@check_frequency_minutes = 5
+	,@check_threshold_warning = NULL
+	,@check_threshold_critical = '>0'
+	,@check_enabled = 1
+	,@check_action_id = -2
+
+	,@action_every_failure = 0
+	,@action_recovery = 1
+	,@action_repeat_period_minutes = 1440 --daily
+	,@action_hourly_limit = 10
+	,@action_template_id = -1
+
+--------------------------------------------------------------------------------------
+exec [dbo].[usp_sqlwatch_user_add_check]
+	 @check_id = -11
+	,@check_name = 'Queued actions have not been processed'
+	,@check_description = 'There is one or more actions that have not been processed for more than 1 hour. This could indicate problems with the action processing mechanism.'
+	,@check_query = 'select count(*)
+from [dbo].[sqlwatch_meta_action_queue]
+where exec_status is null
+and time_queued < dateadd(hour,-1,SYSDATETIME())'
+	,@check_frequency_minutes = 15
+	,@check_threshold_warning = NULL
+	,@check_threshold_critical = '>0'
+	,@check_enabled = 1
+	,@check_action_id = -2
+
+	,@action_every_failure = 0
+	,@action_recovery = 1
+	,@action_repeat_period_minutes = 1440 --daily
+	,@action_hourly_limit = 10
+	,@action_template_id = -1
 
 --------------------------------------------------------------------------------------
 --setup jobs
