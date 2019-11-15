@@ -1,12 +1,25 @@
 ﻿CREATE VIEW [dbo].[vw_sqlwatch_report_dim_check] with schemabinding
 	AS 
 	select ma.sql_instance, ac.check_id, ac.[check_name], ma.last_check_date, ma.last_check_value, ma.last_check_status, ma.[last_status_change_date]
-		--, last_notification_sent = lt.snapshot_time
-		--, total_notifications_in_last_hour = isnull(tc.trigger_count,0)
+
+		, avg_check_exec_time_ms = convert(decimal(10,2),t.check_exec_time_ms)
+		, t.total_checks_executed
 	from [dbo].[sqlwatch_meta_check] ma
+
 	inner join [dbo].[sqlwatch_config_check] ac
 		on ma.[sql_instance] = ac.[sql_instance]
 		and ma.[check_id] = ac.[check_id]
+
+	--get average exec time for each check
+	left join (
+		select sql_instance, check_id
+			, check_exec_time_ms=avg(check_exec_time_ms)
+			, total_checks_executed=count(check_exec_time_ms)
+		from [dbo].[sqlwatch_logger_check]
+		group by sql_instance, check_id
+	) t
+	on t.sql_instance = ma.sql_instance
+	and t.check_id = ma.check_id
 
 	--get last time we sent a message from the trigget history
 	--left join (
