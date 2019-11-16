@@ -1652,4 +1652,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="[exec_status]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="bc15cf7f-b03e-4603-bc6a-e2b8c5aeafbf" ChangeDateTime="11/16/2019 19:07:01">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_config_check_action_template].[date_modified]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_config_check_action_template]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[date_updated]" />
+  </Operation>
 </Operations>
