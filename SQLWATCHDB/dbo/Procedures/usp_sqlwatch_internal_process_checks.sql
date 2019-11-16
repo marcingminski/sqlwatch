@@ -207,7 +207,9 @@ begin
 						@action_id = @action_id,
 						@check_status = @check_status,
 						@check_value = @check_value,
-						@check_snapshot_time = @snapshot_date
+						@check_snapshot_time = @snapshot_date,
+						@check_description = @check_description,
+						@check_name = @check_name
 				end try
 				begin catch
 						select @error_message = @error_message + '

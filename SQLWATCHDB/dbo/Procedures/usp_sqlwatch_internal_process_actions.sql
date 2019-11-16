@@ -4,7 +4,9 @@
 	@action_id smallint,
 	@check_status varchar(50),
 	@check_value decimal(28,2),
-	@check_snapshot_time datetime2(0)
+	@check_snapshot_time datetime2(0),
+	@check_description nvarchar(max) = null,
+	@check_name nvarchar(max)
 	)
 as
 
@@ -143,8 +145,93 @@ ActionCountLimit="' + convert(varchar(10),@action_hourly_limit) + '"
 	end
 
 
+-------------------------------------------------------------------------------------------------------------------
+-- set {SUBJECT} and {BODY}
+-------------------------------------------------------------------------------------------------------------------
 if @action_type  <> 'NONE'
 	begin
+		--an action with arbitrary executable must have the following parameters:
+		--{SUBJECT} and {BODY}
+		--on top of it, an action will have a template that can have one of the below parameters so need to substitute them here:
+		select @subject = 
+			replace(
+				replace(
+					replace(
+						replace(
+							replace(
+								replace(
+									replace(
+										replace(
+											replace(
+												replace(
+													replace(
+														replace(
+															replace(
+																replace(@subject,'{CHECK_STATUS}',@check_status)
+															,'{CHECK_NAME}',check_name)
+														,'{SQL_INSTANCE}',@@SERVERNAME)
+													,'{CHECK_ID}',convert(varchar(10),cc.check_id))
+												,'{CHECK_STATUS}',@check_status)
+											,'{CHECK_VALUE}',convert(varchar(10),@check_value))
+										,'{CHECK_LAST_VALUE}',isnull(convert(varchar(10),mc.last_check_value),'N/A'))
+									,'{CHECK_LAST_STATUS}',isnull(mc.last_check_status,'N/A'))
+								,'{LAST_STATUS_CHANGE}',isnull(convert(varchar(23),mc.last_status_change_date,121),'Never'))
+							,'{CHECK_TIME}',convert(varchar(23),getdate(),121))
+						,'{THRESHOLD_WARNING}',isnull(cc.check_threshold_warning,''))
+					,'{THRESHOLD_CRITICAL}',isnull(cc.check_threshold_critical,''))
+				,'{CHECK_DESCRIPTION}',isnull(cc.check_description,''))
+			,'{CHECK_QUERY}',isnull(replace(cc.check_query,'''',''''''),''))
+
+			, @body = 
+			replace(
+				replace(
+					replace(
+						replace(
+							replace(
+								replace(
+									replace(
+										replace(
+											replace(
+												replace(
+													replace(
+														replace(
+															replace(
+																replace(@body,'{CHECK_STATUS}',@check_status)
+															,'{CHECK_NAME}',check_name)
+														,'{SQL_INSTANCE}',@@SERVERNAME)
+													,'{CHECK_ID}',convert(varchar(10),cc.check_id))
+												,'{CHECK_STATUS}',@check_status)
+											,'{CHECK_VALUE}',convert(varchar(10),@check_value))
+										,'{CHECK_LAST_VALUE}',isnull(convert(varchar(10),mc.last_check_value),'N/A'))
+									,'{CHECK_LAST_STATUS}',isnull(mc.last_check_status,'N/A'))
+								,'{LAST_STATUS_CHANGE}',isnull(convert(varchar(23),mc.last_status_change_date,121),'Never'))
+							,'{CHECK_TIME}',convert(varchar(23),getdate(),121))
+						,'{THRESHOLD_WARNING}',isnull(cc.check_threshold_warning,'None'))
+					,'{THRESHOLD_CRITICAL}',isnull(cc.check_threshold_critical,''))
+				,'{CHECK_DESCRIPTION}',isnull(cc.check_description,''))
+			,'{CHECK_QUERY}',isnull(replace(cc.check_query,'''',''''''),''))
+
+		from [dbo].[sqlwatch_config_check] cc
+		inner join [dbo].[sqlwatch_meta_check] mc
+			on cc.sql_instance = mc.sql_instance
+			and cc.check_id = mc.check_id
+
+		where cc.check_id = @check_id
+		and cc.sql_instance = @@SERVERNAME
+
+		set @action_attributes = '{
+	Subject="' + @subject + '"
+	Body="' + @body + '"
+	}'
+
+
+		insert into [dbo].[sqlwatch_meta_action_queue] (sql_instance, [action_exec_type], [action_exec])
+		select @@SERVERNAME, [action_exec_type], replace(replace([action_exec],'{SUBJECT}',@subject),'{BODY}',@body)
+		from [dbo].[sqlwatch_config_action]
+		where action_id = @action_id
+		and [action_enabled] = 1
+		and [action_exec] is not null --null action exec can only be for reports but they are processed below
+
 		--is this action calling a report or an arbitrary exec?
 		select @report_id = action_report_id 
 		from [dbo].[sqlwatch_config_action] where action_id = @action_id
@@ -156,94 +243,15 @@ if @action_type  <> 'NONE'
 					 @report_id = @report_id
 					,@check_status = @check_status
 					,@check_value = @check_value
+					,@check_name = @check_name
+					,@subject = @subject
+					,@body = @body
 
 				set @action_attributes = '{
-ReportId="' + convert(varchar(10),@report_id) + '"
-}'
+		ReportId="' + convert(varchar(10),@report_id) + '"
+		}'
 			end
-		else
-			begin
-				--an action with arbitrary executable must have the following parameters:
-				--{SUBJECT} and {BODY}
-				--on top of it, an action will have a template that can have one of the below parameters so need to substitute them here:
-				select @subject = 
-					replace(
-						replace(
-							replace(
-								replace(
-									replace(
-										replace(
-											replace(
-												replace(
-													replace(
-														replace(
-															replace(
-																replace(
-																	replace(
-																		replace(@subject,'{CHECK_STATUS}',@check_status)
-																	,'{CHECK_NAME}',check_name)
-																,'{SQL_INSTANCE}',@@SERVERNAME)
-															,'{CHECK_ID}',convert(varchar(10),cc.check_id))
-														,'{CHECK_STATUS}',@check_status)
-													,'{CHECK_VALUE}',convert(varchar(10),@check_value))
-												,'{CHECK_LAST_VALUE}',isnull(convert(varchar(10),mc.last_check_value),'N/A'))
-											,'{CHECK_LAST_STATUS}',isnull(mc.last_check_status,'N/A'))
-										,'{LAST_STATUS_CHANGE}',isnull(convert(varchar(23),mc.last_status_change_date,121),'Never'))
-									,'{CHECK_TIME}',convert(varchar(23),getdate(),121))
-								,'{THRESHOLD_WARNING}',isnull(cc.check_threshold_warning,''))
-							,'{THRESHOLD_CRITICAL}',isnull(cc.check_threshold_critical,''))
-						,'{CHECK_DESCRIPTION}',isnull(cc.check_description,''))
-					,'{CHECK_QUERY}',isnull(replace(cc.check_query,'''',''''''),''))
-
-					, @body = 
-					replace(
-						replace(
-							replace(
-								replace(
-									replace(
-										replace(
-											replace(
-												replace(
-													replace(
-														replace(
-															replace(
-																replace(
-																	replace(
-																		replace(@body,'{CHECK_STATUS}',@check_status)
-																	,'{CHECK_NAME}',check_name)
-																,'{SQL_INSTANCE}',@@SERVERNAME)
-															,'{CHECK_ID}',convert(varchar(10),cc.check_id))
-														,'{CHECK_STATUS}',@check_status)
-													,'{CHECK_VALUE}',convert(varchar(10),@check_value))
-												,'{CHECK_LAST_VALUE}',isnull(convert(varchar(10),mc.last_check_value),'N/A'))
-											,'{CHECK_LAST_STATUS}',isnull(mc.last_check_status,'N/A'))
-										,'{LAST_STATUS_CHANGE}',isnull(convert(varchar(23),mc.last_status_change_date,121),'Never'))
-									,'{CHECK_TIME}',convert(varchar(23),getdate(),121))
-								,'{THRESHOLD_WARNING}',isnull(cc.check_threshold_warning,'None'))
-							,'{THRESHOLD_CRITICAL}',isnull(cc.check_threshold_critical,''))
-						,'{CHECK_DESCRIPTION}',isnull(cc.check_description,''))
-					,'{CHECK_QUERY}',isnull(replace(cc.check_query,'''',''''''),''))
-
-				from [dbo].[sqlwatch_config_check] cc
-				inner join [dbo].[sqlwatch_meta_check] mc
-					on cc.sql_instance = mc.sql_instance
-					and cc.check_id = mc.check_id
-
-				where cc.check_id = @check_id
-				and cc.sql_instance = @@SERVERNAME
-
-				set @action_attributes = '{
-Subject="' + @subject + '"
-Body="' + @body + '"
-}'
-
-				insert into [dbo].[sqlwatch_meta_action_queue] (sql_instance, [action_exec_type], [action_exec])
-				select @@SERVERNAME, [action_exec_type], replace(replace([action_exec],'{SUBJECT}',@subject),'{BODY}',@body)
-				from [dbo].[sqlwatch_config_action]
-				where action_id = @action_id
-				and [action_enabled] = 1
-			end
-		end
+	end
 
  LogAction:
 

@@ -2,7 +2,10 @@
 	@report_batch_id tinyint = null,
 	@report_id smallint = null,
 	@check_status nvarchar(50) = null,
-	@check_value decimal(28,2) = null
+	@check_value decimal(28,2) = null,
+	@check_name nvarchar(max) = null,
+	@subject nvarchar(max) = null,
+	@body nvarchar(max) = null
 	)
 as
 /*
@@ -79,16 +82,12 @@ into @sql_instance, @report_id, @report_title, @report_description, @report_defi
 while @@FETCH_STATUS = 0  
 	begin
 		set @html = ''
-		set @report_title = case when @check_status is not null then @check_status + ': ' + @report_title else @report_title end + ' on ' + @@SERVERNAME
 
 		delete from @template_build
 
 		if @definition_type = 'Query'
 			begin
 				exec [dbo].[usp_sqlwatch_internal_query_to_html_table] @html = @html output, @query = @report_definition
-
-				set @html = '<html><head><style>' + @css + '</style><body><p>' + @report_description + '</p>' + @html + '<p>Email sent from SQLWATCH on host: ' + @@SERVERNAME +'
-<a href="https://sqlwatch.io">https://sqlwatch.io</a></p></body></html>'
 			end
 
 		if @definition_type = 'Template'
@@ -97,14 +96,43 @@ while @@FETCH_STATUS = 0
 				exec sp_executesql @report_definition
 
 				select @html = [result] from @template_build
-				set @html = '<html><head><style>' + @css + '</style><body><p>' + @report_description + '</p>' + @html + '<p>Email sent from SQLWATCH on host: ' + @@SERVERNAME +'
-<a href="https://sqlwatch.io">https://sqlwatch.io</a></p></body></html>'
 			end
 
+		set @html = '<html><head><style>' + @css + '</style><body>' + @html
 
-		if @html is not null
+		--if @check_name is NOT null it means report has been triggered by a check action. Therefore, we need to respect the check action template:
+		if charindex('{REPORT_CONTENT}',isnull(@body,'')) = 0
 			begin
-				set @action_exec = replace(replace(@action_exec,'{BODY}', replace(@html,'''','''''')),'{SUBJECT}',@report_title)
+				--body content was either not passed or does not contain '{REPORT_CONTENT}'. In this case we are just going to include the report as the body.
+				set @body = @html + case when @report_description is not null then '<p>' + @report_description + '</p>' else '' end 
+				set @subject = @report_title
+			end
+		else
+			begin
+				set @body = replace(
+								replace(
+									replace(@body,'{REPORT_CONTENT}',@html)
+								,'{REPORT_TITLE}',@report_title)
+							,'{REPORT_DESCRIPTION}',@report_description)
+
+				set @subject = replace(@subject,'{REPORT_TITLE}',@report_title)
+			end
+
+		/*	If check is null it means we are not triggered report from the check.
+			and if type = Query it means we are running a simple query. in this case
+			add footer. 
+			
+			However, if we are here from the check or from "Template" based report, 
+			the footers (as the whole content) are customisaible in the template */
+		if @definition_type = 'Query' and @check_name is null 
+			begin
+				set @body = @body + '<p>Email sent from SQLWATCH on host: ' + @@SERVERNAME +'
+		<a href="https://sqlwatch.io">https://sqlwatch.io</a></p></body></html>'
+			end
+
+		if @body is not null
+			begin
+				set @action_exec = replace(replace(@action_exec,'{BODY}', replace(@body,'''','''''')),'{SUBJECT}',@subject)
 				--now insert into the delivery queue for further processing:
 				insert into [dbo].[sqlwatch_meta_action_queue] ([sql_instance], [time_queued], [action_exec_type], [action_exec])
 				values (@@SERVERNAME, sysdatetime(), @action_exec_type, @action_exec)
