@@ -13,7 +13,7 @@ as
 
 	insert into @databases
 	select [name], [create_date], [sql_instance] = @@SERVERNAME
-	from sys.databases
+	from dbo.vw_sqlwatch_sys_databases
 	union all
 	/* mssqlsystemresource database appears in the performance counters
 	so we need it as a dimensions to be able to filter in the report */

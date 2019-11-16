@@ -13,6 +13,7 @@ create table ##DB61B2CD92324E4B89019FFA7BEF1010 (
 
 create unique clustered index icx_tmp_DB61B2CD92324E4B89019FFA7BEF1010 on ##DB61B2CD92324E4B89019FFA7BEF1010 ([table_name],[database_name],index_id)
 
+-- this should be a cursor from dbo.vw_sqlwatch_sys_databases
 exec sp_MSforeachdb'
 use [?]
 insert into ##DB61B2CD92324E4B89019FFA7BEF1010 (index_name, index_id, index_type_desc, [table_name], [database_name])
@@ -40,7 +41,7 @@ inner join [dbo].[sqlwatch_meta_table] mt
 	and mt.sqlwatch_database_id = md.sqlwatch_database_id
 	and mt.sql_instance = md.sql_instance
 
-inner join sys.databases dbs
+inner join dbo.vw_sqlwatch_sys_databases dbs
 	on dbs.name = md.database_name collate database_default
 	and dbs.create_date = md.database_create_date
 
