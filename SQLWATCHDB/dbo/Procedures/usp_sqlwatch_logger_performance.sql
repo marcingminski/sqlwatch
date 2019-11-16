@@ -356,9 +356,11 @@ declare @sql nvarchar(4000)
 			on fs.database_id = f.database_id 
 			and fs.[file_id] = f.[file_id]
 		
-		/* 2019-05-05 join on databases to get database name and create data as part of the  */
+		/* 2019-05-05 join on databases to get database name and create data as part of the 
+		   -- doesnt this need a join on dbo.vw_sqlwatch_sys_databases instead ? */
 		inner join sys.databases d 
 			on d.database_id = f.database_id
+
 		inner join [dbo].[sqlwatch_meta_database] sd 
 			on sd.[database_name] = convert(nvarchar(128),d.[name]) collate database_default
 			and sd.[database_create_date] = d.[create_date]

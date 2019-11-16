@@ -11,7 +11,7 @@ create table ##98308FFC2C634BF98B347EECB98E3490 (
 		)
 )
 
-
+--this needs a cursor from dbo.vw_sqlwatch_sys_databases
 exec sp_MSforeachdb '
 USE [?]
 insert into ##98308FFC2C634BF98B347EECB98E3490 ([TABLE_CATALOG],[TABLE_SCHEMA],[TABLE_NAME],[TABLE_TYPE])
