@@ -833,111 +833,127 @@ if (select count(*) from [dbo].[sqlwatch_logger_snapshot_header]
 --------------------------------------------------------------------------------------
 -- default action template
 --------------------------------------------------------------------------------------
-if not exists (select * from [dbo].[sqlwatch_config_check_action_template] where [action_template_id] = -1)
-	begin
-		set identity_insert [dbo].[sqlwatch_config_check_action_template] on
-		insert into [dbo].[sqlwatch_config_check_action_template](
-				   [action_template_id]
-				  ,[action_template_description]
-				  ,[action_template_fail_subject]
-				  ,[action_template_fail_body]
-				  ,[action_template_repeat_subject]
-				  ,[action_template_repeat_body]
-				  ,[action_template_recover_subject]
-				  ,[action_template_recover_body])
-		select
+declare @action_tempalte_plain nvarchar(max) = 'Check: {CHECK_NAME} ( CheckId: {CHECK_ID} )
+
+Current status:  {CHECK_STATUS}
+Current value: {CHECK_VALUE}
+
+Previous value: {CHECK_LAST_VALUE}
+Previous status: {CHECK_LAST_STATUS}
+Previous change: {LAST_STATUS_CHANGE}
+
+SQL instance: {SQL_INSTANCE}
+Alert time: {CHECK_TIME}
+
+Warning threshold: {THRESHOLD_WARNING}
+Critical threshold: {THRESHOLD_CRITICAL}
+
+--- Check Description:
+
+{CHECK_DESCRIPTION}
+
+--- Check Query:
+
+{CHECK_QUERY}
+
+---
+
+Sent from SQLWATCH on host: {SQL_INSTANCE}
+https://docs.sqlwatch.io'
+
+declare @action_tempalte_report_html nvarchar(max) = '<p>Check: {CHECK_NAME} ( CheckId: {CHECK_ID} )</p>
+
+<p>Current status: {CHECK_STATUS}
+<br>Current value: {CHECK_VALUE}</p>
+
+<p>Previous value: {CHECK_LAST_VALUE}
+<br>Previous status: {CHECK_LAST_STATUS}
+<br>Previous change: {LAST_STATUS_CHANGE}</p>
+
+<p>SQL instance: {SQL_INSTANCE}
+<br>Alert time: {CHECK_TIME}</p>
+
+<p>Warning threshold: {THRESHOLD_WARNING}
+<br>Critical threshold: {THRESHOLD_CRITICAL}</p>
+
+<p>--- Check Description:</p>
+
+<p>{CHECK_DESCRIPTION}</p>
+
+<p>--- Check Query:</p>
+
+<p>{CHECK_QUERY}</p>
+
+<p>--- Report Content:</p></p>
+
+<p><b>{REPORT_TITLE}</b></p>
+<p>{REPORT_DESCRIPTION}</p>
+<p>{REPORT_CONTENT}</p>
+
+<p>Sent from SQLWATCH on host: {SQL_INSTANCE}</p>
+<p><a href="https://docs.sqlwatch.io">https://docs.sqlwatch.io</a> </p>';
+
+
+disable trigger [dbo].[trg_sqlwatch_config_check_action_template_modify] on [dbo].[sqlwatch_config_check_action_template];  --so we dont populate updated date as this is to detect if a user has modified default template
+set identity_insert [dbo].[sqlwatch_config_check_action_template] on
+
+merge [dbo].[sqlwatch_config_check_action_template] as target
+using (
+	select
 		 [action_template_id] = -1
-		,[action_template_description] = 'Default notification template'
+		,[action_template_description] = 'Default plain notification template (Text). This template is usually used for simple actions that send plain text messages on the back of the check.'
 		,[action_template_fail_subject] = '{CHECK_STATUS}: {CHECK_NAME} on {SQL_INSTANCE}'
-		,[action_template_fail_body] = 'Check: {CHECK_NAME} ( CheckId: {CHECK_ID} )
-
-Current status:  {CHECK_STATUS}
-Current value: {CHECK_VALUE}
-
-Previous value: {CHECK_LAST_VALUE}
-Previous status: {CHECK_LAST_STATUS}
-Previous change: {LAST_STATUS_CHANGE}
-
-SQL instance: {SQL_INSTANCE}
-Alert time: {CHECK_TIME}
-
-Warning threshold: {THRESHOLD_WARNING}
-Critical threshold: {THRESHOLD_CRITICAL}
-
---- Check Description:
-
-{CHECK_DESCRIPTION}
-
---- Check Query:
-
-{CHECK_QUERY}
-
----
-
-
-Sent from SQLWATCH on host: {SQL_INSTANCE}
-https://docs.sqlwatch.io '
+		,[action_template_fail_body] = @action_tempalte_plain
 		,[action_template_repeat_subject] = 'REPEATED: {CHECK_STATUS}: {CHECK_NAME} on {SQL_INSTANCE}'
-		,[action_template_repeat_body] = 'Check: {CHECK_NAME} ( CheckId: {CHECK_ID} )
-
-Current status:  {CHECK_STATUS}
-Current value: {CHECK_VALUE}
-
-Previous value: {CHECK_LAST_VALUE}
-Previous status: {CHECK_LAST_STATUS}
-Previous change: {LAST_STATUS_CHANGE}
-
-SQL instance: {SQL_INSTANCE}
-Alert time: {CHECK_TIME}
-
-Warning threshold: {THRESHOLD_WARNING}
-Critical threshold: {THRESHOLD_CRITICAL}
-
---- Check Description:
-
-{CHECK_DESCRIPTION}
-
---- Check Query:
-
-{CHECK_QUERY}
-
----
-
-
-Sent from SQLWATCH on host: {SQL_INSTANCE}
-https://docs.sqlwatch.io '
+		,[action_template_repeat_body] = @action_tempalte_plain
 		,[action_template_recover_subject] = 'RECOVERED: {CHECK_STATUS}: {CHECK_NAME} on {SQL_INSTANCE}'
-		,[action_template_recover_body]	= 'Check: {CHECK_NAME} ( CheckId: {CHECK_ID} )
+		,[action_template_recover_body]	= @action_tempalte_plain
 
-Current status:  {CHECK_STATUS}
-Current value: {CHECK_VALUE}
+	union all
 
-Previous value: {CHECK_LAST_VALUE}
-Previous status: {CHECK_LAST_STATUS}
-Previous change: {LAST_STATUS_CHANGE}
+	select
+		 [action_template_id] = -2
+		,[action_template_description] = 'Default report notification template (HTML). This template is used for actions that trigger reports on the back of the check.'
+		,[action_template_fail_subject] = '{CHECK_STATUS}: {CHECK_NAME} on {SQL_INSTANCE}'
+		,[action_template_fail_body] = @action_tempalte_report_html
+		,[action_template_repeat_subject] = 'REPEATED: {CHECK_STATUS}: {CHECK_NAME} on {SQL_INSTANCE}'
+		,[action_template_repeat_body] = @action_tempalte_report_html
+		,[action_template_recover_subject] = 'RECOVERED: {CHECK_STATUS}: {CHECK_NAME} on {SQL_INSTANCE}'
+		,[action_template_recover_body]	= @action_tempalte_report_html
+		) as source
+on target.[action_template_id] = source.[action_template_id]
+when not matched then
+	insert ( [action_template_id]
+			,[action_template_description]
+			,[action_template_fail_subject]
+			,[action_template_fail_body]
+			,[action_template_repeat_subject]
+			,[action_template_repeat_body]
+			,[action_template_recover_subject]
+			,[action_template_recover_body]
+			)
+	values (
+			 source.[action_template_id]
+			,source.[action_template_description]
+			,source.[action_template_fail_subject]
+			,source.[action_template_fail_body]
+			,source.[action_template_repeat_subject]
+			,source.[action_template_repeat_body]
+			,source.[action_template_recover_subject]
+			,source.[action_template_recover_body]
+			)
+when matched and target.[date_updated] is null then --only update when not modified by a user
+	update set [action_template_description] = source.[action_template_description]
+			,[action_template_fail_subject] = source.[action_template_fail_subject]
+			,[action_template_fail_body] = source.[action_template_fail_body]
+			,[action_template_repeat_subject] = source.[action_template_repeat_subject]
+			,[action_template_repeat_body] = source.[action_template_repeat_body]
+			,[action_template_recover_subject] = source.[action_template_recover_subject]
+			,[action_template_recover_body] = source.[action_template_recover_body]
+;
 
-SQL instance: {SQL_INSTANCE}
-Alert time: {CHECK_TIME}
-
-Warning threshold: {THRESHOLD_WARNING}
-Critical threshold: {THRESHOLD_CRITICAL}
-
---- Check Description:
-
-{CHECK_DESCRIPTION}
-
---- Check Query:
-
-{CHECK_QUERY}
-
----
-
-
-Sent from SQLWATCH on host: {SQL_INSTANCE}
-https://docs.sqlwatch.io '
-
-		set identity_insert [dbo].[sqlwatch_config_check_action_template] off
-	end
+set identity_insert [dbo].[sqlwatch_config_check_action_template] off;
+disable trigger [dbo].[trg_sqlwatch_config_check_action_template_modify] on [dbo].[sqlwatch_config_check_action_template];
 
 --------------------------------------------------------------------------------------
 -- load default report styles:
@@ -1115,12 +1131,11 @@ for xml path(''''), type).value(''.'', ''nvarchar(MAX)'')'
 			 @report_id = -4
 			,@report_title = 'Disk Utilisation Report'
 			,@report_description = ''
-			,@report_definition = 'select [volume_name]
-      ,[days_until_full]
-      ,[total_space_formatted]
-      ,[free_space_formatted]
-      ,[growth_bytes_per_day_formatted]
-      ,[free_space_percentage_formatted]
+			,@report_definition = 'select [Volume]=[volume_name]
+      ,[Days Until Full] = [days_until_full]
+      ,[Total Space] = [total_space_formatted]
+      ,[Free Space] = [free_space_formatted] + '' ('' + [free_space_percentage_formatted] + '')''
+      ,[Growth] = [growth_bytes_per_day_formatted]
   from [dbo].[vw_sqlwatch_report_dim_os_volume]'
 			,@report_definition_type = 'Query'
 			,@report_action_id  = -1
@@ -1171,7 +1186,7 @@ and run_status = 0'
 	,@action_recovery = 0
 	,@action_repeat_period_minutes = NULL
 	,@action_hourly_limit = 10
-	,@action_template_id = -1
+	,@action_template_id = -2
 
 --------------------------------------------------------------------------------------
 exec [dbo].[usp_sqlwatch_user_add_check]
@@ -1192,7 +1207,7 @@ where blocking_start_time > dateadd(minute,-5,getdate())'
 	,@action_recovery = 0
 	,@action_repeat_period_minutes = NULL
 	,@action_hourly_limit = 10
-	,@action_template_id = -1
+	,@action_template_id = -2
 
 --------------------------------------------------------------------------------------
 exec [dbo].[usp_sqlwatch_user_add_check]
@@ -1285,10 +1300,10 @@ from dbo.vw_sqlwatch_report_dim_os_volume'
 	,@check_action_id = -9
 
 	,@action_every_failure = 0
-	,@action_recovery = 0
+	,@action_recovery = 1
 	,@action_repeat_period_minutes = 1440 --daily
 	,@action_hourly_limit = 10
-	,@action_template_id = -1
+	,@action_template_id = -2
 
 --------------------------------------------------------------------------------------
 exec [dbo].[usp_sqlwatch_user_add_check]
@@ -1304,10 +1319,10 @@ from dbo.vw_sqlwatch_report_dim_os_volume'
 	,@check_action_id = -9
 
 	,@action_every_failure = 0
-	,@action_recovery = 0
+	,@action_recovery = 1
 	,@action_repeat_period_minutes = 1440 --daily
 	,@action_hourly_limit = 10
-	,@action_template_id = -1
+	,@action_template_id = -2
 
 --------------------------------------------------------------------------------------
 exec [dbo].[usp_sqlwatch_user_add_check]
