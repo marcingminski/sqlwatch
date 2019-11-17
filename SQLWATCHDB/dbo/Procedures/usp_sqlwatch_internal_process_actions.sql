@@ -44,11 +44,14 @@ declare @action_type varchar(200) = 'NONE',
 		@body nvarchar(max),
 		@report_id smallint,
 		@content_info varbinary(128),
-		@action_attributes nvarchar(max)
+		@action_attributes nvarchar(max) = ''
 
 --need to this so we can detect the caller in [usp_sqlwatch_internal_process_reports] to avoid circular ref.
 select @content_info = convert(varbinary(128),convert(varchar(max),@action_id))
 set CONTEXT_INFO @content_info
+
+set @action_attributes = @action_attributes + '
+	ContentInfo="' + isnull(convert(varchar(max),@action_id),'') + '"'
 
 -------------------------------------------------------------------------------------------------------------------
 -- Get action parameters:
@@ -64,6 +67,13 @@ where [check_id] = @check_id
 and [action_id] = @action_id
 and sql_instance = @@SERVERNAME
 
+set @action_attributes = @action_attributes + '
+	ActionEveryFailure="' + isnull(convert(varchar(10),@action_every_failure),'') + '"
+	ActionRecovery="' + isnull(convert(varchar(10),@action_recovery),'') + '"
+	ActionRepeatPeriodMinutes="' + isnull(convert(varchar(10),@action_repeat_period_minutes),'') +'"
+	ActionHourlyLimit="' + isnull(convert(varchar(10),@action_hourly_limit),'') + '"
+	ActionTemplateId="' + isnull(convert(varchar(10),@action_template_id),'') + '"'
+
 -------------------------------------------------------------------------------------------------------------------
 -- each check has limit of actions per hour to avoid flooding:
 -------------------------------------------------------------------------------------------------------------------
@@ -75,6 +85,10 @@ where [check_id] = @check_id
 and [action_id] = @action_id
 and action_type <> 'NONE'
 
+set @action_attributes = @action_attributes + '
+	LastActionTime="' + isnull(convert(varchar(23),@last_action_time,121),'') + '"
+	ActionCountLastHour="' + isnull(convert(varchar(10),@action_count_last_hour),'') + '"'
+
 -------------------------------------------------------------------------------------------------------------------
 -- We need to know if we are dealing with a new, repeated or recovered action. For this, we have to check
 -- previous checks where action was requested
@@ -83,34 +97,43 @@ and action_type <> 'NONE'
 select @action_type = case 
 
 	-------------------------------------------------------------------------------------------------------------------
+	-- when the current status is not OK and the previous status was OK, its a new notification:
+	-------------------------------------------------------------------------------------------------------------------
+	when @check_status <> 'OK' and isnull(last_check_status,'OK') = 'OK' then 'NEW'
+
+	-------------------------------------------------------------------------------------------------------------------
 	-- if previous status is NOT ok and current status is OK the check has recovered from fail to success.
 	-- we can send an email notyfing DBAs that the problem has gone away
 	-------------------------------------------------------------------------------------------------------------------
 	when @check_status = 'OK' and isnull(last_check_status,'OK') <> 'OK' and @action_recovery = 1 then 'RECOVERY'
 
 	-------------------------------------------------------------------------------------------------------------------
-	-- retrigger if the value has changed, regardless of the status.
+	-- retrigger if the value has changed and the status is not OK
 	-- this is handy if we want to monitor every change after it has failed. for example we can set to monitor
 	-- if number of logins is greater than 5 so if someone creates a new login we will get an email and then every time
 	-- new login is created
-	-------------------------------------------------------------------------------------------------------------------
-	when @check_status <> 'OK' and (last_check_value is null or @check_value <> last_check_value) and @action_every_failure = 1 then 'REPEAT'
 
+	-- this however will not work in situations where we want a notification for ongoing blocking chains or failed jobs
+	-- where there the count does not change. i.e. job A fails and then recovers but job B fails instead. The overall 
+	-- count of jailed jobs at any given time is still 1. in such instance we can ste a reminder to 1 minute.
 	-------------------------------------------------------------------------------------------------------------------
-	-- when the current status is not OK and the previous status was OK, its a new notification:
-	-------------------------------------------------------------------------------------------------------------------
-	when @check_status <> 'OK' and isnull(last_check_status,'OK') = 'OK' then 'NEW'
+	when @check_status <> 'OK' and isnull(last_check_status,'OK') <> 'OK' 
+		 and (last_check_value is null or @check_value <> last_check_value) and @action_every_failure = 1 then 'REPEAT'
 
 	-------------------------------------------------------------------------------------------------------------------
 	-- if the previous status is the same as the current status we would not normally send another email
 	-- however, we can do if we set retrigger time. for example, we can be sending repeated alerts every hour so 
 	-- they do not get forgotten about. 
 	-------------------------------------------------------------------------------------------------------------------
-	when @check_status <> 'OK' and last_check_status = @check_status and (@action_repeat_period_minutes is not null and datediff(minute,@last_action_time,getdate()) > @action_repeat_period_minutes) then 'REPEAT'
+	when @check_status <> 'OK' and last_check_status = @check_status and (@action_repeat_period_minutes is not null 
+		and datediff(minute,@last_action_time,getdate()) > @action_repeat_period_minutes) then 'REPEAT'
 
 	else 'NONE' end
 from [dbo].[sqlwatch_meta_check]
 where [check_id] = @check_id
+
+set @action_attributes = @action_attributes + '
+	ActionType="' + isnull(@action_type,'') + '"'
 
 -------------------------------------------------------------------------------------------------------------------
 -- now we know what action we are dealing with, we can build template:
@@ -129,6 +152,10 @@ select
 from [dbo].[sqlwatch_config_check_action_template]
 where action_template_id = @action_template_id
 
+set @action_attributes = @action_attributes + '
+	SubjectTemplate="' + isnull(replace(@subject,'''',''''''),'') + '"
+	BodyTemplate="' + isnull(replace(@body,'''',''''''),'') + '"'
+
 -------------------------------------------------------------------------------------------------------------------
 -- Get action details and add to the queue:
 -------------------------------------------------------------------------------------------------------------------
@@ -136,11 +163,8 @@ where action_template_id = @action_template_id
 if @action_count_last_hour > @action_hourly_limit
 	begin
 		Print 'Action count (' + convert(varchar(10),@action_count_last_hour) + ') exeeded hourly limit (' + convert(varchar(10),@action_hourly_limit) + '.'
-		set @action_attributes = '{
-ErrorMessage="Action count exceeded hourly allowed limit."
-ActionCount="' + convert(varchar(10),@action_count_last_hour) + '"
-ActionCountLimit="' + convert(varchar(10),@action_hourly_limit) + '"
-}'
+		set @action_attributes = @action_attributes + '
+	ErrorMessage="Action count exceeded hourly allowed limit."'
 		GoTo LogAction
 	end
 
@@ -219,10 +243,9 @@ if @action_type  <> 'NONE'
 		where cc.check_id = @check_id
 		and cc.sql_instance = @@SERVERNAME
 
-		set @action_attributes = '{
-	Subject="' + @subject + '"
-	Body="' + @body + '"
-	}'
+		set @action_attributes = @action_attributes + '
+	Subject="' + isnull(replace(replace(@subject,'''',''''''),'"','\"'),'') + '"
+	Body="' + isnull(replace(replace(@body,'''',''''''),'"','\"'),'') + '"'
 
 
 		insert into [dbo].[sqlwatch_meta_action_queue] (sql_instance, [action_exec_type], [action_exec])
@@ -247,20 +270,22 @@ if @action_type  <> 'NONE'
 					,@subject = @subject
 					,@body = @body
 
-				set @action_attributes = '{
-		ReportId="' + convert(varchar(10),@report_id) + '"
-		}'
+				set @action_attributes = @action_attributes + '
+	ReportId="' + convert(varchar(10),@report_id) + '"'
 			end
 	end
 
  LogAction:
+
+ set @action_attributes = '{' + @action_attributes + '
+}'
 
 --log action for each check. This is so we can track how many actions are being executed per each check to satisfy 
 --the [action_hourly_limit] parameter and to have an overall visibility of what checks trigger what actions. 
 --This table needs a minimum of 1 hour history.
 
 --by default, we are NOT logging actions that have no action to do, only those that are triggering a valid action or have error:
-if @action_type <> 'NONE' or @action_attributes is not null
+if @action_type <> 'NONE'
 	begin
 		insert into [dbo].[sqlwatch_logger_check_action] ([sql_instance], [snapshot_type_id], [check_id], [action_id], [snapshot_time], [action_type], [action_attributes])
 		select @@SERVERNAME, 18, @check_id, @action_id, @check_snapshot_time, @action_type, @action_attributes
