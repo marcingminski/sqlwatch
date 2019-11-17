@@ -22,6 +22,7 @@
 					, first_snapshot_time=min(snapshot_time)
 					, last_snapshot_time=max(snapshot_time) 
 				from [dbo].[sqlwatch_logger_snapshot_header]
+				where snapshot_type_id = 17 --limit to this type only to avoid massive scan of the header table
 				group by sql_instance, snapshot_type_id
 			) h
 				on h.sql_instance = f.sql_instance
