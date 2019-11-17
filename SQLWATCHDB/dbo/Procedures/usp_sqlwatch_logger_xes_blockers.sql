@@ -3,6 +3,19 @@ AS
 set xact_abort on
 begin tran
 
+/*
+	Description
+		Collects blocking chains from extended event session.
+		SQLWATCH comes with its own XE sessions however, if they are disabled this procedure will try to get the information from the default system_health session.
+
+	Change Log:
+		1.0 - Initial - Marcin Gminski
+		1.1 - 2019-11 - Marcin Gminski
+			  XE session will record blocking chain every time it triggers. 
+			  This change will make it to only keep the most recent row and update blocking_duration rather add a new row
+
+*/
+
 if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 	begin
 		/* for this to work you must enable blocked process monitor */
