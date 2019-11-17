@@ -1180,7 +1180,7 @@ exec [dbo].[usp_sqlwatch_user_add_action]
 --------------------------------------------------------------------------------------
 exec [dbo].[usp_sqlwatch_user_add_check]
 	 @check_id = -1
-	,@check_name = 'Agent Job failure.' 
+	,@check_name = 'Agent Job failure' 
 	,@check_description = 'One or more SQL Server Agent Jobs have failed.
 If there is a report assosiated with this check, details of the failures should be inlcuded below.'
 	,@check_query = 'select count(*)
@@ -1253,8 +1253,8 @@ and report_time > dateadd(minute,-5,getutcdate())'
 --------------------------------------------------------------------------------------
 exec [dbo].[usp_sqlwatch_user_add_check]
 	 @check_id = -4
-	,@check_name = 'SQL Server has been restarted.'
-	,@check_description = 'SQL Server has been restared in the last 60 minutes.'
+	,@check_name = 'SQL Server Uptime is low'
+	,@check_description = 'SQL Server Uptime Minutes is lower than expected. The server could have been restared in the last 60 minutes.'
 	,@check_query = 'select datediff(minute,sqlserver_start_time,getdate()) from sys.dm_os_sys_info'
 	,@check_frequency_minutes = 10
 	,@check_threshold_warning = NULL
@@ -1329,7 +1329,7 @@ from dbo.vw_sqlwatch_report_dim_os_volume'
 --------------------------------------------------------------------------------------
 exec [dbo].[usp_sqlwatch_user_add_check]
 	 @check_id = -8
-	,@check_name = 'One or more disk will be full soon.'
+	,@check_name = 'One or more disk will be full soon'
 	,@check_description = 'The "days until full" value is lower than expected. One or more disks will be full in few days.
 If there is a report assosiated with this check, details of the storage utilistaion should be included below.'
 	,@check_query = 'select days_until_full
