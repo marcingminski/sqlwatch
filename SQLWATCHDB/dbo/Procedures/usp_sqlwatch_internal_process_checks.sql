@@ -184,47 +184,52 @@ begin
 	values (@@SERVERNAME, @snapshot_date, @snapshot_type_id, @check_id, @check_value, @check_status, @check_exec_time_ms)
 
 	-------------------------------------------------------------------------------------------------------------------
-	-- process any actions for this check:
+	-- process any actions for this check but only if status not OK or previous status was not OK (so we can process recovery)
+	-- if current and previous status was OK we wouldnt have any actions anyway so there is no point calling the proc.
+	-- assuming 99% of time all checks will come back as OK, this will save significant CPU time
 	-------------------------------------------------------------------------------------------------------------------
-	declare cur_actions cursor for
-	select [action_id]
-		from [dbo].[sqlwatch_config_check_action]
-		where check_id = @check_id
-		and sql_instance = @@SERVERNAME
-		order by check_id
+	if @check_status <> 'OK' or @last_check_status <> 'OK'
+		begin
+			declare cur_actions cursor for
+			select [action_id]
+				from [dbo].[sqlwatch_config_check_action]
+				where check_id = @check_id
+				and sql_instance = @@SERVERNAME
+				order by check_id
 
-		open cur_actions
+				open cur_actions
   
-		fetch next from cur_actions 
-		into @action_id
-
-		while @@FETCH_STATUS = 0  
-			begin
-				begin try
-					exec [dbo].[usp_sqlwatch_internal_process_actions] 
-						@sql_instance = @@SERVERNAME,
-						@check_id = @check_id,
-						@action_id = @action_id,
-						@check_status = @check_status,
-						@check_value = @check_value,
-						@check_snapshot_time = @snapshot_date,
-						@check_description = @check_description,
-						@check_name = @check_name
-				end try
-				begin catch
-						select @error_message = @error_message + '
-' + convert(varchar(23),getdate(),121) + ': CheckID: ' + convert(varchar(10),@check_id) + ': ActionID: ' + convert(varchar(10),@action_id) + ' ' + ERROR_MESSAGE()
-
-					goto NextAction
-				end catch
-
-				NextAction:
 				fetch next from cur_actions 
 				into @action_id
-			end
 
-	close cur_actions
-	deallocate cur_actions
+				while @@FETCH_STATUS = 0  
+					begin
+						begin try
+							exec [dbo].[usp_sqlwatch_internal_process_actions] 
+								@sql_instance = @@SERVERNAME,
+								@check_id = @check_id,
+								@action_id = @action_id,
+								@check_status = @check_status,
+								@check_value = @check_value,
+								@check_snapshot_time = @snapshot_date,
+								@check_description = @check_description,
+								@check_name = @check_name
+						end try
+						begin catch
+								select @error_message = @error_message + '
+		' + convert(varchar(23),getdate(),121) + ': CheckID: ' + convert(varchar(10),@check_id) + ': ActionID: ' + convert(varchar(10),@action_id) + ' ' + ERROR_MESSAGE()
+
+							goto NextAction
+						end catch
+
+						NextAction:
+						fetch next from cur_actions 
+						into @action_id
+					end
+
+			close cur_actions
+			deallocate cur_actions
+		end
 	-------------------------------------------------------------------------------------------------------------------
 	-- update meta with the latest values.
 	-- we have to do this after we have triggered actions as the [usp_sqlwatch_internal_process_actions] needs
