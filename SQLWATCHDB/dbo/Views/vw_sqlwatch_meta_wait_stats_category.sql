@@ -1,4 +1,4 @@
-﻿CREATE VIEW [dbo].[vw_sqlwatch_meta_wait_stats]
+﻿CREATE VIEW [dbo].[vw_sqlwatch_meta_wait_stats_category]
 	AS 
 	select 
 		  [sql_instance]
