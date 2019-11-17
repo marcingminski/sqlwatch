@@ -863,15 +863,15 @@ https://docs.sqlwatch.io'
 
 declare @action_tempalte_report_html nvarchar(max) = '<p>Check: {CHECK_NAME} ( CheckId: {CHECK_ID} )</p>
 
-<p>Current status: {CHECK_STATUS}
-<br>Current value: {CHECK_VALUE}</p>
+<p>Current status: <b>{CHECK_STATUS}</b>
+<br>Current value: <b>{CHECK_VALUE}</b></p>
 
 <p>Previous value: {CHECK_LAST_VALUE}
 <br>Previous status: {CHECK_LAST_STATUS}
 <br>Previous change: {LAST_STATUS_CHANGE}</p>
 
-<p>SQL instance: {SQL_INSTANCE}
-<br>Alert time: {CHECK_TIME}</p>
+<p>SQL instance: <b>{SQL_INSTANCE}</b>
+<br>Alert time: <b>{CHECK_TIME}</b></p>
 
 <p>Warning threshold: {THRESHOLD_WARNING}
 <br>Critical threshold: {THRESHOLD_CRITICAL}</p>
@@ -882,7 +882,7 @@ declare @action_tempalte_report_html nvarchar(max) = '<p>Check: {CHECK_NAME} ( C
 
 <p>--- Check Query:</p>
 
-<p>{CHECK_QUERY}</p>
+<p><span style="display:block;background:#ddd; margin-top:0.8em;padding-left:10px;padding-bottom:1em;padding-top:1em;white-space: pre;"><code>{CHECK_QUERY}</code></span></p>
 
 <p>--- Report Content:</p></p>
 
@@ -968,7 +968,9 @@ table.sqlwatchtbl td, table.sqlwatchtbl th { border: 1px solid #AAAAAA; padding:
 table.sqlwatchtbl tbody td { color: #333333; }
 table.sqlwatchtbl tr:nth-child(even) { background: #EEEEEE; }
 table.sqlwatchtbl thead { background: #7C008C; }
-table.sqlwatchtbl thead th { font-size: 12px; font-weight: bold; color: #FFFFFF;}')
+table.sqlwatchtbl thead th { font-size: 12px; font-weight: bold; color: #FFFFFF;}
+.code {display:block;background:#ddd; margin-top:0.8em;padding-left:10px;padding-bottom:1em;white-space: pre;}'
+)
 		set identity_insert [dbo].[sqlwatch_config_report_style] off
 	end
 
@@ -1059,8 +1061,8 @@ exec [dbo].[usp_sqlwatch_user_add_action]
 		--Agent Jobs failed in the last 5 minutes
 		exec [dbo].[usp_sqlwatch_user_add_report] 
 			 @report_id = -2
-			,@report_title = 'Agent Jobs failed in the last 5 minutes'
-			,@report_description = 'List of SQL Server Agent Jobs that are enabled and have failed in the last 5 minutes'
+			,@report_title = 'Agent Job failures'
+			,@report_description = 'List of SQL Server Agent Jobs that are enabled and have failed recently.'
 			,@report_definition = ';with cte_failed_jobs as (
 select 
 	[Job] = sj.name,
@@ -1074,7 +1076,11 @@ inner join msdb.dbo.sysjobsteps sjs
 	on sjs.job_id = sj.job_id
 	and sjh.step_id = sjs.step_id
 where sjh.step_id > 0
-    and msdb.dbo.agent_datetime(sjh.run_date, sjh.run_time) > dateadd(minute,-5,getdate())
+    and msdb.dbo.agent_datetime(sjh.run_date, sjh.run_time) >= isnull((
+	select last_check_date
+	from [dbo].[sqlwatch_meta_check]
+	where check_id = -1
+),getdate())
 	and sjh.run_status = 0
 )
 select (select +
@@ -1094,12 +1100,16 @@ for xml path(''''), type).value(''.'', ''nvarchar(MAX)'')'
 		--Blocked Processes in the last 5 minutes
 		exec [dbo].[usp_sqlwatch_user_add_report] 
 			 @report_id = -3
-			,@report_title = 'Blocked Processes in the last 5 minutes'
-			,@report_description = 'List of blocking chains in the last 5 minutes.'
+			,@report_title = 'Blocked Processes'
+			,@report_description = 'List of blocking chains captured in the last minute.'
 			,@report_definition = ';with cte_blocking as (
 	SELECT *, rn=ROW_NUMBER() over (order by blocking_start_time)
 	  FROM [dbo].[vw_sqlwatch_report_fact_xes_blockers]
-	  WHERE blocking_start_time > dateadd(minute,-5,getdate())
+	  WHERE snapshot_time >= isnull((
+	select last_check_date
+	from [dbo].[sqlwatch_meta_check]
+	where check_id = -2
+	),getdate())
 )
 select (select 
 	''<hr>
@@ -1107,11 +1117,12 @@ select (select
 Database Name: <b>['' + c1.[database_name] + '']</b>
 <br>Blocking App: <b>'' + + c1.blocking_client_app_name + ''</b>
 <br>Blocking Host: <b>'' + c1.blocking_client_hostname + ''</b>
-<br>Blocking SQL: <span style="display:block;background:#ddd; margin-top:0.8em;padding-left:10px;padding-bottom:1em;white-space: pre;" ><code>'' + c1.blocking_sql + ''</code></span></p>
+<br>Blocking SQL: <span style="display:block;background:#ddd; margin-top:0.8em;padding-left:10px;padding-bottom:1em;white-space: pre;"><code>'' + c1.blocking_sql + ''</code></span></p>
 '' +
 	( select char(10) + ''<p style="margin-left:25px;background:red;padding:10px;">
 Blocking start time: '' + convert(varchar(23),c2.[blocking_start_time],121) + char(10) + ''
 <br>Blocked SPID: <b>'' + convert(varchar(10),c2.blocked_spid) + ''</b>
+<br>Blocked for: '' + convert(varchar,dateadd(ms,c2.blocking_duration_ms,0),114) + ''
 <br>Blocked SQL: <span style="display:block;background:#ddd; margin-top:0.8em;padding-left:10px;padding-bottom:1em;white-space: pre;" ><code>'' + c2.[blocked_sql] + ''</code></span></p>''
 	from cte_blocking c2
 	where c1.rn = c2.rn
@@ -1169,14 +1180,18 @@ exec [dbo].[usp_sqlwatch_user_add_action]
 --------------------------------------------------------------------------------------
 exec [dbo].[usp_sqlwatch_user_add_check]
 	 @check_id = -1
-	,@check_name = 'Agent Jobs failed in the last 5 minutes' 
-	,@check_description = 'One or more SQL Server Agent Jobs have failed in the last 5 minutes.
-If the action has been set to trigger a report you should soon get another alert with list of failed jobs.'
+	,@check_name = 'Agent Job failure.' 
+	,@check_description = 'One or more SQL Server Agent Jobs have failed.
+If there is a report assosiated with this check, details of the failures should be inlcuded below.'
 	,@check_query = 'select count(*)
 from msdb.dbo.sysjobhistory 
-where msdb.dbo.agent_datetime(run_date, run_time) > dateadd(minute,-5,getdate())
+where msdb.dbo.agent_datetime(run_date, run_time) >= isnull((
+	select last_check_date
+	from [dbo].[sqlwatch_meta_check]
+	where check_id = -1
+),getdate())
 and run_status = 0'
-	,@check_frequency_minutes = 5
+	,@check_frequency_minutes = NULL
 	,@check_threshold_warning = NULL
 	,@check_threshold_critical = '>0'
 	,@check_enabled = 1
@@ -1184,20 +1199,25 @@ and run_status = 0'
 
 	,@action_every_failure = 1
 	,@action_recovery = 0
-	,@action_repeat_period_minutes = NULL
-	,@action_hourly_limit = 10
+	,@action_repeat_period_minutes = 1
+	,@action_hourly_limit = 60
 	,@action_template_id = -2
 
 --------------------------------------------------------------------------------------
 exec [dbo].[usp_sqlwatch_user_add_check]
 	 @check_id = -2
-	,@check_name = 'Blocking detected in the last 5 minutes'
-	,@check_description = 'In the last 5 minutes there has been blocked processes.
-Blocking means processes are stuck and unable to carry any work, could cause downtime or major outage.'
-	,@check_query = 'select count (distinct blocked_spid)
+	,@check_name = 'Blocking detected'
+	,@check_description = 'One or more blocking chains have been detected.
+Blocking means processes are stuck and unable to carry any work, could cause downtime or major outage.
+If there is a report assosiated with this check, details of the blocking chain should be included below.'
+	,@check_query = 'select count(distinct blocked_spid)
 from dbo.sqlwatch_logger_xes_blockers
-where blocking_start_time > dateadd(minute,-5,getdate())'
-	,@check_frequency_minutes = 5
+where snapshot_time >= isnull((
+	select last_check_date
+	from [dbo].[sqlwatch_meta_check]
+	where check_id = -2
+	),getdate())'
+	,@check_frequency_minutes = NULL
 	,@check_threshold_warning = NULL
 	,@check_threshold_critical = '>0'
 	,@check_enabled = 1
@@ -1205,8 +1225,8 @@ where blocking_start_time > dateadd(minute,-5,getdate())'
 
 	,@action_every_failure = 1
 	,@action_recovery = 0
-	,@action_repeat_period_minutes = NULL
-	,@action_hourly_limit = 10
+	,@action_repeat_period_minutes = 1
+	,@action_hourly_limit = 60
 	,@action_template_id = -2
 
 --------------------------------------------------------------------------------------
@@ -1290,7 +1310,8 @@ exec [dbo].[usp_sqlwatch_user_add_check]
 	 @check_id = -7
 	,@check_name = 'Disk Free % is low'
 	,@check_description = 'The "Free Space %" value is lower than expected. One or more disks have less than expected free space. 
-This does not mean that the disk will be full soon as it may not grow much. Please check the "days until full" value or the actual growth.'
+This does not mean that the disk will be full soon as it may not grow much. Please check the "days until full" value or the actual growth.
+If there is a report assosiated with this check, details of the storage utilistaion should be included below.'
 	,@check_query = 'select free_space_percentage
 from dbo.vw_sqlwatch_report_dim_os_volume'
 	,@check_frequency_minutes = 60
@@ -1309,7 +1330,8 @@ from dbo.vw_sqlwatch_report_dim_os_volume'
 exec [dbo].[usp_sqlwatch_user_add_check]
 	 @check_id = -8
 	,@check_name = 'One or more disk will be full soon.'
-	,@check_description = 'The "days until full" value is lower than expected. One or more disks will be full in few days.'
+	,@check_description = 'The "days until full" value is lower than expected. One or more disks will be full in few days.
+If there is a report assosiated with this check, details of the storage utilistaion should be included below.'
 	,@check_query = 'select days_until_full
 from dbo.vw_sqlwatch_report_dim_os_volume'
 	,@check_frequency_minutes = 60
