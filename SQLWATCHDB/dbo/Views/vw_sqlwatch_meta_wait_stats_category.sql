@@ -1,4 +1,4 @@
-﻿CREATE VIEW [dbo].[vw_sqlwatch_meta_wait_stats_category]
+﻿CREATE VIEW [dbo].[vw_sqlwatch_meta_wait_stats_category] with schemabinding
 	AS 
 	select 
 		  [sql_instance]
