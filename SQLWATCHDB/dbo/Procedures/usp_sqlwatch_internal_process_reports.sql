@@ -130,19 +130,22 @@ while @@FETCH_STATUS = 0
 		<a href="https://sqlwatch.io">https://sqlwatch.io</a></p></body></html>'
 			end
 
-		if @body is not null
+		if @body is null
 			begin
-				set @action_exec = replace(replace(@action_exec,'{BODY}', replace(@body,'''','''''')),'{SUBJECT}',@subject)
-				--now insert into the delivery queue for further processing:
-				insert into [dbo].[sqlwatch_meta_action_queue] ([sql_instance], [time_queued], [action_exec_type], [action_exec])
-				values (@@SERVERNAME, sysdatetime(), @action_exec_type, @action_exec)
+				set @body = 'Report Id: ' + convert(varchar(10),@report_id) + ' contains no data.'
+			end
 
-				Print 'Item ( Id: ' + convert(varchar(10),SCOPE_IDENTITY()) + ' ) queued.'
-			end
-		else
+		if @subject is null
 			begin
-				Print 'Report Id: ' + convert(varchar(10),@report_id) + ' contains no data.'
+				set @subject = 'No Subject'
 			end
+
+		set @action_exec = replace(replace(@action_exec,'{BODY}', replace(@body,'''','''''')),'{SUBJECT}',@subject)
+		--now insert into the delivery queue for further processing:
+		insert into [dbo].[sqlwatch_meta_action_queue] ([sql_instance], [time_queued], [action_exec_type], [action_exec])
+		values (@@SERVERNAME, sysdatetime(), @action_exec_type, @action_exec)
+
+		Print 'Item ( Id: ' + convert(varchar(10),SCOPE_IDENTITY()) + ' ) queued.'
 
 		fetch next from cur_reports 
 		into @sql_instance, @report_id, @report_title, @report_description, @report_definition, @definition_type, @action_exec, @action_exec_type, @css
