@@ -1659,4 +1659,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="[date_updated]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="b77f0617-4fca-4ca3-956e-e2c3125b025c" ChangeDateTime="11/17/2019 20:09:16">
+    <Property Name="ElementName" Value="[dbo].[vw_sqlwatch_meta_wait_stats]" />
+    <Property Name="ElementType" Value="SqlView" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[vw_sqlwatch_meta_wait_stats_category]" />
+  </Operation>
 </Operations>
