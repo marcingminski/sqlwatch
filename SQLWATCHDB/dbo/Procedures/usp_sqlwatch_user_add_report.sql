@@ -7,7 +7,7 @@
 	@report_definition_type varchar(10) ,
 	@report_active bit = 1,
 	@report_batch_id tinyint = null,
-	@report_style_id smallint = 1,
+	@report_style_id smallint = -1,
 	--action to assosiate report with, in case of multiple actions, rerun the procedure with the same params but different action id
 	@report_action_id smallint = null
 )
