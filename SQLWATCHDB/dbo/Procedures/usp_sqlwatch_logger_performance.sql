@@ -1,9 +1,18 @@
 ﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_logger_performance] AS
 
+/*
+	Description
+		Gather performance data
+
+	Change Log
+		2018-08		- Marcin Gminski:	Initial Version
+		2019-11-17	- Marcin Gminski:	Exclude idle wait stats.
+*/
 set xact_abort on
 begin tran
 
 set nocount on;
+
 
 declare	@product_version nvarchar(128)
 declare @product_version_major decimal(10,2)
