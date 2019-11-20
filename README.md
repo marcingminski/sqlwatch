@@ -21,6 +21,7 @@ Tested on the following SQL Server versions:
 * 2014
 * 2016
 * 2017
+* 2019
 
 SQL Server Express is not supported as there is no Agent to invoke data collection. Theoretically, data collection would be possible via SQLCMD triggered from the Windows Task Scheduler but we have not got that tested or even coded.
 
