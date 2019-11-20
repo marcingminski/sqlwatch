@@ -4,68 +4,82 @@
 	@action_exec_type nvarchar(50),
 	@action_exec varchar(max) = null,
 	@action_report_id smallint = null,
-	@action_enabled bit = 1,
-	@force_update bit = 0
+	@action_enabled bit = 1
 )
 as
 
 set xact_abort on;
 set nocount on;
 
-if @action_id is not null 
+if @action_id < 0 --to maintain actions shipped with sqlwatch and to be able to insert negative identities
 	begin
-		--if action id passed we are going to use it as an identity.
-		--if there is an existing action with this id, we are going to update it
+		merge [dbo].[sqlwatch_config_action] as target
+		using (
+			select 
+				 [action_id] = @action_id
+				,[action_description] = @action_description
+				,[action_exec_type] = @action_exec_type
+				,[action_exec] = @action_exec
+				,[action_report_id] = @action_report_id
+				,[action_enabled] = @action_enabled
+			) as source
+			on source.action_id = target.action_id
 
-		--however, if someone has adopted and modified default actions
-		--we must not replace user settings so need to check for the content of exec column
-		if exists ( select * from [dbo].[sqlwatch_config_action]
-					where [action_id] = @action_id )
-			begin
-				update [dbo].[sqlwatch_config_action]
-					set  [action_description] = @action_description
-						,[action_exec_type] = @action_exec_type
-						,[action_exec] = @action_exec
-						,[action_report_id] = @action_report_id
-						,[action_enabled] = @action_enabled
-				where [action_id] = @action_id
-				--check if default action (id < 0) and the content is different
-				--actions with positive id (id > 0) as user actions and we will update as required
-				and 1 = case when @action_id < 0 and [action_exec] <> @action_exec then 0 else 1 end
+		when matched and target.[date_updated] is null
+			then update
+				set  [action_description] = source.[action_description]
+					,[action_exec_type] = source.[action_exec_type]
+					,[action_exec] = source.[action_exec]
+					,[action_report_id] = source.[action_report_id]
+					,[action_enabled] = source.[action_enabled]
 
-				Print 'Action (Id: ' + convert(varchar(10),@action_id) + ') updated.'
-			end
-		else
-			begin
-				if (
-						(
-							@action_report_id is not null 
-							and exists ( select * from [dbo].[sqlwatch_config_report] where report_id = @action_report_id )
-						 )
-						 or @action_report_id is null
-					)
-					begin
-						set identity_insert [dbo].[sqlwatch_config_action] on 
-						insert into [dbo].[sqlwatch_config_action] 
-										( [action_id]
-										 ,[action_description]
-										 ,[action_exec_type]
-										 ,[action_exec]
-										 ,[action_report_id]
-										 ,[action_enabled]
-										)
+		--if not matched or action is null we are going to insert new row
+		when not matched
+			then insert ( [action_id]
+						 ,[action_description]
+						 ,[action_exec_type]
+						 ,[action_exec]
+						 ,[action_report_id]
+						 ,[action_enabled] )
+			values ( source.[action_id]
+					,source.[action_description]
+					,source.[action_exec_type]
+					,source.[action_exec]
+					,source.[action_report_id]
+					,source.[action_enabled] );
+	end
+else
+	begin
+		merge [dbo].[sqlwatch_config_action] as target
+		using (
+			select 
+				 [action_id] = @action_id
+				,[action_description] = @action_description
+				,[action_exec_type] = @action_exec_type
+				,[action_exec] = @action_exec
+				,[action_report_id] = @action_report_id
+				,[action_enabled] = @action_enabled
+			) as source
+			on source.action_id = target.action_id
 
-						values (@action_id, @action_description, @action_exec_type, @action_exec, @action_report_id, @action_enabled)
-						set identity_insert [dbo].[sqlwatch_config_action] off 
+		when matched
+			then update
+				set  [action_description] = source.[action_description]
+					,[action_exec_type] = source.[action_exec_type]
+					,[action_exec] = source.[action_exec]
+					,[action_report_id] = source.[action_report_id]
+					,[action_enabled] = source.[action_enabled]
 
-						Print 'Report (Id: ' + convert(varchar(10),@action_id) + ') created.'
-					end
-				else
-					begin
-						declare @msg nvarchar(max) = 'Action cannot be created because the referenced report (Id: ' + convert(varchar(10),@action_report_id) + ') does not exist'
-						raiserror (@msg,16,1)
-					end
-			end
-
-
+		--if not matched or action is null we are going to insert new row
+		when not matched
+			then insert ( [action_description]
+						 ,[action_exec_type]
+						 ,[action_exec]
+						 ,[action_report_id]
+						 ,[action_enabled] )
+			values ( source.[action_description]
+					,source.[action_exec_type]
+					,source.[action_exec]
+					,source.[action_report_id]
+					,source.[action_enabled] );
 	end

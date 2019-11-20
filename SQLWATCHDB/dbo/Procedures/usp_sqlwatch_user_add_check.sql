@@ -22,71 +22,95 @@ as
 set xact_abort on;
 set nocount on;
 
-if @check_id is not null 
+if @check_id < 0
 	begin
-		--if check id passed we are going to use it as an identity.
-		--if there is an existing check with this id, we are going to update it
-		--this is primarly to maintain default checks shipped with SQLWATCH. They will have negative IDs
+		merge [dbo].[sqlwatch_config_check] as target
+		using ( select
+				 [check_id] = @check_id
+				,[check_name] = @check_name
+				,[check_description] = @check_description
+				,[check_query] = @check_query
+				,[check_frequency_minutes] = @check_frequency_minutes
+				,[check_threshold_warning] = @check_threshold_warning
+				,[check_threshold_critical] = @check_threshold_critical
+				,[check_enabled] = @check_enabled
+			) as source
+		on source.check_id = target.check_id
 
-		if exists ( select * from [dbo].[sqlwatch_config_check]
-					where [sql_instance] = @sql_instance
-					and [check_id] = @check_id )
-			begin
-				update [dbo].[sqlwatch_config_check]
-					set  [check_name] = @check_name
-						,[check_description] = @check_description
-						,[check_query] = @check_query
-						,[check_frequency_minutes] = @check_frequency_minutes
-						,[check_threshold_warning] = @check_threshold_warning
-						,[check_threshold_critical] = @check_threshold_critical
-						,[check_enabled] = @check_enabled
-				where check_id = @check_id
-				and sql_instance = @sql_instance
+		when not matched then
+			insert ( [check_id]
+					,[check_name]
+					,[check_description]
+					,[check_query]
+					,[check_frequency_minutes]
+					,[check_threshold_warning]
+					,[check_threshold_critical]
+					,[check_enabled]
+				   )
+			values ( source.[check_id]
+					,source.[check_name]
+					,source.[check_description]
+					,source.[check_query]
+					,source.[check_frequency_minutes]
+					,source.[check_threshold_warning]
+					,source.[check_threshold_critical]
+					,source.[check_enabled])
 
-				Print 'Check (Id: ' + convert(varchar(10),@check_id) + ') updated.'
-			end
-		else
-			begin
-				set identity_insert [dbo].[sqlwatch_config_check] on 
-				insert into [dbo].[sqlwatch_config_check]
-								   (   [sql_instance]
-									  ,[check_id]
-									  ,[check_name]
-									  ,[check_description]
-									  ,[check_query]
-									  ,[check_frequency_minutes]
-									  ,[check_threshold_warning]
-									  ,[check_threshold_critical]
-									  ,[check_enabled]
-								   )
-				values (@sql_instance, @check_id, @check_name, @check_description, @check_query, @check_frequency_minutes
-						, @check_threshold_warning, @check_threshold_critical, @check_enabled)
-				set identity_insert [dbo].[sqlwatch_config_check] off 
-
-				Print 'Check (Id: ' + convert(varchar(10),@check_id) + ') created.'
-			end
+		when matched and target.[date_updated] is null 
+			then update 
+				set
+				 [check_name] = source.[check_name]
+				,[check_description] = source.[check_description]
+				,[check_query] = source.[check_query]
+				,[check_frequency_minutes] = source.[check_frequency_minutes]
+				,[check_threshold_warning] = source.[check_threshold_warning]
+				,[check_threshold_critical] = source.[check_threshold_critical]
+				,[check_enabled] = source.[check_enabled];
 	end
 else
 	begin
-		--if no check id passed we are going to create a new one with default identity:
-		insert into [dbo].[sqlwatch_config_check]
-							(   [sql_instance]
-								,[check_name]
-								,[check_description]
-								,[check_query]
-								,[check_frequency_minutes]
-								,[check_threshold_warning]
-								,[check_threshold_critical]
-								,[check_enabled]
-							)
-			values (@sql_instance, @check_name, @check_description, @check_query, @check_frequency_minutes
-						, @check_threshold_warning, @check_threshold_critical, @check_enabled)
-		select @check_id = SCOPE_IDENTITY()
-		Print 'Check (Id: ' + convert(varchar(10),@check_id) + ') created.'
-	end
+		merge [dbo].[sqlwatch_config_check] as target
+		using ( select
+				 [check_id] = @check_id
+				,[check_name] = @check_name
+				,[check_description] = @check_description
+				,[check_query] = @check_query
+				,[check_frequency_minutes] = @check_frequency_minutes
+				,[check_threshold_warning] = @check_threshold_warning
+				,[check_threshold_critical] = @check_threshold_critical
+				,[check_enabled] = @check_enabled
+			) as source
+		on source.check_id = target.check_id
 
---if @check_actions is passed, assosiate check with given actions
---list must comma separated
+		when not matched then
+			insert ( [check_name]
+					,[check_description]
+					,[check_query]
+					,[check_frequency_minutes]
+					,[check_threshold_warning]
+					,[check_threshold_critical]
+					,[check_enabled]
+				   )
+			values ( source.[check_name]
+					,source.[check_description]
+					,source.[check_query]
+					,source.[check_frequency_minutes]
+					,source.[check_threshold_warning]
+					,source.[check_threshold_critical]
+					,source.[check_enabled])
+
+		when matched then
+			update set
+				 [check_name] = source.[check_name]
+				,[check_description] = source.[check_description]
+				,[check_query] = source.[check_query]
+				,[check_frequency_minutes] = source.[check_frequency_minutes]
+				,[check_threshold_warning] = source.[check_threshold_warning]
+				,[check_threshold_critical] = source.[check_threshold_critical]
+				,[check_enabled] = source.[check_enabled];
+
+			Print 'Check (Id: ' + convert(varchar(10),@check_id) + ') updated.'
+	end
 
 if @check_action_id is not null
 	begin
@@ -102,22 +126,28 @@ if @check_action_id is not null
 				,[action_hourly_limit] = @action_hourly_limit
 				,[action_template_id] = @action_template_id
 			 ) as source
-		on source.sql_instance = target.sql_instance
-		and source.check_id = target.check_id
+		on source.check_id = target.check_id
 		and source.action_id = target.action_id
 
 		when not matched then
-		insert ([sql_instance]
-				,[check_id],[action_id],[action_every_failure],[action_recovery]
-				,[action_repeat_period_minutes],[action_hourly_limit],[action_template_id])
+		insert ( [check_id],[action_id]
+				,[action_every_failure]
+				,[action_recovery]
+				,[action_repeat_period_minutes]
+				,[action_hourly_limit]
+				,[action_template_id])
 
-		values (source.[sql_instance], source.[check_id], source.[action_id], source.[action_every_failure], source.[action_recovery]
-			 , source.[action_repeat_period_minutes], source.[action_hourly_limit], source.[action_template_id])
+		values (  source.[check_id]
+				, source.[action_id]
+				, source.[action_every_failure]
+				, source.[action_recovery]
+				, source.[action_repeat_period_minutes]
+				, source.[action_hourly_limit]
+				, source.[action_template_id])
 
 		when matched then 
 			update set
-				 [sql_instance]= source.sql_instance
-				,[check_id] = source.check_id
+				 [check_id] = source.check_id
 				,[action_id] = source.action_id
 				,[action_every_failure] = source.action_every_failure
 				,[action_recovery] = source.action_recovery
