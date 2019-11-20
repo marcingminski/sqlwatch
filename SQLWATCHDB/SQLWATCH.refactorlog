@@ -1666,4 +1666,25 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[vw_sqlwatch_meta_wait_stats_category]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="4e565790-d9c1-4b04-959c-66ef8a8afc14" ChangeDateTime="11/19/2019 23:19:44">
+    <Property Name="ElementName" Value="[dbo].[trg_sqlwatch_config_check_updated]" />
+    <Property Name="ElementType" Value="SqlDmlTrigger" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_config_check]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="trg_sqlwatch_config_check_U" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="4a4d6b88-7644-4967-a7c5-4dc28ef2e633" ChangeDateTime="11/19/2019 23:23:27">
+    <Property Name="ElementName" Value="[dbo].[trg_sqlwatch_config_action_updated]" />
+    <Property Name="ElementType" Value="SqlDmlTrigger" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_config_action]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="trg_sqlwatch_config_action_updated_U" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="e5dcfaa8-d33f-441b-b3ea-ccb387e3b3f6" ChangeDateTime="11/20/2019 13:06:50">
+    <Property Name="ElementName" Value="[dbo].[trg_sqlwatch_config_check_meta_IUD]" />
+    <Property Name="ElementType" Value="SqlDmlTrigger" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_config_check]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="trg_sqlwatch_config_check_meta_IU" />
+  </Operation>
 </Operations>

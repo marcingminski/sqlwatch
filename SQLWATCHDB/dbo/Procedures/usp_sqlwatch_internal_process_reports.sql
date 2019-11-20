@@ -40,8 +40,7 @@ declare @template_build as table (
 
 
 declare cur_reports cursor for
-select cr.[sql_instance]
-      ,cr.[report_id]
+select cr.[report_id]
       ,[report_title]
       ,[report_description]
       ,[report_definition]
@@ -52,8 +51,7 @@ select cr.[sql_instance]
   from [dbo].[sqlwatch_config_report] cr
 
   inner join [dbo].[sqlwatch_config_report_action] ra
-	on cr.sql_instance = ra.sql_instance
-	and cr.report_id = ra.report_id
+	on cr.report_id = ra.report_id
 
 	inner join dbo.[sqlwatch_config_action] t
 	on ra.[action_id] = t.[action_id]
@@ -63,6 +61,7 @@ select cr.[sql_instance]
 
   where [report_active] = 1
   and t.[action_enabled] = 1
+
   --and isnull([report_batch_id],0) = isnull(@report_batch_id,0)
   --and cr.report_id = isnull(@report_id,cr.report_id)
   --avoid getting a report that calls actions that has called this routine to avoid circular refernce:

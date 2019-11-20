@@ -11,22 +11,47 @@
 	   It would also take one more check cycle to complete the report as it would have been queued on the back of the action processing and sent out by the next processing */
 	[action_report_id] smallint null,
 	[action_enabled] bit not null default 1,
-	constraint pk_sqlwatch_config_delivery_target primary key clustered (
-		[action_id]
-		),
-	constraint chk_sqlwatch_config_media_exec check ([action_exec_type] in ('PowerShell', 'T-SQL'))	,
+	[date_created] datetime default getdate() not null,
+	[date_updated] datetime null,
+
+	/* primary key */
+	constraint pk_sqlwatch_config_delivery_target primary key clustered ([action_id]),
+
+	/*	foreign key to config report to make sure we only reference valid reports and to prevent deletion of action if
+		there is a report using it */
+	constraint fk_sqlwatch_config_action_report foreign key ([action_report_id])
+		references [dbo].[sqlwatch_config_report] ([report_id]) on delete no action,
+
+	/* check to make sure we always have one of the two and not both and not none */
 	constraint chk_sqlwatch_config_media_action check (
 			([action_exec] is null and [action_report_id] is not null)
 		or	([action_exec] is not null and [action_report_id] is null)
-	)
+	),
+
+	/*	check to only allow given values */
+	constraint chk_sqlwatch_config_media_exec check ([action_exec_type] in ('PowerShell', 'T-SQL'))
 )
 go
 
-CREATE TRIGGER [dbo].[trg_sqlwatch_config_action_report_circular]
-    ON [dbo].[sqlwatch_config_action]
-    FOR INSERT, UPDATE
-    AS
-    BEGIN
+create trigger dbo.trg_sqlwatch_config_action_updated_U
+	on [dbo].[sqlwatch_config_action]
+	for update
+	as
+	begin
+		set nocount on;
+		update t
+			set date_updated = getdate()
+		from [dbo].[sqlwatch_config_action] t
+		inner join inserted i
+		on i.action_id = t.action_id
+	end
+go
+
+create trigger [dbo].[trg_sqlwatch_config_action_report_circular]
+    on [dbo].[sqlwatch_config_action]
+    for insert, update
+    as
+    begin
 	    set nocount on
 		--prevent circular action to a report.
 		--we could create an action that calls report which is configured to call the same action
@@ -40,7 +65,5 @@ CREATE TRIGGER [dbo].[trg_sqlwatch_config_action_report_circular]
 			  raiserror ('You cannot call a report that is calling this action as this would create circular reference.' ,16,1)
 			  rollback transaction
 			end
-
-
-    END
+    end
 go

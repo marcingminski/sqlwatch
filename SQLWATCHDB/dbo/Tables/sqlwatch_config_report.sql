@@ -1,6 +1,5 @@
 ﻿CREATE TABLE [dbo].[sqlwatch_config_report]
 (
-	[sql_instance] varchar(32) not null default @@SERVERNAME,
 	[report_id] smallint identity(1,1) not null,
 	[report_title] varchar(255) not null,
 	[report_description] varchar(4000) null,
@@ -9,12 +8,32 @@
 	[report_active] bit not null default 1,
 	[report_batch_id] tinyint null,
 	[report_style_id] smallint not null,
-	constraint pk_sqlwatch_config_report primary key clustered (
-		[sql_instance], [report_id]
-	),
-	constraint fk_sqlwatch_config_report_servername foreign key ([sql_instance])
-		references dbo.sqlwatch_meta_server ([servername]) on delete cascade,
+	[date_created] datetime default getdate(),
+	[date_updated] datetime null,
+
+	/*	primary key */
+	constraint pk_sqlwatch_config_report primary key clustered ([report_id]),
+
+	/*	check to only allow valid types */
 	constraint chk_sqlwatch_config_report check ([report_definition_type] in ('Query','Template')),
+
+	/*	foreign key to report style to make sure we have valid report and to prevent 
+		deleting styles if assosiated with report */
 	constraint fk_sqlwatch_config_report_style foreign key ([report_style_id])
-		references [dbo].[sqlwatch_config_report_style] ([report_style_id])
+		references [dbo].[sqlwatch_config_report_style] ([report_style_id]) on delete no action
 )
+go
+
+create trigger dbo.trg_sqlwatch_config_report_updated_U
+	on [dbo].[sqlwatch_config_report]
+	for update
+	as
+	begin
+		set nocount on;
+		update t
+			set date_updated = getdate()
+		from [dbo].[sqlwatch_config_report] t
+		inner join inserted i
+			on i.[report_id] = t.[report_id]
+	end
+go

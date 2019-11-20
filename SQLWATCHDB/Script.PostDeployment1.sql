@@ -827,8 +827,7 @@ if (select count(*) from [dbo].[sqlwatch_logger_snapshot_header]
 				set  [snapshot_type_id] = 10
 				where [snapshot_type_id] = 1
 				and sql_instance = @@SERVERNAME
-		end
-
+		end;
 
 
 --------------------------------------------------------------------------------------
@@ -847,7 +846,7 @@ table.sqlwatchtbl thead { background: #7C008C; }
 table.sqlwatchtbl thead th { font-size: 12px; font-weight: bold; color: #FFFFFF;}
 .code {display:block;background:#ddd; margin-top:0.8em;padding-left:10px;padding-bottom:1em;white-space: pre;}'
 )
-		set identity_insert [dbo].[sqlwatch_config_report_style] off
+		set identity_insert [dbo].[sqlwatch_config_report_style] off;
 	end
 
 --------------------------------------------------------------------------------------
@@ -913,10 +912,8 @@ declare @action_tempalte_report_html nvarchar(max) = '<p>Check: {CHECK_NAME} ( C
 <p>Sent from SQLWATCH on host: {SQL_INSTANCE}</p>
 <p><a href="https://docs.sqlwatch.io">https://docs.sqlwatch.io</a> </p>';
 
-
 disable trigger [dbo].[trg_sqlwatch_config_check_action_template_modify] on [dbo].[sqlwatch_config_check_action_template];  --so we dont populate updated date as this is to detect if a user has modified default template
-set identity_insert [dbo].[sqlwatch_config_check_action_template] on
-
+set identity_insert [dbo].[sqlwatch_config_check_action_template] on;
 merge [dbo].[sqlwatch_config_check_action_template] as target
 using (
 	select
@@ -971,13 +968,15 @@ when matched and target.[date_updated] is null then --only update when not modif
 			,[action_template_recover_subject] = source.[action_template_recover_subject]
 			,[action_template_recover_body] = source.[action_template_recover_body]
 ;
-
 set identity_insert [dbo].[sqlwatch_config_check_action_template] off;
-disable trigger [dbo].[trg_sqlwatch_config_check_action_template_modify] on [dbo].[sqlwatch_config_check_action_template];
+enable trigger [dbo].[trg_sqlwatch_config_check_action_template_modify] on [dbo].[sqlwatch_config_check_action_template];
 
 --------------------------------------------------------------------------------------
 -- load default actions that DO NOT call reports
 --------------------------------------------------------------------------------------
+disable trigger dbo.trg_sqlwatch_config_action_updated_U ON [dbo].[sqlwatch_config_action];
+set identity_insert [dbo].[sqlwatch_config_action] on;
+
 exec [dbo].[usp_sqlwatch_user_add_action]
 	 @action_id = -1
 	,@action_description = 'Send Email to DBAs using sp_send_mail  (HTML)'
@@ -1033,38 +1032,42 @@ exec [dbo].[usp_sqlwatch_user_add_action]
 	,@action_exec = 'zabbix_sender.exe -z zabbix.yourcompany.com -s "SQL_INSTANCE" -k your.check.name -o "{BODY}"'
 	,@action_enabled = 0
 
+set identity_insert [dbo].[sqlwatch_config_action] off;
+enable trigger dbo.trg_sqlwatch_config_action_updated_U ON [dbo].[sqlwatch_config_action];
 --------------------------------------------------------------------------------------
 -- load default reports 
 --------------------------------------------------------------------------------------
+set identity_insert [dbo].[sqlwatch_config_report] on;
+disable trigger dbo.trg_sqlwatch_config_report_updated_U on [dbo].[sqlwatch_config_report];
 
-		--Indexes with high fragmentation
-		exec [dbo].[usp_sqlwatch_user_add_report] 
-			 @report_id = -1
-			,@report_title = 'Indexes with high fragmentation'
-			,@report_description = 'Lisf ot indexes where the fragmentation is above 30% and page count greater than 1000. 
-		Index fragmentation can impact performance and should be minimum. You should be running index maintenance often. 
-		A very good and free index maintenance solution is Ola Hallengren''s Maintenance Solution'
-			,@report_definition = 'SELECT [Table] = s.[name] +''.''+t.[name]
-		 ,[Index] = i.NAME 
-		 ,[Type] = index_type_desc
-		 ,[Fragmentation] = convert(decimal(10,2),avg_fragmentation_in_percent)
-		 ,[Records] = record_count
-		 ,[Pages] = page_count
-		FROM sys.dm_db_index_physical_stats(DB_ID(), NULL, NULL, NULL, ''SAMPLED'') ips
-		INNER JOIN sys.tables t on t.[object_id] = ips.[object_id]
-		INNER JOIN sys.schemas s on t.[schema_id] = s.[schema_id]
-		INNER JOIN sys.indexes i ON (ips.object_id = i.object_id) AND (ips.index_id = i.index_id)
-		WHERE avg_fragmentation_in_percent > 30
-		and page_count > 1000'
-			,@report_definition_type = 'Query'
-			,@report_action_id  = -1
+--Indexes with high fragmentation
+exec [dbo].[usp_sqlwatch_user_add_report] 
+	 @report_id = -1
+	,@report_title = 'Indexes with high fragmentation'
+	,@report_description = 'Lisf ot indexes where the fragmentation is above 30% and page count greater than 1000. 
+Index fragmentation can impact performance and should be minimum. You should be running index maintenance often. 
+A very good and free index maintenance solution is Ola Hallengren''s Maintenance Solution'
+	,@report_definition = 'SELECT [Table] = s.[name] +''.''+t.[name]
+	,[Index] = i.NAME 
+	,[Type] = index_type_desc
+	,[Fragmentation] = convert(decimal(10,2),avg_fragmentation_in_percent)
+	,[Records] = record_count
+	,[Pages] = page_count
+FROM sys.dm_db_index_physical_stats(DB_ID(), NULL, NULL, NULL, ''SAMPLED'') ips
+INNER JOIN sys.tables t on t.[object_id] = ips.[object_id]
+INNER JOIN sys.schemas s on t.[schema_id] = s.[schema_id]
+INNER JOIN sys.indexes i ON (ips.object_id = i.object_id) AND (ips.index_id = i.index_id)
+WHERE avg_fragmentation_in_percent > 30
+and page_count > 1000'
+	,@report_definition_type = 'Query'
+	,@report_action_id  = -1
 
-		--Agent Jobs failed in the last 5 minutes
-		exec [dbo].[usp_sqlwatch_user_add_report] 
-			 @report_id = -2
-			,@report_title = 'Agent Job failures'
-			,@report_description = 'List of SQL Server Agent Jobs that are enabled and have failed recently.'
-			,@report_definition = ';with cte_failed_jobs as (
+--Agent Jobs failed in the last 5 minutes
+exec [dbo].[usp_sqlwatch_user_add_report] 
+	 @report_id = -2
+	,@report_title = 'Agent Job failures'
+	,@report_description = 'List of SQL Server Agent Jobs that are enabled and have failed recently.'
+	,@report_definition = ';with cte_failed_jobs as (
 select 
 	[Job] = sj.name,
 	[Step] = sjs.step_name,
@@ -1095,15 +1098,15 @@ select (select +
 from cte_failed_jobs c1
 group by c1.[Job]
 for xml path(''''), type).value(''.'', ''nvarchar(MAX)'')'
-			,@report_definition_type = 'Template'
-			,@report_action_id  = -1
+	,@report_definition_type = 'Template'
+	,@report_action_id  = -1
 
 		--Blocked Processes in the last 5 minutes
-		exec [dbo].[usp_sqlwatch_user_add_report] 
-			 @report_id = -3
-			,@report_title = 'Blocked Processes'
-			,@report_description = 'List of blocking chains captured in the last minute.'
-			,@report_definition = ';with cte_blocking as (
+exec [dbo].[usp_sqlwatch_user_add_report] 
+		@report_id = -3
+	,@report_title = 'Blocked Processes'
+	,@report_description = 'List of blocking chains captured in the last minute.'
+	,@report_definition = ';with cte_blocking as (
 	SELECT *, rn=ROW_NUMBER() over (order by blocking_start_time)
 	  FROM [dbo].[vw_sqlwatch_report_fact_xes_blockers]
 	  WHERE snapshot_time >= isnull((
@@ -1134,27 +1137,33 @@ from cte_blocking c1
 group by c1.blocking_spid, c1.[database_name], c1.blocking_client_app_name, c1.blocking_client_hostname, c1.blocking_sql, rn
 order by rn
 for xml path(''''), type).value(''.'', ''nvarchar(MAX)'')'
-			,@report_definition_type = 'Template'
-			,@report_action_id  = -1
+	,@report_definition_type = 'Template'
+	,@report_action_id  = -1
 
 
 		--Disk utilisation report
-		exec [dbo].[usp_sqlwatch_user_add_report] 
-			 @report_id = -4
-			,@report_title = 'Disk Utilisation Report'
-			,@report_description = ''
-			,@report_definition = 'select [Volume]=[volume_name]
-      ,[Days Until Full] = [days_until_full]
-      ,[Total Space] = [total_space_formatted]
-      ,[Free Space] = [free_space_formatted] + '' ('' + [free_space_percentage_formatted] + '')''
-      ,[Growth] = [growth_bytes_per_day_formatted]
-  from [dbo].[vw_sqlwatch_report_dim_os_volume]'
-			,@report_definition_type = 'Query'
-			,@report_action_id  = -1
+exec [dbo].[usp_sqlwatch_user_add_report] 
+	 @report_id = -4
+	,@report_title = 'Disk Utilisation Report'
+	,@report_description = ''
+	,@report_definition = 'select [Volume]=[volume_name]
+,[Days Until Full] = [days_until_full]
+,[Total Space] = [total_space_formatted]
+,[Free Space] = [free_space_formatted] + '' ('' + [free_space_percentage_formatted] + '')''
+,[Growth] = [growth_bytes_per_day_formatted]
+from [dbo].[vw_sqlwatch_report_dim_os_volume]'
+	,@report_definition_type = 'Query'
+	,@report_action_id  = -1;
+
+set identity_insert [dbo].[sqlwatch_config_report] off;
+enable trigger dbo.trg_sqlwatch_config_report_updated_U on [dbo].[sqlwatch_config_report];
 
 --------------------------------------------------------------------------------------
 -- now load actions that call reports we have just created
 --------------------------------------------------------------------------------------
+disable trigger dbo.trg_sqlwatch_config_action_updated_U ON [dbo].[sqlwatch_config_action];
+set identity_insert [dbo].[sqlwatch_config_action] on;
+
 exec [dbo].[usp_sqlwatch_user_add_action]
 	 @action_id = -7
 	,@action_description = 'Run Failed Agent Jobs Report'
@@ -1176,9 +1185,15 @@ exec [dbo].[usp_sqlwatch_user_add_action]
 	,@action_report_id = -4
 	,@action_enabled = 1
 
+set identity_insert [dbo].[sqlwatch_config_action] off;
+enable trigger dbo.trg_sqlwatch_config_action_updated_U ON [dbo].[sqlwatch_config_action];
+
 -------------------------------------------------------------------------------------
 -- Load default checks
 --------------------------------------------------------------------------------------
+disable trigger dbo.trg_sqlwatch_config_check_U on [dbo].[sqlwatch_config_check];
+set identity_insert [dbo].[sqlwatch_config_check] on;
+
 exec [dbo].[usp_sqlwatch_user_add_check]
 	 @check_id = -1
 	,@check_name = 'Agent Job failure' 
@@ -1411,6 +1426,9 @@ and time_queued < dateadd(hour,-1,SYSDATETIME())'
 	,@action_repeat_period_minutes = 1440 --daily
 	,@action_hourly_limit = 10
 	,@action_template_id = -1
+
+set identity_insert [dbo].[sqlwatch_config_check] off;
+enable trigger dbo.trg_sqlwatch_config_check_U on [dbo].[sqlwatch_config_check];
 
 --------------------------------------------------------------------------------------
 --setup jobs
