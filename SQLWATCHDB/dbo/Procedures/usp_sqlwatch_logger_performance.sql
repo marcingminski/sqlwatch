@@ -108,7 +108,7 @@ declare @sql nvarchar(4000)
 		from (
 			select * from sys.dm_os_performance_counters
 			union all
-			/*  becuase we are only querying sql related performance counters (as only those are exposed through sql) we do not
+			/*  because we are only querying sql related performance counters (as only those are exposed through sql) we do not
 				capture os performance counters such as cpu - hence we captured cpu from ringbuffer and now are going to 
 				make them look like real counter (othwerwise i would have to make up a name) */
 			select 
