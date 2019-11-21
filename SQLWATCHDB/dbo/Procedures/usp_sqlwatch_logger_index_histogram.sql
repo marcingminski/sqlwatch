@@ -144,7 +144,7 @@ if exists (
 		and name=''' + @index_name + ''')
 	begin
 		dbcc show_statistics (''' + @object_name + ''',''' + @index_name + ''') with  HISTOGRAM
-		Print ''['' + convert(varchar(23),getdate(),121) + ''] Collecting index histogram for idnex: ' + @index_name + '''
+		Print ''['' + convert(varchar(23),getdate(),121) + ''] Collecting index histogram for index: ' + @index_name + '''
 	end'
 
 		if @is_index_hierarchical = 1
