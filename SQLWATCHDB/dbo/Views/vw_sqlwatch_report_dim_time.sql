@@ -37,4 +37,7 @@ select distinct report_time
 	, interval_minutes_5 = convert(smalldatetime,dateadd(minute,(datediff(minute,0, report_time)/ 5) * 5,0))
 	, interval_minutes_15 = convert(smalldatetime,dateadd(minute,(datediff(minute,0, report_time)/ 15) * 15,0))
 	, interval_minutes_60 = convert(smalldatetime,dateadd(minute,(datediff(minute,0, report_time)/ 60) * 60,0))
+	, baseline_1_report_time = dateadd(DAY,-1,report_time)
+	, baseline_2_report_time = dateadd(WEEK,-1,report_time)
+	, baseline_3_report_time = dateadd(MONTH,-1,report_time)
 from cte_snapshots
