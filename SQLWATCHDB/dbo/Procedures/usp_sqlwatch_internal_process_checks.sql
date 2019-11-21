@@ -183,11 +183,14 @@ begin
 	if @check_status <> 'OK' or @last_check_status <> 'OK'
 		begin
 			declare cur_actions cursor for
-			select [action_id]
-				from [dbo].[sqlwatch_config_check_action]
-				where check_id = @check_id
-				--and sql_instance = @@SERVERNAME
-				order by check_id
+			select cca.[action_id]
+				from [dbo].[sqlwatch_config_check_action] cca
+					--so we only try process actions that are enabled:
+					inner join [dbo].[sqlwatch_config_action] ca
+						on cca.action_id = ca.action_id
+				where cca.check_id = @check_id
+				and ca.action_enabled = 1
+				order by cca.check_id
 
 				open cur_actions
   
