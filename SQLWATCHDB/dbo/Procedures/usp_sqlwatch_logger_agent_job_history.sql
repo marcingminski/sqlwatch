@@ -40,7 +40,7 @@ from msdb.dbo.sysjobhistory jh
 		and js.step_name = convert(nvarchar(128),jh.step_name) collate database_default
 
 	/* make sure we are only getting new records from msdb history 
-	   need to check performnace over long time !!! */
+	   need to check performance over long time !!! */
 	left join [dbo].[sqlwatch_logger_agent_job_history] sh
 		on sh.sql_instance = mj.sql_instance
 		and sh.[sysjobhistory_instance_id] = jh.instance_id
