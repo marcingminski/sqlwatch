@@ -22,12 +22,33 @@ declare @indextype as table (
 	is_index_hierarchical bit
 )
 
+declare @indextype2 as table (
+	is_index_timestamp bit
+)
+
 create table #stats_hierarchical (
 	[database_name] sysname default 'fe92qw0fa_dummy',
 	[object_name] sysname default 'fe92qw0fa_dummy',
 	index_name sysname default 'fe92qw0fa_dummy',
 	index_id int,
 	RANGE_HI_KEY hierarchyid,
+	RANGE_ROWS real,
+	EQ_ROWS real,
+	DISTINCT_RANGE_ROWS real,
+	AVG_RANGE_ROWS real,
+	[collection_time] datetime,
+	[sqlwatch_database_id] smallint,
+	[sqlwatch_table_id] int,
+	[sqlwatch_index_id] int
+)
+
+/* new temp table because of  https://github.com/marcingminski/sqlwatch/issues/119 */ 
+create table #stats_timestamp (
+	[database_name] sysname default 'fe92qw0fa_dummy',
+	[object_name] sysname default 'fe92qw0fa_dummy',
+	index_name sysname default 'fe92qw0fa_dummy',
+	index_id int,
+	RANGE_HI_KEY datetime,
 	RANGE_ROWS real,
 	EQ_ROWS real,
 	DISTINCT_RANGE_ROWS real,
@@ -55,6 +76,7 @@ create table #stats (
 )
 
 declare @is_index_hierarchical bit
+declare @is_index_timestamp bit  
 
 set @snapshot_type = 15
 
@@ -133,6 +155,35 @@ while @@FETCH_STATUS = 0
 		set @is_index_hierarchical  = isnull(@is_index_hierarchical ,0)
 
 
+		delete from @indextype
+		set @sql = 'use [' + @database_name + ']; 
+			select case when tp.name = ''timestamp'' then 1 else 0 end
+			from sys.schemas s
+			inner join sys.tables t 
+				on s.schema_id = t.schema_id
+			inner join sys.indexes i 
+				on i.object_id = t.object_id
+			inner join sys.index_columns ic 
+				on ic.index_id = i.index_id 
+				and ic.object_id = i.object_id
+				/* only the leading column is used to build histogram 
+				   https://dba.stackexchange.com/a/182250 */
+				and ic.index_column_id = 1
+			inner join sys.columns c 
+				on c.column_id = ic.column_id 
+				and c.object_id = ic.object_id
+			inner join sys.types tp
+				on tp.system_type_id = c.system_type_id
+				and tp.user_type_id = c.user_type_id
+			where i.name = ''' + @index_name + '''
+			and s.name + ''.'' + t.name = ''' + @object_name + ''''
+		insert into @indextype2(is_index_timestamp)
+		exec (@sql)
+
+		select @is_index_timestamp = is_index_timestamp from @indextype2
+		set @is_index_timestamp  = isnull(@is_index_timestamp ,0)
+
+
 		--set @object_name = object_schema_name(@object_id) + '.' + object_name(@object_id)
 		set @sql = 'use [' + @database_name + ']; 
 --extra check if the table and index still exist. since we are collecting histogram for indexes already collected in sqlwatch,
@@ -163,7 +214,23 @@ if exists (
 						, [sqlwatch_index_id] = @sqlwatch_index_id
 				where index_name = 'fe92qw0fa_dummy'
 			end
-		else
+		ELSE IF @is_index_timestamp = 1
+			begin
+				insert into #stats_timestamp (RANGE_HI_KEY,RANGE_ROWS,EQ_ROWS,DISTINCT_RANGE_ROWS,AVG_RANGE_ROWS)
+				exec (@sql)
+
+				update #stats_timestamp
+					set [database_name] = @database_name
+						, [object_name] = @object_name
+						, index_name = @index_name
+						, index_id = @index_id
+						, [collection_time] = getutcdate()
+						, [sqlwatch_database_id] = @sqlwatch_database_id
+						, [sqlwatch_table_id] = @sqlwatch_table_id
+						, [sqlwatch_index_id] = @sqlwatch_index_id
+				where index_name = 'fe92qw0fa_dummy'
+			end
+		ELSE
 			begin
 				insert into #stats (RANGE_HI_KEY,RANGE_ROWS,EQ_ROWS,DISTINCT_RANGE_ROWS,AVG_RANGE_ROWS)
 				exec (@sql)
@@ -226,5 +293,23 @@ deallocate c_index
 		[snapshot_type_id] = @snapshot_type,
 		[collection_time]
 	from #stats_hierarchical st
+
+	insert into [dbo].[sqlwatch_logger_index_usage_stats_histogram](
+			[sqlwatch_database_id], [sqlwatch_table_id], [sqlwatch_index_id],
+		RANGE_HI_KEY, RANGE_ROWS, EQ_ROWS, DISTINCT_RANGE_ROWS, AVG_RANGE_ROWS,
+		[snapshot_time], [snapshot_type_id], [collection_time])
+	select
+		st.[sqlwatch_database_id],
+		st.[sqlwatch_table_id],
+		st.[sqlwatch_index_id],
+		convert(nvarchar(max),st.RANGE_HI_KEY),
+		RANGE_ROWS = convert(real,st.RANGE_ROWS),
+		EQ_ROWS = convert(real,st.EQ_ROWS),
+		DISTINCT_RANGE_ROWS = convert(real,st.DISTINCT_RANGE_ROWS),
+		AVG_RANGE_ROWS = convert(real,st.AVG_RANGE_ROWS),
+		[snapshot_time] = @snapshot_time,
+		[snapshot_type_id] = @snapshot_type,
+		[collection_time]
+	from #stats_timestamp st
 
 commit tran
