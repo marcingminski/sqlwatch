@@ -1084,6 +1084,7 @@ where sjh.step_id > 0
 	select last_check_date
 	from [dbo].[sqlwatch_meta_check]
 	where check_id = -1
+	and sql_instance = @@SERVERNAME
 ),getdate())
 	and sjh.run_status = 0
 )
@@ -1108,11 +1109,12 @@ exec [dbo].[usp_sqlwatch_user_add_report]
 	,@report_description = 'List of blocking chains captured in the last minute.'
 	,@report_definition = ';with cte_blocking as (
 	SELECT *, rn=ROW_NUMBER() over (order by blocking_start_time)
-	  FROM [dbo].[vw_sqlwatch_report_fact_xes_blockers]
+	  FROM [dbo].[vw_sqlwatch_report_fact_xes_blockers] b
 	  WHERE snapshot_time >= isnull((
 	select last_check_date
 	from [dbo].[sqlwatch_meta_check]
 	where check_id = -2
+	and sql_instance = @@SERVERNAME
 	),getdate())
 )
 select (select 
@@ -1151,7 +1153,8 @@ exec [dbo].[usp_sqlwatch_user_add_report]
 ,[Total Space] = [total_space_formatted]
 ,[Free Space] = [free_space_formatted] + '' ('' + [free_space_percentage_formatted] + '')''
 ,[Growth] = [growth_bytes_per_day_formatted]
-from [dbo].[vw_sqlwatch_report_dim_os_volume]'
+from [dbo].[vw_sqlwatch_report_dim_os_volume]
+where sql_instance = @@SERVERNAME'
 	,@report_definition_type = 'Query'
 	,@report_action_id  = -1;
 
@@ -1205,6 +1208,7 @@ where msdb.dbo.agent_datetime(run_date, run_time) >= isnull((
 	select last_check_date
 	from [dbo].[sqlwatch_meta_check]
 	where check_id = -1
+	and sql_instance = @@SERVERNAME
 ),getdate())
 and run_status = 0'
 	,@check_frequency_minutes = NULL
@@ -1227,11 +1231,12 @@ exec [dbo].[usp_sqlwatch_user_add_check]
 Blocking means processes are stuck and unable to carry any work, could cause downtime or major outage.
 If there is a report assosiated with this check, details of the blocking chain should be included below.'
 	,@check_query = 'select count(distinct blocked_spid)
-from dbo.sqlwatch_logger_xes_blockers
+from dbo.sqlwatch_logger_xes_blockers b
 where snapshot_time >= isnull((
 	select last_check_date
 	from [dbo].[sqlwatch_meta_check]
 	where check_id = -2
+	and sql_instance = @@SERVERNAME
 	),getdate())'
 	,@check_frequency_minutes = NULL
 	,@check_threshold_warning = NULL
@@ -1253,6 +1258,7 @@ exec [dbo].[usp_sqlwatch_user_add_check]
 	,@check_query = 'select avg(cntr_value_calculated) 
 from dbo.vw_sqlwatch_report_fact_perf_os_performance_counters
 where counter_name = ''Processor Time %''
+and sql_instance = @@SERVERNAME
 and report_time > dateadd(minute,-5,getutcdate())'
 	,@check_frequency_minutes = 5
 	,@check_threshold_warning = '>60'
@@ -1329,7 +1335,8 @@ exec [dbo].[usp_sqlwatch_user_add_check]
 This does not mean that the disk will be full soon as it may not grow much. Please check the "days until full" value or the actual growth.
 If there is a report assosiated with this check, details of the storage utilistaion should be included below.'
 	,@check_query = 'select free_space_percentage
-from dbo.vw_sqlwatch_report_dim_os_volume'
+from dbo.vw_sqlwatch_report_dim_os_volume
+where sql_instance = @@SERVERNAME'
 	,@check_frequency_minutes = 60
 	,@check_threshold_warning = '<0.1'
 	,@check_threshold_critical = '<0.05'
@@ -1349,7 +1356,8 @@ exec [dbo].[usp_sqlwatch_user_add_check]
 	,@check_description = 'The "days until full" value is lower than expected. One or more disks will be full in few days.
 If there is a report assosiated with this check, details of the storage utilistaion should be included below.'
 	,@check_query = 'select days_until_full
-from dbo.vw_sqlwatch_report_dim_os_volume'
+from dbo.vw_sqlwatch_report_dim_os_volume
+where sql_instance = @@SERVERNAME'
 	,@check_frequency_minutes = 60
 	,@check_threshold_warning = '<7'
 	,@check_threshold_critical = '<3'
@@ -1372,7 +1380,8 @@ Checks are executed in series, in a single threaded cursor and not parralel. Thi
 Each check should not take more than few miliseconds to run.
 You can view average check execution time in [dbo].[vw_sqlwatch_report_dim_check] and individual runs in [dbo].[sqlwatch_logger_check]'
 	,@check_query = 'SELECT max([avg_check_exec_time_ms])
-FROM [dbo].[vw_sqlwatch_report_dim_check]'
+FROM [dbo].[vw_sqlwatch_report_dim_check]
+where sql_instance = @@SERVERNAME'
 	,@check_frequency_minutes = 15
 	,@check_threshold_warning = NULL
 	,@check_threshold_critical = '>1000'
@@ -1393,7 +1402,8 @@ exec [dbo].[usp_sqlwatch_user_add_check]
 You can view last_check_status in [dbo].[vw_sqlwatch_report_dim_check] and individual runs in [dbo].[sqlwatch_logger_check]'
 	,@check_query = 'select count(*) 
 from [dbo].[vw_sqlwatch_report_dim_check]
-where last_check_status = ''CHECK ERROR'''
+where sql_instance = @@SERVERNAME 
+and last_check_status = ''CHECK ERROR'''
 	,@check_frequency_minutes = 5
 	,@check_threshold_warning = NULL
 	,@check_threshold_critical = '>0'
