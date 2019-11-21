@@ -183,7 +183,6 @@
     <Build Include="dbo\Tables\sqlwatch_logger_check.sql" />
     <Build Include="dbo\Tables\sqlwatch_meta_check.sql" />
     <Build Include="dbo\Views\vw_sqlwatch_report_dim_check.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_config_add_default_checks.sql" />
     <Build Include="dbo\Tables\sqlwatch_config_action.sql" />
     <Build Include="dbo\Tables\sqlwatch_meta_action_queue.sql" />
     <Build Include="dbo\Tables\sqlwatch_trend_perf_os_performance_counters.sql" />
@@ -197,7 +196,6 @@
     <Build Include="dbo\Tables\sqlwatch_config_check_action.sql" />
     <Build Include="dbo\Tables\sqlwatch_config_check_action_template.sql" />
     <Build Include="dbo\Tables\sqlwatch_config_report_action.sql" />
-    <Build Include="dbo\Tables\sqlwatch_logger_action.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_process_actions.sql" />
     <Build Include="dbo\Tables\sqlwatch_logger_check_action.sql" />
     <Build Include="dbo\Tables\sqlwatch_config_report_style.sql" />
@@ -207,6 +205,8 @@
     <Build Include="dbo\Procedures\usp_sqlwatch_user_add_action.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_user_add_check.sql" />
     <Build Include="dbo\Views\vw_sqlwatch_sys_databases.sql" />
+    <Build Include="dbo\Views\vw_sqlwatch_meta_wait_stats_category.sql" />
+    <Build Include="dbo\Views\vw_sqlwatch_report_fact_check.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />

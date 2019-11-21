@@ -65,7 +65,7 @@ select
 from [dbo].[sqlwatch_config_check_action]
 where [check_id] = @check_id
 and [action_id] = @action_id
-and sql_instance = @@SERVERNAME
+--and sql_instance = @@SERVERNAME
 
 set @action_attributes = @action_attributes + '
 	ActionEveryFailure="' + isnull(convert(varchar(10),@action_every_failure),'') + '"
@@ -84,6 +84,7 @@ from [dbo].[sqlwatch_logger_check_action]
 where [check_id] = @check_id
 and [action_id] = @action_id
 and action_type <> 'NONE'
+and sql_instance = @@SERVERNAME
 
 set @action_attributes = @action_attributes + '
 	LastActionTime="' + isnull(convert(varchar(23),@last_action_time,121),'') + '"
@@ -131,6 +132,7 @@ select @action_type = case
 	else 'NONE' end
 from [dbo].[sqlwatch_meta_check]
 where [check_id] = @check_id
+and sql_instance = @@SERVERNAME
 
 set @action_attributes = @action_attributes + '
 	ActionType="' + isnull(@action_type,'') + '"'
@@ -151,6 +153,7 @@ select
 		else 'UNDEFINED' end		
 from [dbo].[sqlwatch_config_check_action_template]
 where action_template_id = @action_template_id
+--and sql_instance = @@SERVERNAME
 
 set @action_attributes = @action_attributes + '
 	SubjectTemplate="' + isnull(replace(@subject,'''',''''''),'') + '"
@@ -197,9 +200,9 @@ if @action_type  <> 'NONE'
 													,'{CHECK_ID}',convert(varchar(10),cc.check_id))
 												,'{CHECK_STATUS}',@check_status)
 											,'{CHECK_VALUE}',convert(varchar(10),@check_value))
-										,'{CHECK_LAST_VALUE}',isnull(convert(varchar(10),mc.last_check_value),'N/A'))
-									,'{CHECK_LAST_STATUS}',isnull(mc.last_check_status,'N/A'))
-								,'{LAST_STATUS_CHANGE}',isnull(convert(varchar(23),mc.last_status_change_date,121),'Never'))
+										,'{CHECK_LAST_VALUE}',isnull(convert(varchar(10),cc.last_check_value),'N/A'))
+									,'{CHECK_LAST_STATUS}',isnull(cc.last_check_status,'N/A'))
+								,'{LAST_STATUS_CHANGE}',isnull(convert(varchar(23),cc.last_status_change_date,121),'Never'))
 							,'{CHECK_TIME}',convert(varchar(23),getdate(),121))
 						,'{THRESHOLD_WARNING}',isnull(cc.check_threshold_warning,''))
 					,'{THRESHOLD_CRITICAL}',isnull(cc.check_threshold_critical,''))
@@ -226,20 +229,16 @@ if @action_type  <> 'NONE'
 													,'{CHECK_ID}',convert(varchar(10),cc.check_id))
 												,'{CHECK_STATUS}',@check_status)
 											,'{CHECK_VALUE}',convert(varchar(10),@check_value))
-										,'{CHECK_LAST_VALUE}',isnull(convert(varchar(10),mc.last_check_value),'N/A'))
-									,'{CHECK_LAST_STATUS}',isnull(mc.last_check_status,'N/A'))
-								,'{LAST_STATUS_CHANGE}',isnull(convert(varchar(23),mc.last_status_change_date,121),'Never'))
+										,'{CHECK_LAST_VALUE}',isnull(convert(varchar(10),cc.last_check_value),'N/A'))
+									,'{CHECK_LAST_STATUS}',isnull(cc.last_check_status,'N/A'))
+								,'{LAST_STATUS_CHANGE}',isnull(convert(varchar(23),cc.last_status_change_date,121),'Never'))
 							,'{CHECK_TIME}',convert(varchar(23),getdate(),121))
 						,'{THRESHOLD_WARNING}',isnull(cc.check_threshold_warning,'None'))
 					,'{THRESHOLD_CRITICAL}',isnull(cc.check_threshold_critical,''))
 				,'{CHECK_DESCRIPTION}',isnull(cc.check_description,''))
 			,'{CHECK_QUERY}',isnull(replace(cc.check_query,'''',''''''),''))
 
-		from [dbo].[sqlwatch_config_check] cc
-		inner join [dbo].[sqlwatch_meta_check] mc
-			on cc.sql_instance = mc.sql_instance
-			and cc.check_id = mc.check_id
-
+		from [dbo].[sqlwatch_meta_check] cc
 		where cc.check_id = @check_id
 		and cc.sql_instance = @@SERVERNAME
 
@@ -254,6 +253,7 @@ if @action_type  <> 'NONE'
 		where action_id = @action_id
 		and [action_enabled] = 1
 		and [action_exec] is not null --null action exec can only be for reports but they are processed below
+		--and sql_instance = @@SERVERNAME
 
 		--is this action calling a report or an arbitrary exec?
 		select @report_id = action_report_id 

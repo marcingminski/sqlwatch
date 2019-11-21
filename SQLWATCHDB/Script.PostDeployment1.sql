@@ -466,287 +466,287 @@ when not matched then
 --------------------------------------------------------------------------------------
 -- wait stat categories
 --------------------------------------------------------------------------------------
-declare @wait_categories table (
-	[wait_type] nvarchar(60) not null,
-	[wait_category] nvarchar(60) not null,
-	[report_include] bit not null
-)
+--declare @wait_categories table (
+--	[wait_type] nvarchar(60) not null,
+--	[wait_category] nvarchar(60) not null,
+--	[report_include] bit not null
+--)
 
-insert into @wait_categories
-VALUES
- ('HADR_CLUSAPI_CALL','Availability Groups',0)
-,('HADR_FILESTREAM_IOMGR_IOCOMPLETION','Availability Groups',0)
-,('HADR_LOGCAPTURE_WAIT','Availability Groups',0)
-,('HADR_NOTIFICATION_DEQUEUE','Availability Groups',0)
-,('HADR_TIMER_TASK','Availability Groups',0)
-,('HADR_WORK_QUEUE','Availability Groups',0)
-,('FCB_REPLICA_READ','Buffer I/O',1)
-,('FCB_REPLICA_WRITE','Buffer I/O',1)
-,('IO_COMPLETION','Buffer I/O',1)
-,('PAGEIOLATCH_DT','Buffer I/O',1)
-,('PAGEIOLATCH_EX','Buffer I/O',1)
-,('PAGEIOLATCH_KP','Buffer I/O',1)
-,('PAGEIOLATCH_NL','Buffer I/O',1)
-,('PAGEIOLATCH_SH','Buffer I/O',1)
-,('PAGEIOLATCH_UP','Buffer I/O',1)
-,('REPLICA_WRITES','Buffer I/O',1)
-,('PAGELATCH_DT','Buffer Latch',1)
-,('PAGELATCH_EX','Buffer Latch',1)
-,('PAGELATCH_KP','Buffer Latch',1)
-,('PAGELATCH_NL','Buffer Latch',1)
-,('PAGELATCH_SH','Buffer Latch',1)
-,('PAGELATCH_UP','Buffer Latch',1)
-,('RESOURCE_SEMAPHORE_MUTEX','Compilation',1)
-,('RESOURCE_SEMAPHORE_QUERY_COMPILE','Compilation',1)
-,('RESOURCE_SEMAPHORE_SMALL_QUERY','Compilation',1)
-,('MSSEARCH','Full Text Search',1)
-,('SOAP_READ','Full Text Search',1)
-,('SOAP_WRITE','Full Text Search',1)
-,('CHECKPOINT_QUEUE','Idle',0)
-,('CHKPT','Idle',0)
-,('KSOURCE_WAKEUP','Idle',0)
-,('LAZYWRITER_SLEEP','Idle',0)
-,('LOGMGR_QUEUE','Idle',0)
-,('ONDEMAND_TASK_QUEUE','Idle',0)
-,('REQUEST_FOR_DEADLOCK_SEARCH','Idle',0)
-,('RESOURCE_QUEUE','Idle',0)
-,('SERVER_IDLE_CHECK','Idle',0)
-,('SLEEP_BPOOL_FLUSH','Idle',0)
-,('SLEEP_DBSTARTUP','Idle',0)
-,('SLEEP_DCOMSTARTUP','Idle',0)
-,('SLEEP_MSDBSTARTUP','Idle',0)
-,('SLEEP_SYSTEMTASK','Idle',0)
-,('SLEEP_TASK','Idle',0)
-,('SLEEP_TEMPDBSTARTUP','Idle',0)
-,('SNI_HTTP_ACCEPT','Idle',0)
-,('SQLTRACE_BUFFER_FLUSH','Idle',0)
-,('TRACEWRITE','Idle',1)
-,('WAIT_FOR_RESULTS','Idle',0)
-,('WAITFOR_TASKSHUTDOWN','Idle',0)
-,('XE_DISPATCHER_WAIT','Idle',0)
-,('XE_TIMER_EVENT','Idle',0)
-,('DEADLOCK_ENUM_MUTEX','Latch',1)
-,('INDEX_USAGE_STATS_MUTEX','Latch',1)
-,('LATCH_DT','Latch',1)
-,('LATCH_EX','Latch',1)
-,('LATCH_KP','Latch',1)
-,('LATCH_NL','Latch',1)
-,('LATCH_SH','Latch',1)
-,('LATCH_UP','Latch',1)
-,('VIEW_DEFINITION_MUTEX','Latch',1)
-,('LCK_M_BU','Lock',1)
-,('LCK_M_IS','Lock',1)
-,('LCK_M_IU','Lock',1)
-,('LCK_M_IX','Lock',1)
-,('LCK_M_RIn_NL','Lock',1)
-,('LCK_M_RIn_S','Lock',1)
-,('LCK_M_RIn_U','Lock',1)
-,('LCK_M_RIn_X','Lock',1)
-,('LCK_M_RS_S','Lock',1)
-,('LCK_M_RS_U','Lock',1)
-,('LCK_M_RX_S','Lock',1)
-,('LCK_M_RX_U','Lock',1)
-,('LCK_M_RX_X','Lock',1)
-,('LCK_M_S','Lock',1)
-,('LCK_M_SCH_M','Lock',1)
-,('LCK_M_SCH_S','Lock',1)
-,('LCK_M_SIU','Lock',1)
-,('LCK_M_SIX','Lock',1)
-,('LCK_M_U','Lock',1)
-,('LCK_M_UIX','Lock',1)
-,('LCK_M_X','Lock',1)
-,('LOGBUFFER','Logging',1)
-,('LOGMGR','Logging',1)
-,('LOGMGR_FLUSH','Logging',1)
-,('LOGMGR_RESERVE_APPEND','Logging',1)
-,('WRITELOG','Logging',1)
-,('CMEMTHREAD','Memory',1)
-,('LOWFAIL_MEMMGR_QUEUE','Memory',1)
-,('RESOURCE_SEMAPHORE','Memory',1)
-,('SOS_RESERVEDMEMBLOCKLIST','Memory',1)
-,('SOS_VIRTUALMEMORY_LOW','Memory',1)
-,('UTIL_PAGE_ALLOC','Memory',1)
-,('DBMIRROR_DBM_EVENT','Mirroring',0)
-,('DBMIRROR_DBM_MUTEX','Mirroring',1)
-,('DBMIRROR_EVENTS_QUEUE','Mirroring',0)
-,('DBMIRROR_WORKER_QUEUE','Mirroring',0)
-,('DBMIRROR%','Mirroring',1)
-,('DBMIRRORING_CMD','Mirroring',0)
-,('ASYNC_NETWORK_IO','Network I/O',1)
-,('DBMIRROR_SEND','Network I/O',1)
-,('MSQL_DQ','Network I/O',1)
-,('NET_WAITFOR_PACKET','Network I/O',1)
-,('OLEDB','Network I/O',1)
-,('ABR','Other',1)
-,('BAD_PAGE_PROCESS','Other',1)
-,('BROKER_CONNECTION_RECEIVE_TASK','Other',1)
-,('BROKER_ENDPOINT_STATE_MUTEX','Other',1)
-,('BROKER_REGISTERALLENDPOINTS','Other',1)
-,('BROKER_SHUTDOWN','Other',1)
-,('BROKER_TASK_STOP','Other',0)
-,('CHECK_PRINT_RECORD','Other',1)
-,('CURSOR_ASYNC','Other',1)
-,('DAC_INIT','Other',1)
-,('DBCC_COLUMN_TRANSLATION_CACHE','Other',1)
-,('DBTABLE','Other',1)
-,('DUMPTRIGGER','Other',1)
-,('EC','Other',1)
-,('EE_SPECPROC_MAP_INIT','Other',1)
-,('EXECUTION_PIPE_EVENT_INTERNAL','Other',1)
-,('FAILPOINT','Other',1)
-,('FT_RESTART_CRAWL','Other',1)
-,('FT_RESUME_CRAWL','Other',1)
-,('FULLTEXT GATHERER','Other',1)
-,('GUARDIAN','Other',1)
-,('HTTP_ENDPOINT_COLLCREATE','Other',1)
-,('HTTP_ENUMERATION','Other',1)
-,('HTTP_START','Other',1)
-,('IMP_IMPORT_MUTEX','Other',1)
-,('IMPPROV_IOWAIT','Other',1)
-,('INTERNAL_TESTING','Other',1)
-,('IO_AUDIT_MUTEX','Other',1)
-,('KTM_ENLISTMENT','Other',1)
-,('KTM_RECOVERY_MANAGER','Other',1)
-,('KTM_RECOVERY_RESOLUTION','Other',1)
-,('MIRROR_SEND_MESSAGE','Other',1)
-,('MISCELLANEOUS','Other',1)
-,('MSQL_SYNC_PIPE','Other',1)
-,('MSQL_XP','Other',1)
-,('PARALLEL_BACKUP_QUEUE','Other',1)
-,('PRINT_ROLLBACK_PROGRESS','Other',1)
-,('QNMANAGER_ACQUIRE','Other',1)
-,('QPJOB_KILL','Other',1)
-,('QPJOB_WAITFOR_ABORT','Other',1)
-,('QRY_MEM_GRANT_INFO_MUTEX','Other',1)
-,('QUERY_ERRHDL_SERVICE_DONE','Other',1)
-,('QUERY_EXECUTION_INDEX_SORT_EVENT_OPEN','Other',1)
-,('QUERY_NOTIFICATION_MGR_MUTEX','Other',1)
-,('QUERY_NOTIFICATION_SUBSCRIPTION_MUTEX','Other',1)
-,('QUERY_NOTIFICATION_TABLE_MGR_MUTEX','Other',1)
-,('QUERY_NOTIFICATION_UNITTEST_MUTEX','Other',1)
-,('QUERY_OPTIMIZER_PRINT_MUTEX','Other',1)
-,('QUERY_REMOTE_BRICKS_DONE','Other',1)
-,('QUERY_TRACEOUT','Other',1)
-,('RECOVER_CHANGEDB','Other',1)
-,('REPL_CACHE_ACCESS','Other',1)
-,('REPL_SCHEMA_ACCESS','Other',1)
-,('REQUEST_DISPENSER_PAUSE','Other',1)
-,('SEC_DROP_TEMP_KEY','Other',1)
-,('SEQUENTIAL_GUID','Other',1)
-,('SHUTDOWN','Other',1)
-,('SNI_CRITICAL_SECTION','Other',1)
-,('SNI_HTTP_WAITFOR_0_DISCON','Other',1)
-,('SNI_LISTENER_ACCESS','Other',1)
-,('SNI_TASK_COMPLETION','Other',1)
-,('SOS_CALLBACK_REMOVAL','Other',1)
-,('SOS_DISPATCHER_MUTEX','Other',1)
-,('SOS_LOCALALLOCATORLIST','Other',1)
-,('SOS_OBJECT_STORE_DESTROY_MUTEX','Other',1)
-,('SOS_PROCESS_AFFINITY_MUTEX','Other',1)
-,('SOS_STACKSTORE_INIT_MUTEX','Other',1)
-,('SOS_SYNC_TASK_ENQUEUE_EVENT','Other',1)
-,('SOSHOST_EVENT','Other',1)
-,('SOSHOST_INTERNAL','Other',1)
-,('SOSHOST_MUTEX','Other',1)
-,('SOSHOST_RWLOCK','Other',1)
-,('SOSHOST_SEMAPHORE','Other',1)
-,('SOSHOST_SLEEP','Other',1)
-,('SOSHOST_TRACELOCK','Other',1)
-,('SOSHOST_WAITFORDONE','Other',1)
-,('SQLSORT_NORMMUTEX','Other',1)
-,('SQLSORT_SORTMUTEX','Other',1)
-,('SQLTRACE_LOCK','Other',1)
-,('SQLTRACE_SHUTDOWN','Other',1)
-,('SQLTRACE_WAIT_ENTRIES','Other',0)
-,('SRVPROC_SHUTDOWN','Other',1)
-,('TEMPOBJ','Other',1)
-,('THREADPOOL','CPU',1)
-,('TIMEPRIV_TIMEPERIOD','Other',1)
-,('VIA_ACCEPT','Other',1)
-,('WAITSTAT_MUTEX','Other',1)
-,('WCC','Other',1)
-,('WORKTBL_DROP','Other',1)
-,('XE_BUFFERMGR_ALLPROCECESSED_EVENT','Other',1)
-,('XE_BUFFERMGR_FREEBUF_EVENT','Other',1)
-,('XE_DISPATCHER_JOIN','Other',0)
-,('XE_MODULEMGR_SYNC','Other',1)
-,('XE_OLS_LOCK','Other',1)
-,('XE_SERVICES_MUTEX','Other',1)
-,('XE_SESSION_CREATE_SYNC','Other',1)
-,('XE_SESSION_SYNC','Other',1)
-,('XE_STM_CREATE','Other',1)
-,('XE_TIMER_MUTEX','Other',1)
-,('XE_TIMER_TASK_DONE','Other',1)
-,('CXPACKET','Parallelism',1)
-,('REPL%','Replication',1)
-,('CLR_AUTO_EVENT','SQLCLR',0)
-,('CLR_RWLOCK_WRITER','SQLCLR',1)
-,('SQLCLR_APPDOMAIN','SQLCLR',1)
-,('SQLCLR_ASSEMBLY','SQLCLR',1)
-,('SQLCLR_DEADLOCK_DETECTION','SQLCLR',1)
-,('SQLCLR_QUANTUM_PUNISHMENT','SQLCLR',1)
-,('DTC','Transaction',1)
-,('DTC_ABORT_REQUEST','Transaction',1)
-,('DTC_RESOLVE','Transaction',1)
-,('MSQL_XACT_MGR_MUTEX','Transaction',1)
-,('MSQL_XACT_MUTEX','Transaction',1)
-,('TRAN_MARKLATCH_DT','Transaction',1)
-,('TRAN_MARKLATCH_EX','Transaction',1)
-,('TRAN_MARKLATCH_KP','Transaction',1)
-,('TRAN_MARKLATCH_NL','Transaction',1)
-,('TRAN_MARKLATCH_SH','Transaction',1)
-,('TRAN_MARKLATCH_UP','Transaction',1)
-,('TRANSACTION_MUTEX','Transaction',1)
-,('XACT_OWN_TRANSACTION','Transaction',1)
-,('XACT_RECLAIM_SESSION','Transaction',1)
-,('XACTLOCKINFO','Transaction',1)
-,('XACTWORKSPACE_MUTEX','Transaction',1)
-,('WAITFOR','User Waits',0)
-,('BROKER_TO_FLUSH','Other',0)
-,('CXCONSUMER','Other',0)
-,('DIRTY_PAGE_POLL','Other',0)
-,('DISPATCHER_QUEUE_SEMAPHORE','Other',0)
-,('FT_IFTS_SCHEDULER_IDLE_WAIT','Other',0)
-,('FT_IFTSHC_MUTEX','Other',0)
-,('MEMORY_ALLOCATION_EXT','Other',0)
-,('PARALLEL_REDO_DRAIN_WORKER','Availability Groups',0)
-,('PARALLEL_REDO_LOG_CACHE','Availability Groups',0)
-,('PARALLEL_REDO_TRAN_LIST','Availability Groups',0)
-,('PARALLEL_REDO_WORKER_SYNC','Availability Groups',0)
-,('PARALLEL_REDO_WORKER_WAIT_WORK','Availability Groups',0)
-,('PREEMPTIVE_XE_GETTARGETSTATE','Other',0)
-,('PWAIT_ALL_COMPONENTS_INITIALIZED','Other',0)
-,('PWAIT_DIRECTLOGCONSUMER_GETNEXT','Other',0)
-,('QDS_ASYNC_QUEUE','Other',0)
-,('QDS_CLEANUP_STALE_QUERIES_TASK_MAIN_LOOP_SLEEP','Other',0)
-,('QDS_PERSIST_TASK_MAIN_LOOP_SLEEP','Other',0)
-,('QDS_SHUTDOWN_QUEUE','Other',0)
-,('REDO_THREAD_PENDING_WORK','Availability Groups',0)
-,('SLEEP_MASTERDBREADY','Other',0)
-,('SLEEP_MASTERMDREADY','Other',0)
-,('SLEEP_MASTERUPGRADED','Other',0)
-,('SOS_WORK_DISPATCHER','Other',0)
-,('SP_SERVER_DIAGNOSTICS_SLEEP','Other',0)
-,('SQLTRACE_INCREMENTAL_FLUSH_SLEEP','Other',0)
-,('WAIT_XTP_CKPT_CLOSE','Other',0)
-,('WAIT_XTP_HOST_WAIT','Other',0)
-,('WAIT_XTP_OFFLINE_CKPT_NEW_LOG','Other',0)
-,('WAIT_XTP_RECOVERY','Other',0)
-,('SOS_SCHEDULER_YIELD','CPU',1)
+--insert into @wait_categories
+--VALUES
+-- ('HADR_CLUSAPI_CALL','Availability Groups',0)
+--,('HADR_FILESTREAM_IOMGR_IOCOMPLETION','Availability Groups',0)
+--,('HADR_LOGCAPTURE_WAIT','Availability Groups',0)
+--,('HADR_NOTIFICATION_DEQUEUE','Availability Groups',0)
+--,('HADR_TIMER_TASK','Availability Groups',0)
+--,('HADR_WORK_QUEUE','Availability Groups',0)
+--,('FCB_REPLICA_READ','Buffer I/O',1)
+--,('FCB_REPLICA_WRITE','Buffer I/O',1)
+--,('IO_COMPLETION','Buffer I/O',1)
+--,('PAGEIOLATCH_DT','Buffer I/O',1)
+--,('PAGEIOLATCH_EX','Buffer I/O',1)
+--,('PAGEIOLATCH_KP','Buffer I/O',1)
+--,('PAGEIOLATCH_NL','Buffer I/O',1)
+--,('PAGEIOLATCH_SH','Buffer I/O',1)
+--,('PAGEIOLATCH_UP','Buffer I/O',1)
+--,('REPLICA_WRITES','Buffer I/O',1)
+--,('PAGELATCH_DT','Buffer Latch',1)
+--,('PAGELATCH_EX','Buffer Latch',1)
+--,('PAGELATCH_KP','Buffer Latch',1)
+--,('PAGELATCH_NL','Buffer Latch',1)
+--,('PAGELATCH_SH','Buffer Latch',1)
+--,('PAGELATCH_UP','Buffer Latch',1)
+--,('RESOURCE_SEMAPHORE_MUTEX','Compilation',1)
+--,('RESOURCE_SEMAPHORE_QUERY_COMPILE','Compilation',1)
+--,('RESOURCE_SEMAPHORE_SMALL_QUERY','Compilation',1)
+--,('MSSEARCH','Full Text Search',1)
+--,('SOAP_READ','Full Text Search',1)
+--,('SOAP_WRITE','Full Text Search',1)
+--,('CHECKPOINT_QUEUE','Idle',0)
+--,('CHKPT','Idle',0)
+--,('KSOURCE_WAKEUP','Idle',0)
+--,('LAZYWRITER_SLEEP','Idle',0)
+--,('LOGMGR_QUEUE','Idle',0)
+--,('ONDEMAND_TASK_QUEUE','Idle',0)
+--,('REQUEST_FOR_DEADLOCK_SEARCH','Idle',0)
+--,('RESOURCE_QUEUE','Idle',0)
+--,('SERVER_IDLE_CHECK','Idle',0)
+--,('SLEEP_BPOOL_FLUSH','Idle',0)
+--,('SLEEP_DBSTARTUP','Idle',0)
+--,('SLEEP_DCOMSTARTUP','Idle',0)
+--,('SLEEP_MSDBSTARTUP','Idle',0)
+--,('SLEEP_SYSTEMTASK','Idle',0)
+--,('SLEEP_TASK','Idle',0)
+--,('SLEEP_TEMPDBSTARTUP','Idle',0)
+--,('SNI_HTTP_ACCEPT','Idle',0)
+--,('SQLTRACE_BUFFER_FLUSH','Idle',0)
+--,('TRACEWRITE','Idle',1)
+--,('WAIT_FOR_RESULTS','Idle',0)
+--,('WAITFOR_TASKSHUTDOWN','Idle',0)
+--,('XE_DISPATCHER_WAIT','Idle',0)
+--,('XE_TIMER_EVENT','Idle',0)
+--,('DEADLOCK_ENUM_MUTEX','Latch',1)
+--,('INDEX_USAGE_STATS_MUTEX','Latch',1)
+--,('LATCH_DT','Latch',1)
+--,('LATCH_EX','Latch',1)
+--,('LATCH_KP','Latch',1)
+--,('LATCH_NL','Latch',1)
+--,('LATCH_SH','Latch',1)
+--,('LATCH_UP','Latch',1)
+--,('VIEW_DEFINITION_MUTEX','Latch',1)
+--,('LCK_M_BU','Lock',1)
+--,('LCK_M_IS','Lock',1)
+--,('LCK_M_IU','Lock',1)
+--,('LCK_M_IX','Lock',1)
+--,('LCK_M_RIn_NL','Lock',1)
+--,('LCK_M_RIn_S','Lock',1)
+--,('LCK_M_RIn_U','Lock',1)
+--,('LCK_M_RIn_X','Lock',1)
+--,('LCK_M_RS_S','Lock',1)
+--,('LCK_M_RS_U','Lock',1)
+--,('LCK_M_RX_S','Lock',1)
+--,('LCK_M_RX_U','Lock',1)
+--,('LCK_M_RX_X','Lock',1)
+--,('LCK_M_S','Lock',1)
+--,('LCK_M_SCH_M','Lock',1)
+--,('LCK_M_SCH_S','Lock',1)
+--,('LCK_M_SIU','Lock',1)
+--,('LCK_M_SIX','Lock',1)
+--,('LCK_M_U','Lock',1)
+--,('LCK_M_UIX','Lock',1)
+--,('LCK_M_X','Lock',1)
+--,('LOGBUFFER','Logging',1)
+--,('LOGMGR','Logging',1)
+--,('LOGMGR_FLUSH','Logging',1)
+--,('LOGMGR_RESERVE_APPEND','Logging',1)
+--,('WRITELOG','Logging',1)
+--,('CMEMTHREAD','Memory',1)
+--,('LOWFAIL_MEMMGR_QUEUE','Memory',1)
+--,('RESOURCE_SEMAPHORE','Memory',1)
+--,('SOS_RESERVEDMEMBLOCKLIST','Memory',1)
+--,('SOS_VIRTUALMEMORY_LOW','Memory',1)
+--,('UTIL_PAGE_ALLOC','Memory',1)
+--,('DBMIRROR_DBM_EVENT','Mirroring',0)
+--,('DBMIRROR_DBM_MUTEX','Mirroring',1)
+--,('DBMIRROR_EVENTS_QUEUE','Mirroring',0)
+--,('DBMIRROR_WORKER_QUEUE','Mirroring',0)
+--,('DBMIRROR%','Mirroring',1)
+--,('DBMIRRORING_CMD','Mirroring',0)
+--,('ASYNC_NETWORK_IO','Network I/O',1)
+--,('DBMIRROR_SEND','Network I/O',1)
+--,('MSQL_DQ','Network I/O',1)
+--,('NET_WAITFOR_PACKET','Network I/O',1)
+--,('OLEDB','Network I/O',1)
+--,('ABR','Other',1)
+--,('BAD_PAGE_PROCESS','Other',1)
+--,('BROKER_CONNECTION_RECEIVE_TASK','Other',1)
+--,('BROKER_ENDPOINT_STATE_MUTEX','Other',1)
+--,('BROKER_REGISTERALLENDPOINTS','Other',1)
+--,('BROKER_SHUTDOWN','Other',1)
+--,('BROKER_TASK_STOP','Other',0)
+--,('CHECK_PRINT_RECORD','Other',1)
+--,('CURSOR_ASYNC','Other',1)
+--,('DAC_INIT','Other',1)
+--,('DBCC_COLUMN_TRANSLATION_CACHE','Other',1)
+--,('DBTABLE','Other',1)
+--,('DUMPTRIGGER','Other',1)
+--,('EC','Other',1)
+--,('EE_SPECPROC_MAP_INIT','Other',1)
+--,('EXECUTION_PIPE_EVENT_INTERNAL','Other',1)
+--,('FAILPOINT','Other',1)
+--,('FT_RESTART_CRAWL','Other',1)
+--,('FT_RESUME_CRAWL','Other',1)
+--,('FULLTEXT GATHERER','Other',1)
+--,('GUARDIAN','Other',1)
+--,('HTTP_ENDPOINT_COLLCREATE','Other',1)
+--,('HTTP_ENUMERATION','Other',1)
+--,('HTTP_START','Other',1)
+--,('IMP_IMPORT_MUTEX','Other',1)
+--,('IMPPROV_IOWAIT','Other',1)
+--,('INTERNAL_TESTING','Other',1)
+--,('IO_AUDIT_MUTEX','Other',1)
+--,('KTM_ENLISTMENT','Other',1)
+--,('KTM_RECOVERY_MANAGER','Other',1)
+--,('KTM_RECOVERY_RESOLUTION','Other',1)
+--,('MIRROR_SEND_MESSAGE','Other',1)
+--,('MISCELLANEOUS','Other',1)
+--,('MSQL_SYNC_PIPE','Other',1)
+--,('MSQL_XP','Other',1)
+--,('PARALLEL_BACKUP_QUEUE','Other',1)
+--,('PRINT_ROLLBACK_PROGRESS','Other',1)
+--,('QNMANAGER_ACQUIRE','Other',1)
+--,('QPJOB_KILL','Other',1)
+--,('QPJOB_WAITFOR_ABORT','Other',1)
+--,('QRY_MEM_GRANT_INFO_MUTEX','Other',1)
+--,('QUERY_ERRHDL_SERVICE_DONE','Other',1)
+--,('QUERY_EXECUTION_INDEX_SORT_EVENT_OPEN','Other',1)
+--,('QUERY_NOTIFICATION_MGR_MUTEX','Other',1)
+--,('QUERY_NOTIFICATION_SUBSCRIPTION_MUTEX','Other',1)
+--,('QUERY_NOTIFICATION_TABLE_MGR_MUTEX','Other',1)
+--,('QUERY_NOTIFICATION_UNITTEST_MUTEX','Other',1)
+--,('QUERY_OPTIMIZER_PRINT_MUTEX','Other',1)
+--,('QUERY_REMOTE_BRICKS_DONE','Other',1)
+--,('QUERY_TRACEOUT','Other',1)
+--,('RECOVER_CHANGEDB','Other',1)
+--,('REPL_CACHE_ACCESS','Other',1)
+--,('REPL_SCHEMA_ACCESS','Other',1)
+--,('REQUEST_DISPENSER_PAUSE','Other',1)
+--,('SEC_DROP_TEMP_KEY','Other',1)
+--,('SEQUENTIAL_GUID','Other',1)
+--,('SHUTDOWN','Other',1)
+--,('SNI_CRITICAL_SECTION','Other',1)
+--,('SNI_HTTP_WAITFOR_0_DISCON','Other',1)
+--,('SNI_LISTENER_ACCESS','Other',1)
+--,('SNI_TASK_COMPLETION','Other',1)
+--,('SOS_CALLBACK_REMOVAL','Other',1)
+--,('SOS_DISPATCHER_MUTEX','Other',1)
+--,('SOS_LOCALALLOCATORLIST','Other',1)
+--,('SOS_OBJECT_STORE_DESTROY_MUTEX','Other',1)
+--,('SOS_PROCESS_AFFINITY_MUTEX','Other',1)
+--,('SOS_STACKSTORE_INIT_MUTEX','Other',1)
+--,('SOS_SYNC_TASK_ENQUEUE_EVENT','Other',1)
+--,('SOSHOST_EVENT','Other',1)
+--,('SOSHOST_INTERNAL','Other',1)
+--,('SOSHOST_MUTEX','Other',1)
+--,('SOSHOST_RWLOCK','Other',1)
+--,('SOSHOST_SEMAPHORE','Other',1)
+--,('SOSHOST_SLEEP','Other',1)
+--,('SOSHOST_TRACELOCK','Other',1)
+--,('SOSHOST_WAITFORDONE','Other',1)
+--,('SQLSORT_NORMMUTEX','Other',1)
+--,('SQLSORT_SORTMUTEX','Other',1)
+--,('SQLTRACE_LOCK','Other',1)
+--,('SQLTRACE_SHUTDOWN','Other',1)
+--,('SQLTRACE_WAIT_ENTRIES','Other',0)
+--,('SRVPROC_SHUTDOWN','Other',1)
+--,('TEMPOBJ','Other',1)
+--,('THREADPOOL','CPU',1)
+--,('TIMEPRIV_TIMEPERIOD','Other',1)
+--,('VIA_ACCEPT','Other',1)
+--,('WAITSTAT_MUTEX','Other',1)
+--,('WCC','Other',1)
+--,('WORKTBL_DROP','Other',1)
+--,('XE_BUFFERMGR_ALLPROCECESSED_EVENT','Other',1)
+--,('XE_BUFFERMGR_FREEBUF_EVENT','Other',1)
+--,('XE_DISPATCHER_JOIN','Other',0)
+--,('XE_MODULEMGR_SYNC','Other',1)
+--,('XE_OLS_LOCK','Other',1)
+--,('XE_SERVICES_MUTEX','Other',1)
+--,('XE_SESSION_CREATE_SYNC','Other',1)
+--,('XE_SESSION_SYNC','Other',1)
+--,('XE_STM_CREATE','Other',1)
+--,('XE_TIMER_MUTEX','Other',1)
+--,('XE_TIMER_TASK_DONE','Other',1)
+--,('CXPACKET','Parallelism',1)
+--,('REPL%','Replication',1)
+--,('CLR_AUTO_EVENT','SQLCLR',0)
+--,('CLR_RWLOCK_WRITER','SQLCLR',1)
+--,('SQLCLR_APPDOMAIN','SQLCLR',1)
+--,('SQLCLR_ASSEMBLY','SQLCLR',1)
+--,('SQLCLR_DEADLOCK_DETECTION','SQLCLR',1)
+--,('SQLCLR_QUANTUM_PUNISHMENT','SQLCLR',1)
+--,('DTC','Transaction',1)
+--,('DTC_ABORT_REQUEST','Transaction',1)
+--,('DTC_RESOLVE','Transaction',1)
+--,('MSQL_XACT_MGR_MUTEX','Transaction',1)
+--,('MSQL_XACT_MUTEX','Transaction',1)
+--,('TRAN_MARKLATCH_DT','Transaction',1)
+--,('TRAN_MARKLATCH_EX','Transaction',1)
+--,('TRAN_MARKLATCH_KP','Transaction',1)
+--,('TRAN_MARKLATCH_NL','Transaction',1)
+--,('TRAN_MARKLATCH_SH','Transaction',1)
+--,('TRAN_MARKLATCH_UP','Transaction',1)
+--,('TRANSACTION_MUTEX','Transaction',1)
+--,('XACT_OWN_TRANSACTION','Transaction',1)
+--,('XACT_RECLAIM_SESSION','Transaction',1)
+--,('XACTLOCKINFO','Transaction',1)
+--,('XACTWORKSPACE_MUTEX','Transaction',1)
+--,('WAITFOR','User Waits',0)
+--,('BROKER_TO_FLUSH','Other',0)
+--,('CXCONSUMER','Other',0)
+--,('DIRTY_PAGE_POLL','Other',0)
+--,('DISPATCHER_QUEUE_SEMAPHORE','Other',0)
+--,('FT_IFTS_SCHEDULER_IDLE_WAIT','Other',0)
+--,('FT_IFTSHC_MUTEX','Other',0)
+--,('MEMORY_ALLOCATION_EXT','Other',0)
+--,('PARALLEL_REDO_DRAIN_WORKER','Availability Groups',0)
+--,('PARALLEL_REDO_LOG_CACHE','Availability Groups',0)
+--,('PARALLEL_REDO_TRAN_LIST','Availability Groups',0)
+--,('PARALLEL_REDO_WORKER_SYNC','Availability Groups',0)
+--,('PARALLEL_REDO_WORKER_WAIT_WORK','Availability Groups',0)
+--,('PREEMPTIVE_XE_GETTARGETSTATE','Other',0)
+--,('PWAIT_ALL_COMPONENTS_INITIALIZED','Other',0)
+--,('PWAIT_DIRECTLOGCONSUMER_GETNEXT','Other',0)
+--,('QDS_ASYNC_QUEUE','Other',0)
+--,('QDS_CLEANUP_STALE_QUERIES_TASK_MAIN_LOOP_SLEEP','Other',0)
+--,('QDS_PERSIST_TASK_MAIN_LOOP_SLEEP','Other',0)
+--,('QDS_SHUTDOWN_QUEUE','Other',0)
+--,('REDO_THREAD_PENDING_WORK','Availability Groups',0)
+--,('SLEEP_MASTERDBREADY','Other',0)
+--,('SLEEP_MASTERMDREADY','Other',0)
+--,('SLEEP_MASTERUPGRADED','Other',0)
+--,('SOS_WORK_DISPATCHER','Other',0)
+--,('SP_SERVER_DIAGNOSTICS_SLEEP','Other',0)
+--,('SQLTRACE_INCREMENTAL_FLUSH_SLEEP','Other',0)
+--,('WAIT_XTP_CKPT_CLOSE','Other',0)
+--,('WAIT_XTP_HOST_WAIT','Other',0)
+--,('WAIT_XTP_OFFLINE_CKPT_NEW_LOG','Other',0)
+--,('WAIT_XTP_RECOVERY','Other',0)
+--,('SOS_SCHEDULER_YIELD','CPU',1)
 
-merge [dbo].[sqlwatch_config_wait_stats] as target
-using @wait_categories as source
-on (target.[wait_type] = source.[wait_type])
+--merge [dbo].[sqlwatch_config_wait_stats] as target
+--using @wait_categories as source
+--on (target.[wait_type] = source.[wait_type])
 
-when matched and (target.[wait_category] <> source.[wait_category]
-	or target.[report_include] <> source.[report_include])
-then update	
-	set [wait_category] = source.[wait_category],
-		[report_include] = source.[report_include]
+--when matched and (target.[wait_category] <> source.[wait_category]
+--	or target.[report_include] <> source.[report_include])
+--then update	
+--	set [wait_category] = source.[wait_category],
+--		[report_include] = source.[report_include]
 
-when not matched by target then
-	insert (wait_type, wait_category, report_include)
-	values (source.wait_type, source.wait_category, source.report_include);
+--when not matched by target then
+--	insert (wait_type, wait_category, report_include)
+--	values (source.wait_type, source.wait_category, source.report_include);
 
 --------------------------------------------------------------------------------------
 -- perf counters poster
@@ -827,8 +827,27 @@ if (select count(*) from [dbo].[sqlwatch_logger_snapshot_header]
 				set  [snapshot_type_id] = 10
 				where [snapshot_type_id] = 1
 				and sql_instance = @@SERVERNAME
-		end
+		end;
 
+
+--------------------------------------------------------------------------------------
+-- load default report styles:
+--------------------------------------------------------------------------------------
+if not exists (select * from [dbo].[sqlwatch_config_report_style] where [report_style_id] = -1)
+	begin
+		set identity_insert [dbo].[sqlwatch_config_report_style] on
+		insert into [dbo].[sqlwatch_config_report_style] ([report_style_id], [style])
+		values (-1,'body {font-family: "Trebuchet MS",Helvetica,sans-serif; font-size: 12px;}
+table.sqlwatchtbl { border: 1px solid #AAAAAA; background-color: #FEFEFE; width: 100%; text-align: left; border-collapse: collapse; }
+table.sqlwatchtbl td, table.sqlwatchtbl th { border: 1px solid #AAAAAA; padding: 3px 3px; }
+table.sqlwatchtbl tbody td { color: #333333; }
+table.sqlwatchtbl tr:nth-child(even) { background: #EEEEEE; }
+table.sqlwatchtbl thead { background: #7C008C; }
+table.sqlwatchtbl thead th { font-size: 12px; font-weight: bold; color: #FFFFFF;}
+.code {display:block;background:#ddd; margin-top:0.8em;padding-left:10px;padding-bottom:1em;white-space: pre;}'
+)
+		set identity_insert [dbo].[sqlwatch_config_report_style] off;
+	end
 
 --------------------------------------------------------------------------------------
 -- default action template
@@ -893,10 +912,8 @@ declare @action_tempalte_report_html nvarchar(max) = '<p>Check: {CHECK_NAME} ( C
 <p>Sent from SQLWATCH on host: {SQL_INSTANCE}</p>
 <p><a href="https://docs.sqlwatch.io">https://docs.sqlwatch.io</a> </p>';
 
-
 disable trigger [dbo].[trg_sqlwatch_config_check_action_template_modify] on [dbo].[sqlwatch_config_check_action_template];  --so we dont populate updated date as this is to detect if a user has modified default template
-set identity_insert [dbo].[sqlwatch_config_check_action_template] on
-
+set identity_insert [dbo].[sqlwatch_config_check_action_template] on;
 merge [dbo].[sqlwatch_config_check_action_template] as target
 using (
 	select
@@ -951,32 +968,15 @@ when matched and target.[date_updated] is null then --only update when not modif
 			,[action_template_recover_subject] = source.[action_template_recover_subject]
 			,[action_template_recover_body] = source.[action_template_recover_body]
 ;
-
 set identity_insert [dbo].[sqlwatch_config_check_action_template] off;
-disable trigger [dbo].[trg_sqlwatch_config_check_action_template_modify] on [dbo].[sqlwatch_config_check_action_template];
-
---------------------------------------------------------------------------------------
--- load default report styles:
---------------------------------------------------------------------------------------
-if not exists (select * from [dbo].[sqlwatch_config_report_style] where [report_style_id] = -1)
-	begin
-		set identity_insert [dbo].[sqlwatch_config_report_style] on
-		insert into [dbo].[sqlwatch_config_report_style] ([report_style_id], [style])
-		values (-1,'body {font-family: "Trebuchet MS",Helvetica,sans-serif; font-size: 12px;}
-table.sqlwatchtbl { border: 1px solid #AAAAAA; background-color: #FEFEFE; width: 100%; text-align: left; border-collapse: collapse; }
-table.sqlwatchtbl td, table.sqlwatchtbl th { border: 1px solid #AAAAAA; padding: 3px 3px; }
-table.sqlwatchtbl tbody td { color: #333333; }
-table.sqlwatchtbl tr:nth-child(even) { background: #EEEEEE; }
-table.sqlwatchtbl thead { background: #7C008C; }
-table.sqlwatchtbl thead th { font-size: 12px; font-weight: bold; color: #FFFFFF;}
-.code {display:block;background:#ddd; margin-top:0.8em;padding-left:10px;padding-bottom:1em;white-space: pre;}'
-)
-		set identity_insert [dbo].[sqlwatch_config_report_style] off
-	end
+enable trigger [dbo].[trg_sqlwatch_config_check_action_template_modify] on [dbo].[sqlwatch_config_check_action_template];
 
 --------------------------------------------------------------------------------------
 -- load default actions that DO NOT call reports
 --------------------------------------------------------------------------------------
+disable trigger dbo.trg_sqlwatch_config_action_updated_U ON [dbo].[sqlwatch_config_action];
+set identity_insert [dbo].[sqlwatch_config_action] on;
+
 exec [dbo].[usp_sqlwatch_user_add_action]
 	 @action_id = -1
 	,@action_description = 'Send Email to DBAs using sp_send_mail  (HTML)'
@@ -1032,38 +1032,42 @@ exec [dbo].[usp_sqlwatch_user_add_action]
 	,@action_exec = 'zabbix_sender.exe -z zabbix.yourcompany.com -s "SQL_INSTANCE" -k your.check.name -o "{BODY}"'
 	,@action_enabled = 0
 
+set identity_insert [dbo].[sqlwatch_config_action] off;
+enable trigger dbo.trg_sqlwatch_config_action_updated_U ON [dbo].[sqlwatch_config_action];
 --------------------------------------------------------------------------------------
 -- load default reports 
 --------------------------------------------------------------------------------------
+set identity_insert [dbo].[sqlwatch_config_report] on;
+disable trigger dbo.trg_sqlwatch_config_report_updated_U on [dbo].[sqlwatch_config_report];
 
-		--Indexes with high fragmentation
-		exec [dbo].[usp_sqlwatch_user_add_report] 
-			 @report_id = -1
-			,@report_title = 'Indexes with high fragmentation'
-			,@report_description = 'Lisf ot indexes where the fragmentation is above 30% and page count greater than 1000. 
-		Index fragmentation can impact performance and should be minimum. You should be running index maintenance often. 
-		A very good and free index maintenance solution is Ola Hallengren''s Maintenance Solution'
-			,@report_definition = 'SELECT [Table] = s.[name] +''.''+t.[name]
-		 ,[Index] = i.NAME 
-		 ,[Type] = index_type_desc
-		 ,[Fragmentation] = convert(decimal(10,2),avg_fragmentation_in_percent)
-		 ,[Records] = record_count
-		 ,[Pages] = page_count
-		FROM sys.dm_db_index_physical_stats(DB_ID(), NULL, NULL, NULL, ''SAMPLED'') ips
-		INNER JOIN sys.tables t on t.[object_id] = ips.[object_id]
-		INNER JOIN sys.schemas s on t.[schema_id] = s.[schema_id]
-		INNER JOIN sys.indexes i ON (ips.object_id = i.object_id) AND (ips.index_id = i.index_id)
-		WHERE avg_fragmentation_in_percent > 30
-		and page_count > 1000'
-			,@report_definition_type = 'Query'
-			,@report_action_id  = -1
+--Indexes with high fragmentation
+exec [dbo].[usp_sqlwatch_user_add_report] 
+	 @report_id = -1
+	,@report_title = 'Indexes with high fragmentation'
+	,@report_description = 'Lisf ot indexes where the fragmentation is above 30% and page count greater than 1000. 
+Index fragmentation can impact performance and should be minimum. You should be running index maintenance often. 
+A very good and free index maintenance solution is Ola Hallengren''s Maintenance Solution'
+	,@report_definition = 'SELECT [Table] = s.[name] +''.''+t.[name]
+	,[Index] = i.NAME 
+	,[Type] = index_type_desc
+	,[Fragmentation] = convert(decimal(10,2),avg_fragmentation_in_percent)
+	,[Records] = record_count
+	,[Pages] = page_count
+FROM sys.dm_db_index_physical_stats(DB_ID(), NULL, NULL, NULL, ''SAMPLED'') ips
+INNER JOIN sys.tables t on t.[object_id] = ips.[object_id]
+INNER JOIN sys.schemas s on t.[schema_id] = s.[schema_id]
+INNER JOIN sys.indexes i ON (ips.object_id = i.object_id) AND (ips.index_id = i.index_id)
+WHERE avg_fragmentation_in_percent > 30
+and page_count > 1000'
+	,@report_definition_type = 'Query'
+	,@report_action_id  = -1
 
-		--Agent Jobs failed in the last 5 minutes
-		exec [dbo].[usp_sqlwatch_user_add_report] 
-			 @report_id = -2
-			,@report_title = 'Agent Job failures'
-			,@report_description = 'List of SQL Server Agent Jobs that are enabled and have failed recently.'
-			,@report_definition = ';with cte_failed_jobs as (
+--Agent Jobs failed in the last 5 minutes
+exec [dbo].[usp_sqlwatch_user_add_report] 
+	 @report_id = -2
+	,@report_title = 'Agent Job failures'
+	,@report_description = 'List of SQL Server Agent Jobs that are enabled and have failed recently.'
+	,@report_definition = ';with cte_failed_jobs as (
 select 
 	[Job] = sj.name,
 	[Step] = sjs.step_name,
@@ -1080,6 +1084,7 @@ where sjh.step_id > 0
 	select last_check_date
 	from [dbo].[sqlwatch_meta_check]
 	where check_id = -1
+	and sql_instance = @@SERVERNAME
 ),getdate())
 	and sjh.run_status = 0
 )
@@ -1094,21 +1099,22 @@ select (select +
 from cte_failed_jobs c1
 group by c1.[Job]
 for xml path(''''), type).value(''.'', ''nvarchar(MAX)'')'
-			,@report_definition_type = 'Template'
-			,@report_action_id  = -1
+	,@report_definition_type = 'Template'
+	,@report_action_id  = -1
 
 		--Blocked Processes in the last 5 minutes
-		exec [dbo].[usp_sqlwatch_user_add_report] 
-			 @report_id = -3
-			,@report_title = 'Blocked Processes'
-			,@report_description = 'List of blocking chains captured in the last minute.'
-			,@report_definition = ';with cte_blocking as (
+exec [dbo].[usp_sqlwatch_user_add_report] 
+		@report_id = -3
+	,@report_title = 'Blocked Processes'
+	,@report_description = 'List of blocking chains captured in the last minute.'
+	,@report_definition = ';with cte_blocking as (
 	SELECT *, rn=ROW_NUMBER() over (order by blocking_start_time)
-	  FROM [dbo].[vw_sqlwatch_report_fact_xes_blockers]
+	  FROM [dbo].[vw_sqlwatch_report_fact_xes_blockers] b
 	  WHERE snapshot_time >= isnull((
 	select last_check_date
 	from [dbo].[sqlwatch_meta_check]
 	where check_id = -2
+	and sql_instance = @@SERVERNAME
 	),getdate())
 )
 select (select 
@@ -1133,27 +1139,34 @@ from cte_blocking c1
 group by c1.blocking_spid, c1.[database_name], c1.blocking_client_app_name, c1.blocking_client_hostname, c1.blocking_sql, rn
 order by rn
 for xml path(''''), type).value(''.'', ''nvarchar(MAX)'')'
-			,@report_definition_type = 'Template'
-			,@report_action_id  = -1
+	,@report_definition_type = 'Template'
+	,@report_action_id  = -1
 
 
 		--Disk utilisation report
-		exec [dbo].[usp_sqlwatch_user_add_report] 
-			 @report_id = -4
-			,@report_title = 'Disk Utilisation Report'
-			,@report_description = ''
-			,@report_definition = 'select [Volume]=[volume_name]
-      ,[Days Until Full] = [days_until_full]
-      ,[Total Space] = [total_space_formatted]
-      ,[Free Space] = [free_space_formatted] + '' ('' + [free_space_percentage_formatted] + '')''
-      ,[Growth] = [growth_bytes_per_day_formatted]
-  from [dbo].[vw_sqlwatch_report_dim_os_volume]'
-			,@report_definition_type = 'Query'
-			,@report_action_id  = -1
+exec [dbo].[usp_sqlwatch_user_add_report] 
+	 @report_id = -4
+	,@report_title = 'Disk Utilisation Report'
+	,@report_description = ''
+	,@report_definition = 'select [Volume]=[volume_name]
+,[Days Until Full] = [days_until_full]
+,[Total Space] = [total_space_formatted]
+,[Free Space] = [free_space_formatted] + '' ('' + [free_space_percentage_formatted] + '')''
+,[Growth] = [growth_bytes_per_day_formatted]
+from [dbo].[vw_sqlwatch_report_dim_os_volume]
+where sql_instance = @@SERVERNAME'
+	,@report_definition_type = 'Query'
+	,@report_action_id  = -1;
+
+set identity_insert [dbo].[sqlwatch_config_report] off;
+enable trigger dbo.trg_sqlwatch_config_report_updated_U on [dbo].[sqlwatch_config_report];
 
 --------------------------------------------------------------------------------------
 -- now load actions that call reports we have just created
 --------------------------------------------------------------------------------------
+disable trigger dbo.trg_sqlwatch_config_action_updated_U ON [dbo].[sqlwatch_config_action];
+set identity_insert [dbo].[sqlwatch_config_action] on;
+
 exec [dbo].[usp_sqlwatch_user_add_action]
 	 @action_id = -7
 	,@action_description = 'Run Failed Agent Jobs Report'
@@ -1175,12 +1188,18 @@ exec [dbo].[usp_sqlwatch_user_add_action]
 	,@action_report_id = -4
 	,@action_enabled = 1
 
+set identity_insert [dbo].[sqlwatch_config_action] off;
+enable trigger dbo.trg_sqlwatch_config_action_updated_U ON [dbo].[sqlwatch_config_action];
+
 -------------------------------------------------------------------------------------
 -- Load default checks
 --------------------------------------------------------------------------------------
+disable trigger dbo.trg_sqlwatch_config_check_U on [dbo].[sqlwatch_config_check];
+set identity_insert [dbo].[sqlwatch_config_check] on;
+
 exec [dbo].[usp_sqlwatch_user_add_check]
 	 @check_id = -1
-	,@check_name = 'Agent Job failure.' 
+	,@check_name = 'Agent Job failure' 
 	,@check_description = 'One or more SQL Server Agent Jobs have failed.
 If there is a report assosiated with this check, details of the failures should be inlcuded below.'
 	,@check_query = 'select count(*)
@@ -1189,6 +1208,7 @@ where msdb.dbo.agent_datetime(run_date, run_time) >= isnull((
 	select last_check_date
 	from [dbo].[sqlwatch_meta_check]
 	where check_id = -1
+	and sql_instance = @@SERVERNAME
 ),getdate())
 and run_status = 0'
 	,@check_frequency_minutes = NULL
@@ -1211,11 +1231,12 @@ exec [dbo].[usp_sqlwatch_user_add_check]
 Blocking means processes are stuck and unable to carry any work, could cause downtime or major outage.
 If there is a report assosiated with this check, details of the blocking chain should be included below.'
 	,@check_query = 'select count(distinct blocked_spid)
-from dbo.sqlwatch_logger_xes_blockers
+from dbo.sqlwatch_logger_xes_blockers b
 where snapshot_time >= isnull((
 	select last_check_date
 	from [dbo].[sqlwatch_meta_check]
 	where check_id = -2
+	and sql_instance = @@SERVERNAME
 	),getdate())'
 	,@check_frequency_minutes = NULL
 	,@check_threshold_warning = NULL
@@ -1237,6 +1258,7 @@ exec [dbo].[usp_sqlwatch_user_add_check]
 	,@check_query = 'select avg(cntr_value_calculated) 
 from dbo.vw_sqlwatch_report_fact_perf_os_performance_counters
 where counter_name = ''Processor Time %''
+and sql_instance = @@SERVERNAME
 and report_time > dateadd(minute,-5,getutcdate())'
 	,@check_frequency_minutes = 5
 	,@check_threshold_warning = '>60'
@@ -1253,8 +1275,8 @@ and report_time > dateadd(minute,-5,getutcdate())'
 --------------------------------------------------------------------------------------
 exec [dbo].[usp_sqlwatch_user_add_check]
 	 @check_id = -4
-	,@check_name = 'SQL Server has been restarted.'
-	,@check_description = 'SQL Server has been restared in the last 60 minutes.'
+	,@check_name = 'SQL Server Uptime is low'
+	,@check_description = 'SQL Server Uptime Minutes is lower than expected. The server could have been restared in the last 60 minutes.'
 	,@check_query = 'select datediff(minute,sqlserver_start_time,getdate()) from sys.dm_os_sys_info'
 	,@check_frequency_minutes = 10
 	,@check_threshold_warning = NULL
@@ -1313,7 +1335,8 @@ exec [dbo].[usp_sqlwatch_user_add_check]
 This does not mean that the disk will be full soon as it may not grow much. Please check the "days until full" value or the actual growth.
 If there is a report assosiated with this check, details of the storage utilistaion should be included below.'
 	,@check_query = 'select free_space_percentage
-from dbo.vw_sqlwatch_report_dim_os_volume'
+from dbo.vw_sqlwatch_report_dim_os_volume
+where sql_instance = @@SERVERNAME'
 	,@check_frequency_minutes = 60
 	,@check_threshold_warning = '<0.1'
 	,@check_threshold_critical = '<0.05'
@@ -1329,11 +1352,12 @@ from dbo.vw_sqlwatch_report_dim_os_volume'
 --------------------------------------------------------------------------------------
 exec [dbo].[usp_sqlwatch_user_add_check]
 	 @check_id = -8
-	,@check_name = 'One or more disk will be full soon.'
+	,@check_name = 'One or more disk will be full soon'
 	,@check_description = 'The "days until full" value is lower than expected. One or more disks will be full in few days.
 If there is a report assosiated with this check, details of the storage utilistaion should be included below.'
 	,@check_query = 'select days_until_full
-from dbo.vw_sqlwatch_report_dim_os_volume'
+from dbo.vw_sqlwatch_report_dim_os_volume
+where sql_instance = @@SERVERNAME'
 	,@check_frequency_minutes = 60
 	,@check_threshold_warning = '<7'
 	,@check_threshold_critical = '<3'
@@ -1356,7 +1380,8 @@ Checks are executed in series, in a single threaded cursor and not parralel. Thi
 Each check should not take more than few miliseconds to run.
 You can view average check execution time in [dbo].[vw_sqlwatch_report_dim_check] and individual runs in [dbo].[sqlwatch_logger_check]'
 	,@check_query = 'SELECT max([avg_check_exec_time_ms])
-FROM [dbo].[vw_sqlwatch_report_dim_check]'
+FROM [dbo].[vw_sqlwatch_report_dim_check]
+where sql_instance = @@SERVERNAME'
 	,@check_frequency_minutes = 15
 	,@check_threshold_warning = NULL
 	,@check_threshold_critical = '>1000'
@@ -1377,7 +1402,8 @@ exec [dbo].[usp_sqlwatch_user_add_check]
 You can view last_check_status in [dbo].[vw_sqlwatch_report_dim_check] and individual runs in [dbo].[sqlwatch_logger_check]'
 	,@check_query = 'select count(*) 
 from [dbo].[vw_sqlwatch_report_dim_check]
-where last_check_status = ''CHECK ERROR'''
+where sql_instance = @@SERVERNAME 
+and last_check_status = ''CHECK ERROR'''
 	,@check_frequency_minutes = 5
 	,@check_threshold_warning = NULL
 	,@check_threshold_critical = '>0'
@@ -1410,6 +1436,9 @@ and time_queued < dateadd(hour,-1,SYSDATETIME())'
 	,@action_repeat_period_minutes = 1440 --daily
 	,@action_hourly_limit = 10
 	,@action_template_id = -1
+
+set identity_insert [dbo].[sqlwatch_config_check] off;
+enable trigger dbo.trg_sqlwatch_config_check_U on [dbo].[sqlwatch_config_check];
 
 --------------------------------------------------------------------------------------
 --setup jobs

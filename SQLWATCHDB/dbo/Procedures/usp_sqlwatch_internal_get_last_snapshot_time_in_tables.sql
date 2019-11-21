@@ -45,7 +45,9 @@ values
 	('sqlwatch_logger_xes_iosubsystem', 10),
 	('sqlwatch_logger_xes_long_queries', 7),
 	('sqlwatch_logger_xes_query_processing', 10),
-	('sqlwatch_logger_xes_waits_stats', 6)
+	('sqlwatch_logger_xes_waits_stats', 6),
+	('sqlwatch_logger_check',18),
+	('sqlwatch_logger_check_action',18)
 
 
 
@@ -161,6 +163,10 @@ with result sets (
 	,sqlwatch_logger_xes_query_processing_header varchar(23)
 	,sqlwatch_logger_xes_waits_stats varchar(23)
 	,sqlwatch_logger_xes_waits_stats_header varchar(23)
+	,sqlwatch_logger_check varchar(23)
+	,sqlwatch_logger_check_header varchar(23)
+	,sqlwatch_logger_check_action varchar(23)
+	,sqlwatch_logger_check_action_header varchar(23)
 	)
 )
 

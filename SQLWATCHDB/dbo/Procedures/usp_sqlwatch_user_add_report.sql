@@ -7,7 +7,7 @@
 	@report_definition_type varchar(10) ,
 	@report_active bit = 1,
 	@report_batch_id tinyint = null,
-	@report_style_id smallint = 1,
+	@report_style_id smallint = -1,
 	--action to assosiate report with, in case of multiple actions, rerun the procedure with the same params but different action id
 	@report_action_id smallint = null
 )
@@ -16,87 +16,109 @@ as
 set xact_abort on;
 set nocount on;
 
-if @report_id is not null 
+if @report_id < 0 
 	begin
-		--if report id passed we are going to use it as an identity.
-		--if there is an existing report with this id, we are going to update it
-		--this is primarly to maintain default reports shipped with SQLWATCH. They will have negative IDs
+		merge [dbo].[sqlwatch_config_report] as target
+		using ( select
+				 [report_id] = @report_id
+				,[report_title] = @report_title
+				,[report_description] = @report_description
+				,[report_definition] = @report_definition
+				,[report_definition_type] = @report_definition_type
+				,[report_active] = @report_active
+				,[report_batch_id] = @report_batch_id
+				,[report_style_id] = @report_style_id
+		) as source
+		on source.report_id = target.report_id
 
-		if exists ( select * from [dbo].[sqlwatch_config_report]
-					where [sql_instance] = @sql_instance
-					and [report_id] = @report_id )
-			begin
-				update [dbo].[sqlwatch_config_report]
-					set  [report_title] = @report_title
-						,[report_description] = @report_description
-						,[report_definition] = @report_definition
-						,[report_definition_type] = @report_definition_type
-						,[report_active] = @report_active
-						,[report_batch_id] = @report_batch_id
-						,[report_style_id] = @report_style_id
-				where [report_id] = @report_id
-				and [sql_instance] = @sql_instance
+		when not matched then
+			insert ( [report_id]
+					,[report_title]
+					,[report_description]
+					,[report_definition]
+					,[report_definition_type]
+					,[report_active]
+					,[report_batch_id]
+					,[report_style_id])
+			values ( source.[report_id]
+					,source.[report_title]
+					,source.[report_description]
+					,source.[report_definition]
+					,source.[report_definition_type]
+					,source.[report_active]
+					,source.[report_batch_id]
+					,source.[report_style_id])
 
-				Print 'Report (Id: ' + convert(varchar(10),@report_id) + ') updated.'
-			end
-		else
-			begin
-				set identity_insert [dbo].[sqlwatch_config_report] on 
-				insert into [dbo].[sqlwatch_config_report]
-								   ([sql_instance]
-								   ,[report_id]
-								   ,[report_title]
-								   ,[report_description]
-								   ,[report_definition]
-								   ,[report_definition_type]
-								   ,[report_active]
-								   ,[report_batch_id]
-								   ,[report_style_id]
-								   )
-				values (@sql_instance, @report_id, @report_title, @report_description, @report_definition, @report_definition_type, @report_active, @report_batch_id, @report_style_id)
-				set identity_insert [dbo].[sqlwatch_config_report] off 
-
-				Print 'Report (Id: ' + convert(varchar(10),@report_id) + ') created.'
-			end
-
+		when matched and target.[date_updated] is null then
+			update
+				set  [report_title] = source.[report_title]
+					,[report_description] = source. [report_description]
+					,[report_definition] = source.[report_definition]
+					,[report_definition_type] = source.[report_definition_type]
+					,[report_active] = source.[report_active]
+					,[report_batch_id] = source.[report_batch_id]
+					,[report_style_id] = source.[report_style_id]
+		;
 	end
 else
 	begin
-		--if no report id passed we are going to create a new one with default identity:
-		insert into [dbo].[sqlwatch_config_report]
-						   ([sql_instance]
-						   ,[report_title]
-						   ,[report_description]
-						   ,[report_definition]
-						   ,[report_definition_type]
-						   ,[report_active]
-						   ,[report_batch_id]
-						   ,[report_style_id]
-						   )
-		values (@sql_instance, @report_title, @report_description, @report_definition, @report_definition_type, @report_active, @report_batch_id, @report_style_id)
-		select @report_id = SCOPE_IDENTITY()
-		Print 'Report (Id: ' + convert(varchar(10),@report_id) + ') created.'
+		merge [dbo].[sqlwatch_config_report] as target
+		using ( select
+				 [report_id] = @report_id
+				,[report_title] = @report_title
+				,[report_description] = @report_description
+				,[report_definition] = @report_definition
+				,[report_definition_type] = @report_definition_type
+				,[report_active] = @report_active
+				,[report_batch_id] = @report_batch_id
+				,[report_style_id] = @report_style_id
+		) as source
+		on source.report_id = target.report_id
+
+		when not matched then
+			insert ( [report_title]
+					,[report_description]
+					,[report_definition]
+					,[report_definition_type]
+					,[report_active]
+					,[report_batch_id]
+					,[report_style_id])
+			values ( source.[report_title]
+					,source.[report_description]
+					,source.[report_definition]
+					,source.[report_definition_type]
+					,source.[report_active]
+					,source.[report_batch_id]
+					,source.[report_style_id])
+
+		when matched then
+			update
+				set  [report_title] = source.[report_title]
+					,[report_description] = source. [report_description]
+					,[report_definition] = source.[report_definition]
+					,[report_definition_type] = source.[report_definition_type]
+					,[report_active] = source.[report_active]
+					,[report_batch_id] = source.[report_batch_id]
+					,[report_style_id] = source.[report_style_id]
+		;
+
+		Print 'Report (Id: ' + convert(varchar(10),@report_id) + ') updated.'
 	end
 
 
---if @report_actions is passed, assosiate report with given actions
---list must comma separated
-
 if @report_action_id is not null
 	begin
-		insert into [dbo].[sqlwatch_config_report_action] ( [sql_instance], [report_id] ,[action_id] )
+		insert into [dbo].[sqlwatch_config_report_action] ( [report_id] ,[action_id] )
 
-		select [s].[sql_instance], [s].[report_id], [s].[action_id]
+		select [s].[report_id], [s].[action_id]
 		from (
 			select 
-				 [sql_instance] = @@SERVERNAME
-				,[report_id] = @report_id
+				 [report_id] = @report_id
 				,[action_id] = @report_action_id
 			) s
 
 		left join [dbo].[sqlwatch_config_report_action] t
-			on t.sql_instance = s.sql_instance
-			and t.report_id = s.[report_id]
+			on t.report_id = s.[report_id]
 			and t.action_id = s.action_id
 
 		where t.action_id is null
@@ -107,4 +129,3 @@ if @report_action_id is not null
 			end
 
 	end
-

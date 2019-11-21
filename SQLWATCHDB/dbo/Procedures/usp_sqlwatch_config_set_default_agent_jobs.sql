@@ -64,9 +64,9 @@ insert into #jobs
 			('SQLWATCH-INTERNAL-CONFIG',		4,		1,			8,				1,				0,					1,					20180101,	99991231, 26,			235959,		1),
 			('SQLWATCH-INTERNAL-TRENDS',		4,		1,			4,				60,				0,					1,					20180101,	99991231, 150,			235959,		1),
 			('SQLWATCH-INTERNAL-ACTIONS',		4,		1,			2,				15,				0,					1,					20180101,	99991231, 2,			235959,		1),
-			('SQLWATCH-INTERNAL-CHECKS',		4,		1,			4,				1,				0,					1,					20180101,	99991231, 43,			235959,		1),
+			('SQLWATCH-INTERNAL-CHECKS',		4,		1,			4,				1,				0,					1,					20180101,	99991231, 43,			235959,		1)
 
-			('SQLWATCH-USER-REPORTS',			4,		1,			1,				0,				0,					1,					20180101,	99991231, 80000,		235959,		1)
+			--('SQLWATCH-USER-REPORTS',			4,		1,			1,				0,				0,					1,					20180101,	99991231, 80000,		235959,		1)
 
 
 			
@@ -91,7 +91,7 @@ insert into #steps
 
 			('dbo.usp_sqlwatch_trend_perf_os_performance_counters',1,'SQLWATCH-INTERNAL-TRENDS',		'TSQL',		'exec dbo.usp_sqlwatch_trend_perf_os_performance_counters'),
 
-			('dbo.usp_sqlwatch_internal_process_reports',1,			'SQLWATCH-USER-REPORTS',			'TSQL',		'exec dbo.usp_sqlwatch_internal_process_reports @report_batch_id = 1'),
+			--('dbo.usp_sqlwatch_internal_process_reports',1,			'SQLWATCH-USER-REPORTS',			'TSQL',		'exec dbo.usp_sqlwatch_internal_process_reports @report_batch_id = 1'),
 
 			('dbo.usp_sqlwatch_internal_process_checks',1,			'SQLWATCH-INTERNAL-CHECKS',				'TSQL',		'exec dbo.usp_sqlwatch_internal_process_checks'),
 

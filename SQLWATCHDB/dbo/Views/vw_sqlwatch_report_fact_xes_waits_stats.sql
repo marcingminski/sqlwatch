@@ -20,7 +20,7 @@ SELECT d.[event_time]
       ,d.[event_name]
       ,d.[sql_instance]
       ,d.[sqlwatch_activity_id]
-	  ,wait_category = isnull(cw.wait_category,'Other')
+	  ,wait_category = isnull(mws.wait_category,'Other')
  --for backward compatibility with existing pbi, this column will become report_time as we could be aggregating many snapshots in a report_period
 , d.snapshot_time
 , d.snapshot_type_id
@@ -31,9 +31,10 @@ SELECT d.[event_time]
 		and h.snapshot_type_id = d.snapshot_type_id
 		and h.sql_instance = d.sql_instance
 
-	inner join [dbo].[sqlwatch_meta_wait_stats] mws
+	inner join [dbo].[vw_sqlwatch_meta_wait_stats_category] mws
 		on mws.sql_instance = d.sql_instance
 		and mws.wait_type_id = d.wait_type_id
 
-	left join [dbo].[sqlwatch_config_wait_stats] cw
-		on cw.wait_type = mws.wait_type
+	-- NO LONGER NEEDED:
+	--left join [dbo].[sqlwatch_config_wait_stats] cw
+	--	on cw.wait_type = mws.wait_type

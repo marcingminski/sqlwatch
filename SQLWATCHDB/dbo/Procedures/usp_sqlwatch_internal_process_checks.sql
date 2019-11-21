@@ -64,16 +64,8 @@ declare @check_output as table (
 insert into [dbo].[sqlwatch_logger_snapshot_header]
 values (@snapshot_date, @snapshot_type_id, @@SERVERNAME)
 
-insert into [dbo].[sqlwatch_meta_check]([sql_instance],[check_id])
-select s.[sql_instance], s.[check_id]
-from [dbo].[sqlwatch_config_check] s
-left join [dbo].[sqlwatch_meta_check] t
-on s.sql_instance = t.sql_instance
-and s.check_id = t.check_id
-where t.check_id is null
 
 declare cur_rules cursor for
-
 select 
 	  cc.[check_id]
 	, cc.[check_name]
@@ -87,12 +79,12 @@ select
 from [dbo].[sqlwatch_config_check] cc
 
 inner join [dbo].[sqlwatch_meta_check] mc
-	on mc.sql_instance = cc.sql_instance
-	and mc.check_id = cc.check_id
+	on mc.check_id = cc.check_id
+	and mc.sql_instance = @@SERVERNAME
 
 where [check_enabled] = 1
-and datediff(minute,isnull(mc.last_check_date,'1970-01-01'),getdate()) >= isnull([check_frequency_minutes],0)
-and cc.sql_instance = @@SERVERNAME
+and datediff(minute,isnull(mc.last_check_date,'1970-01-01'),getdate()) >= isnull(mc.[check_frequency_minutes],0)
+--and cc.sql_instance = @@SERVERNAME
 order by cc.[check_id]
 
 open cur_rules   
@@ -194,7 +186,7 @@ begin
 			select [action_id]
 				from [dbo].[sqlwatch_config_check_action]
 				where check_id = @check_id
-				and sql_instance = @@SERVERNAME
+				--and sql_instance = @@SERVERNAME
 				order by check_id
 
 				open cur_actions

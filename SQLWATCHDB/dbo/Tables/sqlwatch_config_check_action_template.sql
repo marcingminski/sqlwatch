@@ -10,6 +10,8 @@
 	[action_template_recover_body] nvarchar(max) not null,
 	[date_added] datetime default getdate() not null,
 	[date_updated] datetime null,
+
+	/*	primary key */
 	constraint pk_sqlwatch_config_action_template primary key clustered (
 		[action_template_id]
 	)
