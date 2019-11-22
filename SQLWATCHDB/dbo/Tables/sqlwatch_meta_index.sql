@@ -7,7 +7,7 @@
 	[index_name] nvarchar(128),
 	[index_id] int not null,
 	[index_type_desc] nvarchar(128),
-	[date_added] datetime default getutcdate(),
+	[date_created] datetime not null constraint df_sqlwatch_meta_index_date_created default (getutcdate()),
 	[date_updated] datetime,
 	[date_deleted] datetime,
 	constraint pk_sqlwatch_meta_index primary key clustered (

@@ -29,7 +29,7 @@ when matched then
 		[last_seen] = GETUTCDATE()
 
 when not matched by target then
-	insert ([sql_instance], [volume_name], [label], [file_system], [volume_block_size_bytes], [date_added], [last_seen])
+	insert ([sql_instance], [volume_name], [label], [file_system], [volume_block_size_bytes], [date_created], [last_seen])
 	values (source.[sql_instance], source.[volume_name], source.[label], source.[file_system], source.[volume_block_size_bytes], GETUTCDATE(), GETUTCDATE());
 
 

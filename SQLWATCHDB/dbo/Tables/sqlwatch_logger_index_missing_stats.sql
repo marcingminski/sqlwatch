@@ -12,7 +12,7 @@
 	[avg_total_user_cost] float,
 	[avg_user_impact] float,
 	[snapshot_type_id] tinyint,
-	[sql_instance] varchar(32) not null default @@SERVERNAME,
+	[sql_instance] varchar(32) not null constraint df_sqlwatch_logger_index_missing_stats_sql_instance default (@@SERVERNAME),
 	constraint pk_logger_missing_indexes primary key clustered (
 		[sql_instance], [snapshot_time], [sqlwatch_database_id], [sqlwatch_table_id], [sqlwatch_missing_index_id], [sqlwatch_missing_index_stats_id], [snapshot_type_id]
 	),

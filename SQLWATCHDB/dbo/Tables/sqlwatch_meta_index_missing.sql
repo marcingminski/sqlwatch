@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[sqlwatch_meta_index_missing]
 (
-	[sql_instance] varchar(32) not null default @@SERVERNAME,
+	[sql_instance] varchar(32) not null constraint df_sqlwatch_meta_index_missing_sql_instance default (@@SERVERNAME),
 	[sqlwatch_database_id] smallint not null,
 	[sqlwatch_table_id] int not null,
 	[sqlwatch_missing_index_id] int identity(1,1) not null,
@@ -9,7 +9,7 @@
 	[included_columns] nvarchar(max),
 	[statement] nvarchar(max),
 	[index_handle] int,
-	[date_added] datetime default getutcdate(),
+	[date_created] datetime not null constraint df_sqlwatch_meta_index_missing_date_created default (getutcdate()),
 	[date_updated] datetime,
 	[date_deleted] datetime,
 	constraint pk_sqlwatch_meta_index_missing primary key (

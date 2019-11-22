@@ -11,8 +11,8 @@
 	[io_stall_write_ms] real not null,
 	[size_on_disk_bytes] real not null,
 	[snapshot_time] datetime2(0) not null,
-	[snapshot_type_id] tinyint not null default 1 ,
-	[sql_instance] varchar(32) not null default @@SERVERNAME,
+	[snapshot_type_id] tinyint not null constraint df_sqlwatch_logger_perf_file_stats_type default (1) ,
+	[sql_instance] varchar(32) not null constraint df_sqlwatch_logger_perf_file_stats_sql_instance default (@@SERVERNAME),
 
 	[num_of_reads_delta] real null,
 	[num_of_bytes_read_delta] real null,

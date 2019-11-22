@@ -18,7 +18,7 @@
 	[report_xml] xml,
 	[snapshot_time] datetime2(0),
 	[snapshot_type_id] tinyint,
-	[sql_instance] varchar(32) not null default @@SERVERNAME,
+	[sql_instance] varchar(32) not null constraint df_sqlwatch_logger_xes_blockers_sql_instance default (@@SERVERNAME),
 	constraint fk_logger_perf_xes_blockers foreign key ([snapshot_time],[sql_instance],[snapshot_type_id]) references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time],[sql_instance],[snapshot_type_id]) on delete cascade  on update cascade,
 	constraint pk_logger_perf_xes_blockers primary key clustered (
 		[snapshot_time], [snapshot_type_id], [attach_activity_id], [attach_activity_sequence], [sql_instance]

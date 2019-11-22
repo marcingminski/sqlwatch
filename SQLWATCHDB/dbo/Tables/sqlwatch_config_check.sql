@@ -8,7 +8,7 @@
 	[check_threshold_warning] varchar(100) null, --warning is optional
 	[check_threshold_critical] varchar(100) not null, --critical is not optional
 	[check_enabled] bit not null default 1, --if enabled the check will be processed
-	[date_created] datetime default getdate(),
+	[date_created] datetime not null constraint df_sqlwatch_config_check_date_created default (getdate()),
 	[date_updated] datetime null,
 
 	/* primary key */

@@ -92,7 +92,7 @@ when matched then
 
 when not matched by target then
 	insert ([sql_instance], [sqlwatch_database_id], [sqlwatch_table_id],		[equality_columns] ,
-		[inequality_columns] ,[included_columns] ,[statement] , [index_handle] , [date_added])
+		[inequality_columns] ,[included_columns] ,[statement] , [index_handle] , [date_created])
 	values (source.[sql_instance], source.[sqlwatch_database_id], source.[sqlwatch_table_id], source.[equality_columns] ,
 		source.[inequality_columns] ,source.[included_columns] ,source.[statement] , source.[index_handle] , source.[date_added]);
 

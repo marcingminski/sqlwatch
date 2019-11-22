@@ -60,7 +60,7 @@ using (
 								/* a new database could have been added since last db collection.
 								   in which case we have not got id yet, it will be picked up with the next cycle */
  when not matched by target and source.[sqlwatch_database_id] is not null then
-	insert ([sql_instance],[sqlwatch_database_id],[table_name],[table_type],[date_added])
+	insert ([sql_instance],[sqlwatch_database_id],[table_name],[table_type],[date_created])
 	values (@@SERVERNAME,source.[sqlwatch_database_id],source.[TABLE_SCHEMA] + '.' + source.[TABLE_NAME],source.[table_type],GETUTCDATE());
 
  --when matched and [date_deleted] is not null and target.sql_instance = @@SERVERNAME then

@@ -7,7 +7,7 @@
 	[file_type] tinyint,
 	[file_name] nvarchar(260),
 	[file_physical_name] nvarchar(260),
-	[sql_instance] varchar(32) not null default @@SERVERNAME,
+	[sql_instance] varchar(32) not null constraint df_sqlwatch_meta_master_file_sql_instance default (@@SERVERNAME),
 	[deleted_when] datetime null,
 	[logical_disk] varchar(260),
 	constraint PK_sql_perf_mon_master_files primary key clustered (

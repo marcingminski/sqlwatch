@@ -8,7 +8,7 @@
 	[action_template_repeat_body] nvarchar(max) not null,
 	[action_template_recover_subject] nvarchar(max) not null,
 	[action_template_recover_body] nvarchar(max) not null,
-	[date_added] datetime default getdate() not null,
+	[date_created] datetime not null constraint df_sqlwatch_config_check_action_template_date_added default (getdate()),
 	[date_updated] datetime null,
 
 	/*	primary key */

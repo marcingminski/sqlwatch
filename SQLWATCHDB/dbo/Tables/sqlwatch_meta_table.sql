@@ -5,7 +5,7 @@
 	[sqlwatch_table_id] int identity(1,1) not null,
 	[table_name] nvarchar(128),
 	[table_type] nvarchar(128),
-	[date_added] datetime default getutcdate(),
+	[date_created] datetime not null constraint df_sqlwatch_meta_table_date_created default (getutcdate()),
 	[date_updated] datetime,
 	[date_deleted] datetime,
 	constraint pk_sqlwatch_meta_database_table primary key clustered (
