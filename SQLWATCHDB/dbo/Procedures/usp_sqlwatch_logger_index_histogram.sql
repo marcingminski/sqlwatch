@@ -1,4 +1,5 @@
-﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_logger_index_histogram]
+CREATE PROCEDURE [dbo].[usp_sqlwatch_logger_index_histogram]
+
 as
 
 set xact_abort on
@@ -19,12 +20,10 @@ declare @sqlwatch_table_id int
 declare @sqlwatch_index_id int
 
 declare @indextype as table (
-	is_index_hierarchical bit
-)
-
-declare @indextype2 as table (
+	is_index_hierarchical bit,
 	is_index_timestamp bit
 )
+
 
 create table #stats_hierarchical (
 	[database_name] sysname default 'fe92qw0fa_dummy',
@@ -48,7 +47,16 @@ create table #stats_timestamp (
 	[object_name] sysname default 'fe92qw0fa_dummy',
 	index_name sysname default 'fe92qw0fa_dummy',
 	index_id int,
-	RANGE_HI_KEY datetime,
+	/*
+		timestamp is a rowversion column - a binary "counter" to identify that the row has been modified. 
+		it is unlikely to have index or/and stats on the rowversion column but we have seen it happen. (yay vendor apps!)
+		so we have to be able to handle it. 		
+		Anyway, timestamp (aka rowversion) will implicitly convert to varchar and datetime.
+		when converted to varchar the value will be empty string, and when converted to datetime it will simply add the counter value to 1900-01-01
+		and will show relatively random date. I don't either will be of any use and I'd be actually tempted to just not collect any stats from indexes on these columns 
+		but happy to wait for community advice and expertise. 
+	*/
+	RANGE_HI_KEY datetime, 
 	RANGE_ROWS real,
 	EQ_ROWS real,
 	DISTINCT_RANGE_ROWS real,
@@ -127,8 +135,12 @@ into @database_name, @object_name, @index_name, @index_id, @sqlwatch_database_id
 while @@FETCH_STATUS = 0
 	begin
 		delete from @indextype
+		select @is_index_hierarchical = 0, @is_index_timestamp = 0
+
 		set @sql = 'use [' + @database_name + ']; 
-			select case when tp.name = ''hierarchyid'' then 1 else 0 end
+			select
+				is_index_hierarchical = case when tp.name = ''hierarchyid'' then 1 else 0 end,
+				is_index_timestamp = case when tp.name = ''timestamp'' then 1 else 0 end
 			from sys.schemas s
 			inner join sys.tables t 
 				on s.schema_id = t.schema_id
@@ -148,40 +160,13 @@ while @@FETCH_STATUS = 0
 				and tp.user_type_id = c.user_type_id
 			where i.name = ''' + @index_name + '''
 			and s.name + ''.'' + t.name = ''' + @object_name + ''''
-		insert into @indextype(is_index_hierarchical)
+		insert into @indextype(is_index_hierarchical, is_index_timestamp)
 		exec (@sql)
 
-		select @is_index_hierarchical = is_index_hierarchical from @indextype
-		set @is_index_hierarchical  = isnull(@is_index_hierarchical ,0)
-
-
-		delete from @indextype
-		set @sql = 'use [' + @database_name + ']; 
-			select case when tp.name = ''timestamp'' then 1 else 0 end
-			from sys.schemas s
-			inner join sys.tables t 
-				on s.schema_id = t.schema_id
-			inner join sys.indexes i 
-				on i.object_id = t.object_id
-			inner join sys.index_columns ic 
-				on ic.index_id = i.index_id 
-				and ic.object_id = i.object_id
-				/* only the leading column is used to build histogram 
-				   https://dba.stackexchange.com/a/182250 */
-				and ic.index_column_id = 1
-			inner join sys.columns c 
-				on c.column_id = ic.column_id 
-				and c.object_id = ic.object_id
-			inner join sys.types tp
-				on tp.system_type_id = c.system_type_id
-				and tp.user_type_id = c.user_type_id
-			where i.name = ''' + @index_name + '''
-			and s.name + ''.'' + t.name = ''' + @object_name + ''''
-		insert into @indextype2(is_index_timestamp)
-		exec (@sql)
-
-		select @is_index_timestamp = is_index_timestamp from @indextype2
-		set @is_index_timestamp  = isnull(@is_index_timestamp ,0)
+		select 
+			@is_index_hierarchical = is_index_hierarchical,
+			@is_index_timestamp = is_index_timestamp
+		from @indextype
 
 
 		--set @object_name = object_schema_name(@object_id) + '.' + object_name(@object_id)
@@ -214,7 +199,7 @@ if exists (
 						, [sqlwatch_index_id] = @sqlwatch_index_id
 				where index_name = 'fe92qw0fa_dummy'
 			end
-		ELSE IF @is_index_timestamp = 1
+		else if @is_index_timestamp = 1
 			begin
 				insert into #stats_timestamp (RANGE_HI_KEY,RANGE_ROWS,EQ_ROWS,DISTINCT_RANGE_ROWS,AVG_RANGE_ROWS)
 				exec (@sql)
@@ -230,7 +215,7 @@ if exists (
 						, [sqlwatch_index_id] = @sqlwatch_index_id
 				where index_name = 'fe92qw0fa_dummy'
 			end
-		ELSE
+		else
 			begin
 				insert into #stats (RANGE_HI_KEY,RANGE_ROWS,EQ_ROWS,DISTINCT_RANGE_ROWS,AVG_RANGE_ROWS)
 				exec (@sql)
@@ -311,5 +296,6 @@ deallocate c_index
 		[snapshot_type_id] = @snapshot_type,
 		[collection_time]
 	from #stats_timestamp st
+
 
 commit tran
