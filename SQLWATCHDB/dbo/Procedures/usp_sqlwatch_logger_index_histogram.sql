@@ -101,31 +101,9 @@ from [dbo].[sqlwatch_meta_index] mi
 		on md.sql_instance = mi.sql_instance
 		and md.sqlwatch_database_id = mi.sqlwatch_database_id
 
-	inner join sys.databases sdb
+	inner join [dbo].[vw_sqlwatch_sys_databases] sdb
 		on sdb.name = md.database_name collate database_default
 		and sdb.create_date = md.database_create_date
-
-	/* https://github.com/marcingminski/sqlwatch/issues/108 */
-	--begin hadr aware and db online 
-	   left join sys.dm_hadr_availability_replica_states hars 
-			on sdb.replica_id = hars.replica_id
-	   left join sys.availability_replicas ar 
-			on sdb.replica_id = ar.replica_id
-	--end hadr aware and db online ? 
-
-where mi.[sql_instance] = @@SERVERNAME
-and mi.date_deleted is null
-
---begin hadr aware and db online ?
-and database_id > 4 
-and state_desc = 'ONLINE'
-and (  
-		(hars.role_desc = 'PRIMARY' or hars.role_desc is null)
-	 or (hars.role_desc = 'SECONDARY' and ar.secondary_role_allow_connections_desc IN ('READ_ONLY','ALL'))
-	 )
-and [name] not like '%ReportServer%'
---end hadr aware and db online ? 
-
 
 open c_index
 

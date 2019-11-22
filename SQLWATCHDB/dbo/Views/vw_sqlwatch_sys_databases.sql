@@ -7,6 +7,8 @@ select
 	, [d].[database_id]
 	, [d].[create_date]
 from sys.databases d
+
+/* https://github.com/marcingminski/sqlwatch/issues/108 */
 left join sys.dm_hadr_availability_replica_states hars 
 	on d.replica_id = hars.replica_id
 left join sys.availability_replicas ar 
