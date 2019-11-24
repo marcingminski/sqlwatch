@@ -31,19 +31,7 @@ select @date_snapshot_previous = max([snapshot_time])
 insert into [dbo].[sqlwatch_logger_snapshot_header] (snapshot_time, snapshot_type_id)
 values (@snapshot_time, @snapshot_type)
 
-/* step 2 , collect indexes from all databases 
-   https://github.com/marcingminski/sqlwatch/issues/107 */
-declare c_db cursor for
-select [name] from [dbo].[vw_sqlwatch_sys_databases]
-
-open c_db
-
-fetch next from c_db
-into @database_name
-
-while @@FETCH_STATUS = 0
-	begin
-
+/* step 2 , collect indexes from all databases */
 		set @sql = 'insert into [dbo].[sqlwatch_logger_index_usage_stats] (
 	sqlwatch_database_id, [sqlwatch_index_id], [used_pages_count],
 	user_seeks, user_scans, user_lookups, user_updates, last_user_seek, last_user_scan, last_user_lookup, last_user_update,
@@ -78,22 +66,22 @@ while @@FETCH_STATUS = 0
 				, [user_lookups_delta] = case when ixus.[user_lookups] > usprev.[user_lookups] then ixus.[user_lookups] - usprev.[user_lookups] else 0 end
 			from sys.dm_db_index_usage_stats ixus
 
-			inner join dbo.vw_sqlwatch_sys_databases dbs
+			inner join sys.databases dbs
 				on dbs.database_id = ixus.database_id
-				and dbs.name = ''' + @database_name + '''
+				and dbs.name = ''?''
 
-			inner join ' + quotename(@database_name) + '.sys.indexes ix 
+			inner join [?].sys.indexes ix 
 				on ix.index_id = ixus.index_id
 				and ix.object_id = ixus.object_id
 
-			inner join ' + quotename(@database_name) + '.sys.dm_db_partition_stats ps 
+			inner join [?].sys.dm_db_partition_stats ps 
 				on  ps.[object_id] = ix.[object_id]
 				and ps.[index_id] = ix.[index_id]
 
-			inner join ' + quotename(@database_name) + '.sys.tables t 
+			inner join [?].sys.tables t 
 				on t.[object_id] = ix.[object_id]
 
-			inner join ' + quotename(@database_name) + '.sys.schemas s 
+			inner join [?].sys.schemas s 
 				on s.[schema_id] = t.[schema_id]
 
 			inner join [dbo].[sqlwatch_meta_index] mi
@@ -121,25 +109,14 @@ while @@FETCH_STATUS = 0
 				and usprev.snapshot_time = ''' + convert(varchar(23),@date_snapshot_previous,121) + '''
 				and usprev.partition_id = ps.partition_id
 
-			left join [dbo].[sqlwatch_config_exclude_database] ed
+			left join [dbo].[sqlwatch_config_logger_exclude_database] ed
 				on mdb.[database_name] like ed.[database_name_pattern]
 				and ed.snapshot_type_id = ' + convert(varchar(5),@snapshot_type) + '
 
 			where ed.snapshot_type_id is null
+
+			Print ''['' + convert(varchar(23),getdate(),121) + ''] Collecting index statistics for database: ?''
 '
-		print @sql
-		Print '[' + convert(varchar(23),getdate(),121) + '] Collecting index statistics for database: ' + @database_name
-		exec (@sql)
-		
-		
-	fetch next from c_db
-	into @database_name
-
-	end
-close c_db
-deallocate c_db
-
-
-
+exec [dbo].[usp_sqlwatch_internal_foreachdb] @sql
 
 commit tran

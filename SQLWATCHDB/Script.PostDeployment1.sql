@@ -1514,7 +1514,7 @@ exec [dbo].[usp_sqlwatch_user_add_check]
 <p><a href="https://docs.microsoft.com/en-us/sql/relational-databases/policy-based-management/set-the-auto-close-database-option-to-off">https://docs.microsoft.com/en-us/sql/relational-databases/policy-based-management/set-the-auto-close-database-option-to-off</a>
 <br>When AUTO_CLOSE is set ON, this option can cause performance degradation on frequently accessed databases because of the increased overhead of opening and closing the database after each connection. AUTO_CLOSE also flushes the procedure cache after each connection.</p>
 
-<p>You can use the below query to see databases with AUTO_CLOSE on:
+<p>You can use the below query to see databases with AUTO_CLOSE:
 <span style="display:block;background:#ddd; margin-top:0.8em;padding:1em;white-space: pre;" ><code>select * from sys.databases
 where is_auto_close_on = 1</code></span></p>'
 	,@check_query = 'select count(*)
@@ -1552,7 +1552,7 @@ You have to carefully evaluate setting this option for the databases in a SQL Se
 <p>4. The AUTO_SHRINK background task will need to acquire locks and other synchronization which can conflict with other regular application activity.</p>
 </p>
 
-<p>You can use the below query to see databases with AUTO_SHRINK on:
+<p>You can use the below query to see databases with AUTO_SHRINK:
 <span style="display:block;background:#ddd; margin-top:0.8em;padding:1em;white-space: pre;" ><code>select * from sys.databases
 where is_auto_shrink_on = 1</code></span></p>'
 	,@check_query = 'select count(*)
@@ -1562,6 +1562,96 @@ inner join [dbo].[sqlwatch_meta_database] mtb
 on sdb.name = mtb.database_name collate database_default
 and sdb.create_date = mtb.database_create_date
 where sdb.is_auto_shrink_on = 1
+and mtb.sql_instance = @@SERVERNAME'
+	,@check_frequency_minutes = 60
+	,@check_threshold_warning = NULL
+	,@check_threshold_critical = '>0'
+	,@check_enabled = 1
+	,@check_action_id = -1
+
+	,@action_every_failure = 0
+	,@action_recovery = 1
+	,@action_repeat_period_minutes = 1440 --daily
+	,@action_hourly_limit = 10
+	,@action_template_id = -3
+
+--------------------------------------------------------------------------------------
+exec [dbo].[usp_sqlwatch_user_add_check]
+	 @check_id = -14
+	,@check_name = 'Databases not ONLINE'
+	,@check_description = '<p>There is one or more databases with status other than ONLINE.</p>
+<p>You can use the below query to see databases not ONLINE:
+<span style="display:block;background:#ddd; margin-top:0.8em;padding:1em;white-space: pre;" ><code>select *
+from sys.databases
+where state <> 0</code></span></p>'
+	,@check_query = 'select count(*)
+from sys.databases sdb
+--join on meta database to respect exclusions, othwerise we could query sys.databases directly:
+inner join [dbo].[sqlwatch_meta_database] mtb
+on sdb.name = mtb.database_name collate database_default
+and sdb.create_date = mtb.database_create_date
+where sdb.state <> 0
+and mtb.sql_instance = @@SERVERNAME'
+	,@check_frequency_minutes = 60
+	,@check_threshold_warning = NULL
+	,@check_threshold_critical = '>0'
+	,@check_enabled = 1
+	,@check_action_id = -1
+
+	,@action_every_failure = 0
+	,@action_recovery = 1
+	,@action_repeat_period_minutes = 1440 --daily
+	,@action_hourly_limit = 10
+	,@action_template_id = -3
+
+--------------------------------------------------------------------------------------
+exec [dbo].[usp_sqlwatch_user_add_check]
+	 @check_id = -15
+	,@check_name = 'Databases not MULTI_USER'
+	,@check_description = '<p>There is one or more databases with user access other than MULTI_USER.</p>
+<p>This means that database may not be accessible to multiple concurrent users or access is restricted.</p>
+<p>You can use the below query to see databases with AUTO_SHRINK on:
+<span style="display:block;background:#ddd; margin-top:0.8em;padding:1em;white-space: pre;" ><code>select *
+from sys.databases
+where user_access <> 0</code></span></p>'
+	,@check_query = 'select count(*)
+from sys.databases sdb
+--join on meta database to respect exclusions, othwerise we could query sys.databases directly:
+inner join [dbo].[sqlwatch_meta_database] mtb
+on sdb.name = mtb.database_name collate database_default
+and sdb.create_date = mtb.database_create_date
+where sdb.user_access <> 0
+and mtb.sql_instance = @@SERVERNAME'
+	,@check_frequency_minutes = 60
+	,@check_threshold_warning = NULL
+	,@check_threshold_critical = '>0'
+	,@check_enabled = 1
+	,@check_action_id = -1
+
+	,@action_every_failure = 0
+	,@action_recovery = 1
+	,@action_repeat_period_minutes = 1440 --daily
+	,@action_hourly_limit = 10
+	,@action_template_id = -3
+
+--------------------------------------------------------------------------------------
+exec [dbo].[usp_sqlwatch_user_add_check]
+	 @check_id = -16
+	,@check_name = 'Database page_verify not CHECKSUM'
+	,@check_description = '<p>There is one or more databases with page_verify other than CHECKSUM.</p>
+<p><a href="https://docs.microsoft.com/en-us/sql/relational-databases/policy-based-management/set-the-page-verify-database-option-to-checksum">https://docs.microsoft.com/en-us/sql/relational-databases/policy-based-management/set-the-page-verify-database-option-to-checksum</a></p>
+<p>When CHECKSUM is enabled for the PAGE_VERIFY database option, the SQL Server Database Engine calculates a checksum over the contents of the whole page, and stores the value in the page header when a page is written to disk. When the page is read from disk, the checksum is recomputed and compared to the checksum value that is stored in the page header. This helps provide a high level of data-file integrity.</p>
+<p>You can use the below query to see databases with CHECKSUM not set:
+<span style="display:block;background:#ddd; margin-top:0.8em;padding:1em;white-space: pre;" ><code>select *
+from sys.databases
+where page_verify_option <> 2</code></span></p>'
+	,@check_query = 'select count(*)
+from sys.databases sdb
+--join on meta database to respect exclusions, othwerise we could query sys.databases directly:
+inner join [dbo].[sqlwatch_meta_database] mtb
+on sdb.name = mtb.database_name collate database_default
+and sdb.create_date = mtb.database_create_date
+where sdb.page_verify_option <> 2
 and mtb.sql_instance = @@SERVERNAME'
 	,@check_frequency_minutes = 60
 	,@check_threshold_warning = NULL

@@ -9,6 +9,12 @@
 	[is_auto_close_on] bit null,
 	[is_auto_shrink_on] bit null,
 	[is_auto_update_stats_on] bit null,
+	[user_access] tinyint null,
+	[state] tinyint null,
+	[snapshot_isolation_state] tinyint,
+	[is_read_committed_snapshot_on] bit,
+	[recovery_model] tinyint,
+	[page_verify_option] tinyint,
 
 	/*	primary key */
 	constraint PK_database primary key clustered (

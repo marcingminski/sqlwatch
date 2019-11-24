@@ -208,6 +208,7 @@
     <Build Include="dbo\Views\vw_sqlwatch_meta_wait_stats_category.sql" />
     <Build Include="dbo\Views\vw_sqlwatch_report_fact_check.sql" />
     <Build Include="dbo\Tables\sqlwatch_config_logger_exclude_database.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_foreachdb.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
