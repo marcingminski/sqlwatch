@@ -10,7 +10,7 @@
 	)
 as
 
---Print '   Processing Action (Id: ' + convert(varchar(10),@action_id) + ')'
+Print '   Action (Id: ' + convert(varchar(10),@action_id) + ')'
 
 /* 
 -------------------------------------------------------------------------------------------------------------------

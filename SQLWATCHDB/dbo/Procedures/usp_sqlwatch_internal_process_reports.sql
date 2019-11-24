@@ -76,10 +76,12 @@ select cr.[report_id]
 open cur_reports
 
 fetch next from cur_reports
-into @sql_instance, @report_id, @report_title, @report_description, @report_definition, @definition_type, @action_exec, @action_exec_type, @css
+into @report_id, @report_title, @report_description, @report_definition, @definition_type, @action_exec, @action_exec_type, @css
 
 while @@FETCH_STATUS = 0  
 	begin
+
+		Print '      Report (Id: ' + convert(varchar(10),@report_id)
 		set @html = ''
 
 		delete from @template_build
@@ -147,7 +149,7 @@ while @@FETCH_STATUS = 0
 		Print 'Item ( Id: ' + convert(varchar(10),SCOPE_IDENTITY()) + ' ) queued.'
 
 		fetch next from cur_reports 
-		into @sql_instance, @report_id, @report_title, @report_description, @report_definition, @definition_type, @action_exec, @action_exec_type, @css
+		into @report_id, @report_title, @report_description, @report_definition, @definition_type, @action_exec, @action_exec_type, @css
 
 	end
 

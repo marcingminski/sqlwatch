@@ -90,7 +90,8 @@ order by cc.[check_id]
 open cur_rules   
   
 fetch next from cur_rules 
-into @check_id, @check_name, @check_description , @check_query, @check_warning_threshold, @check_critical_threshold, @previous_check_date, @previous_check_value, @previous_check_status
+into @check_id, @check_name, @check_description , @check_query, @check_warning_threshold, @check_critical_threshold
+	, @previous_check_date, @previous_check_value, @previous_check_status
 
 
 while @@FETCH_STATUS = 0  
@@ -102,7 +103,7 @@ begin
 	set @actions = null
 	delete from @check_output
 
-	--Print 'Processing Check (Id: ' + convert(varchar(10),@check_id) + ')'
+	Print 'Check (Id: ' + convert(varchar(10),@check_id) + ')'
 
 	-------------------------------------------------------------------------------------------------------------------
 	-- execute check and log output in variable:
@@ -211,10 +212,17 @@ begin
 								@check_name = @check_name
 						end try
 						begin catch
-								select @error_message = @error_message + '
-		' + convert(varchar(23),getdate(),121) + ': CheckID: ' + convert(varchar(10),@check_id) + ': ActionID: ' + convert(varchar(10),@action_id) + ' ' + ERROR_MESSAGE()
-
-							goto NextAction
+							select @error_message = @error_message + '
+		' + convert(varchar(23),getdate(),121) + ': CheckID: ' + convert(varchar(10),@check_id) + ': ActionID: ' + convert(varchar(10),@action_id) + '
+			 ERROR_NUMBER: ' + convert(varchar(10),ERROR_NUMBER()) + '
+             ERROR_SEVERITY : ' + convert(varchar(max),ERROR_SEVERITY()) + '
+             ERROR_STATE : ' + convert(varchar(max),ERROR_STATE()) + '   
+             ERROR_PROCEDURE : ' + convert(varchar(max),ERROR_PROCEDURE()) + '   
+             ERROR_LINE : ' + convert(varchar(max),ERROR_LINE()) + '   
+             ERROR_MESSAGE : ' + convert(varchar(max),ERROR_MESSAGE()) + ''
+						
+							--immediate feedback without terminating the batch and continue processing remaining checks:
+							--raiserror ('%s',1, 1, @error_message)
 						end catch
 
 						NextAction:
@@ -241,7 +249,8 @@ begin
 	ProcessNextCheck:
 
 	fetch next from cur_rules 
-	into @check_id, @check_name, @check_description , @check_query, @check_warning_threshold, @check_critical_threshold, @previous_check_date, @previous_check_value, @previous_check_status
+	into @check_id, @check_name, @check_description , @check_query, @check_warning_threshold, @check_critical_threshold
+		, @previous_check_date, @previous_check_value, @previous_check_status
 	
 end
 
@@ -256,5 +265,6 @@ if nullif(@error_message,'') is not null
 		set @error_message = 'Errors during check execution: 
 ' + @error_message
 
-		raiserror (@error_message,16,1)
+		--print all errors and terminate the batch which will also fail the agent job for the attention:
+		raiserror ('%s',16,1,@error_message)
 	end
