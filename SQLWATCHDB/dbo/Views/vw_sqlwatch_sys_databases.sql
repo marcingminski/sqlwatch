@@ -9,6 +9,12 @@ select
 	, [d].[is_auto_close_on]
 	, [d].[is_auto_shrink_on]
 	, [d].[is_auto_update_stats_on]
+	, [d].[user_access]
+	, [d].[state]
+	, [d].[snapshot_isolation_state] 
+	, [d].[is_read_committed_snapshot_on] 
+	, [d].[recovery_model] 
+	, [d].[page_verify_option] 
 from sys.databases d
 
 /* https://github.com/marcingminski/sqlwatch/issues/108 */
@@ -17,7 +23,7 @@ left join sys.dm_hadr_availability_replica_states hars
 left join sys.availability_replicas ar 
 	on d.replica_id = ar.replica_id
 
-and state_desc = 'ONLINE' --only online database
+where state_desc = 'ONLINE' --only online database
 
 /* AG dbs */
 and ( 
