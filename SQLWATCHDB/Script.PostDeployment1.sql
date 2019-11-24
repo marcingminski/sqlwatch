@@ -30,6 +30,14 @@ Post-Deployment Script Template
 
 
 --------------------------------------------------------------------------------------
+-- database exclusions:
+--------------------------------------------------------------------------------------
+if (select count(*) from [dbo].[sqlwatch_config_exclude_database]) = 0
+	begin
+		insert into [dbo].[sqlwatch_config_exclude_database] ([database_name_pattern])
+		values ('%ReportServer%')
+	end
+--------------------------------------------------------------------------------------
 --
 --------------------------------------------------------------------------------------
 if (select count(*) from [dbo].[sqlwatch_meta_server]) = 0
@@ -402,32 +410,33 @@ where t.[counter_name] is null
 
 --------------------------------------------------------------------------------------
 -- add snapshot types
+-- 8 day week and 32 day month so we can cover weekly and monthly baselines
 --------------------------------------------------------------------------------------
 ;merge [dbo].[sqlwatch_config_snapshot_type] as target
 using (
 	/* performance data logger */
-	select [snapshot_type_id] = 1, [snapshot_type_desc] = 'Performance', [snapshot_retention_days] = 7
+	select [snapshot_type_id] = 1, [snapshot_type_desc] = 'Performance', [snapshot_retention_days] = 8
 	union 
 	/* size data logger */
 	select [snapshot_type_id] = 2, [snapshot_type_desc] = 'Disk Utilisation Database', [snapshot_retention_days] = 365
 	union 
 	/* indexes */
-	select [snapshot_type_id] = 3, [snapshot_type_desc] = 'Missing indexes', [snapshot_retention_days] = 30
+	select [snapshot_type_id] = 3, [snapshot_type_desc] = 'Missing indexes', [snapshot_retention_days] = 32
 	union 
 	/* XES Waits */
-	select [snapshot_type_id] = 6, [snapshot_type_desc] = 'XES Waits', [snapshot_retention_days] = 7
+	select [snapshot_type_id] = 6, [snapshot_type_desc] = 'XES Waits', [snapshot_retention_days] = 8
 	union
 	/* XES SQLWATCH Long queries */
-	select [snapshot_type_id] = 7, [snapshot_type_desc] = 'XES Long Queries', [snapshot_retention_days] = 7
+	select [snapshot_type_id] = 7, [snapshot_type_desc] = 'XES Long Queries', [snapshot_retention_days] = 8
 	union
 	/* XES SQLWATCH Waits */
-	select [snapshot_type_id] = 8, [snapshot_type_desc] = 'XES Waits', [snapshot_retention_days] = 30  --is this used
+	select [snapshot_type_id] = 8, [snapshot_type_desc] = 'XES Waits', [snapshot_retention_days] = 32  --is this used
 	union
 	/* XES SQLWATCH Blockers */
-	select [snapshot_type_id] = 9, [snapshot_type_desc] = 'XES Blockers', [snapshot_retention_days] = 30
+	select [snapshot_type_id] = 9, [snapshot_type_desc] = 'XES Blockers', [snapshot_retention_days] = 32
 	union
 	/* XES diagnostics */
-	select [snapshot_type_id] = 10, [snapshot_type_desc] = 'XES Query Processing', [snapshot_retention_days] = 30
+	select [snapshot_type_id] = 10, [snapshot_type_desc] = 'XES Query Processing', [snapshot_retention_days] = 32
 	union
 	/* whoisactive */
 	select [snapshot_type_id] = 11, [snapshot_type_desc] = 'WhoIsActive', [snapshot_retention_days] = 3

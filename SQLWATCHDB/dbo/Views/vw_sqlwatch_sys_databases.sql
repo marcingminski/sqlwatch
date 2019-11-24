@@ -14,6 +14,10 @@ left join sys.dm_hadr_availability_replica_states hars
 left join sys.availability_replicas ar 
 	on d.replica_id = ar.replica_id
 
+/*	user database exclusion */
+left join [dbo].[sqlwatch_config_exclude_database] ed
+	on [name] like ed.database_name_pattern collate database_default
+
 where database_id > 4 --exclude system databases
 
 and state_desc = 'ONLINE' --only online database
@@ -26,5 +30,6 @@ and (
 		--OR if part of AG include secondary only when is readable
 	or  (hars.role_desc = 'SECONDARY' AND ar.secondary_role_allow_connections_desc IN ('READ_ONLY','ALL'))
 )
-and [name] not like '%ReportServer%' --exclude SSRS database
+and ed.database_name_pattern is null
+--and [name] not like '%ReportServer%' --exclude SSRS database
 and source_database_id is null --exclude snapshots
