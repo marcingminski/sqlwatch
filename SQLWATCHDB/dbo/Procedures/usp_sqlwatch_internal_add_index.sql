@@ -45,7 +45,6 @@ inner join dbo.vw_sqlwatch_sys_databases dbs
 	on dbs.name = md.database_name collate database_default
 	and dbs.create_date = md.database_create_date
 
-
 merge [dbo].[sqlwatch_meta_index] as target
 	using ##DB61B2CD92324E4B89019FFA7BEF1010 as source
 on target.sqlwatch_database_id = source.sqlwatch_database_id
@@ -54,7 +53,7 @@ and target.sql_instance = @@SERVERNAME
 and target.index_name = source.index_name collate database_default
 
 when matched then
-	update set date_deleted = null,
+	update set [date_last_seen] = getutcdate(),
 		index_id = case when source.index_id <> target.index_id then source.index_id else target.index_id end,
 		index_type_desc = case when source.index_type_desc <> target.index_type_desc collate database_default then source.index_type_desc else target.index_type_desc end collate database_default,
 		date_updated = case when source.index_id <> target.index_id or source.index_type_desc <> target.index_type_desc collate database_default then GETUTCDATE() else date_updated end

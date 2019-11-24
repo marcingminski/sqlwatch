@@ -38,7 +38,7 @@ merge [dbo].[sqlwatch_meta_table] as target
 using (
 	select [t].[TABLE_CATALOG], [t].[TABLE_SCHEMA], [t].[TABLE_NAME], [t].[TABLE_TYPE], mdb.sqlwatch_database_id, mtb.sqlwatch_table_id
 	from ##98308FFC2C634BF98B347EECB98E3490 t
-	inner join sys.databases dbs
+	inner join [dbo].[vw_sqlwatch_sys_databases] dbs
 		on dbs.name = t.TABLE_CATALOG 
 	inner join [dbo].[sqlwatch_meta_database] mdb
 		on mdb.database_name = dbs.name collate database_default

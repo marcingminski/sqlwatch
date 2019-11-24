@@ -7,6 +7,7 @@
 	Change Log
 		2018-08		- Marcin Gminski:	Initial Version
 		2019-11-17	- Marcin Gminski:	Exclude idle wait stats.
+		2019-11-24	- Marcin Gminski:	Replace sys.databses with dbo.vw_sqlwatch_sys_databases
 */
 set xact_abort on
 begin tran
@@ -366,8 +367,9 @@ declare @sql nvarchar(4000)
 			and fs.[file_id] = f.[file_id]
 		
 		/* 2019-05-05 join on databases to get database name and create data as part of the 
-		   -- doesnt this need a join on dbo.vw_sqlwatch_sys_databases instead ? */
-		inner join sys.databases d 
+		   -- doesnt this need a join on dbo.vw_sqlwatch_sys_databases instead ?
+		   2019-11-24 change sys.databses to vw_sqlwatch_sys_databases */
+		inner join dbo.vw_sqlwatch_sys_databases d 
 			on d.database_id = f.database_id
 
 		inner join [dbo].[sqlwatch_meta_database] sd 
@@ -388,6 +390,12 @@ declare @sql nvarchar(4000)
 			and prevfs.sqlwatch_master_file_id = mf.sqlwatch_master_file_id
 			and prevfs.snapshot_type_id = @snapshot_type_id
 			and prevfs.snapshot_time = @date_snapshot_previous
+
+		left join [dbo].[sqlwatch_config_logger_exclude_database] ed
+			on d.[name] like ed.database_name_pattern collate database_default
+			and ed.snapshot_type_id = @snapshot_type_id
+
+		where ed.snapshot_type_id is null
 
 
 		--------------------------------------------------------------------------------------------------------------

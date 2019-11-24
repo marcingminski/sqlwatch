@@ -6,6 +6,9 @@ select
 	, [d].[name]
 	, [d].[database_id]
 	, [d].[create_date]
+	, [d].[is_auto_close_on]
+	, [d].[is_auto_shrink_on]
+	, [d].[is_auto_update_stats_on]
 from sys.databases d
 
 /* https://github.com/marcingminski/sqlwatch/issues/108 */
@@ -13,12 +16,6 @@ left join sys.dm_hadr_availability_replica_states hars
 	on d.replica_id = hars.replica_id
 left join sys.availability_replicas ar 
 	on d.replica_id = ar.replica_id
-
-/*	user database exclusion */
-left join [dbo].[sqlwatch_config_exclude_database] ed
-	on [name] like ed.database_name_pattern collate database_default
-
-where database_id > 4 --exclude system databases
 
 and state_desc = 'ONLINE' --only online database
 
@@ -30,6 +27,4 @@ and (
 		--OR if part of AG include secondary only when is readable
 	or  (hars.role_desc = 'SECONDARY' AND ar.secondary_role_allow_connections_desc IN ('READ_ONLY','ALL'))
 )
-and ed.database_name_pattern is null
---and [name] not like '%ReportServer%' --exclude SSRS database
 and source_database_id is null --exclude snapshots

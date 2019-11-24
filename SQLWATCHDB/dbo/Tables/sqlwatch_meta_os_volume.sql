@@ -8,7 +8,7 @@
 	[volume_block_size_bytes] int,
 	[date_created] datetime not null constraint df_sqlwatch_meta_os_volume_date_created default (getutcdate()),
 	[date_updated] datetime null,
-	[last_seen] datetime null,
+	[date_last_seen] datetime null,
 	constraint pk_sqlwatch_meta_os_volume primary key clustered (
 		[sql_instance], [sqlwatch_volume_id]
 		),

@@ -74,7 +74,7 @@ create trigger dbo.trg_sqlwatch_config_check_U
 	begin
 		set nocount on;
 		update t
-			set date_updated = getdate()
+			set date_updated = getutcdate()
 		from [dbo].[sqlwatch_config_check] t
 		inner join inserted i
 			on i.[check_id] = t.[check_id]

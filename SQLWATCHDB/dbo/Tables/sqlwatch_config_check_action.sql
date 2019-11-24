@@ -7,6 +7,8 @@
 	[action_repeat_period_minutes] smallint null, --how often to repeat the trigger i.e. if we are low on disk we may want a daily reminder, not just one alert
 	[action_hourly_limit] tinyint not null constraint df_sqlwatch_config_check_action_hourly_limit default (2), --no more than 2 alerts per hour, of each alert
 	[action_template_id] smallint not null,
+	[date_created] datetime not null constraint df_sqlwatch_config_check_action_date_created default (getutcdate()),
+	[date_updated] datetime null,
 
 	/*	primary key */
 	constraint pk_sqlwatch_config_check_action primary key clustered ([check_id], [action_id]),
@@ -28,7 +30,20 @@
 )
 go
 
-
+create trigger dbo.trg_sqlwatch_config_check_action_updated_date_U
+	on [dbo].[sqlwatch_config_check_action]
+	for update
+	as
+	begin
+		set nocount on;
+		update t
+			set [date_updated] = getutcdate()
+		from [dbo].[sqlwatch_config_check_action] t
+		inner join inserted i
+			on i.[check_id] = t.[check_id]
+			and i.[action_id] = t.[action_id]
+	end
+go
 
 create trigger dbo.trg_sqlwatch_config_check_action_D
 	on [dbo].[sqlwatch_config_action]

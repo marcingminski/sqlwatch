@@ -28,15 +28,6 @@ Post-Deployment Script Template
 --		ALTER TABLE [dbo].[sqlwatch_logger_perf_file_stats] CHECK CONSTRAINT [fk_pk_sql_perf_mon_file_stats_database];
 --	end
 
-
---------------------------------------------------------------------------------------
--- database exclusions:
---------------------------------------------------------------------------------------
-if (select count(*) from [dbo].[sqlwatch_config_exclude_database]) = 0
-	begin
-		insert into [dbo].[sqlwatch_config_exclude_database] ([database_name_pattern])
-		values ('%ReportServer%')
-	end
 --------------------------------------------------------------------------------------
 --
 --------------------------------------------------------------------------------------
@@ -471,7 +462,37 @@ when not matched then
 	values (source.[snapshot_type_id],source.[snapshot_type_desc],source.[snapshot_retention_days])
 ;
 
+--------------------------------------------------------------------------------------
+--
+--------------------------------------------------------------------------------------
+if (select count(*) from [dbo].[sqlwatch_config_logger_exclude_database]) = 0
+	begin
+		 --exclude collecting missing indexes from ReportServer and system databases
+		insert into [dbo].[sqlwatch_config_logger_exclude_database] ([database_name_pattern], [snapshot_type_id])
+		values  ('%ReportServer%',3),
+				('msdb',3),
+				('master',3)
+	end
 
+--------------------------------------------------------------------------------------
+-- set baseline for empty last_seen dates (when upgrading from previous versions)
+--------------------------------------------------------------------------------------
+declare @sql varchar(max)
+set @sql = ''
+
+select @sql = @sql + '
+update ' + TABLE_SCHEMA + '.' + TABLE_NAME + '
+set [' + COLUMN_NAME + '] = GETUTCDATE()
+where [' + COLUMN_NAME + '] is null
+'
+ from INFORMATION_SCHEMA.COLUMNS
+/*	I should have been more careful when naming columns, I ended up having all these variations.
+	Yes, I know....*/
+WHERE COLUMN_NAME in ('deleted_when', 'date_deleted', 'last_seen','last_seen_date','date_last_seen')
+AND TABLE_NAME LIKE 'sqlwatch_meta%'
+
+
+exec (@sql)
 --------------------------------------------------------------------------------------
 -- wait stat categories
 --------------------------------------------------------------------------------------
@@ -861,7 +882,7 @@ table.sqlwatchtbl thead th { font-size: 12px; font-weight: bold; color: #FFFFFF;
 --------------------------------------------------------------------------------------
 -- default action template
 --------------------------------------------------------------------------------------
-declare @action_tempalte_plain nvarchar(max) = 'Check: {CHECK_NAME} ( CheckId: {CHECK_ID} )
+declare @action_template_plain nvarchar(max) = 'Check: {CHECK_NAME} ( CheckId: {CHECK_ID} )
 
 Current status:  {CHECK_STATUS}
 Current value: {CHECK_VALUE}
@@ -889,7 +910,7 @@ Critical threshold: {THRESHOLD_CRITICAL}
 Sent from SQLWATCH on host: {SQL_INSTANCE}
 https://docs.sqlwatch.io'
 
-declare @action_tempalte_report_html nvarchar(max) = '<p>Check: {CHECK_NAME} ( CheckId: {CHECK_ID} )</p>
+declare @action_template_report_html nvarchar(max) = '<p>Check: {CHECK_NAME} ( CheckId: {CHECK_ID} )</p>
 
 <p>Current status: <b>{CHECK_STATUS}</b>
 <br>Current value: <b>{CHECK_VALUE}</b></p>
@@ -921,6 +942,32 @@ declare @action_tempalte_report_html nvarchar(max) = '<p>Check: {CHECK_NAME} ( C
 <p>Sent from SQLWATCH on host: {SQL_INSTANCE}</p>
 <p><a href="https://docs.sqlwatch.io">https://docs.sqlwatch.io</a> </p>';
 
+declare @action_template_html nvarchar(max) = '<p>Check: {CHECK_NAME} ( CheckId: {CHECK_ID} )</p>
+
+<p>Current status: <b>{CHECK_STATUS}</b>
+<br>Current value: <b>{CHECK_VALUE}</b></p>
+
+<p>Previous value: {CHECK_LAST_VALUE}
+<br>Previous status: {CHECK_LAST_STATUS}
+<br>Previous change: {LAST_STATUS_CHANGE}</p>
+
+<p>SQL instance: <b>{SQL_INSTANCE}</b>
+<br>Alert time: <b>{CHECK_TIME}</b></p>
+
+<p>Warning threshold: {THRESHOLD_WARNING}
+<br>Critical threshold: {THRESHOLD_CRITICAL}</p>
+
+<p>--- Check Description:</p>
+
+<p>{CHECK_DESCRIPTION}</p>
+
+<p>--- Check Query:</p>
+
+<p><span style="display:block;background:#ddd; margin-top:0.8em;padding-left:10px;padding-bottom:1em;padding-top:1em;white-space: pre;"><code>{CHECK_QUERY}</code></span></p>
+
+<p>Sent from SQLWATCH on host: {SQL_INSTANCE}</p>
+<p><a href="https://docs.sqlwatch.io">https://docs.sqlwatch.io</a> </p>';
+
 disable trigger [dbo].[trg_sqlwatch_config_check_action_template_modify] on [dbo].[sqlwatch_config_check_action_template];  --so we dont populate updated date as this is to detect if a user has modified default template
 set identity_insert [dbo].[sqlwatch_config_check_action_template] on;
 merge [dbo].[sqlwatch_config_check_action_template] as target
@@ -929,11 +976,11 @@ using (
 		 [action_template_id] = -1
 		,[action_template_description] = 'Default plain notification template (Text). This template is usually used for simple actions that send plain text messages on the back of the check.'
 		,[action_template_fail_subject] = '{CHECK_STATUS}: {CHECK_NAME} on {SQL_INSTANCE}'
-		,[action_template_fail_body] = @action_tempalte_plain
+		,[action_template_fail_body] = @action_template_plain
 		,[action_template_repeat_subject] = 'REPEATED: {CHECK_STATUS}: {CHECK_NAME} on {SQL_INSTANCE}'
-		,[action_template_repeat_body] = @action_tempalte_plain
+		,[action_template_repeat_body] = @action_template_plain
 		,[action_template_recover_subject] = 'RECOVERED: {CHECK_STATUS}: {CHECK_NAME} on {SQL_INSTANCE}'
-		,[action_template_recover_body]	= @action_tempalte_plain
+		,[action_template_recover_body]	= @action_template_plain
 
 	union all
 
@@ -941,11 +988,23 @@ using (
 		 [action_template_id] = -2
 		,[action_template_description] = 'Default report notification template (HTML). This template is used for actions that trigger reports on the back of the check.'
 		,[action_template_fail_subject] = '{CHECK_STATUS}: {CHECK_NAME} on {SQL_INSTANCE}'
-		,[action_template_fail_body] = @action_tempalte_report_html
+		,[action_template_fail_body] = @action_template_report_html
 		,[action_template_repeat_subject] = 'REPEATED: {CHECK_STATUS}: {CHECK_NAME} on {SQL_INSTANCE}'
-		,[action_template_repeat_body] = @action_tempalte_report_html
+		,[action_template_repeat_body] = @action_template_report_html
 		,[action_template_recover_subject] = 'RECOVERED: {CHECK_STATUS}: {CHECK_NAME} on {SQL_INSTANCE}'
-		,[action_template_recover_body]	= @action_tempalte_report_html
+		,[action_template_recover_body]	= @action_template_report_html
+
+	union all
+
+	select
+		 [action_template_id] = -3
+		,[action_template_description] = 'Default notification template (HTML). This template is used for actions that do not trigger reports but have HTML content'
+		,[action_template_fail_subject] = '{CHECK_STATUS}: {CHECK_NAME} on {SQL_INSTANCE}'
+		,[action_template_fail_body] = @action_template_html
+		,[action_template_repeat_subject] = 'REPEATED: {CHECK_STATUS}: {CHECK_NAME} on {SQL_INSTANCE}'
+		,[action_template_repeat_body] = @action_template_html
+		,[action_template_recover_subject] = 'RECOVERED: {CHECK_STATUS}: {CHECK_NAME} on {SQL_INSTANCE}'
+		,[action_template_recover_body]	= @action_template_html
 		) as source
 on target.[action_template_id] = source.[action_template_id]
 when not matched then
@@ -1204,6 +1263,7 @@ enable trigger dbo.trg_sqlwatch_config_action_updated_U ON [dbo].[sqlwatch_confi
 -- Load default checks
 --------------------------------------------------------------------------------------
 disable trigger dbo.trg_sqlwatch_config_check_U on [dbo].[sqlwatch_config_check];
+disable trigger dbo.trg_sqlwatch_config_check_action_updated_date_U on [dbo].[sqlwatch_config_check_action];
 set identity_insert [dbo].[sqlwatch_config_check] on;
 
 exec [dbo].[usp_sqlwatch_user_add_check]
@@ -1446,9 +1506,78 @@ and time_queued < dateadd(hour,-1,SYSDATETIME())'
 	,@action_hourly_limit = 10
 	,@action_template_id = -1
 
+--------------------------------------------------------------------------------------
+exec [dbo].[usp_sqlwatch_user_add_check]
+	 @check_id = -12
+	,@check_name = 'Databases with Auto Close Enabled'
+	,@check_description = '<p>There is one or more databases with Auto Close Enabled.</p>
+<p><a href="https://docs.microsoft.com/en-us/sql/relational-databases/policy-based-management/set-the-auto-close-database-option-to-off">https://docs.microsoft.com/en-us/sql/relational-databases/policy-based-management/set-the-auto-close-database-option-to-off</a>
+<br>When AUTO_CLOSE is set ON, this option can cause performance degradation on frequently accessed databases because of the increased overhead of opening and closing the database after each connection. AUTO_CLOSE also flushes the procedure cache after each connection.</p>
+
+<p>You can use the below query to see databases with AUTO_CLOSE on:
+<span style="display:block;background:#ddd; margin-top:0.8em;padding:1em;white-space: pre;" ><code>select * from sys.databases
+where is_auto_close_on = 1</code></span></p>'
+	,@check_query = 'select count(*)
+from sys.databases sdb
+--join on meta database to respect exclusions, othwerise we could query sys.databases directly:
+inner join [dbo].[sqlwatch_meta_database] mtb
+on sdb.name = mtb.database_name collate database_default
+and sdb.create_date = mtb.database_create_date
+where sdb.is_auto_close_on = 1
+and mtb.sql_instance = @@SERVERNAME'
+	,@check_frequency_minutes = 60
+	,@check_threshold_warning = NULL
+	,@check_threshold_critical = '>0'
+	,@check_enabled = 1
+	,@check_action_id = -1
+
+	,@action_every_failure = 0
+	,@action_recovery = 1
+	,@action_repeat_period_minutes = 1440 --daily
+	,@action_hourly_limit = 10
+	,@action_template_id = -3
+
+--------------------------------------------------------------------------------------
+exec [dbo].[usp_sqlwatch_user_add_check]
+	 @check_id = -13
+	,@check_name = 'Databases with Auto Shrink Enabled'
+	,@check_description = '<p>There is one or more databases with Auto Shrink Enabled.</p>
+<p><a href="https://docs.microsoft.com/en-us/sql/relational-databases/policy-based-management/set-the-auto-shrink-database-option-to-off">https://docs.microsoft.com/en-us/sql/relational-databases/policy-based-management/set-the-auto-shrink-database-option-to-off</a></p>
+<p><a href="https://support.microsoft.com/en-us/help/2160663/recommendations-and-guidelines-for-setting-the-auto-shrink-database-op">https://support.microsoft.com/en-us/help/2160663/recommendations-and-guidelines-for-setting-the-auto-shrink-database-op</a></p>
+<p>When you enable this option for a database, this database becomes eligible for shrinking by a background task. This background task evaluates all databases which satisfy the criteria for Shrinking and shrink the data or log files. 
+You have to carefully evaluate setting this option for the databases in a SQL Server instance. Frequent grow and shrink operations can lead to various performance problems and physical fragmentation.</p>
+<p>1. If multiple databases undergo frequent shrink and grow operations, then this will easily lead to file system level fragmentation.</p>
+<p>2. After AUTO_SHRINK successfully shrinks the data or log file, a subsequent DML or DDL operation can slow down significantly if space is required and the files need to grow.</p>
+<p>3. The AUTO_SHRINK background task can take up resources when there are a lot of databases that need shrinking.</p>
+<p>4. The AUTO_SHRINK background task will need to acquire locks and other synchronization which can conflict with other regular application activity.</p>
+</p>
+
+<p>You can use the below query to see databases with AUTO_SHRINK on:
+<span style="display:block;background:#ddd; margin-top:0.8em;padding:1em;white-space: pre;" ><code>select * from sys.databases
+where is_auto_shrink_on = 1</code></span></p>'
+	,@check_query = 'select count(*)
+from sys.databases sdb
+--join on meta database to respect exclusions, othwerise we could query sys.databases directly:
+inner join [dbo].[sqlwatch_meta_database] mtb
+on sdb.name = mtb.database_name collate database_default
+and sdb.create_date = mtb.database_create_date
+where sdb.is_auto_shrink_on = 1
+and mtb.sql_instance = @@SERVERNAME'
+	,@check_frequency_minutes = 60
+	,@check_threshold_warning = NULL
+	,@check_threshold_critical = '>0'
+	,@check_enabled = 1
+	,@check_action_id = -1
+
+	,@action_every_failure = 0
+	,@action_recovery = 1
+	,@action_repeat_period_minutes = 1440 --daily
+	,@action_hourly_limit = 10
+	,@action_template_id = -3
+
 set identity_insert [dbo].[sqlwatch_config_check] off;
 enable trigger dbo.trg_sqlwatch_config_check_U on [dbo].[sqlwatch_config_check];
-
+enable trigger dbo.trg_sqlwatch_config_check_action_updated_date_U on [dbo].[sqlwatch_config_check_action];
 --------------------------------------------------------------------------------------
 --setup jobs
 --we have to switch database to msdb but we also need to know which db jobs should run in so have to capture current database:
@@ -1463,8 +1592,6 @@ USE [msdb]
 /* rename old jobs to new standard, DB 1.5, March 2019 */
 set nocount on;
 
-declare @sql varchar(max) = ''
-
 create table #jobrename (
 	old_job sysname, new_job sysname
 	)
@@ -1475,6 +1602,7 @@ insert into #jobrename
 			('SQLWATCH-LOGGER-MISSING-INDEXES',	'SQLWATCH-LOGGER-INDEXES'),
 			('SQLWATCH-INTERNAL-META-CONFIG',	'SQLWATCH-INTERNAL-CONFIG')
 
+set @sql= ''
 select @sql = @sql + convert(varchar(max),' if (select name from msdb.dbo.sysjobs where name = ''' + old_job + ''') is not null
 	and (select name from msdb.dbo.sysjobs where name = ''' + new_job + ''') is null
 	begin

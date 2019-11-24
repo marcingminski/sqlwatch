@@ -11,7 +11,7 @@
 	[index_handle] int,
 	[date_created] datetime not null constraint df_sqlwatch_meta_index_missing_date_created default (getutcdate()),
 	[date_updated] datetime,
-	[date_deleted] datetime,
+	[date_last_seen] datetime null constraint df_sqlwatch_meta_index_missing_last_seen default (getutcdate()),
 	constraint pk_sqlwatch_meta_index_missing primary key (
 		[sql_instance], [sqlwatch_database_id], [sqlwatch_table_id], [sqlwatch_missing_index_id]
 	),

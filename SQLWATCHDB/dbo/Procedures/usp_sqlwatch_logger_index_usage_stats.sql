@@ -78,7 +78,7 @@ while @@FETCH_STATUS = 0
 				, [user_lookups_delta] = case when ixus.[user_lookups] > usprev.[user_lookups] then ixus.[user_lookups] - usprev.[user_lookups] else 0 end
 			from sys.dm_db_index_usage_stats ixus
 
-			inner join sys.databases dbs
+			inner join dbo.vw_sqlwatch_sys_databases dbs
 				on dbs.database_id = ixus.database_id
 				and dbs.name = ''' + @database_name + '''
 
@@ -120,6 +120,12 @@ while @@FETCH_STATUS = 0
 				and usprev.snapshot_type_id = ' + convert(varchar(5),@snapshot_type) + '
 				and usprev.snapshot_time = ''' + convert(varchar(23),@date_snapshot_previous,121) + '''
 				and usprev.partition_id = ps.partition_id
+
+			left join [dbo].[sqlwatch_config_exclude_database] ed
+				on mdb.[database_name] like ed.[database_name_pattern]
+				and ed.snapshot_type_id = ' + convert(varchar(5),@snapshot_type) + '
+
+			where ed.snapshot_type_id is null
 '
 		print @sql
 		Print '[' + convert(varchar(23),getdate(),121) + '] Collecting index statistics for database: ' + @database_name

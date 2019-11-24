@@ -77,6 +77,12 @@ select
 		and mt.sqlwatch_database_id = db.sqlwatch_database_id
 		and mt.table_name = idx.table_name collate database_default
 
+	left join [dbo].[sqlwatch_config_logger_exclude_database] ed
+		on db.[database_name] like ed.[database_name_pattern]
+		and ed.[snapshot_type_id] = 3 --missing index logger.
+
+	where ed.[snapshot_type_id] is null
+
 		) as source
 	on	target.sql_instance = source.sql_instance
 	and target.sqlwatch_database_id = source.sqlwatch_database_id
@@ -88,7 +94,7 @@ select
 	and isnull(target.[statement],'') = isnull(source.[statement],'') collate database_default
 
 when matched then
-	update set [date_deleted] = null
+	update set [date_last_seen] = getutcdate()
 
 when not matched by target then
 	insert ([sql_instance], [sqlwatch_database_id], [sqlwatch_table_id],		[equality_columns] ,
