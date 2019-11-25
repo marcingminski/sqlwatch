@@ -109,7 +109,7 @@ values (@snapshot_time, @snapshot_type)
 				and usprev.snapshot_time = ''' + convert(varchar(23),@date_snapshot_previous,121) + '''
 				and usprev.partition_id = ps.partition_id
 
-			left join [dbo].[sqlwatch_config_logger_exclude_database] ed
+			left join [dbo].[sqlwatch_config_exclude_database] ed
 				on mdb.[database_name] like ed.[database_name_pattern]
 				and ed.snapshot_type_id = ' + convert(varchar(5),@snapshot_type) + '
 
