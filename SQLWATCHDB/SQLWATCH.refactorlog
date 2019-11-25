@@ -1848,4 +1848,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="fk_sqlwatch_config_logger_exclude_database_snapshot_type" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="27f21822-65b8-4ba1-9c33-c0c6b4e5d3b1" ChangeDateTime="11/25/2019 00:00:51">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_config_logger_exclude_database]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[sqlwatch_config_exclude_database]" />
+  </Operation>
 </Operations>

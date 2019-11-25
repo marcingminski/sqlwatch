@@ -105,7 +105,7 @@ from [dbo].[sqlwatch_meta_index] mi
 		on sdb.name = md.database_name collate database_default
 		and sdb.create_date = md.database_create_date
 
-	left join [dbo].[sqlwatch_config_logger_exclude_database] ed
+	left join [dbo].[sqlwatch_config_exclude_database] ed
 		on md.[database_name] like ed.database_name_pattern
 		and ed.snapshot_type_id = @snapshot_type
 

@@ -65,7 +65,7 @@ select
 		and mt.sqlwatch_database_id = db.sqlwatch_database_id
 		and mt.table_name = idx.table_name collate database_default
 
-	left join [dbo].[sqlwatch_config_logger_exclude_database] ed
+	left join [dbo].[sqlwatch_config_exclude_database] ed
 		on db.[database_name] like ed.[database_name_pattern]
 		and ed.[snapshot_type_id] = 3 --missing index logger.
 

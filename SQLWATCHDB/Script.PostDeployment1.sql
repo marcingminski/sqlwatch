@@ -465,10 +465,10 @@ when not matched then
 --------------------------------------------------------------------------------------
 --
 --------------------------------------------------------------------------------------
-if (select count(*) from [dbo].[sqlwatch_config_logger_exclude_database]) = 0
+if (select count(*) from [dbo].[sqlwatch_config_exclude_database]) = 0
 	begin
 		 --exclude collecting missing indexes from ReportServer and system databases
-		insert into [dbo].[sqlwatch_config_logger_exclude_database] ([database_name_pattern], [snapshot_type_id])
+		insert into [dbo].[sqlwatch_config_exclude_database] ([database_name_pattern], [snapshot_type_id])
 		values  ('%ReportServer%',3),
 				('msdb',3),
 				('master',3)

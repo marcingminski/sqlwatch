@@ -179,7 +179,7 @@ inner join [dbo].[sqlwatch_meta_database] swd
 	and swd.[database_create_date] = db.[create_date]
 	and swd.sql_instance = @@SERVERNAME
 
-left join [dbo].[sqlwatch_config_logger_exclude_database] ed
+left join [dbo].[sqlwatch_config_exclude_database] ed
 	on swd.[database_name] like ed.database_name_pattern
 	and ed.snapshot_type_id = @snapshot_type
 

@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[sqlwatch_config_logger_exclude_database]
+﻿CREATE TABLE [dbo].[sqlwatch_config_exclude_database]
 ( 
 	[database_name_pattern] nvarchar(128) not null,
 	[snapshot_type_id] tinyint not null,

@@ -391,7 +391,7 @@ declare @sql nvarchar(4000)
 			and prevfs.snapshot_type_id = @snapshot_type_id
 			and prevfs.snapshot_time = @date_snapshot_previous
 
-		left join [dbo].[sqlwatch_config_logger_exclude_database] ed
+		left join [dbo].[sqlwatch_config_exclude_database] ed
 			on d.[name] like ed.database_name_pattern collate database_default
 			and ed.snapshot_type_id = @snapshot_type_id
 
