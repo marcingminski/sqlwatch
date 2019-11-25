@@ -209,17 +209,19 @@ begin
 								@check_value = @check_value,
 								@check_snapshot_time = @snapshot_date,
 								@check_description = @check_description,
-								@check_name = @check_name
+								@check_name = @check_name,
+								@check_threshold_warning = @check_warning_threshold,
+								@check_threshold_critical = @check_critical_threshold
 						end try
 						begin catch
 							select @error_message = @error_message + '
 		' + convert(varchar(23),getdate(),121) + ': CheckID: ' + convert(varchar(10),@check_id) + ': ActionID: ' + convert(varchar(10),@action_id) + '
-			 ERROR_NUMBER: ' + convert(varchar(10),ERROR_NUMBER()) + '
-             ERROR_SEVERITY : ' + convert(varchar(max),ERROR_SEVERITY()) + '
-             ERROR_STATE : ' + convert(varchar(max),ERROR_STATE()) + '   
-             ERROR_PROCEDURE : ' + convert(varchar(max),ERROR_PROCEDURE()) + '   
-             ERROR_LINE : ' + convert(varchar(max),ERROR_LINE()) + '   
-             ERROR_MESSAGE : ' + convert(varchar(max),ERROR_MESSAGE()) + ''
+			 ERROR_NUMBER: ' + isnull(convert(varchar(10),ERROR_NUMBER()),'') + '
+             ERROR_SEVERITY : ' + isnull(convert(varchar(max),ERROR_SEVERITY()),'') + '
+             ERROR_STATE : ' + isnull(convert(varchar(max),ERROR_STATE()),'') + '   
+             ERROR_PROCEDURE : ' + isnull(convert(varchar(max),ERROR_PROCEDURE()),'') + '   
+             ERROR_LINE : ' + isnull(convert(varchar(max),ERROR_LINE()),'') + '   
+             ERROR_MESSAGE : ' + isnull(convert(varchar(max),ERROR_MESSAGE()),'') + ''
 						
 							--immediate feedback without terminating the batch and continue processing remaining checks:
 							--raiserror ('%s',1, 1, @error_message)
@@ -262,7 +264,7 @@ Print 'No Checks to Process'
 
 if nullif(@error_message,'') is not null
 	begin
-		set @error_message = 'Errors during check execution: 
+		set @error_message = 'Errors during check execution (' + OBJECT_NAME(@@PROCID) + '): 
 ' + @error_message
 
 		--print all errors and terminate the batch which will also fail the agent job for the attention:

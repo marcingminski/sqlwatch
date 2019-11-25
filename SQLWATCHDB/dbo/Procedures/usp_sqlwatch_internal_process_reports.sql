@@ -5,7 +5,10 @@
 	@check_value decimal(28,2) = null,
 	@check_name nvarchar(max) = null,
 	@subject nvarchar(max) = null,
-	@body nvarchar(max) = null
+	@body nvarchar(max) = null,
+	--so we can apply filter to the reports:
+	@check_threshold_warning varchar(100) = null,
+	@check_threshold_critical varchar(100) = null
 	)
 as
 /*
@@ -30,6 +33,7 @@ declare @sql_instance varchar(32),
 		@target_address nvarchar(max),
 		@action_exec nvarchar(max),
 		@action_exec_type nvarchar(max),
+		@error_message nvarchar(max),
 
 		@css nvarchar(max),
 		@html nvarchar(max)
@@ -81,24 +85,51 @@ into @report_id, @report_title, @report_description, @report_definition, @defini
 while @@FETCH_STATUS = 0  
 	begin
 
-		Print '      Report (Id: ' + convert(varchar(10),@report_id)
+		Print '      Report (Id: ' + convert(varchar(10),@report_id) +')'
 		set @html = ''
 
 		delete from @template_build
 
 		if @definition_type = 'Query'
 			begin
-				exec [dbo].[usp_sqlwatch_internal_query_to_html_table] @html = @html output, @query = @report_definition
+				set @report_definition = case when @check_threshold_critical is not null then replace(@report_definition,'{THRESHOLD_CRITICAL}',@check_threshold_critical) else @report_definition end
+				set @report_definition = case when @check_threshold_warning is not null then replace(@report_definition,'{THRESHOLD_WARNING}',@check_threshold_warning) else @report_definition end
+
+				begin try
+					exec [dbo].[usp_sqlwatch_internal_query_to_html_table] @html = @html output, @query = @report_definition
+				end try
+				begin catch
+					select @error_message = @error_message + '
+' + convert(varchar(23),getdate(),121) + ': ReportID: ' + convert(varchar(10),@report_id) + '
+		ERROR_NUMBER: ' + isnull(convert(varchar(10),ERROR_NUMBER()),'') + '
+        ERROR_SEVERITY : ' + isnull(convert(varchar(max),ERROR_SEVERITY()),'') + '
+        ERROR_STATE : ' + isnull(convert(varchar(max),ERROR_STATE()),'') + '   
+        ERROR_PROCEDURE : ' + isnull(convert(varchar(max),ERROR_PROCEDURE()),'') + '   
+        ERROR_LINE : ' + isnull(convert(varchar(max),ERROR_LINE()),'') + '   
+        ERROR_MESSAGE : ' + isnull(convert(varchar(max),ERROR_MESSAGE()),'') + ''
+				end catch
 			end
 
 		if @definition_type = 'Template'
 			begin
-				insert into @template_build
-				exec sp_executesql @report_definition
-
-				select @html = [result] from @template_build
+				begin try
+					insert into @template_build
+					exec sp_executesql @report_definition
+					select @html = [result] from @template_build
+				end try
+				begin catch
+					select @error_message = @error_message + '
+' + convert(varchar(23),getdate(),121) + ': ReportID: ' + convert(varchar(10),@report_id) + '
+		ERROR_NUMBER: ' + isnull(convert(varchar(10),ERROR_NUMBER()),'') + '
+        ERROR_SEVERITY : ' + isnull(convert(varchar(max),ERROR_SEVERITY()),'') + '
+        ERROR_STATE : ' + isnull(convert(varchar(max),ERROR_STATE()),'') + '   
+        ERROR_PROCEDURE : ' + isnull(convert(varchar(max),ERROR_PROCEDURE()),'') + '   
+        ERROR_LINE : ' + isnull(convert(varchar(max),ERROR_LINE()),'') + '   
+        ERROR_MESSAGE : ' + isnull(convert(varchar(max),ERROR_MESSAGE()),'') + ''
+				end catch
 			end
 
+		select @css, @html
 		set @html = '<html><head><style>' + @css + '</style><body>' + @html
 
 		--if @check_name is NOT null it means report has been triggered by a check action. Therefore, we need to respect the check action template:
@@ -155,3 +186,13 @@ while @@FETCH_STATUS = 0
 
 close cur_reports
 deallocate cur_reports
+
+
+if nullif(@error_message,'') is not null
+	begin
+		set @error_message = 'Errors during report execution (' + OBJECT_NAME(@@PROCID) + '): 
+' + @error_message
+
+		--print all errors and terminate the batch which will also fail the agent job for the attention:
+		raiserror ('%s',16,1,@error_message)
+	end

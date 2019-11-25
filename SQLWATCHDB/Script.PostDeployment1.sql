@@ -1226,6 +1226,145 @@ where sql_instance = @@SERVERNAME'
 	,@report_definition_type = 'Query'
 	,@report_action_id  = -1;
 
+
+exec [dbo].[usp_sqlwatch_user_add_report] 
+	 @report_id = -5
+	,@report_title = 'Backup Report'
+	,@report_description = ''
+	,@report_definition = 'SELECT 
+     [Database] = d.name
+	,[Recovery Model] = d.recovery_model_desc
+    ,[Last Backup Date] = convert(varchar(23),max(bs.backup_finish_date),121)
+    ,[Last FULL Backup] = convert(varchar(23),max(case when bs.type =''D'' then bs.backup_finish_date else null end),121)
+    ,[Last DIFF Backup] = convert(varchar(23),max(case when bs.type =''I'' then bs.backup_finish_date else null end),121)
+    ,[Last LOG Backup] =  case when d.recovery_model_desc = ''SIMPLE'' then ''N/A'' else convert(varchar(23),max(case when bs.type =''L'' then bs.backup_finish_date else null end),121) end	
+	,[Minutes Since Last Log Backup] = convert(varchar(10),case when bs.type =''L'' then datediff(minute,(max(bs.backup_finish_Date)),getdate()) else null end)
+    ,[Days Since Last Data Backup] = convert(varchar(10),datediff(day,(max(bs.backup_finish_Date)),getdate()))
+from sys.databases d
+left join msdb.dbo.backupset AS bs
+	on bs.database_name = d.name
+group by  
+	  d.name
+	, bs.name
+    , bs.server_name
+	, d.recovery_model_desc
+	, bs.type
+order by [Database]'
+	,@report_definition_type = 'Query'
+	,@report_action_id  = -1;
+
+
+exec [dbo].[usp_sqlwatch_user_add_report] 
+	 @report_id = -6
+	,@report_title = 'Out of Date Log Backup Report'
+	,@report_description = 'Report showing databases with out of date log backups.
+This report can only be triggered from check as it contains check related variables.'
+	,@report_definition = 'select * from (
+	select 
+		 [Database] = d.name
+		,[Recovery Model] = d.recovery_model_desc
+		,[Last LOG Backup] =  isnull(convert(varchar(23),max(bs.backup_finish_date),121),''--'')
+		,[Minutes Since Last Log Backup] = isnull(convert(varchar(10),datediff(minute,(max(bs.backup_finish_Date)),getdate())),'''')
+	from sys.databases d
+	left join msdb.dbo.backupset AS bs
+		on bs.database_name = d.name
+		and bs.type = ''L''
+	where d.recovery_model_desc <> ''SIMPLE''
+	and d.name not in (''tempdb'')
+	group by  
+		  d.name
+		, bs.name
+		, bs.server_name
+		, d.recovery_model_desc
+		, bs.type
+	) t
+where (datediff(minute,replace([Last LOG Backup],''--'',''''),getdate()) {THRESHOLD_WARNING}
+or datediff(minute,replace([Last LOG Backup],''--'',''''),getdate()) {THRESHOLD_CRITICAL})
+and [Last LOG Backup] <> ''--'''
+	,@report_definition_type = 'Query'
+	,@report_action_id  = -1;
+
+
+exec [dbo].[usp_sqlwatch_user_add_report] 
+	 @report_id = -7
+	,@report_title = 'Out of Date Data Backup Report'
+	,@report_description = 'Report showing databases with out of date data backups.
+This report can only be triggered from check as it contains check related variables.'
+	,@report_definition = 'select * from (
+	select 
+		 [Database] = d.name
+		,[Last Backup Date] = isnull(convert(varchar(23),max(bs.backup_finish_date),121),''--'')
+		,[Days Since Last Data Backup] = isnull(convert(varchar(10),datediff(day,(max(bs.backup_finish_Date)),getdate())),'''')
+	from sys.databases d
+	left join msdb.dbo.backupset AS bs
+		on bs.database_name = d.name
+		and bs.type <> ''L''
+	where d.name not in (''tempdb'')
+	group by  
+		  d.name
+		, bs.name
+		, bs.server_name
+		, d.recovery_model_desc
+		, bs.type
+		) t
+where (datediff(day,replace([Last Backup Date],''--'',''''),getdate()) {THRESHOLD_WARNING}
+or datediff(day,replace([Last Backup Date],''--'',''''),getdate()) {THRESHOLD_CRITICAL})
+and [Last Backup Date] <> ''--'''
+	,@report_definition_type = 'Query'
+	,@report_action_id  = -1;
+
+
+
+exec [dbo].[usp_sqlwatch_user_add_report] 
+	 @report_id = -8
+	,@report_title = 'Missing Data Backup Report'
+	,@report_description = 'Report showing databases with no data backups.
+This report can only be triggered from check as it contains check related variables.'
+	,@report_definition = 'select 
+		 [Database] = d.name
+		,[Last Backup Date] = isnull(convert(varchar(23),max(bs.backup_finish_date),121),''--'')
+	from sys.databases d
+	left join msdb.dbo.backupset AS bs
+		on bs.database_name = d.name
+		and bs.type <> ''L''
+	where d.name not in (''tempdb'')
+	and bs.backup_finish_date is null
+	group by  
+		  d.name
+		, bs.name
+		, bs.server_name
+		, d.recovery_model_desc
+		, bs.type'
+	,@report_definition_type = 'Query'
+	,@report_action_id  = -1;
+
+
+
+exec [dbo].[usp_sqlwatch_user_add_report] 
+	 @report_id = -9
+	,@report_title = 'Missing Log Backup Report'
+	,@report_description = 'Report showing databases with missing log backups.
+This report can only be triggered from check as it contains check related variables.'
+	,@report_definition = 'select 
+		 [Database] = d.name
+		,[Recovery Model] = d.recovery_model_desc
+		,[Last LOG Backup] =  isnull(convert(varchar(23),max(bs.backup_finish_date),121),''--'')
+	from sys.databases d
+	left join msdb.dbo.backupset AS bs
+		on bs.database_name = d.name
+		and bs.type = ''L''
+	where d.recovery_model_desc <> ''SIMPLE''
+	and d.name not in (''tempdb'')
+	and bs.backup_finish_date is null
+	group by  
+		  d.name
+		, bs.name
+		, bs.server_name
+		, d.recovery_model_desc
+		, bs.type'
+	,@report_definition_type = 'Query'
+	,@report_action_id  = -1;
+
 set identity_insert [dbo].[sqlwatch_config_report] off;
 enable trigger dbo.trg_sqlwatch_config_report_updated_U on [dbo].[sqlwatch_config_report];
 
@@ -1255,6 +1394,42 @@ exec [dbo].[usp_sqlwatch_user_add_action]
 	,@action_exec_type = 'T-SQL'
 	,@action_report_id = -4
 	,@action_enabled = 1
+
+exec [dbo].[usp_sqlwatch_user_add_action]
+	 @action_id = -10
+	,@action_description = 'Run Backup Report'
+	,@action_exec_type = 'T-SQL'
+	,@action_report_id = -5
+	,@action_enabled = 1
+
+exec [dbo].[usp_sqlwatch_user_add_action]
+	 @action_id = -11
+	,@action_description = 'Out of date Log Backup Report'
+	,@action_exec_type = 'T-SQL'
+	,@action_report_id = -6
+	,@action_enabled = 1
+
+exec [dbo].[usp_sqlwatch_user_add_action]
+	 @action_id = -12
+	,@action_description = 'Out of date Backup Report'
+	,@action_exec_type = 'T-SQL'
+	,@action_report_id = -7
+	,@action_enabled = 1
+
+exec [dbo].[usp_sqlwatch_user_add_action]
+	 @action_id = -13
+	,@action_description = 'Missing Data Backup Report'
+	,@action_exec_type = 'T-SQL'
+	,@action_report_id = -8
+	,@action_enabled = 1
+
+exec [dbo].[usp_sqlwatch_user_add_action]
+	 @action_id = -14
+	,@action_description = 'Missing Log Backup Report'
+	,@action_exec_type = 'T-SQL'
+	,@action_report_id = -9
+	,@action_enabled = 1
+
 
 set identity_insert [dbo].[sqlwatch_config_action] off;
 enable trigger dbo.trg_sqlwatch_config_action_updated_U ON [dbo].[sqlwatch_config_action];
@@ -1664,6 +1839,108 @@ and mtb.sql_instance = @@SERVERNAME'
 	,@action_repeat_period_minutes = 1440 --daily
 	,@action_hourly_limit = 10
 	,@action_template_id = -3
+
+--------------------------------------------------------------------------------------
+exec [dbo].[usp_sqlwatch_user_add_check]
+	 @check_id = -17
+	,@check_name = 'Oldest LOG backup (minutes)'
+	,@check_description = '<p>There is one or more databases that has no recent log backup.</p>
+<p>Databases that are in either FULL or BULK_LOGGED recovery must have frequent Transaction Log backups.
+The recovery point will be to the last Transaction Log backup and therefore these must happen often to minimise data loss.</p>
+More details: <a href="https://docs.microsoft.com/en-us/sql/relational-databases/backup-restore/recovery-models-sql-server">https://docs.microsoft.com/en-us/sql/relational-databases/backup-restore/recovery-models-sql-server</a>'
+	,@check_query = 'select max(datediff(minute,backup_finish_date,getdate()))
+from sys.databases d
+left join msdb.dbo.backupset bs
+	on bs.database_name = d.name
+	and bs.type = ''L''
+where d.recovery_model_desc <> ''SIMPLE''
+and d.name not in (''tempdb'')'
+	,@check_frequency_minutes = 5
+	,@check_threshold_warning = '>10' --warn if log backup over 10 minutes old
+	,@check_threshold_critical = '>60' --critical if log backup over 1 hour old
+	,@check_enabled = 1
+	,@check_action_id = -11
+
+	,@action_every_failure = 0
+	,@action_recovery = 1
+	,@action_repeat_period_minutes = 60 
+	,@action_hourly_limit = 10
+	,@action_template_id = -2
+
+--------------------------------------------------------------------------------------
+exec [dbo].[usp_sqlwatch_user_add_check]
+	 @check_id = -18
+	,@check_name = 'Oldest DATA backup (days)'
+	,@check_description = '<p>There is one or more databases that has no recent data backup.</p>'
+	,@check_query = 'select max(datediff(day,backup_finish_date,getdate()))
+from sys.databases d
+left join msdb.dbo.backupset bs
+	on bs.database_name = d.name
+	and bs.type <> ''L''
+where d.name not in (''tempdb'')'
+	,@check_frequency_minutes = 15
+	,@check_threshold_warning = '>1' --warn if data backup over 1 day old
+	,@check_threshold_critical = '>7' --critical if data backup over 1 week old
+	,@check_enabled = 1
+	,@check_action_id = -12
+
+	,@action_every_failure = 1
+	,@action_recovery = 1
+	,@action_repeat_period_minutes = 1440 
+	,@action_hourly_limit = 10
+	,@action_template_id = -2
+
+--------------------------------------------------------------------------------------
+exec [dbo].[usp_sqlwatch_user_add_check]
+	 @check_id = -19
+	,@check_name = 'Databases with no DATA backup'
+	,@check_description = '<p>There is one or more databases that has no data backup.</p>'
+	,@check_query = 'select count(*)
+from sys.databases d
+left join msdb.dbo.backupset bs
+	on bs.database_name = d.name
+	and bs.type <> ''L''
+where d.name not in (''tempdb'')
+and bs.backup_finish_date is null'
+	,@check_frequency_minutes = 15
+	,@check_threshold_warning = null
+	,@check_threshold_critical = '>0'
+	,@check_enabled = 1
+	,@check_action_id = -13
+
+	,@action_every_failure = 1
+	,@action_recovery = 1
+	,@action_repeat_period_minutes = 1440 
+	,@action_hourly_limit = 10
+	,@action_template_id = -2
+
+--------------------------------------------------------------------------------------
+exec [dbo].[usp_sqlwatch_user_add_check]
+	 @check_id = -20
+	,@check_name = 'Databases with no LOG backup'
+	,@check_description = '<p>There is one or more databases that are in FULL or BULK_LOGGED recovery model that have not Log backups.</p>
+It is critical to maintain Log backups for databases in these recovery modes in order to keep the log small, othwerise it will be constantly growing.
+Without a valid log backup the point in time recovery will not be possible.</p>
+More details: <a href="https://docs.microsoft.com/en-us/sql/relational-databases/backup-restore/recovery-models-sql-server">https://docs.microsoft.com/en-us/sql/relational-databases/backup-restore/recovery-models-sql-server</a>'
+	,@check_query = 'select count(*)
+from sys.databases d
+left join msdb.dbo.backupset bs
+	on bs.database_name = d.name
+	and bs.type = ''L''
+where d.recovery_model_desc <> ''SIMPLE''
+and d.name not in (''tempdb'')
+and bs.backup_finish_date is null'
+	,@check_frequency_minutes = 15
+	,@check_threshold_warning = null 
+	,@check_threshold_critical = '>0' 
+	,@check_enabled = 1
+	,@check_action_id = -14
+
+	,@action_every_failure = 1
+	,@action_recovery = 1
+	,@action_repeat_period_minutes = 1440 
+	,@action_hourly_limit = 10
+	,@action_template_id = -2
 
 set identity_insert [dbo].[sqlwatch_config_check] off;
 enable trigger dbo.trg_sqlwatch_config_check_U on [dbo].[sqlwatch_config_check];

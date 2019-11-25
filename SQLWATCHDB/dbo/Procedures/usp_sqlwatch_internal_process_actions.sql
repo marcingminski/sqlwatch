@@ -6,7 +6,9 @@
 	@check_value decimal(28,2),
 	@check_snapshot_time datetime2(0),
 	@check_description nvarchar(max) = null,
-	@check_name nvarchar(max)
+	@check_name nvarchar(max),
+	@check_threshold_warning varchar(100) = null,
+	@check_threshold_critical varchar(100) = null
 	)
 as
 
@@ -44,7 +46,8 @@ declare @action_type varchar(200) = 'NONE',
 		@body nvarchar(max),
 		@report_id smallint,
 		@content_info varbinary(128),
-		@action_attributes nvarchar(max) = ''
+		@action_attributes nvarchar(max) = '',
+		@error_message nvarchar(max) = ''
 
 --need to this so we can detect the caller in [usp_sqlwatch_internal_process_reports] to avoid circular ref.
 select @content_info = convert(varbinary(128),convert(varchar(max),@action_id))
@@ -262,16 +265,30 @@ if @action_type  <> 'NONE'
 		if @report_id is not null
 			begin
 				--if we have action that calls a report, call the report here:
-				exec [dbo].[usp_sqlwatch_internal_process_reports] 
-					 @report_id = @report_id
-					,@check_status = @check_status
-					,@check_value = @check_value
-					,@check_name = @check_name
-					,@subject = @subject
-					,@body = @body
+				begin try
+					exec [dbo].[usp_sqlwatch_internal_process_reports] 
+						 @report_id = @report_id
+						,@check_status = @check_status
+						,@check_value = @check_value
+						,@check_name = @check_name
+						,@subject = @subject
+						,@body = @body
+						,@check_threshold_warning = @check_threshold_warning
+						,@check_threshold_critical = @check_threshold_critical
 
-				set @action_attributes = @action_attributes + '
+					set @action_attributes = @action_attributes + '
 	ReportId="' + convert(varchar(10),@report_id) + '"'
+				end try
+				begin catch
+					select @error_message = @error_message + '
+' + convert(varchar(23),getdate(),121) + ': ActionID: ' + convert(varchar(10),@action_id) + ' ReportID: ' + convert(varchar(10),@report_id) + '
+		ERROR_NUMBER: ' + isnull(convert(varchar(10),ERROR_NUMBER()),'') + '
+        ERROR_SEVERITY : ' + isnull(convert(varchar(max),ERROR_SEVERITY()),'') + '
+        ERROR_STATE : ' + isnull(convert(varchar(max),ERROR_STATE()),'') + '   
+        ERROR_PROCEDURE : ' + isnull(convert(varchar(max),ERROR_PROCEDURE()),'') + '   
+        ERROR_LINE : ' + isnull(convert(varchar(max),ERROR_LINE()),'') + '   
+        ERROR_MESSAGE : ' + isnull(convert(varchar(max),ERROR_MESSAGE()),'') + ''
+				end catch
 			end
 	end
 
@@ -279,6 +296,7 @@ if @action_type  <> 'NONE'
 
  set @action_attributes = '{' + @action_attributes + '
 }'
+
 
 --log action for each check. This is so we can track how many actions are being executed per each check to satisfy 
 --the [action_hourly_limit] parameter and to have an overall visibility of what checks trigger what actions. 
@@ -289,4 +307,14 @@ if @action_type <> 'NONE'
 	begin
 		insert into [dbo].[sqlwatch_logger_check_action] ([sql_instance], [snapshot_type_id], [check_id], [action_id], [snapshot_time], [action_type], [action_attributes])
 		select @@SERVERNAME, 18, @check_id, @action_id, @check_snapshot_time, @action_type, @action_attributes
+	end
+
+
+if nullif(@error_message,'') is not null
+	begin
+		set @error_message = 'Errors during action execution (' + OBJECT_NAME(@@PROCID) + '): 
+' + @error_message
+
+		--print all errors and terminate the batch which will also fail the agent job for the attention:
+		raiserror ('%s',16,1,@error_message)
 	end
