@@ -3,7 +3,7 @@
 	/* history of executed checks and results */
 	[sql_instance] varchar(32) not null,
 	[snapshot_time] datetime2(0) not null,
-	[snapshot_type_id] tinyint default 18 not null,
+	[snapshot_type_id] tinyint not null constraint df_sqlwatch_logger_check_type default (18),
 	[check_id] smallint not null,
 	[check_value] real not null,
 	[check_status] varchar(50) not null,

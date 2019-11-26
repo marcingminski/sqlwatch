@@ -28,7 +28,6 @@ Post-Deployment Script Template
 --		ALTER TABLE [dbo].[sqlwatch_logger_perf_file_stats] CHECK CONSTRAINT [fk_pk_sql_perf_mon_file_stats_database];
 --	end
 
-
 --------------------------------------------------------------------------------------
 --
 --------------------------------------------------------------------------------------
@@ -402,32 +401,33 @@ where t.[counter_name] is null
 
 --------------------------------------------------------------------------------------
 -- add snapshot types
+-- 8 day week and 32 day month so we can cover weekly and monthly baselines
 --------------------------------------------------------------------------------------
 ;merge [dbo].[sqlwatch_config_snapshot_type] as target
 using (
 	/* performance data logger */
-	select [snapshot_type_id] = 1, [snapshot_type_desc] = 'Performance', [snapshot_retention_days] = 7
+	select [snapshot_type_id] = 1, [snapshot_type_desc] = 'Performance', [snapshot_retention_days] = 8
 	union 
 	/* size data logger */
 	select [snapshot_type_id] = 2, [snapshot_type_desc] = 'Disk Utilisation Database', [snapshot_retention_days] = 365
 	union 
 	/* indexes */
-	select [snapshot_type_id] = 3, [snapshot_type_desc] = 'Missing indexes', [snapshot_retention_days] = 30
+	select [snapshot_type_id] = 3, [snapshot_type_desc] = 'Missing indexes', [snapshot_retention_days] = 32
 	union 
 	/* XES Waits */
-	select [snapshot_type_id] = 6, [snapshot_type_desc] = 'XES Waits', [snapshot_retention_days] = 7
+	select [snapshot_type_id] = 6, [snapshot_type_desc] = 'XES Waits', [snapshot_retention_days] = 8
 	union
 	/* XES SQLWATCH Long queries */
-	select [snapshot_type_id] = 7, [snapshot_type_desc] = 'XES Long Queries', [snapshot_retention_days] = 7
+	select [snapshot_type_id] = 7, [snapshot_type_desc] = 'XES Long Queries', [snapshot_retention_days] = 8
 	union
 	/* XES SQLWATCH Waits */
-	select [snapshot_type_id] = 8, [snapshot_type_desc] = 'XES Waits', [snapshot_retention_days] = 30  --is this used
+	select [snapshot_type_id] = 8, [snapshot_type_desc] = 'XES Waits', [snapshot_retention_days] = 32  --is this used
 	union
 	/* XES SQLWATCH Blockers */
-	select [snapshot_type_id] = 9, [snapshot_type_desc] = 'XES Blockers', [snapshot_retention_days] = 30
+	select [snapshot_type_id] = 9, [snapshot_type_desc] = 'XES Blockers', [snapshot_retention_days] = 32
 	union
 	/* XES diagnostics */
-	select [snapshot_type_id] = 10, [snapshot_type_desc] = 'XES Query Processing', [snapshot_retention_days] = 30
+	select [snapshot_type_id] = 10, [snapshot_type_desc] = 'XES Query Processing', [snapshot_retention_days] = 32
 	union
 	/* whoisactive */
 	select [snapshot_type_id] = 11, [snapshot_type_desc] = 'WhoIsActive', [snapshot_retention_days] = 3
@@ -462,7 +462,37 @@ when not matched then
 	values (source.[snapshot_type_id],source.[snapshot_type_desc],source.[snapshot_retention_days])
 ;
 
+--------------------------------------------------------------------------------------
+--
+--------------------------------------------------------------------------------------
+if (select count(*) from [dbo].[sqlwatch_config_exclude_database]) = 0
+	begin
+		 --exclude collecting missing indexes from ReportServer and system databases
+		insert into [dbo].[sqlwatch_config_exclude_database] ([database_name_pattern], [snapshot_type_id])
+		values  ('%ReportServer%',3),
+				('msdb',3),
+				('master',3)
+	end
 
+--------------------------------------------------------------------------------------
+-- set baseline for empty last_seen dates (when upgrading from previous versions)
+--------------------------------------------------------------------------------------
+declare @sql varchar(max)
+set @sql = ''
+
+select @sql = @sql + '
+update ' + TABLE_SCHEMA + '.' + TABLE_NAME + '
+set [' + COLUMN_NAME + '] = GETUTCDATE()
+where [' + COLUMN_NAME + '] is null
+'
+ from INFORMATION_SCHEMA.COLUMNS
+/*	I should have been more careful when naming columns, I ended up having all these variations.
+	Yes, I know....*/
+WHERE COLUMN_NAME in ('deleted_when', 'date_deleted', 'last_seen','last_seen_date','date_last_seen')
+AND TABLE_NAME LIKE 'sqlwatch_meta%'
+
+
+exec (@sql)
 --------------------------------------------------------------------------------------
 -- wait stat categories
 --------------------------------------------------------------------------------------
@@ -852,7 +882,7 @@ table.sqlwatchtbl thead th { font-size: 12px; font-weight: bold; color: #FFFFFF;
 --------------------------------------------------------------------------------------
 -- default action template
 --------------------------------------------------------------------------------------
-declare @action_tempalte_plain nvarchar(max) = 'Check: {CHECK_NAME} ( CheckId: {CHECK_ID} )
+declare @action_template_plain nvarchar(max) = 'Check: {CHECK_NAME} ( CheckId: {CHECK_ID} )
 
 Current status:  {CHECK_STATUS}
 Current value: {CHECK_VALUE}
@@ -880,7 +910,7 @@ Critical threshold: {THRESHOLD_CRITICAL}
 Sent from SQLWATCH on host: {SQL_INSTANCE}
 https://docs.sqlwatch.io'
 
-declare @action_tempalte_report_html nvarchar(max) = '<p>Check: {CHECK_NAME} ( CheckId: {CHECK_ID} )</p>
+declare @action_template_report_html nvarchar(max) = '<p>Check: {CHECK_NAME} ( CheckId: {CHECK_ID} )</p>
 
 <p>Current status: <b>{CHECK_STATUS}</b>
 <br>Current value: <b>{CHECK_VALUE}</b></p>
@@ -912,6 +942,32 @@ declare @action_tempalte_report_html nvarchar(max) = '<p>Check: {CHECK_NAME} ( C
 <p>Sent from SQLWATCH on host: {SQL_INSTANCE}</p>
 <p><a href="https://docs.sqlwatch.io">https://docs.sqlwatch.io</a> </p>';
 
+declare @action_template_html nvarchar(max) = '<p>Check: {CHECK_NAME} ( CheckId: {CHECK_ID} )</p>
+
+<p>Current status: <b>{CHECK_STATUS}</b>
+<br>Current value: <b>{CHECK_VALUE}</b></p>
+
+<p>Previous value: {CHECK_LAST_VALUE}
+<br>Previous status: {CHECK_LAST_STATUS}
+<br>Previous change: {LAST_STATUS_CHANGE}</p>
+
+<p>SQL instance: <b>{SQL_INSTANCE}</b>
+<br>Alert time: <b>{CHECK_TIME}</b></p>
+
+<p>Warning threshold: {THRESHOLD_WARNING}
+<br>Critical threshold: {THRESHOLD_CRITICAL}</p>
+
+<p>--- Check Description:</p>
+
+<p>{CHECK_DESCRIPTION}</p>
+
+<p>--- Check Query:</p>
+
+<p><span style="display:block;background:#ddd; margin-top:0.8em;padding-left:10px;padding-bottom:1em;padding-top:1em;white-space: pre;"><code>{CHECK_QUERY}</code></span></p>
+
+<p>Sent from SQLWATCH on host: {SQL_INSTANCE}</p>
+<p><a href="https://docs.sqlwatch.io">https://docs.sqlwatch.io</a> </p>';
+
 disable trigger [dbo].[trg_sqlwatch_config_check_action_template_modify] on [dbo].[sqlwatch_config_check_action_template];  --so we dont populate updated date as this is to detect if a user has modified default template
 set identity_insert [dbo].[sqlwatch_config_check_action_template] on;
 merge [dbo].[sqlwatch_config_check_action_template] as target
@@ -920,11 +976,11 @@ using (
 		 [action_template_id] = -1
 		,[action_template_description] = 'Default plain notification template (Text). This template is usually used for simple actions that send plain text messages on the back of the check.'
 		,[action_template_fail_subject] = '{CHECK_STATUS}: {CHECK_NAME} on {SQL_INSTANCE}'
-		,[action_template_fail_body] = @action_tempalte_plain
+		,[action_template_fail_body] = @action_template_plain
 		,[action_template_repeat_subject] = 'REPEATED: {CHECK_STATUS}: {CHECK_NAME} on {SQL_INSTANCE}'
-		,[action_template_repeat_body] = @action_tempalte_plain
+		,[action_template_repeat_body] = @action_template_plain
 		,[action_template_recover_subject] = 'RECOVERED: {CHECK_STATUS}: {CHECK_NAME} on {SQL_INSTANCE}'
-		,[action_template_recover_body]	= @action_tempalte_plain
+		,[action_template_recover_body]	= @action_template_plain
 
 	union all
 
@@ -932,11 +988,23 @@ using (
 		 [action_template_id] = -2
 		,[action_template_description] = 'Default report notification template (HTML). This template is used for actions that trigger reports on the back of the check.'
 		,[action_template_fail_subject] = '{CHECK_STATUS}: {CHECK_NAME} on {SQL_INSTANCE}'
-		,[action_template_fail_body] = @action_tempalte_report_html
+		,[action_template_fail_body] = @action_template_report_html
 		,[action_template_repeat_subject] = 'REPEATED: {CHECK_STATUS}: {CHECK_NAME} on {SQL_INSTANCE}'
-		,[action_template_repeat_body] = @action_tempalte_report_html
+		,[action_template_repeat_body] = @action_template_report_html
 		,[action_template_recover_subject] = 'RECOVERED: {CHECK_STATUS}: {CHECK_NAME} on {SQL_INSTANCE}'
-		,[action_template_recover_body]	= @action_tempalte_report_html
+		,[action_template_recover_body]	= @action_template_report_html
+
+	union all
+
+	select
+		 [action_template_id] = -3
+		,[action_template_description] = 'Default notification template (HTML). This template is used for actions that do not trigger reports but have HTML content'
+		,[action_template_fail_subject] = '{CHECK_STATUS}: {CHECK_NAME} on {SQL_INSTANCE}'
+		,[action_template_fail_body] = @action_template_html
+		,[action_template_repeat_subject] = 'REPEATED: {CHECK_STATUS}: {CHECK_NAME} on {SQL_INSTANCE}'
+		,[action_template_repeat_body] = @action_template_html
+		,[action_template_recover_subject] = 'RECOVERED: {CHECK_STATUS}: {CHECK_NAME} on {SQL_INSTANCE}'
+		,[action_template_recover_body]	= @action_template_html
 		) as source
 on target.[action_template_id] = source.[action_template_id]
 when not matched then
@@ -1158,6 +1226,145 @@ where sql_instance = @@SERVERNAME'
 	,@report_definition_type = 'Query'
 	,@report_action_id  = -1;
 
+
+exec [dbo].[usp_sqlwatch_user_add_report] 
+	 @report_id = -5
+	,@report_title = 'Backup Report'
+	,@report_description = ''
+	,@report_definition = 'SELECT 
+     [Database] = d.name
+	,[Recovery Model] = d.recovery_model_desc
+    ,[Last Backup Date] = convert(varchar(23),max(bs.backup_finish_date),121)
+    ,[Last FULL Backup] = convert(varchar(23),max(case when bs.type =''D'' then bs.backup_finish_date else null end),121)
+    ,[Last DIFF Backup] = convert(varchar(23),max(case when bs.type =''I'' then bs.backup_finish_date else null end),121)
+    ,[Last LOG Backup] =  case when d.recovery_model_desc = ''SIMPLE'' then ''N/A'' else convert(varchar(23),max(case when bs.type =''L'' then bs.backup_finish_date else null end),121) end	
+	,[Minutes Since Last Log Backup] = convert(varchar(10),case when bs.type =''L'' then datediff(minute,(max(bs.backup_finish_Date)),getdate()) else null end)
+    ,[Days Since Last Data Backup] = convert(varchar(10),datediff(day,(max(bs.backup_finish_Date)),getdate()))
+from sys.databases d
+left join msdb.dbo.backupset AS bs
+	on bs.database_name = d.name
+group by  
+	  d.name
+	, bs.name
+    , bs.server_name
+	, d.recovery_model_desc
+	, bs.type
+order by [Database]'
+	,@report_definition_type = 'Query'
+	,@report_action_id  = -1;
+
+
+exec [dbo].[usp_sqlwatch_user_add_report] 
+	 @report_id = -6
+	,@report_title = 'Out of Date Log Backup Report'
+	,@report_description = 'Report showing databases with out of date log backups.
+This report can only be triggered from check as it contains check related variables.'
+	,@report_definition = 'select * from (
+	select 
+		 [Database] = d.name
+		,[Recovery Model] = d.recovery_model_desc
+		,[Last LOG Backup] =  isnull(convert(varchar(23),max(bs.backup_finish_date),121),''--'')
+		,[Minutes Since Last Log Backup] = isnull(convert(varchar(10),datediff(minute,(max(bs.backup_finish_Date)),getdate())),'''')
+	from sys.databases d
+	left join msdb.dbo.backupset AS bs
+		on bs.database_name = d.name
+		and bs.type = ''L''
+	where d.recovery_model_desc <> ''SIMPLE''
+	and d.name not in (''tempdb'')
+	group by  
+		  d.name
+		, bs.name
+		, bs.server_name
+		, d.recovery_model_desc
+		, bs.type
+	) t
+where (datediff(minute,replace([Last LOG Backup],''--'',''''),getdate()) {THRESHOLD_WARNING}
+or datediff(minute,replace([Last LOG Backup],''--'',''''),getdate()) {THRESHOLD_CRITICAL})
+and [Last LOG Backup] <> ''--'''
+	,@report_definition_type = 'Query'
+	,@report_action_id  = -1;
+
+
+exec [dbo].[usp_sqlwatch_user_add_report] 
+	 @report_id = -7
+	,@report_title = 'Out of Date Data Backup Report'
+	,@report_description = 'Report showing databases with out of date data backups.
+This report can only be triggered from check as it contains check related variables.'
+	,@report_definition = 'select * from (
+	select 
+		 [Database] = d.name
+		,[Last Backup Date] = isnull(convert(varchar(23),max(bs.backup_finish_date),121),''--'')
+		,[Days Since Last Data Backup] = isnull(convert(varchar(10),datediff(day,(max(bs.backup_finish_Date)),getdate())),'''')
+	from sys.databases d
+	left join msdb.dbo.backupset AS bs
+		on bs.database_name = d.name
+		and bs.type <> ''L''
+	where d.name not in (''tempdb'')
+	group by  
+		  d.name
+		, bs.name
+		, bs.server_name
+		, d.recovery_model_desc
+		, bs.type
+		) t
+where (datediff(day,replace([Last Backup Date],''--'',''''),getdate()) {THRESHOLD_WARNING}
+or datediff(day,replace([Last Backup Date],''--'',''''),getdate()) {THRESHOLD_CRITICAL})
+and [Last Backup Date] <> ''--'''
+	,@report_definition_type = 'Query'
+	,@report_action_id  = -1;
+
+
+
+exec [dbo].[usp_sqlwatch_user_add_report] 
+	 @report_id = -8
+	,@report_title = 'Missing Data Backup Report'
+	,@report_description = 'Report showing databases with no data backups.
+This report can only be triggered from check as it contains check related variables.'
+	,@report_definition = 'select 
+		 [Database] = d.name
+		,[Last Backup Date] = isnull(convert(varchar(23),max(bs.backup_finish_date),121),''--'')
+	from sys.databases d
+	left join msdb.dbo.backupset AS bs
+		on bs.database_name = d.name
+		and bs.type <> ''L''
+	where d.name not in (''tempdb'')
+	and bs.backup_finish_date is null
+	group by  
+		  d.name
+		, bs.name
+		, bs.server_name
+		, d.recovery_model_desc
+		, bs.type'
+	,@report_definition_type = 'Query'
+	,@report_action_id  = -1;
+
+
+
+exec [dbo].[usp_sqlwatch_user_add_report] 
+	 @report_id = -9
+	,@report_title = 'Missing Log Backup Report'
+	,@report_description = 'Report showing databases with missing log backups.
+This report can only be triggered from check as it contains check related variables.'
+	,@report_definition = 'select 
+		 [Database] = d.name
+		,[Recovery Model] = d.recovery_model_desc
+		,[Last LOG Backup] =  isnull(convert(varchar(23),max(bs.backup_finish_date),121),''--'')
+	from sys.databases d
+	left join msdb.dbo.backupset AS bs
+		on bs.database_name = d.name
+		and bs.type = ''L''
+	where d.recovery_model_desc <> ''SIMPLE''
+	and d.name not in (''tempdb'')
+	and bs.backup_finish_date is null
+	group by  
+		  d.name
+		, bs.name
+		, bs.server_name
+		, d.recovery_model_desc
+		, bs.type'
+	,@report_definition_type = 'Query'
+	,@report_action_id  = -1;
+
 set identity_insert [dbo].[sqlwatch_config_report] off;
 enable trigger dbo.trg_sqlwatch_config_report_updated_U on [dbo].[sqlwatch_config_report];
 
@@ -1188,6 +1395,42 @@ exec [dbo].[usp_sqlwatch_user_add_action]
 	,@action_report_id = -4
 	,@action_enabled = 1
 
+exec [dbo].[usp_sqlwatch_user_add_action]
+	 @action_id = -10
+	,@action_description = 'Run Backup Report'
+	,@action_exec_type = 'T-SQL'
+	,@action_report_id = -5
+	,@action_enabled = 1
+
+exec [dbo].[usp_sqlwatch_user_add_action]
+	 @action_id = -11
+	,@action_description = 'Out of date Log Backup Report'
+	,@action_exec_type = 'T-SQL'
+	,@action_report_id = -6
+	,@action_enabled = 1
+
+exec [dbo].[usp_sqlwatch_user_add_action]
+	 @action_id = -12
+	,@action_description = 'Out of date Backup Report'
+	,@action_exec_type = 'T-SQL'
+	,@action_report_id = -7
+	,@action_enabled = 1
+
+exec [dbo].[usp_sqlwatch_user_add_action]
+	 @action_id = -13
+	,@action_description = 'Missing Data Backup Report'
+	,@action_exec_type = 'T-SQL'
+	,@action_report_id = -8
+	,@action_enabled = 1
+
+exec [dbo].[usp_sqlwatch_user_add_action]
+	 @action_id = -14
+	,@action_description = 'Missing Log Backup Report'
+	,@action_exec_type = 'T-SQL'
+	,@action_report_id = -9
+	,@action_enabled = 1
+
+
 set identity_insert [dbo].[sqlwatch_config_action] off;
 enable trigger dbo.trg_sqlwatch_config_action_updated_U ON [dbo].[sqlwatch_config_action];
 
@@ -1195,6 +1438,7 @@ enable trigger dbo.trg_sqlwatch_config_action_updated_U ON [dbo].[sqlwatch_confi
 -- Load default checks
 --------------------------------------------------------------------------------------
 disable trigger dbo.trg_sqlwatch_config_check_U on [dbo].[sqlwatch_config_check];
+disable trigger dbo.trg_sqlwatch_config_check_action_updated_date_U on [dbo].[sqlwatch_config_check_action];
 set identity_insert [dbo].[sqlwatch_config_check] on;
 
 exec [dbo].[usp_sqlwatch_user_add_check]
@@ -1437,9 +1681,270 @@ and time_queued < dateadd(hour,-1,SYSDATETIME())'
 	,@action_hourly_limit = 10
 	,@action_template_id = -1
 
+--------------------------------------------------------------------------------------
+exec [dbo].[usp_sqlwatch_user_add_check]
+	 @check_id = -12
+	,@check_name = 'Databases with Auto Close Enabled'
+	,@check_description = '<p>There is one or more databases with Auto Close Enabled.</p>
+<p><a href="https://docs.microsoft.com/en-us/sql/relational-databases/policy-based-management/set-the-auto-close-database-option-to-off">https://docs.microsoft.com/en-us/sql/relational-databases/policy-based-management/set-the-auto-close-database-option-to-off</a>
+<br>When AUTO_CLOSE is set ON, this option can cause performance degradation on frequently accessed databases because of the increased overhead of opening and closing the database after each connection. AUTO_CLOSE also flushes the procedure cache after each connection.</p>
+
+<p>You can use the below query to see databases with AUTO_CLOSE:
+<span style="display:block;background:#ddd; margin-top:0.8em;padding:1em;white-space: pre;" ><code>select * from sys.databases
+where is_auto_close_on = 1</code></span></p>'
+	,@check_query = 'select count(*)
+from sys.databases sdb
+--join on meta database to respect exclusions, othwerise we could query sys.databases directly:
+inner join [dbo].[sqlwatch_meta_database] mtb
+on sdb.name = mtb.database_name collate database_default
+and sdb.create_date = mtb.database_create_date
+where sdb.is_auto_close_on = 1
+and mtb.sql_instance = @@SERVERNAME'
+	,@check_frequency_minutes = 60
+	,@check_threshold_warning = NULL
+	,@check_threshold_critical = '>0'
+	,@check_enabled = 1
+	,@check_action_id = -1
+
+	,@action_every_failure = 0
+	,@action_recovery = 1
+	,@action_repeat_period_minutes = 1440 --daily
+	,@action_hourly_limit = 10
+	,@action_template_id = -3
+
+--------------------------------------------------------------------------------------
+exec [dbo].[usp_sqlwatch_user_add_check]
+	 @check_id = -13
+	,@check_name = 'Databases with Auto Shrink Enabled'
+	,@check_description = '<p>There is one or more databases with Auto Shrink Enabled.</p>
+<p><a href="https://docs.microsoft.com/en-us/sql/relational-databases/policy-based-management/set-the-auto-shrink-database-option-to-off">https://docs.microsoft.com/en-us/sql/relational-databases/policy-based-management/set-the-auto-shrink-database-option-to-off</a></p>
+<p><a href="https://support.microsoft.com/en-us/help/2160663/recommendations-and-guidelines-for-setting-the-auto-shrink-database-op">https://support.microsoft.com/en-us/help/2160663/recommendations-and-guidelines-for-setting-the-auto-shrink-database-op</a></p>
+<p>When you enable this option for a database, this database becomes eligible for shrinking by a background task. This background task evaluates all databases which satisfy the criteria for Shrinking and shrink the data or log files. 
+You have to carefully evaluate setting this option for the databases in a SQL Server instance. Frequent grow and shrink operations can lead to various performance problems and physical fragmentation.</p>
+<p>1. If multiple databases undergo frequent shrink and grow operations, then this will easily lead to file system level fragmentation.</p>
+<p>2. After AUTO_SHRINK successfully shrinks the data or log file, a subsequent DML or DDL operation can slow down significantly if space is required and the files need to grow.</p>
+<p>3. The AUTO_SHRINK background task can take up resources when there are a lot of databases that need shrinking.</p>
+<p>4. The AUTO_SHRINK background task will need to acquire locks and other synchronization which can conflict with other regular application activity.</p>
+</p>
+
+<p>You can use the below query to see databases with AUTO_SHRINK:
+<span style="display:block;background:#ddd; margin-top:0.8em;padding:1em;white-space: pre;" ><code>select * from sys.databases
+where is_auto_shrink_on = 1</code></span></p>'
+	,@check_query = 'select count(*)
+from sys.databases sdb
+--join on meta database to respect exclusions, othwerise we could query sys.databases directly:
+inner join [dbo].[sqlwatch_meta_database] mtb
+on sdb.name = mtb.database_name collate database_default
+and sdb.create_date = mtb.database_create_date
+where sdb.is_auto_shrink_on = 1
+and mtb.sql_instance = @@SERVERNAME'
+	,@check_frequency_minutes = 60
+	,@check_threshold_warning = NULL
+	,@check_threshold_critical = '>0'
+	,@check_enabled = 1
+	,@check_action_id = -1
+
+	,@action_every_failure = 0
+	,@action_recovery = 1
+	,@action_repeat_period_minutes = 1440 --daily
+	,@action_hourly_limit = 10
+	,@action_template_id = -3
+
+--------------------------------------------------------------------------------------
+exec [dbo].[usp_sqlwatch_user_add_check]
+	 @check_id = -14
+	,@check_name = 'Databases not ONLINE'
+	,@check_description = '<p>There is one or more databases with status other than ONLINE.</p>
+<p>You can use the below query to see databases not ONLINE:
+<span style="display:block;background:#ddd; margin-top:0.8em;padding:1em;white-space: pre;" ><code>select *
+from sys.databases
+where state <> 0</code></span></p>'
+	,@check_query = 'select count(*)
+from sys.databases sdb
+--join on meta database to respect exclusions, othwerise we could query sys.databases directly:
+inner join [dbo].[sqlwatch_meta_database] mtb
+on sdb.name = mtb.database_name collate database_default
+and sdb.create_date = mtb.database_create_date
+where sdb.state <> 0
+and mtb.sql_instance = @@SERVERNAME'
+	,@check_frequency_minutes = 60
+	,@check_threshold_warning = NULL
+	,@check_threshold_critical = '>0'
+	,@check_enabled = 1
+	,@check_action_id = -1
+
+	,@action_every_failure = 0
+	,@action_recovery = 1
+	,@action_repeat_period_minutes = 1440 --daily
+	,@action_hourly_limit = 10
+	,@action_template_id = -3
+
+--------------------------------------------------------------------------------------
+exec [dbo].[usp_sqlwatch_user_add_check]
+	 @check_id = -15
+	,@check_name = 'Databases not MULTI_USER'
+	,@check_description = '<p>There is one or more databases with user access other than MULTI_USER.</p>
+<p>This means that database may not be accessible to multiple concurrent users or access is restricted.</p>
+<p>You can use the below query to see databases with AUTO_SHRINK on:
+<span style="display:block;background:#ddd; margin-top:0.8em;padding:1em;white-space: pre;" ><code>select *
+from sys.databases
+where user_access <> 0</code></span></p>'
+	,@check_query = 'select count(*)
+from sys.databases sdb
+--join on meta database to respect exclusions, othwerise we could query sys.databases directly:
+inner join [dbo].[sqlwatch_meta_database] mtb
+on sdb.name = mtb.database_name collate database_default
+and sdb.create_date = mtb.database_create_date
+where sdb.user_access <> 0
+and mtb.sql_instance = @@SERVERNAME'
+	,@check_frequency_minutes = 60
+	,@check_threshold_warning = NULL
+	,@check_threshold_critical = '>0'
+	,@check_enabled = 1
+	,@check_action_id = -1
+
+	,@action_every_failure = 0
+	,@action_recovery = 1
+	,@action_repeat_period_minutes = 1440 --daily
+	,@action_hourly_limit = 10
+	,@action_template_id = -3
+
+--------------------------------------------------------------------------------------
+exec [dbo].[usp_sqlwatch_user_add_check]
+	 @check_id = -16
+	,@check_name = 'Database page_verify not CHECKSUM'
+	,@check_description = '<p>There is one or more databases with page_verify other than CHECKSUM.</p>
+<p><a href="https://docs.microsoft.com/en-us/sql/relational-databases/policy-based-management/set-the-page-verify-database-option-to-checksum">https://docs.microsoft.com/en-us/sql/relational-databases/policy-based-management/set-the-page-verify-database-option-to-checksum</a></p>
+<p>When CHECKSUM is enabled for the PAGE_VERIFY database option, the SQL Server Database Engine calculates a checksum over the contents of the whole page, and stores the value in the page header when a page is written to disk. When the page is read from disk, the checksum is recomputed and compared to the checksum value that is stored in the page header. This helps provide a high level of data-file integrity.</p>
+<p>You can use the below query to see databases with CHECKSUM not set:
+<span style="display:block;background:#ddd; margin-top:0.8em;padding:1em;white-space: pre;" ><code>select *
+from sys.databases
+where page_verify_option <> 2</code></span></p>'
+	,@check_query = 'select count(*)
+from sys.databases sdb
+--join on meta database to respect exclusions, othwerise we could query sys.databases directly:
+inner join [dbo].[sqlwatch_meta_database] mtb
+on sdb.name = mtb.database_name collate database_default
+and sdb.create_date = mtb.database_create_date
+where sdb.page_verify_option <> 2
+and mtb.sql_instance = @@SERVERNAME'
+	,@check_frequency_minutes = 60
+	,@check_threshold_warning = NULL
+	,@check_threshold_critical = '>0'
+	,@check_enabled = 1
+	,@check_action_id = -1
+
+	,@action_every_failure = 0
+	,@action_recovery = 1
+	,@action_repeat_period_minutes = 1440 --daily
+	,@action_hourly_limit = 10
+	,@action_template_id = -3
+
+--------------------------------------------------------------------------------------
+exec [dbo].[usp_sqlwatch_user_add_check]
+	 @check_id = -17
+	,@check_name = 'Oldest LOG backup (minutes)'
+	,@check_description = '<p>There is one or more databases that has no recent log backup.</p>
+<p>Databases that are in either FULL or BULK_LOGGED recovery must have frequent Transaction Log backups.
+The recovery point will be to the last Transaction Log backup and therefore these must happen often to minimise data loss.</p>
+More details: <a href="https://docs.microsoft.com/en-us/sql/relational-databases/backup-restore/recovery-models-sql-server">https://docs.microsoft.com/en-us/sql/relational-databases/backup-restore/recovery-models-sql-server</a>'
+	,@check_query = 'select max(datediff(minute,backup_finish_date,getdate()))
+from sys.databases d
+left join msdb.dbo.backupset bs
+	on bs.database_name = d.name
+	and bs.type = ''L''
+where d.recovery_model_desc <> ''SIMPLE''
+and d.name not in (''tempdb'')'
+	,@check_frequency_minutes = 5
+	,@check_threshold_warning = '>10' --warn if log backup over 10 minutes old
+	,@check_threshold_critical = '>60' --critical if log backup over 1 hour old
+	,@check_enabled = 1
+	,@check_action_id = -11
+
+	,@action_every_failure = 0
+	,@action_recovery = 1
+	,@action_repeat_period_minutes = 60 
+	,@action_hourly_limit = 10
+	,@action_template_id = -2
+
+--------------------------------------------------------------------------------------
+exec [dbo].[usp_sqlwatch_user_add_check]
+	 @check_id = -18
+	,@check_name = 'Oldest DATA backup (days)'
+	,@check_description = '<p>There is one or more databases that has no recent data backup.</p>'
+	,@check_query = 'select max(datediff(day,backup_finish_date,getdate()))
+from sys.databases d
+left join msdb.dbo.backupset bs
+	on bs.database_name = d.name
+	and bs.type <> ''L''
+where d.name not in (''tempdb'')'
+	,@check_frequency_minutes = 15
+	,@check_threshold_warning = '>1' --warn if data backup over 1 day old
+	,@check_threshold_critical = '>7' --critical if data backup over 1 week old
+	,@check_enabled = 1
+	,@check_action_id = -12
+
+	,@action_every_failure = 1
+	,@action_recovery = 1
+	,@action_repeat_period_minutes = 1440 
+	,@action_hourly_limit = 10
+	,@action_template_id = -2
+
+--------------------------------------------------------------------------------------
+exec [dbo].[usp_sqlwatch_user_add_check]
+	 @check_id = -19
+	,@check_name = 'Databases with no DATA backup'
+	,@check_description = '<p>There is one or more databases that has no data backup.</p>'
+	,@check_query = 'select count(*)
+from sys.databases d
+left join msdb.dbo.backupset bs
+	on bs.database_name = d.name
+	and bs.type <> ''L''
+where d.name not in (''tempdb'')
+and bs.backup_finish_date is null'
+	,@check_frequency_minutes = 15
+	,@check_threshold_warning = null
+	,@check_threshold_critical = '>0'
+	,@check_enabled = 1
+	,@check_action_id = -13
+
+	,@action_every_failure = 1
+	,@action_recovery = 1
+	,@action_repeat_period_minutes = 1440 
+	,@action_hourly_limit = 10
+	,@action_template_id = -2
+
+--------------------------------------------------------------------------------------
+exec [dbo].[usp_sqlwatch_user_add_check]
+	 @check_id = -20
+	,@check_name = 'Databases with no LOG backup'
+	,@check_description = '<p>There is one or more databases that are in FULL or BULK_LOGGED recovery model that have not Log backups.</p>
+It is critical to maintain Log backups for databases in these recovery modes in order to keep the log small, othwerise it will be constantly growing.
+Without a valid log backup the point in time recovery will not be possible.</p>
+More details: <a href="https://docs.microsoft.com/en-us/sql/relational-databases/backup-restore/recovery-models-sql-server">https://docs.microsoft.com/en-us/sql/relational-databases/backup-restore/recovery-models-sql-server</a>'
+	,@check_query = 'select count(*)
+from sys.databases d
+left join msdb.dbo.backupset bs
+	on bs.database_name = d.name
+	and bs.type = ''L''
+where d.recovery_model_desc <> ''SIMPLE''
+and d.name not in (''tempdb'')
+and bs.backup_finish_date is null'
+	,@check_frequency_minutes = 15
+	,@check_threshold_warning = null 
+	,@check_threshold_critical = '>0' 
+	,@check_enabled = 1
+	,@check_action_id = -14
+
+	,@action_every_failure = 1
+	,@action_recovery = 1
+	,@action_repeat_period_minutes = 1440 
+	,@action_hourly_limit = 10
+	,@action_template_id = -2
+
 set identity_insert [dbo].[sqlwatch_config_check] off;
 enable trigger dbo.trg_sqlwatch_config_check_U on [dbo].[sqlwatch_config_check];
-
+enable trigger dbo.trg_sqlwatch_config_check_action_updated_date_U on [dbo].[sqlwatch_config_check_action];
 --------------------------------------------------------------------------------------
 --setup jobs
 --we have to switch database to msdb but we also need to know which db jobs should run in so have to capture current database:
@@ -1454,8 +1959,6 @@ USE [msdb]
 /* rename old jobs to new standard, DB 1.5, March 2019 */
 set nocount on;
 
-declare @sql varchar(max) = ''
-
 create table #jobrename (
 	old_job sysname, new_job sysname
 	)
@@ -1466,6 +1969,7 @@ insert into #jobrename
 			('SQLWATCH-LOGGER-MISSING-INDEXES',	'SQLWATCH-LOGGER-INDEXES'),
 			('SQLWATCH-INTERNAL-META-CONFIG',	'SQLWATCH-INTERNAL-CONFIG')
 
+set @sql= ''
 select @sql = @sql + convert(varchar(max),' if (select name from msdb.dbo.sysjobs where name = ''' + old_job + ''') is not null
 	and (select name from msdb.dbo.sysjobs where name = ''' + new_job + ''') is null
 	begin

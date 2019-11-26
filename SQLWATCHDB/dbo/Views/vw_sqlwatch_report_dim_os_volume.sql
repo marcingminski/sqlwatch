@@ -2,7 +2,7 @@
 	AS 
 
 	with cte_volume as (
-		select d.[sql_instance], d.[sqlwatch_volume_id], d.[volume_name], d.[label], d.[file_system], d.[volume_block_size_bytes], d.[date_added], d.[date_updated], d.[last_seen] 
+		select d.[sql_instance], d.[sqlwatch_volume_id], d.[volume_name], d.[label], d.[file_system], d.[volume_block_size_bytes], d.[date_created], d.[date_updated], d.[date_last_seen] 
 		, volume_total_space_bytes_current = vc.[volume_total_space_bytes]
 		, volume_free_space_bytes_current = vc.[volume_free_space_bytes]
 
@@ -48,7 +48,7 @@
 			and g2.sqlwatch_volume_id = d.sqlwatch_volume_id
 			) lg
 	), cte_volume_growth as (
-	select [sql_instance], [sqlwatch_volume_id], [volume_name], [label], [file_system], [volume_block_size_bytes], [date_added], [date_updated], [last_seen]
+	select [sql_instance], [sqlwatch_volume_id], [volume_name], [label], [file_system], [volume_block_size_bytes], [date_created], [date_updated], [date_last_seen]
 	, [volume_total_space_bytes_current], [volume_free_space_bytes_current], volume_bytes_growth, [total_growth_days]
 
 	, growth_bytes_per_day = case when [total_growth_days] > 0 and volume_bytes_growth > 0 then [volume_bytes_growth] / [total_growth_days] else 0 end
@@ -56,7 +56,7 @@
 	, [free_space_percentage]
 	from cte_volume
 	)
-	select [sql_instance], [sqlwatch_volume_id], [volume_name], [label], [file_system], [volume_block_size_bytes], [date_added], [date_updated], [last_seen]
+	select [sql_instance], [sqlwatch_volume_id], [volume_name], [label], [file_system], [volume_block_size_bytes], [date_created], [date_updated], [date_last_seen]
 		, [volume_total_space_bytes_current], [volume_free_space_bytes_current], [volume_bytes_growth], [total_growth_days], [free_space_percentage]
 		, [growth_bytes_per_day], [days_until_full]
 	, [total_space_formatted] = case 

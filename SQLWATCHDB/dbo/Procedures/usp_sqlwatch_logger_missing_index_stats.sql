@@ -108,10 +108,8 @@ begin tran
 		inner join sys.dm_db_missing_index_details mi 
 			on ig.index_handle = mi.index_handle
 
-		inner join sys.databases sdb
+		inner join dbo.vw_sqlwatch_sys_databases sdb
 			on sdb.[name] = db_name(mi.[database_id])
-			and sdb.database_id > 4
-			and sdb.[name] not like '%ReportServer%'
 
 		inner join [dbo].[sqlwatch_meta_database] db
 			on db.[database_name] = db_name(mi.[database_id])
@@ -130,6 +128,11 @@ begin tran
 			and mii.index_handle = ig.index_handle
 			and mii.equality_columns = mi.equality_columns collate database_default
 			and mii.statement = mi.statement collate database_default
+
+		-- this is not required as in this case we not populating [dbo].[sqlwatch_meta_index_missing] at all to reduce noise
+		--left join [dbo].[sqlwatch_config_logger_exclude_database] ed
+		--	on db.[database_name] like ed.database_name_pattern
+		--	and ed.snapshot_type_id = @snapshot_type
 
 	where mi.equality_columns is not null
 	and mi.statement is not null

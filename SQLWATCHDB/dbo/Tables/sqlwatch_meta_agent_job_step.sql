@@ -4,7 +4,7 @@
 	[sqlwatch_job_id] smallint not null ,
 	[step_name] nvarchar(128) not null,
 	[sqlwatch_job_step_id] int identity(1,1),
-	[deleted_when] datetime null,
+	[date_last_seen] datetime null constraint df_sqlwatch_meta_agent_job_step_last_seen default (getutcdate()),
 	constraint pk_sqlwatch_meta_agent_job_step primary key (
 		[sql_instance], [sqlwatch_job_id], [sqlwatch_job_step_id]
 		),

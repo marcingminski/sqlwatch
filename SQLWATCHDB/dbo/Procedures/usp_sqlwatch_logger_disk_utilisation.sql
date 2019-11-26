@@ -170,7 +170,7 @@ select
 from @spaceused su
 inner join @logspace ls
 	on su.[database_name] = ls.[database_name] collate database_default
-inner join sys.databases db
+inner join vw_sqlwatch_sys_databases db
 	on db.[name] = su.[database_name] collate database_default
 /*	join on sqlwatch database list otherwise it will fail
 	for newly created databases not yet added to the list */
@@ -178,5 +178,11 @@ inner join [dbo].[sqlwatch_meta_database] swd
 	on swd.[database_name] = db.[name] collate database_default
 	and swd.[database_create_date] = db.[create_date]
 	and swd.sql_instance = @@SERVERNAME
+
+left join [dbo].[sqlwatch_config_exclude_database] ed
+	on swd.[database_name] like ed.database_name_pattern
+	and ed.snapshot_type_id = @snapshot_type
+
+where ed.snapshot_type_id is null
 
 commit tran

@@ -4,18 +4,18 @@
 	[report_title] varchar(255) not null,
 	[report_description] varchar(4000) null,
 	[report_definition] nvarchar(max) not null,
-	[report_definition_type] varchar(10) not null default 'Query',
-	[report_active] bit not null default 1,
+	[report_definition_type] varchar(10) not null constraint df_sqlwatch_config_report_type default ('Query'),
+	[report_active] bit not null constraint df_sqlwatch_config_report_active default (1),
 	[report_batch_id] tinyint null,
 	[report_style_id] smallint not null,
-	[date_created] datetime default getdate(),
+	[date_created] datetime constraint df_sqlwatch_config_report_date_created default (getdate()),
 	[date_updated] datetime null,
 
 	/*	primary key */
 	constraint pk_sqlwatch_config_report primary key clustered ([report_id]),
 
 	/*	check to only allow valid types */
-	constraint chk_sqlwatch_config_report check ([report_definition_type] in ('Query','Template')),
+	constraint chk_sqlwatch_config_report check (([report_definition_type]='Template' OR [report_definition_type]='Query')),
 
 	/*	foreign key to report style to make sure we have valid report and to prevent 
 		deleting styles if assosiated with report */

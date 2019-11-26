@@ -26,10 +26,10 @@ when matched then
 								or	target.[file_system] <> source.[file_system]
 								or	target.[volume_block_size_bytes] <> source.[volume_block_size_bytes]
 								then GETUTCDATE() else [date_updated] end,
-		[last_seen] = GETUTCDATE()
+		[date_last_seen] = GETUTCDATE()
 
 when not matched by target then
-	insert ([sql_instance], [volume_name], [label], [file_system], [volume_block_size_bytes], [date_added], [last_seen])
+	insert ([sql_instance], [volume_name], [label], [file_system], [volume_block_size_bytes], [date_created], [date_last_seen])
 	values (source.[sql_instance], source.[volume_name], source.[label], source.[file_system], source.[volume_block_size_bytes], GETUTCDATE(), GETUTCDATE());
 
 

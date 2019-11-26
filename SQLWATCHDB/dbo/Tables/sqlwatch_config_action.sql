@@ -11,7 +11,7 @@
 	   It would also take one more check cycle to complete the report as it would have been queued on the back of the action processing and sent out by the next processing */
 	[action_report_id] smallint null,
 	[action_enabled] bit not null default 1,
-	[date_created] datetime default getdate() not null,
+	[date_created] datetime not null constraint df_sqlwatch_config_action_date_created default (getdate()),
 	[date_updated] datetime null,
 
 	/* primary key */
@@ -24,12 +24,15 @@
 
 	/* check to make sure we always have one of the two and not both and not none */
 	constraint chk_sqlwatch_config_media_action check (
-			([action_exec] is null and [action_report_id] is not null)
-		or	([action_exec] is not null and [action_report_id] is null)
-	),
+			([action_exec] is null and [action_report_id] is not null) 
+		or  ([action_exec] is not null and [action_report_id] is null)
+		),
 
 	/*	check to only allow given values */
-	constraint chk_sqlwatch_config_media_exec check ([action_exec_type] in ('PowerShell', 'T-SQL'))
+	constraint chk_sqlwatch_config_media_exec check (
+		(	[action_exec_type]='T-SQL' 
+		or	[action_exec_type]='PowerShell')
+		)
 )
 go
 

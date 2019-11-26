@@ -14,7 +14,7 @@ using (
 		else mf.physical_name
 	end as varchar(255)) as logical_disk
 	from sys.master_files mf
-	inner join sys.databases db
+	inner join dbo.vw_sqlwatch_sys_databases db
 		on db.database_id = mf.database_id
 	inner join [dbo].[sqlwatch_meta_database] mdb
 		on mdb.sql_instance = @@SERVERNAME
@@ -27,6 +27,10 @@ using (
 	and source.physical_name = target.file_physical_name collate database_default
 	and	source.sql_instance = target.sql_instance
  )
+when matched then
+	update
+		set [date_last_seen] = getutcdate()
+
 when not matched by target then
 	insert ( [sqlwatch_database_id], [file_id], [file_type], [file_physical_name], [sql_instance], [file_name], [logical_disk] )
 	values ( source.[sqlwatch_database_id], source.[file_id], source.[type], source.[physical_name], source.[sql_instance], source.[file_name], source.[logical_disk] );

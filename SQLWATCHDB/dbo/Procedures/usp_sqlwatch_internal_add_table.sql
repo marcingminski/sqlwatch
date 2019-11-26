@@ -38,7 +38,7 @@ merge [dbo].[sqlwatch_meta_table] as target
 using (
 	select [t].[TABLE_CATALOG], [t].[TABLE_SCHEMA], [t].[TABLE_NAME], [t].[TABLE_TYPE], mdb.sqlwatch_database_id, mtb.sqlwatch_table_id
 	from ##98308FFC2C634BF98B347EECB98E3490 t
-	inner join sys.databases dbs
+	inner join [dbo].[vw_sqlwatch_sys_databases] dbs
 		on dbs.name = t.TABLE_CATALOG 
 	inner join [dbo].[sqlwatch_meta_database] mdb
 		on mdb.database_name = dbs.name collate database_default
@@ -60,7 +60,7 @@ using (
 								/* a new database could have been added since last db collection.
 								   in which case we have not got id yet, it will be picked up with the next cycle */
  when not matched by target and source.[sqlwatch_database_id] is not null then
-	insert ([sql_instance],[sqlwatch_database_id],[table_name],[table_type],[date_added])
+	insert ([sql_instance],[sqlwatch_database_id],[table_name],[table_type],[date_created])
 	values (@@SERVERNAME,source.[sqlwatch_database_id],source.[TABLE_SCHEMA] + '.' + source.[TABLE_NAME],source.[table_type],GETUTCDATE());
 
  --when matched and [date_deleted] is not null and target.sql_instance = @@SERVERNAME then

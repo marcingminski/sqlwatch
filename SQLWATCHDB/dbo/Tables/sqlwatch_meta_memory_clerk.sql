@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[sqlwatch_meta_memory_clerk]
 (
-	[sql_instance] varchar(32) not null default @@SERVERNAME,
+	[sql_instance] varchar(32) not null constraint df_sqlwatch_meta_memory_clerk_sql_instance default (@@SERVERNAME),
 	[sqlwatch_mem_clerk_id] smallint identity(1,1),
 	[clerk_name] nvarchar(255) not null,
 	constraint pk_sqlwatch_meta_memory_clerk primary key clustered (
