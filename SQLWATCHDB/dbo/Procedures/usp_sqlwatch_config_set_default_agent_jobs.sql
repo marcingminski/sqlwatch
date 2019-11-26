@@ -207,7 +207,7 @@ select @sql = replace(replace(convert(nvarchar(max),(select ' if (select name fr
 	end
 else
 	begin
-		Print ''Job ''''' + job_name + ''''' not created becuase it already exists.''
+		Print ''Job ''''' + job_name + ''''' not created because it already exists.''
 	end;'
 	from #jobs
 	for xml path ('')
