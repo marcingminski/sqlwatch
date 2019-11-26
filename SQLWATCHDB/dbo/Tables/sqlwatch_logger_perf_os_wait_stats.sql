@@ -6,8 +6,8 @@
 	[max_wait_time_ms] real not null,
 	[signal_wait_time_ms] real not null,
 	[snapshot_time] datetime2(0) not null,
-	[snapshot_type_id] tinyint not null default 1 ,
-	[sql_instance] varchar(32) not null default @@SERVERNAME,
+	[snapshot_type_id] tinyint not null constraint df_sqlwatch_logger_perf_os_wait_stats_type default (1) ,
+	[sql_instance] varchar(32) not null constraint df_sqlwatch_logger_perf_os_wait_stats_sql_instance default (@@SERVERNAME),
 
 	[waiting_tasks_count_delta] real not null,
 	[wait_time_ms_delta] real not null,

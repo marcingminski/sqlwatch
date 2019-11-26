@@ -145,7 +145,7 @@ if @check_action_id is not null
 				, source.[action_hourly_limit]
 				, source.[action_template_id])
 
-		when matched then 
+		when matched and target.[date_updated] is null then 
 			update set
 				 [check_id] = source.check_id
 				,[action_id] = source.action_id

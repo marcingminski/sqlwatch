@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[sqlwatch_meta_check]
 (
-	[sql_instance] varchar(32) not null default @@SERVERNAME,
+	[sql_instance] varchar(32) not null constraint df_sqlwatch_meta_check_sql_instance default (@@SERVERNAME),
 
 	/* repeat columns from sqlwatch_config_check so we can detach it from config and retain all the information when sending to central repo */
 	[check_id] smallint not null,

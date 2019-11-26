@@ -1,6 +1,6 @@
 ﻿CREATE VIEW [dbo].[vw_sqlwatch_report_dim_master_file] with schemabinding
 	AS 
-		select [d].[sqlwatch_database_id], [d].[sqlwatch_master_file_id], [d].[file_id], [d].[file_type], [d].[file_name], [d].[file_physical_name], [d].[sql_instance], [d].[deleted_when], [d].[logical_disk], lg.size_on_disk_bytes
+		select [d].[sqlwatch_database_id], [d].[sqlwatch_master_file_id], [d].[file_id], [d].[file_type], [d].[file_name], [d].[file_physical_name], [d].[sql_instance], [d].[date_last_seen], [d].[logical_disk], lg.size_on_disk_bytes
 		from [dbo].[sqlwatch_meta_master_file] d
 
 			outer apply (

@@ -8,7 +8,7 @@
 	[check_threshold_warning] varchar(100) null, --warning is optional
 	[check_threshold_critical] varchar(100) not null, --critical is not optional
 	[check_enabled] bit not null default 1, --if enabled the check will be processed
-	[date_created] datetime default getdate(),
+	[date_created] datetime not null constraint df_sqlwatch_config_check_date_created default (getdate()),
 	[date_updated] datetime null,
 
 	/* primary key */
@@ -74,7 +74,7 @@ create trigger dbo.trg_sqlwatch_config_check_U
 	begin
 		set nocount on;
 		update t
-			set date_updated = getdate()
+			set date_updated = getutcdate()
 		from [dbo].[sqlwatch_config_check] t
 		inner join inserted i
 			on i.[check_id] = t.[check_id]

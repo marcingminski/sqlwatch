@@ -3,7 +3,7 @@
 	/* history of executed actions and attributes, i.e. a message log for actions */
 	[sql_instance] varchar(32) not null,
 	[snapshot_time] datetime2(0) not null,
-	[snapshot_type_id] tinyint not null default 18,
+	[snapshot_type_id] tinyint not null constraint df_sqlwatch_logger_check_action_type default (18),
 	[check_id] smallint not null,
 	[action_id] smallint not null,
 	[action_type] varchar(50),

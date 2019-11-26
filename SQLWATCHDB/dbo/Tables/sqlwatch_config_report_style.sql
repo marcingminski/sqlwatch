@@ -2,7 +2,7 @@
 (
 	[report_style_id] smallint identity(1,1) not null,
 	[style] nvarchar(max) not null,
-	[date_created] datetime default getdate(),
+	[date_created] datetime not null constraint df_sqlwatch_config_report_style_date_created default (getdate()),
 	[date_updated] datetime null,
 	constraint pk_sqlwatch_config_report_style primary key clustered (
 		[report_style_id]

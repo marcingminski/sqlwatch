@@ -3,7 +3,7 @@
 	[performance_counter_id] smallint not null,
 	[instance_name] nvarchar(128) not null,
 	[snapshot_time] datetime2(0) not null,
-	[sql_instance] varchar(32) not null default @@SERVERNAME,
+	[sql_instance] varchar(32) not null constraint df_sqlwatch_trend_perf_os_performance_counters_sql_instance default (@@SERVERNAME),
 	[cntr_value_calculated] real null,
 	[trend_interval_minutes] tinyint not null,
 	/* aggregates will be detached from header as no new snapshots will be created in the header table when aggregates are created 
