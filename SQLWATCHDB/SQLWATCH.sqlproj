@@ -209,6 +209,12 @@
     <Build Include="dbo\Views\vw_sqlwatch_report_fact_check.sql" />
     <Build Include="dbo\Tables\sqlwatch_config_exclude_database.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_foreachdb.sql" />
+    <Build Include="dbo\Functions\ufn_sqlwatch_get_error_detail_xml.sql" />
+    <Build Include="dbo\Functions\ufn_sqlwatch_get_error_detail_text.sql" />
+    <Build Include="dbo\Views\vw_sqlwatch_report_config_check_action.sql" />
+    <Build Include="dbo\Views\vw_sqlwatch_report_fact_check_status_change.sql" />
+    <Build Include="dbo\Tables\sqlwatch_logger_log.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_log.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
@@ -249,6 +255,7 @@
     <None Include="migrate_database_name_to_sqlwatch_database_id.sql" />
     <None Include="normalise_file_stats.sql" />
     <None Include="generate snapshot_time variables for SSIS.sql" />
+    <None Include="SQLWATCH.publish.xml" />
   </ItemGroup>
   <Target Name="SetDacVersionToAssemblyVersion" AfterTargets="CoreCompile">
     <GetAssemblyIdentity AssemblyFiles="$(IntermediateTargetFullFileName)">
