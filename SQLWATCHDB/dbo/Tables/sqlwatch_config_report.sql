@@ -37,3 +37,15 @@ create trigger dbo.trg_sqlwatch_config_report_updated_U
 			on i.[report_id] = t.[report_id]
 	end
 go
+
+create trigger dbo.trg_trg_sqlwatch_config_report_D
+	on [dbo].[sqlwatch_config_report]
+	for delete
+	as
+	begin
+		set nocount on;
+		delete l from [dbo].[sqlwatch_logger_report_action] l
+		inner join deleted d
+		on l.report_id = d.report_id
+		and l.sql_instance = @@SERVERNAME
+	end
