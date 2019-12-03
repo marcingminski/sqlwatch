@@ -2,13 +2,14 @@
 	@report_batch_id tinyint = null,
 	@report_id smallint = null,
 	@check_status nvarchar(50) = null,
-	@check_value decimal(28,2) = null,
+	@check_value decimal(28,5) = null,
 	@check_name nvarchar(max) = null,
 	@subject nvarchar(max) = null,
 	@body nvarchar(max) = null,
 	--so we can apply filter to the reports:
 	@check_threshold_warning varchar(100) = null,
-	@check_threshold_critical varchar(100) = null
+	@check_threshold_critical varchar(100) = null,
+	@snapshot_time datetime2(0) = null
 	)
 as
 /*
@@ -19,8 +20,8 @@ as
 	1.0 2019-11-03 - Marcin Gminski
 -------------------------------------------------------------------------------------------------------------------
 */
-set nocount on;
-set xact_abort on;
+SET NOCOUNT ON 
+SET ANSI_NULLS ON
 
 declare @sql_instance varchar(32),
 		@report_title varchar(255),
@@ -33,15 +34,53 @@ declare @sql_instance varchar(32),
 		@target_address nvarchar(max),
 		@action_exec nvarchar(max),
 		@action_exec_type nvarchar(max),
-		@error_message nvarchar(max),
+		@action_id smallint,
 
 		@css nvarchar(max),
-		@html nvarchar(max)
+		@html nvarchar(max),
+		@snapshot_type_id tinyint = 20,
 
-declare @template_build as table (
-	[result] nvarchar(max)
+		@error_message nvarchar(max) = '',
+		@has_errored bit = 0
+
+declare @sqlwatch_logger_report_action table (
+	 [sql_instance] varchar(32)
+	,[snapshot_time] datetime2(0)
+	,[snapshot_type_id] tinyint
+	,[report_id] smallint
+	,[action_id] smallint
+	,[error_message] xml
 )
 
+/*	In rare circumstances, we could have different checks that call the same report, 
+	in which case action would call this procedure in a cursor. The snapshot_time in
+	dbo.sqlwatch_logger_snapshot_header has resolution of 1 second (datetime2(0)) to 
+	reduce space utilisation, however, when called frequently in a loop it will cause
+	PK violation. To overcome this, we are going to check if the snapshot_time already
+	exists and only create one if it does not.
+
+	We are also passing @snapshot_time from parent proc to make sure we are not
+	generating new @snapshot_time as this would caused a few ms difference and would
+	still violate PK
+	
+	This will not introduce performance bottleck considering that we are not going to
+	be calling reports every few seconds	*/
+
+if @snapshot_time is null
+	begin
+		set @snapshot_time = getutcdate()
+	end
+
+if not exists (
+		select * from dbo.sqlwatch_logger_snapshot_header
+		where sql_instance = @@SERVERNAME
+		and snapshot_type_id = @snapshot_type_id
+		and snapshot_time = @snapshot_time
+)
+	begin
+		insert into dbo.sqlwatch_logger_snapshot_header ([snapshot_time], [snapshot_type_id], [sql_instance])
+		values (@snapshot_time, @snapshot_type_id, @@SERVERNAME)
+	end
 
 declare cur_reports cursor for
 select cr.[report_id]
@@ -52,6 +91,7 @@ select cr.[report_id]
 	  ,t.[action_exec]
 	  ,t.[action_exec_type]
 	  ,rs.style
+	  ,ra.action_id
   from [dbo].[sqlwatch_config_report] cr
 
   inner join [dbo].[sqlwatch_config_report_action] ra
@@ -80,52 +120,61 @@ select cr.[report_id]
 open cur_reports
 
 fetch next from cur_reports
-into @report_id, @report_title, @report_description, @report_definition, @definition_type, @action_exec, @action_exec_type, @css
+into @report_id, @report_title, @report_description, @report_definition, @definition_type, @action_exec, @action_exec_type, @css, @action_id
 
 while @@FETCH_STATUS = 0  
 	begin
 
-		Print '      Report (Id: ' + convert(varchar(10),@report_id) +')'
+		delete from @sqlwatch_logger_report_action
 		set @html = ''
 
-		delete from @template_build
+		set @report_definition = case 
+			when @check_status = 'CRITICAL' and @check_threshold_critical is not null then replace(@report_definition,'{THRESHOLD}',@check_threshold_critical)
+			when @check_status = 'WARNING' and @check_threshold_warning is not null then replace(@report_definition,'{THRESHOLD}',@check_threshold_warning)
+			else @report_definition end
 
 		if @definition_type = 'Query'
 			begin
-				set @report_definition = case when @check_threshold_critical is not null then replace(@report_definition,'{THRESHOLD_CRITICAL}',@check_threshold_critical) else @report_definition end
-				set @report_definition = case when @check_threshold_warning is not null then replace(@report_definition,'{THRESHOLD_WARNING}',@check_threshold_warning) else @report_definition end
-
 				begin try
 					exec [dbo].[usp_sqlwatch_internal_query_to_html_table] @html = @html output, @query = @report_definition
 				end try
 				begin catch
-					select @error_message = @error_message + '
-' + convert(varchar(23),getdate(),121) + ': ReportID: ' + convert(varchar(10),@report_id) + '
-		ERROR_NUMBER: ' + isnull(convert(varchar(10),ERROR_NUMBER()),'') + '
-        ERROR_SEVERITY : ' + isnull(convert(varchar(max),ERROR_SEVERITY()),'') + '
-        ERROR_STATE : ' + isnull(convert(varchar(max),ERROR_STATE()),'') + '   
-        ERROR_PROCEDURE : ' + isnull(convert(varchar(max),ERROR_PROCEDURE()),'') + '   
-        ERROR_LINE : ' + isnull(convert(varchar(max),ERROR_LINE()),'') + '   
-        ERROR_MESSAGE : ' + isnull(convert(varchar(max),ERROR_MESSAGE()),'') + ''
+					set @has_errored = 1
+					set @error_message = 'Error when executing Query Report (usp_sqlwatch_internal_query_to_html_table), @report_batch_id: ' + isnull(convert(varchar(max),@report_batch_id),'NULL') + ', @report_id: ' + isnull(convert(varchar(max),@report_id),'NULL')
+					exec [dbo].[usp_sqlwatch_internal_log]
+							@proc_id = @@PROCID,
+							@snapshot_time = @snapshot_time,
+							@process_stage = '31FF6B08-735E-45F9-BAAB-D1F7E446BB1B',
+							@process_message = @error_message,
+							@process_message_type = 'ERROR'
+
+					insert into @sqlwatch_logger_report_action ([sql_instance],[snapshot_time],[snapshot_type_id],[report_id],[action_id])
+					select @@SERVERNAME,@snapshot_time,@snapshot_type_id,@report_id,@action_id
+
+					GoTo NextReport
 				end catch
 			end
 
 		if @definition_type = 'Template'
 			begin
 				begin try
-					insert into @template_build
-					exec sp_executesql @report_definition
-					select @html = [result] from @template_build
+					exec sp_executesql @report_definition, N'@output nvarchar(max) OUTPUT', @output = @html output;
 				end try
 				begin catch
-					select @error_message = @error_message + '
-' + convert(varchar(23),getdate(),121) + ': ReportID: ' + convert(varchar(10),@report_id) + '
-		ERROR_NUMBER: ' + isnull(convert(varchar(10),ERROR_NUMBER()),'') + '
-        ERROR_SEVERITY : ' + isnull(convert(varchar(max),ERROR_SEVERITY()),'') + '
-        ERROR_STATE : ' + isnull(convert(varchar(max),ERROR_STATE()),'') + '   
-        ERROR_PROCEDURE : ' + isnull(convert(varchar(max),ERROR_PROCEDURE()),'') + '   
-        ERROR_LINE : ' + isnull(convert(varchar(max),ERROR_LINE()),'') + '   
-        ERROR_MESSAGE : ' + isnull(convert(varchar(max),ERROR_MESSAGE()),'') + ''
+					--E3796F4B-3C89-450E-8FC7-09926979074F
+					set @has_errored = 1
+					set @error_message = 'Error when executing Template Report (usp_sqlwatch_internal_query_to_html_table), @report_batch_id: ' + isnull(convert(varchar(max),@report_batch_id),'NULL') + ', @report_id: ' + isnull(convert(varchar(max),@report_id),'NULL')
+					exec [dbo].[usp_sqlwatch_internal_log]
+							@proc_id = @@PROCID,
+							@snapshot_time = @snapshot_time,
+							@process_stage = 'E3796F4B-3C89-450E-8FC7-09926979074F',
+							@process_message = @error_message,
+							@process_message_type = 'ERROR'
+
+					insert into @sqlwatch_logger_report_action ([sql_instance],[snapshot_time],[snapshot_type_id],[report_id],[action_id])
+					select @@SERVERNAME,@snapshot_time,@snapshot_type_id,@report_id,@action_id
+
+					GoTo NextReport
 				end catch
 			end
 
@@ -143,10 +192,10 @@ while @@FETCH_STATUS = 0
 			begin
 				set @body = replace(
 								replace(
-									replace(@body,'{REPORT_CONTENT}',@html)
+									replace(@body,'{REPORT_CONTENT}',isnull(@html,'Report Id: ' + convert(varchar(10),@report_id) + ' contains no data.'))
 								,'{REPORT_TITLE}',@report_title)
 							,'{REPORT_DESCRIPTION}',@report_description)
-
+							
 				set @subject = replace(@subject,'{REPORT_TITLE}',@report_title)
 			end
 
@@ -162,25 +211,26 @@ while @@FETCH_STATUS = 0
 		<a href="https://sqlwatch.io">https://sqlwatch.io</a></p></body></html>'
 			end
 
-		if @body is null
-			begin
-				set @body = 'Report Id: ' + convert(varchar(10),@report_id) + ' contains no data.'
-			end
-
-		if @subject is null
-			begin
-				set @subject = 'No Subject'
-			end
-
 		set @action_exec = replace(replace(@action_exec,'{BODY}', replace(@body,'''','''''')),'{SUBJECT}',@subject)
+		
 		--now insert into the delivery queue for further processing:
 		insert into [dbo].[sqlwatch_meta_action_queue] ([sql_instance], [time_queued], [action_exec_type], [action_exec])
 		values (@@SERVERNAME, sysdatetime(), @action_exec_type, @action_exec)
 
 		Print 'Item ( Id: ' + convert(varchar(10),SCOPE_IDENTITY()) + ' ) queued.'
 
+		--E3796F4B-3C89-450E-8FC7-09926979074F
+		insert into @sqlwatch_logger_report_action ([sql_instance],[snapshot_time],[snapshot_type_id],[report_id],[action_id])
+		select @@SERVERNAME,@snapshot_time,@snapshot_type_id,@report_id,@action_id
+
+		NextReport:
+
+		insert into [dbo].[sqlwatch_logger_report_action]
+		select [sql_instance], [snapshot_time], [snapshot_type_id], [report_id], [action_id] 
+		from @sqlwatch_logger_report_action
+
 		fetch next from cur_reports 
-		into @report_id, @report_title, @report_description, @report_definition, @definition_type, @action_exec, @action_exec_type, @css
+		into @report_id, @report_title, @report_description, @report_definition, @definition_type, @action_exec, @action_exec_type, @css, @action_id
 
 	end
 
@@ -188,11 +238,8 @@ close cur_reports
 deallocate cur_reports
 
 
-if nullif(@error_message,'') is not null
+if @has_errored = 1
 	begin
-		set @error_message = 'Errors during report execution (' + OBJECT_NAME(@@PROCID) + '): 
-' + @error_message
-
-		--print all errors and terminate the batch which will also fail the agent job for the attention:
+		set @error_message = 'Errors during execution of (' + OBJECT_NAME(@@PROCID) + '). Please review action log.'
 		raiserror ('%s',16,1,@error_message)
 	end

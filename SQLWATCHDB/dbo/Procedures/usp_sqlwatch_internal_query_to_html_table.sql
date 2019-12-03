@@ -18,7 +18,9 @@
 				@error_message  nvarchar(max) = '',
 				@thead nvarchar(max),
 				@cols nvarchar(max),
-				@tmp_table nvarchar(max)
+				@tmp_table nvarchar(max),
+				@error_message_single nvarchar(max) = '',
+				@has_errors bit = 0
 		
 		set nocount on;
 
@@ -31,14 +33,15 @@
 			exec sp_executesql @sql 
 		end try
 		begin catch
-			select @error_message = @error_message + '
-				' + convert(varchar(23),getdate(),121) + '
-					 ERROR_NUMBER: ' + isnull(convert(varchar(10),ERROR_NUMBER()),'') + '
-					 ERROR_SEVERITY : ' + isnull(convert(varchar(max),ERROR_SEVERITY()),'') + '
-					 ERROR_STATE : ' + isnull(convert(varchar(max),ERROR_STATE()),'') + '   
-					 ERROR_PROCEDURE : ' + isnull(convert(varchar(max),ERROR_PROCEDURE()),'') + '   
-					 ERROR_LINE : ' + isnull(convert(varchar(max),ERROR_LINE()),'') + '   
-					 ERROR_MESSAGE : ' + isnull(convert(varchar(max),ERROR_MESSAGE()),'') + ''
+			set @has_errors = 1
+
+			set @error_message = 'Executing initial query'
+
+			exec [dbo].[usp_sqlwatch_internal_log]
+				@proc_id = @@PROCID,
+				@process_stage = '77EF7172-3573-46B7-91E6-9BF0259B2DAC',
+				@process_message = @error_message,
+				@process_message_type = 'ERROR'
 		end catch
 
 		select @cols = coalesce(@cols + ', '''', ', '') + '[' + name + '] AS ''td'''
@@ -52,14 +55,15 @@
 			exec sys.sp_executesql @cols, N'@html nvarchar(max) OUTPUT', @html=@html output
 		end try
 		begin catch
-			select @error_message = @error_message + '
-				' + convert(varchar(23),getdate(),121) + '
-					 ERROR_NUMBER: ' + isnull(convert(varchar(10),ERROR_NUMBER()),'') + '
-					 ERROR_SEVERITY : ' + isnull(convert(varchar(max),ERROR_SEVERITY()),'') + '
-					 ERROR_STATE : ' + isnull(convert(varchar(max),ERROR_STATE()),'') + '   
-					 ERROR_PROCEDURE : ' + isnull(convert(varchar(max),ERROR_PROCEDURE()),'') + '   
-					 ERROR_LINE : ' + isnull(convert(varchar(max),ERROR_LINE()),'') + '   
-					 ERROR_MESSAGE : ' + isnull(convert(varchar(max),ERROR_MESSAGE()),'') + ''
+
+			set @has_errors = 1
+
+			set @error_message = 'Building html content.'
+			exec [dbo].[usp_sqlwatch_internal_log]
+				@proc_id = @@PROCID,
+				@process_stage = '52357550-B447-4352-9E0C-16353A967709',
+				@process_message = @error_message,
+				@process_message_type = 'ERROR'
 		end catch
 
 		select @thead = coalesce(@thead + '', '') + '<th>' + name + '</th>' 
@@ -72,8 +76,7 @@
 
 	if nullif(@error_message,'') is not null
 		begin
-			set @error_message = 'Errors during execution (' + OBJECT_NAME(@@PROCID) + '): 
-	' + @error_message
+			set @error_message = 'Errors during execution (' + OBJECT_NAME(@@PROCID) + ')'
 			set @html = '<p style="color:red;">' + @error_message + '</p>'
 			--print all errors but not terminate the batch as we are going to include this error instead of the report for the attention.
 			raiserror ('%s',1,1,@error_message)

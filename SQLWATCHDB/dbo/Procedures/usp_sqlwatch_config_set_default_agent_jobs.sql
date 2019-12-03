@@ -128,6 +128,7 @@ while ($output -ne $null) {
 
 		if ( $output.action_exec_type -eq "PowerShell" ) {
 			try {
+				$action_exec = $output.action_exec
 				Invoke-Expression $output.action_exec
 			}
 			catch {
@@ -136,7 +137,12 @@ while ($output -ne $null) {
 		}
 
        if ($ErrorOutput -ne "") {
- 			$query = "update [dbo].[sqlwatch_meta_action_queue] set [exec_status] = ''FAILED'', [exec_error_message] = ''$ErrorOutput'' where queue_item_id = $queue_item_id" 
+ 			$query = "update [dbo].[sqlwatch_meta_action_queue] set [exec_status] = ''FAILED'' where queue_item_id = $queue_item_id;
+					exec [dbo].[usp_sqlwatch_internal_log]
+							@procces_name = ''PowerShell'',
+							@process_stage = ''6DC68414-915F-4B52-91B6-4D0B6018243B'',
+							@process_message = ''$ErrorOutput'',
+							@process_message_type = ''ERROR''
         } else {
 			$query = "update [dbo].[sqlwatch_meta_action_queue] set [exec_status] = ''OK'' where queue_item_id = $queue_item_id"
         }
