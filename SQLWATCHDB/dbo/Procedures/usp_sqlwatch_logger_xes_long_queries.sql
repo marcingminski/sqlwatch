@@ -56,8 +56,7 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 		FROM #xes t
 			CROSS APPLY targetdata.nodes('//RingBufferTarget/event') AS xed (event_data)
 		--where xed.event_data.value('(@name)[1]', 'varchar(255)') not in ( 'wait_info', 'wait_info_external')
-
-
+	
 		insert into dbo.[sqlwatch_logger_xes_long_queries]([activity_id], [activity_sequence], [activity_id_xfer], [activity_sequence_xfer], [event_time], event_name, session_id, database_name, cpu_time, physical_reads, logical_reads, writes, spills, offset, offset_end, statement, username, 
 			sql_text, object_name, client_hostname, client_app_name, duration_ms, wait_type, snapshot_time, snapshot_type_id)
 
@@ -70,10 +69,13 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 			, tx.offset_end, tx.statement, tx.username, tx.sql_text, tx.object_name, tx.client_hostname, tx.client_app_name, tx.duration_ms, tx.wait_type
 			, tx.snapshot_time, tx.snapshot_type_id
 		from #t_queries tx
-		left join dbo.[sqlwatch_logger_xes_long_queries] x
-			on x.activity_id = substring(tx.[activity_id],1,len(tx.[activity_id])-charindex('-',reverse(tx.[activity_id]))) 
-			and x.activity_sequence = right(tx.[activity_id],charindex('-',reverse(tx.[activity_id]))-1)
+			left join dbo.[sqlwatch_logger_xes_long_queries] x
+				on x.activity_id = substring(tx.[activity_id],1,len(tx.[activity_id])-charindex('-',reverse(tx.[activity_id]))) 
+				and x.activity_sequence = right(tx.[activity_id],charindex('-',reverse(tx.[activity_id]))-1)
 		where x.activity_id is null
+		/*	2019-11-26 Marcin Gminski
+			extended event session can only include LIKE but not exclude we have to drop few events we do not want log here: */
+		and tx.client_app_name not like 'DatabaseMail%'
 	end
 else
 	print 'Product version must be 11 or higher'
