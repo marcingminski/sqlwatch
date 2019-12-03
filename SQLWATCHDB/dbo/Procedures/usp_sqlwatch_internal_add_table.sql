@@ -54,8 +54,8 @@ using (
  and	target.[table_type] = source.[table_type] collate database_default
  and	target.[sqlwatch_database_id] = source.[sqlwatch_database_id]
 
- --when not matched by source and target.sql_instance = @@SERVERNAME then
-	--update set [date_deleted] = GETUTCDATE()
+ when matched and target.sql_instance = @@SERVERNAME 
+	then update set [date_last_seen] = GETUTCDATE()
 
 								/* a new database could have been added since last db collection.
 								   in which case we have not got id yet, it will be picked up with the next cycle */

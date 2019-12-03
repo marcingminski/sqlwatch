@@ -5,8 +5,7 @@
 	[action_exec_type] varchar(50) not null,
 	[time_queued] datetime2(7) not null constraint df_sqlwatch_meta_action_queue_time_queued default (sysdatetime()),
 	[action_exec] varchar(max) not null,
-	[exec_status] varchar(50) null, --null awaiting send, -1 = processing, othewrise error_code, 
-	[exec_error_message] varchar(1024) null,
+	[exec_status] varchar(50) null,
 	constraint pk_sqlwatch_meta_delivery_queue primary key clustered (
 		[sql_instance], [queue_item_id]
 	),
