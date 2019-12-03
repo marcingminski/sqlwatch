@@ -1855,4 +1855,109 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[sqlwatch_config_exclude_database]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="db6b1bee-3942-43f3-b21f-e713456607c6" ChangeDateTime="11/25/2019 14:33:10">
+    <Property Name="ElementName" Value="[dbo].[uk_sqlwatch_meta_table_table]" />
+    <Property Name="ElementType" Value="SqlUniqueConstraint" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_meta_table]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="uq_sqlwatch_meta_table_table" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="f047e401-7b03-43a8-9861-fef24d1bdd4f" ChangeDateTime="11/25/2019 21:56:19">
+    <Property Name="ElementName" Value="[dbo].[ufn_sqlwatch_get_error_detail]" />
+    <Property Name="ElementType" Value="SqlScalarFunction" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[ufn_sqlwatch_get_error_detail_xml]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="d7159e7c-e902-476f-be2a-238f69f011fd" ChangeDateTime="11/30/2019 00:26:01">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_config_check_action_template].[template_type]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_config_check_action_template]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[action_template_type]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="d368a621-a402-431c-af05-996020d3c92a" ChangeDateTime="12/02/2019 03:04:51">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_logger_log].[EXEC_DATABASE_NAME]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_logger_log]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="DATABASE_NAME" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="da0b6e66-682c-4040-898f-df0b3c73431f" ChangeDateTime="12/02/2019 03:05:12">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_logger_log].[EXEC_PROC_NAME]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_logger_log]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="CALLER_PROC_NAME" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="394e4a5c-44bf-4978-82d1-237a1c5af81d" ChangeDateTime="12/02/2019 03:05:22">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_logger_log].[EXEC_SPID]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_logger_log]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="SPID" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="506ba42b-523c-48fa-b10c-29cd0daf03f8" ChangeDateTime="12/02/2019 03:05:40">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_logger_log].[EXEC_LOGIN]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_logger_log]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="LOGIN" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="c26684f3-2046-45e0-b90e-b2c5641ece4a" ChangeDateTime="12/02/2019 03:06:00">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_logger_log].[EXEC_USER]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_logger_log]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[USER]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="e7c33950-fcc3-4a6d-bd72-2f858c2b71cc" ChangeDateTime="12/02/2019 22:25:58">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_config_check].[flapping_ratio]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_config_check]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[ignore_flapping]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="b1480600-de7f-4c41-a529-58c12bd9e08a" ChangeDateTime="12/03/2019 12:14:35">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_logger_log].[CALLER_PROC_NAME]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_logger_log]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[process_name]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="ff96a528-cb61-4fa8-8c47-58ac9309e80b" ChangeDateTime="12/03/2019 12:15:23">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_logger_log].[APP_STAGE]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_logger_log]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="process_stage" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="07cee4a4-0d18-4e7c-83bf-e0101926ec18" ChangeDateTime="12/03/2019 12:16:23">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_logger_log].[APP_MESSAGE]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_logger_log]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="process_message" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="eccab044-6ace-44c5-bad4-b726ed90249e" ChangeDateTime="12/03/2019 12:48:14">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_logger_log].[SQL_ERROR]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_logger_log]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[ERROR_STACK]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="debdc71d-5ee6-4483-a62b-7671f941d4fc" ChangeDateTime="12/03/2019 12:48:52">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_logger_log].[ERROR_STACK]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_logger_log]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[ERROR]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="507df03b-6ebb-4885-b541-9e171952d941" ChangeDateTime="12/03/2019 12:53:03">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_logger_log].[ERROR]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_logger_log]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[SQL_ERROR]" />
+  </Operation>
 </Operations>
