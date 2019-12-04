@@ -142,7 +142,7 @@ while ($output -ne $null) {
 							@procces_name = ''PowerShell'',
 							@process_stage = ''6DC68414-915F-4B52-91B6-4D0B6018243B'',
 							@process_message = ''$ErrorOutput'',
-							@process_message_type = ''ERROR''
+							@process_message_type = ''ERROR'' "
         } else {
 			$query = "update [dbo].[sqlwatch_meta_action_queue] set [exec_status] = ''OK'' where queue_item_id = $queue_item_id"
         }
