@@ -471,11 +471,14 @@ when not matched then
 --------------------------------------------------------------------------------------
 if (select count(*) from [dbo].[sqlwatch_config_exclude_database]) = 0
 	begin
-		 --exclude collecting missing indexes from ReportServer and system databases
+		 --exclude collecting missing indexes from ReportServer and system databases:
 		insert into [dbo].[sqlwatch_config_exclude_database] ([database_name_pattern], [snapshot_type_id])
 		values  ('%ReportServer%',3),
 				('msdb',3),
-				('master',3)
+				('master',3),
+		--exclude index stats and histogram collection from tempdb:
+				('tempdb',14),
+				('tempdb',15)
 	end
 
 --------------------------------------------------------------------------------------

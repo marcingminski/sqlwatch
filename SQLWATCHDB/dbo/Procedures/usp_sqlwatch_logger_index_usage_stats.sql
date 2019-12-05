@@ -1,6 +1,27 @@
 ﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_logger_index_usage_stats]
 AS
 
+/*
+-------------------------------------------------------------------------------------------------------------------
+ Procedure:
+	usp_sqlwatch_logger_index_usage_stats
+
+ Description:
+	Collect index statistics.
+
+ Parameters
+	
+ Author:
+	Marcin Gminski
+
+ Change Log:
+	1.0		2018-08		- Marcin Gminski, Initial version
+	1.1		2012-12-05	- Marcin Gminski, Ability to exclude database from iteration altogether rather than just data collection.
+							In some cases, trying to get index stats from tempdb may deadlock due to schema locks in tempdb.
+							Excluding tempdb from iteration means the code will not even be executed there.
+-------------------------------------------------------------------------------------------------------------------
+*/
+
 set xact_abort on
 begin tran
 
@@ -109,14 +130,8 @@ values (@snapshot_time, @snapshot_type)
 				and usprev.snapshot_time = ''' + convert(varchar(23),@date_snapshot_previous,121) + '''
 				and usprev.partition_id = ps.partition_id
 
-			left join [dbo].[sqlwatch_config_exclude_database] ed
-				on mdb.[database_name] like ed.[database_name_pattern]
-				and ed.snapshot_type_id = ' + convert(varchar(5),@snapshot_type) + '
-
-			where ed.snapshot_type_id is null
-
 			Print ''['' + convert(varchar(23),getdate(),121) + ''] Collecting index statistics for database: ?''
 '
-exec [dbo].[usp_sqlwatch_internal_foreachdb] @sql
+exec [dbo].[usp_sqlwatch_internal_foreachdb] @command = @sql, @snapshot_type_id = @snapshot_type
 
 commit tran
