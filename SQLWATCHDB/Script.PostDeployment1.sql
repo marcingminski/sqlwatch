@@ -28,6 +28,7 @@ Post-Deployment Script Template
 --		ALTER TABLE [dbo].[sqlwatch_logger_perf_file_stats] CHECK CONSTRAINT [fk_pk_sql_perf_mon_file_stats_database];
 --	end
 
+
 --------------------------------------------------------------------------------------
 --
 --------------------------------------------------------------------------------------
@@ -2863,32 +2864,39 @@ USE [msdb]
 -- job creator engine, March 2019
 ------------------------------------------------------------------------------------------------------------------
 /* rename old jobs to new standard, DB 1.5, March 2019 */
-set nocount on;
 
-create table #jobrename (
-	old_job sysname, new_job sysname
-	)
-insert into #jobrename
-	values  ('DBA-PERF-AUTO-CONFIG',			'SQLWATCH-INTERNAL-CONFIG'),
-			('DBA-PERF-LOGGER',					'SQLWATCH-LOGGER-PERFORMANCE'),
-			('DBA-PERF-LOGGER-RETENTION',		'SQLWATCH-INTERNAL-RETENTION'),
-			('SQLWATCH-LOGGER-MISSING-INDEXES',	'SQLWATCH-LOGGER-INDEXES'),
-			('SQLWATCH-INTERNAL-META-CONFIG',	'SQLWATCH-INTERNAL-CONFIG')
 
-set @sql= ''
-select @sql = @sql + convert(varchar(max),' if (select name from msdb.dbo.sysjobs where name = ''' + old_job + ''') is not null
-	and (select name from msdb.dbo.sysjobs where name = ''' + new_job + ''') is null
+if (select case when @@VERSION like '%Express Edition%' then 1 else 0 end) = 0
 	begin
-		exec msdb.dbo.sp_update_job @job_name=N''' + old_job + ''', @new_name=N''' + new_job + '''
-	end;')
-from #jobrename
+		set nocount on;
 
-exec ( @sql )
+		create table #jobrename (
+			old_job sysname, new_job sysname
+			)
+		insert into #jobrename
+			values  ('DBA-PERF-AUTO-CONFIG',			'SQLWATCH-INTERNAL-CONFIG'),
+					('DBA-PERF-LOGGER',					'SQLWATCH-LOGGER-PERFORMANCE'),
+					('DBA-PERF-LOGGER-RETENTION',		'SQLWATCH-INTERNAL-RETENTION'),
+					('SQLWATCH-LOGGER-MISSING-INDEXES',	'SQLWATCH-LOGGER-INDEXES'),
+					('SQLWATCH-INTERNAL-META-CONFIG',	'SQLWATCH-INTERNAL-CONFIG')
+
+		set @sql= ''
+		select @sql = @sql + convert(varchar(max),' if (select name from msdb.dbo.sysjobs where name = ''' + old_job + ''') is not null
+			and (select name from msdb.dbo.sysjobs where name = ''' + new_job + ''') is null
+			begin
+				exec msdb.dbo.sp_update_job @job_name=N''' + old_job + ''', @new_name=N''' + new_job + '''
+			end;')
+		from #jobrename
+
+		exec ( @sql )
 
 
 
-USE [$(DatabaseName)];
+		USE [$(DatabaseName)];
 
-exec dbo.[usp_sqlwatch_config_set_default_agent_jobs]
+		exec dbo.[usp_sqlwatch_config_set_default_agent_jobs]
+		exec msdb.dbo.sp_start_job @job_name = 'SQLWATCH-INTERNAL-CONFIG'
+	end
 
-exec msdb.dbo.sp_start_job @job_name = 'SQLWATCH-INTERNAL-CONFIG'
+
+
