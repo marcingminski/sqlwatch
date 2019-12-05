@@ -306,11 +306,33 @@ Print '
 Copy the below into PowerShell ISE and execute
 ----------------------------------------------------------------------------------------------------------------------------------------'
 
-Print '<# Scheduled tasks can only accept 261 characters long commands which is not enough for our PowerShell commands.
+Print '<# ----------------------------------------------------------------------------------------------------------------------------------------
+Scheduled tasks can only accept 261 characters long commands which is not enough for our PowerShell commands.
 We are going to dump these into ps1 files and execute these files from the scheduler. Default location will be:
-C:\SQLWATCHPS so feel free to change this before executing this script #>
+C:\SQLWATCHPS so feel free to change this before executing this script 
+---------------------------------------------------------------------------------------------------------------------------------------- #>
 
 $PSPath = "C:\SQLWATCHPS"
+
+<# ----------------------------------------------------------------------------------------------------------------------------------------
+Windows Task scheduler normally only runs when the user is logged in. To make it run all the time we have to give it an account under which it will run.
+Whilst it is technically possible to run it as SYSTEM, as long as SYSTEM has access to the SQL Server, it is quite insecure. 
+Best practice is to create dedicated Windows user i.e. SQLWATCHUSER and *** GRANT BATCH LOGON RIGHTS *** and required access to the SQL Server. 
+You can read more about task principals here: https://docs.microsoft.com/en-us/powershell/module/scheduledtasks/new-scheduledtaskprincipal
+
+In your enviroment you will want something like:
+$User = "sqlwatch"
+$Password = "UserPassword"
+$LogonType = "Password"
+
+However, to make this example and scripting easier, we are going to asume LOCALSERVICE. 
+Note that the account will need access to the SQL Server and the SQLWATCH database according to the access requirements.
+---------------------------------------------------------------------------------------------------------------------------------------- #>
+
+$User = "LOCALSERVICE" #Change in your environemnt to a dedicated user
+$LogonType = "ServiceAccount"
+
+<# ---------------------------------------------------------------------------------------------------------------------------------------- #>
 
 If (!(Test-Path $PSPath)) {
     New-Item $PSPath -ItemType Directory
@@ -388,8 +410,13 @@ while @@FETCH_STATUS = 0
 			when 16 then 'Monthly'
 			end + ' -At ''' + convert(varchar(10),@string_time) + ''''
 
-		set @command = @command + char(10) + '$task=New-ScheduledTask -Action $actions -Trigger $trigger'
-		set @command = @command + char(10) + 'Register-ScheduledTask "' + @task_name + '" -InputObject $task'
+		set @command = @command + char(10) + '$principal=New-ScheduledTaskPrincipal -UserId $User -LogonType $LogonType'
+		set @command = @command + char(10) + '$task=New-ScheduledTask -Action $actions -Trigger $trigger -Principal $principal'
+		set @command = @command + char(10) + 'if ( $Password -ne "" -and $Password -ne $null ) {
+Register-ScheduledTask "' + @task_name + '" -InputObject $task -User $User -Password $Password
+} else {
+Register-ScheduledTask "' + @task_name + '" -InputObject $task -User $User
+}'
 		
 		/*	The amount of time between each restart of the task. The format for this string is PDTHMS (for example, "PT5M" is 5 minutes, "PT1H" is 1 hour, and "PT20M" is 20 minutes). 
 			The maximum time allowed is 31 days, and the minimum time allowed is 1 minute.	*/
@@ -409,7 +436,11 @@ while @@FETCH_STATUS = 0
 				when 4 then convert(varchar(10),@freq_subday_interval) + 'M'
 				when 8 then convert(varchar(10),@freq_subday_interval) + 'H'
 				else '' end + '"'		
-		set @command = @command + char(10) + '$task | Set-ScheduledTask'
+		set @command = @command + char(10) + 'if ( $Password -ne "" -and $Password -ne $null ) {
+$task | Set-ScheduledTask -User $User -Password $Password
+} else {
+$task | Set-ScheduledTask -User $User
+}'
 
 		if @enabled = 0
 			begin
