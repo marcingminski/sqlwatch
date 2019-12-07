@@ -229,26 +229,28 @@ if @action_type  <> 'NONE'
 													replace(
 														replace(
 															replace(
-																replace(@subject_template,'{CHECK_STATUS}',@check_status)
-															,'{CHECK_NAME}',check_name)
-														,'{SQL_INSTANCE}',@@SERVERNAME)
-													,'{CHECK_ID}',convert(varchar(max),cc.check_id))
-												,'{CHECK_STATUS}',@check_status)
-											,'{CHECK_VALUE}',convert(varchar(max),@check_value))
-										,'{CHECK_LAST_VALUE}',isnull(convert(varchar(max),cc.last_check_value),'N/A'))
-									,'{CHECK_LAST_STATUS}',isnull(cc.last_check_status,'N/A'))
-								,'{LAST_STATUS_CHANGE}',isnull(convert(varchar(max),cc.last_status_change_date,121),'Never'))
-							,'{CHECK_TIME}',convert(varchar(max),getdate(),121))
-						,'{THRESHOLD_WARNING}',isnull(cc.check_threshold_warning,''))
-					,'{THRESHOLD_CRITICAL}',isnull(cc.check_threshold_critical,''))
-				,'{CHECK_DESCRIPTION}',isnull(rtrim(ltrim(case 
-					when @action_exec_type = 'T-SQL' then replace(cc.check_description,'''','''''')
-					when @action_exec_type = 'PowerShell' then replace(cc.check_description,'"','`"')
-					end)),''))
-			,'{CHECK_QUERY}',isnull(rtrim(ltrim(case
-					when @action_exec_type = 'T-SQL' then replace(cc.check_query,'''','''''')
-					when @action_exec_type = 'PowerShell' then replace(cc.check_query,'"','`"')
-					end)),''))
+																replace(
+																	replace(@subject_template,'{CHECK_STATUS}',@check_status)
+																,'{CHECK_NAME}',check_name)
+															,'{SQL_INSTANCE}',@@SERVERNAME)
+														,'{CHECK_ID}',convert(varchar(max),cc.check_id))
+													,'{CHECK_STATUS}',@check_status)
+												,'{CHECK_VALUE}',convert(varchar(max),@check_value))
+											,'{CHECK_LAST_VALUE}',isnull(convert(varchar(max),cc.last_check_value),'N/A'))
+										,'{CHECK_LAST_STATUS}',isnull(cc.last_check_status,'N/A'))
+									,'{LAST_STATUS_CHANGE}',isnull(convert(varchar(max),cc.last_status_change_date,121),'Never'))
+								,'{CHECK_TIME}',convert(varchar(max),getdate(),121))
+							,'{THRESHOLD_WARNING}',isnull(cc.check_threshold_warning,''))
+						,'{THRESHOLD_CRITICAL}',isnull(cc.check_threshold_critical,''))
+					,'{CHECK_DESCRIPTION}',isnull(rtrim(ltrim(case 
+						when @action_exec_type = 'T-SQL' then replace(cc.check_description,'''','''''')
+						when @action_exec_type = 'PowerShell' then replace(cc.check_description,'"','`"')
+						end)),''))
+				,'{CHECK_QUERY}',isnull(rtrim(ltrim(case
+						when @action_exec_type = 'T-SQL' then replace(cc.check_query,'''','''''')
+						when @action_exec_type = 'PowerShell' then replace(cc.check_query,'"','`"')
+						end)),''))
+			,'{SQL_VERSION}',@@VERSION)
 
 			, @body = 
 			replace(
@@ -264,26 +266,28 @@ if @action_type  <> 'NONE'
 													replace(
 														replace(
 															replace(
-																replace(@body_template,'{CHECK_STATUS}',@check_status)
-															,'{CHECK_NAME}',check_name)
-														,'{SQL_INSTANCE}',@@SERVERNAME)
-													,'{CHECK_ID}',convert(varchar(max),cc.check_id))
-												,'{CHECK_STATUS}',@check_status)
-											,'{CHECK_VALUE}',convert(varchar(max),@check_value))
-										,'{CHECK_LAST_VALUE}',isnull(convert(varchar(max),cc.last_check_value),'N/A'))
-									,'{CHECK_LAST_STATUS}',isnull(cc.last_check_status,'N/A'))
-								,'{LAST_STATUS_CHANGE}',isnull(convert(varchar(max),cc.last_status_change_date,121),'Never'))
-							,'{CHECK_TIME}',convert(varchar(max),getdate(),121))
-						,'{THRESHOLD_WARNING}',isnull(cc.check_threshold_warning,'None'))
-					,'{THRESHOLD_CRITICAL}',isnull(cc.check_threshold_critical,''))
-				,'{CHECK_DESCRIPTION}',isnull(rtrim(ltrim(case 
-					when @action_exec_type = 'T-SQL' then replace(cc.check_description,'''','''''')
-					when @action_exec_type = 'PowerShell' then replace(cc.check_description,'"','`"')
-					end)),''))
-			,'{CHECK_QUERY}',isnull(rtrim(ltrim(case
-					when @action_exec_type = 'T-SQL' then replace(cc.check_query,'''','''''')
-					when @action_exec_type = 'PowerShell' then replace(cc.check_query,'"','`"')
-					end)),''))
+																replace(
+																	replace(@body_template,'{CHECK_STATUS}',@check_status)
+																,'{CHECK_NAME}',check_name)
+															,'{SQL_INSTANCE}',@@SERVERNAME)
+														,'{CHECK_ID}',convert(varchar(max),cc.check_id))
+													,'{CHECK_STATUS}',@check_status)
+												,'{CHECK_VALUE}',convert(varchar(max),@check_value))
+											,'{CHECK_LAST_VALUE}',isnull(convert(varchar(max),cc.last_check_value),'N/A'))
+										,'{CHECK_LAST_STATUS}',isnull(cc.last_check_status,'N/A'))
+									,'{LAST_STATUS_CHANGE}',isnull(convert(varchar(max),cc.last_status_change_date,121),'Never'))
+								,'{CHECK_TIME}',convert(varchar(max),getdate(),121))
+							,'{THRESHOLD_WARNING}',isnull(cc.check_threshold_warning,'None'))
+						,'{THRESHOLD_CRITICAL}',isnull(cc.check_threshold_critical,''))
+					,'{CHECK_DESCRIPTION}',isnull(rtrim(ltrim(case 
+						when @action_exec_type = 'T-SQL' then replace(cc.check_description,'''','''''')
+						when @action_exec_type = 'PowerShell' then replace(cc.check_description,'"','`"')
+						end)),''))
+				,'{CHECK_QUERY}',isnull(rtrim(ltrim(case
+						when @action_exec_type = 'T-SQL' then replace(cc.check_query,'''','''''')
+						when @action_exec_type = 'PowerShell' then replace(cc.check_query,'"','`"')
+						end)),''))
+			,'{SQL_VERSION}',@@VERSION)
 			
 
 		from [dbo].[sqlwatch_meta_check] cc
