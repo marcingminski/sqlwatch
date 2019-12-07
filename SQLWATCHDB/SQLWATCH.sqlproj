@@ -215,6 +215,8 @@
     <Build Include="dbo\Views\vw_sqlwatch_report_fact_check_status_change.sql" />
     <Build Include="dbo\Tables\sqlwatch_logger_log.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_log.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_action_queue_get_next.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_action_queue_update.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />

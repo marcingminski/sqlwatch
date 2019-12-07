@@ -1960,4 +1960,18 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="[SQL_ERROR]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="f65c27ca-2ed1-4d4a-b83a-48a6f55946ef" ChangeDateTime="12/06/2019 23:52:13">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_internal_action_queue_get]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_internal_action_queue_get_item]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="1ed2a184-4a64-4039-b0e9-e868e7f42369" ChangeDateTime="12/06/2019 23:52:34">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_internal_action_queue_get_item]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_internal_action_queue_get_next]" />
+  </Operation>
 </Operations>

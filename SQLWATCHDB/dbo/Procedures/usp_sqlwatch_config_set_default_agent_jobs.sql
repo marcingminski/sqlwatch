@@ -126,18 +126,7 @@ insert into #steps
 			('Process Actions',							1,			'SQLWATCH-INTERNAL-ACTIONS',		'PowerShell','
 $output = "x"
 while ($output -ne $null) { 
-	$output = Invoke-SqlCmd -ServerInstance "' + @server + '" -Database ' + '$(DatabaseName)' + ' -MaxCharLength 2147483647 -Query "set xact_abort on
-	begin tran
-		;with cte_get_message as (
-		  select top 1 *
-		  from [dbo].[sqlwatch_meta_action_queue]
-		  where [exec_status] is null
-		  order by [time_queued]
-		)
-		update cte_get_message
-			set [exec_status] = ''PROCESSING''
-			output deleted.[action_exec], deleted.[action_exec_type], deleted.[queue_item_id]
-	commit tran"
+	$output = Invoke-SqlCmd -ServerInstance "' + @server + '" -Database ' + '$(DatabaseName)' + ' -MaxCharLength 2147483647 -Query "exec [dbo].[usp_sqlwatch_internal_action_queue_get_next]"
 
 	$status = ""
 	$queue_item_id = $output.queue_item_id
@@ -156,26 +145,15 @@ while ($output -ne $null) {
 
 		if ( $output.action_exec_type -eq "PowerShell" ) {
 			try {
-				$action_exec = $output.action_exec
-				Invoke-Expression $output.action_exec
+				Invoke-Expression $output.action_exec -ErrorAction "Stop" 
 			}
 			catch {
 				$ErrorOutput = $_.Exception.Message
-				}
+			}
 		}
-
-       if ($ErrorOutput -ne "") {
- 			$query = "update [dbo].[sqlwatch_meta_action_queue] set [exec_status] = ''FAILED'' where queue_item_id = $queue_item_id;
-					exec [dbo].[usp_sqlwatch_internal_log]
-							@procces_name = ''PowerShell'',
-							@process_stage = ''6DC68414-915F-4B52-91B6-4D0B6018243B'',
-							@process_message = ''$ErrorOutput'',
-							@process_message_type = ''ERROR'' "
-        } else {
-			$query = "update [dbo].[sqlwatch_meta_action_queue] set [exec_status] = ''OK'' where queue_item_id = $queue_item_id"
-        }
-		Invoke-SqlCmd -ServerInstance "' + @server + '" -Database ' + '$(DatabaseName)' + ' -Query $query
-		Invoke-SqlCmd -ServerInstance "' + @server + '" -Database ' + '$(DatabaseName)' + ' -Query "delete from [dbo].[sqlwatch_meta_action_queue] [exec_status] = ''OK'' and [time_queued] > dateadd(day,-1,sysdatetime())"
+		Invoke-SqlCmd -ServerInstance "' + @server + '" -Database ' + '$(DatabaseName)' + ' -ErrorAction "Stop" -Query "exec [dbo].[usp_sqlwatch_internal_action_queue_update]
+					@queue_item_id = $queue_item_id,
+					@error = ''$ErrorOutput''"
 	}
 }'),
 			
