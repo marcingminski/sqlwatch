@@ -916,7 +916,9 @@ Critical threshold: {THRESHOLD_CRITICAL}
 ---
 
 Sent from SQLWATCH on host: {SQL_INSTANCE}
-https://docs.sqlwatch.io'
+https://docs.sqlwatch.io
+
+{SQL_VERSION}'
 
 declare @action_template_report_html nvarchar(max) = '<html>
   <head>
@@ -962,6 +964,7 @@ declare @action_template_report_html nvarchar(max) = '<html>
 
 <p>Sent from SQLWATCH on host: {SQL_INSTANCE}</p>
 <p><a href="https://docs.sqlwatch.io">https://docs.sqlwatch.io</a> </p>
+<p>{SQL_VERSION}</p>
   </body>
 </html>';
 
@@ -1003,6 +1006,7 @@ declare @action_template_html nvarchar(max) = '<html>
 
 <p>Sent from SQLWATCH on host: {SQL_INSTANCE}</p>
 <p><a href="https://docs.sqlwatch.io">https://docs.sqlwatch.io</a> </p>
+<p>{SQL_VERSION}</p>
   </body>
 </html>';
 
@@ -1028,7 +1032,9 @@ Critical threshold: {THRESHOLD_CRITICAL}
 ---
 
 Sent from SQLWATCH on host: {SQL_INSTANCE}
-https://docs.sqlwatch.io';
+https://docs.sqlwatch.io
+
+{SQL_VERSION}';
 
 disable trigger [dbo].[trg_sqlwatch_config_check_action_template_modify] on [dbo].[sqlwatch_config_check_action_template];  --so we dont populate updated date as this is to detect if a user has modified default template
 set identity_insert [dbo].[sqlwatch_config_check_action_template] on;
@@ -1133,7 +1139,7 @@ exec [dbo].[usp_sqlwatch_user_add_action]
 	,@action_exec = 'exec msdb.dbo.sp_send_dbmail @recipients = ''dba@yourcompany.com'',
 @subject = ''{SUBJECT}'',
 @body = ''{BODY}'',
-@profile_name=''DBA'',
+@profile_name=''SQLWATCH'',
 @body_format = ''HTML'''
 	,@action_enabled = 0
 
@@ -1144,7 +1150,7 @@ exec [dbo].[usp_sqlwatch_user_add_action]
 	,@action_exec = 'exec msdb.dbo.sp_send_dbmail @recipients = ''dba@yourcompany.com'',
 @subject = ''{SUBJECT}'',
 @body = ''{BODY}'',
-@profile_name=''DBA'''
+@profile_name=''SQLWATCH'''
 	,@action_enabled = 0
 
 exec [dbo].[usp_sqlwatch_user_add_action]
@@ -1664,7 +1670,7 @@ and snapshot_time > isnull((
 	,@check_action_id = -1
 
 	,@action_every_failure = 0
-	,@action_recovery = 1
+	,@action_recovery = 0
 	,@action_repeat_period_minutes = NULL
 	,@action_hourly_limit = 10
 	,@action_template_id = -3
@@ -1739,7 +1745,7 @@ where sql_instance = @@SERVERNAME'
 	,@check_action_id = -9
 
 	,@action_every_failure = 0
-	,@action_recovery = 1
+	,@action_recovery = 0
 	,@action_repeat_period_minutes = 1440 --daily
 	,@action_hourly_limit = 10
 	,@action_template_id = -2
@@ -1759,7 +1765,7 @@ where sql_instance = @@SERVERNAME'
 	,@check_action_id = -9
 
 	,@action_every_failure = 0
-	,@action_recovery = 1
+	,@action_recovery = 0
 	,@action_repeat_period_minutes = 1440 --daily
 	,@action_hourly_limit = 10
 	,@action_template_id = -2
@@ -1780,7 +1786,7 @@ where sql_instance = @@SERVERNAME'
 	,@check_action_id = -1
 
 	,@action_every_failure = 0
-	,@action_recovery = 1
+	,@action_recovery = 0
 	,@action_repeat_period_minutes = 1440 --daily
 	,@action_hourly_limit = 10
 	,@action_template_id = -3
@@ -1802,7 +1808,7 @@ and last_check_status = ''CHECK ERROR'''
 	,@check_action_id = -1
 
 	,@action_every_failure = 0
-	,@action_recovery = 1
+	,@action_recovery = 0
 	,@action_repeat_period_minutes = 1440 --daily
 	,@action_hourly_limit = 10
 	,@action_template_id = -3
@@ -1823,7 +1829,7 @@ and time_queued < dateadd(hour,-1,SYSDATETIME())'
 	,@check_action_id = -1
 
 	,@action_every_failure = 0
-	,@action_recovery = 1
+	,@action_recovery = 0
 	,@action_repeat_period_minutes = 1440 --daily
 	,@action_hourly_limit = 10
 	,@action_template_id = -3
@@ -1855,7 +1861,7 @@ and mtb.sql_instance = @@SERVERNAME'
 	,@check_action_id = -1
 
 	,@action_every_failure = 0
-	,@action_recovery = 1
+	,@action_recovery = 0
 	,@action_repeat_period_minutes = 1440 --daily
 	,@action_hourly_limit = 10
 	,@action_template_id = -3
@@ -1892,7 +1898,7 @@ and mtb.sql_instance = @@SERVERNAME'
 	,@check_action_id = -1
 
 	,@action_every_failure = 0
-	,@action_recovery = 1
+	,@action_recovery = 0
 	,@action_repeat_period_minutes = 1440 --daily
 	,@action_hourly_limit = 10
 	,@action_template_id = -3
@@ -1921,7 +1927,7 @@ and mtb.sql_instance = @@SERVERNAME'
 	,@check_action_id = -1
 
 	,@action_every_failure = 0
-	,@action_recovery = 1
+	,@action_recovery = 0
 	,@action_repeat_period_minutes = 1440 --daily
 	,@action_hourly_limit = 10
 	,@action_template_id = -3
@@ -1950,7 +1956,7 @@ and mtb.sql_instance = @@SERVERNAME'
 	,@check_action_id = -1
 
 	,@action_every_failure = 0
-	,@action_recovery = 1
+	,@action_recovery = 0
 	,@action_repeat_period_minutes = 1440 --daily
 	,@action_hourly_limit = 10
 	,@action_template_id = -3
@@ -1981,7 +1987,7 @@ and mtb.sql_instance = @@SERVERNAME'
 	,@check_action_id = -1
 
 	,@action_every_failure = 0
-	,@action_recovery = 1
+	,@action_recovery = 0
 	,@action_repeat_period_minutes = 1440 --daily
 	,@action_hourly_limit = 10
 	,@action_template_id = -3
@@ -2006,7 +2012,7 @@ and d.name not in (''tempdb'')'
 	,@check_action_id = -11
 
 	,@action_every_failure = 0
-	,@action_recovery = 1
+	,@action_recovery = 0
 	,@action_repeat_period_minutes = 60 
 	,@action_hourly_limit = 10
 	,@action_template_id = -2
@@ -2029,7 +2035,7 @@ where d.name not in (''tempdb'')'
 	,@check_action_id = -12
 
 	,@action_every_failure = 1
-	,@action_recovery = 1
+	,@action_recovery = 0
 	,@action_repeat_period_minutes = 1440 
 	,@action_hourly_limit = 10
 	,@action_template_id = -2
@@ -2053,7 +2059,7 @@ and bs.backup_finish_date is null'
 	,@check_action_id = -13
 
 	,@action_every_failure = 1
-	,@action_recovery = 1
+	,@action_recovery = 0
 	,@action_repeat_period_minutes = 1440 
 	,@action_hourly_limit = 10
 	,@action_template_id = -2
@@ -2079,7 +2085,7 @@ and bs.backup_finish_date is null'
 	,@check_action_id = -14
 
 	,@action_every_failure = 1
-	,@action_recovery = 1
+	,@action_recovery = 0
 	,@action_repeat_period_minutes = 1440 
 	,@action_hourly_limit = 10
 	,@action_template_id = -2
@@ -2105,7 +2111,7 @@ left join sys.dm_exec_requests r
 	,@check_action_id = -15
 
 	,@action_every_failure = 1
-	,@action_recovery = 1
+	,@action_recovery = 0
 	,@action_repeat_period_minutes = 1 
 	,@action_hourly_limit = 6
 	,@action_template_id = -2
@@ -2139,7 +2145,7 @@ and snapshot_time > isnull((
 	,@check_action_id = -1
 
 	,@action_every_failure = 0
-	,@action_recovery = 1
+	,@action_recovery = 0
 	,@action_repeat_period_minutes = null 
 	,@action_hourly_limit = 6
 	,@action_template_id = -3
@@ -2172,7 +2178,7 @@ and snapshot_time > isnull((
 	,@check_action_id = -1
 
 	,@action_every_failure = 0
-	,@action_recovery = 1
+	,@action_recovery = 0
 	,@action_repeat_period_minutes = null 
 	,@action_hourly_limit = 6
 	,@action_template_id = -3
@@ -2205,7 +2211,7 @@ and snapshot_time > isnull((
 	,@check_action_id = -1
 
 	,@action_every_failure = 0
-	,@action_recovery = 1
+	,@action_recovery = 0
 	,@action_repeat_period_minutes = null 
 	,@action_hourly_limit = 6
 	,@action_template_id = -3
@@ -2238,7 +2244,7 @@ and snapshot_time > isnull((
 	,@check_action_id = -1
 
 	,@action_every_failure = 0
-	,@action_recovery = 1
+	,@action_recovery = 0
 	,@action_repeat_period_minutes = null 
 	,@action_hourly_limit = 6
 	,@action_template_id = -3
@@ -2271,7 +2277,7 @@ and snapshot_time > isnull((
 	,@check_action_id = -1
 
 	,@action_every_failure = 0
-	,@action_recovery = 1
+	,@action_recovery = 0
 	,@action_repeat_period_minutes = null 
 	,@action_hourly_limit = 6
 	,@action_template_id = -3
@@ -2305,7 +2311,7 @@ and snapshot_time > isnull((
 	,@check_action_id = -1
 
 	,@action_every_failure = 0
-	,@action_recovery = 1
+	,@action_recovery = 0
 	,@action_repeat_period_minutes = null 
 	,@action_hourly_limit = 6
 	,@action_template_id = -3
@@ -2338,7 +2344,7 @@ and snapshot_time > isnull((
 	,@check_action_id = -1
 
 	,@action_every_failure = 0
-	,@action_recovery = 1
+	,@action_recovery = 0
 	,@action_repeat_period_minutes = null 
 	,@action_hourly_limit = 6
 	,@action_template_id = -3
@@ -2371,7 +2377,7 @@ and snapshot_time > isnull((
 	,@check_action_id = -1
 
 	,@action_every_failure = 0
-	,@action_recovery = 1
+	,@action_recovery = 0
 	,@action_repeat_period_minutes = null 
 	,@action_hourly_limit = 6
 	,@action_template_id = -3
@@ -2404,7 +2410,7 @@ and snapshot_time > isnull((
 	,@check_action_id = -1
 
 	,@action_every_failure = 0
-	,@action_recovery = 1
+	,@action_recovery = 0
 	,@action_repeat_period_minutes = null 
 	,@action_hourly_limit = 6
 	,@action_template_id = -3
@@ -2437,7 +2443,7 @@ and snapshot_time > isnull((
 	,@check_action_id = -1
 
 	,@action_every_failure = 0
-	,@action_recovery = 1
+	,@action_recovery = 0
 	,@action_repeat_period_minutes = null 
 	,@action_hourly_limit = 6
 	,@action_template_id = -3
@@ -2470,7 +2476,7 @@ and snapshot_time > isnull((
 	,@check_action_id = -1
 
 	,@action_every_failure = 0
-	,@action_recovery = 1
+	,@action_recovery = 0
 	,@action_repeat_period_minutes = null 
 	,@action_hourly_limit = 6
 	,@action_template_id = -3
@@ -2504,7 +2510,7 @@ and snapshot_time > isnull((
 	,@check_action_id = -1
 
 	,@action_every_failure = 0
-	,@action_recovery = 1
+	,@action_recovery = 0
 	,@action_repeat_period_minutes = null 
 	,@action_hourly_limit = 6
 	,@action_template_id = -3
@@ -2537,7 +2543,7 @@ and snapshot_time > isnull((
 	,@check_action_id = -1
 
 	,@action_every_failure = 0
-	,@action_recovery = 1
+	,@action_recovery = 0
 	,@action_repeat_period_minutes = null 
 	,@action_hourly_limit = 6
 	,@action_template_id = -3
@@ -2571,7 +2577,7 @@ and snapshot_time > isnull((
 	,@check_action_id = -1
 
 	,@action_every_failure = 0
-	,@action_recovery = 1
+	,@action_recovery = 0
 	,@action_repeat_period_minutes = null 
 	,@action_hourly_limit = 6
 	,@action_template_id = -3
@@ -2604,7 +2610,7 @@ and snapshot_time > isnull((
 	,@check_action_id = -1
 
 	,@action_every_failure = 0
-	,@action_recovery = 1
+	,@action_recovery = 0
 	,@action_repeat_period_minutes = null 
 	,@action_hourly_limit = 6
 	,@action_template_id = -3
@@ -2637,7 +2643,7 @@ and snapshot_time > isnull((
 	,@check_action_id = -1
 
 	,@action_every_failure = 0
-	,@action_recovery = 1
+	,@action_recovery = 0
 	,@action_repeat_period_minutes = null 
 	,@action_hourly_limit = 6
 	,@action_template_id = -3
@@ -2671,7 +2677,7 @@ and snapshot_time > isnull((
 	,@check_action_id = -1
 
 	,@action_every_failure = 0
-	,@action_recovery = 1
+	,@action_recovery = 0
 	,@action_repeat_period_minutes = null 
 	,@action_hourly_limit = 6
 	,@action_template_id = -3
@@ -2704,7 +2710,7 @@ and snapshot_time > isnull((
 	,@check_action_id = -1
 
 	,@action_every_failure = 0
-	,@action_recovery = 1
+	,@action_recovery = 0
 	,@action_repeat_period_minutes = null 
 	,@action_hourly_limit = 6
 	,@action_template_id = -3
@@ -2737,7 +2743,7 @@ and snapshot_time > isnull((
 	,@check_action_id = -1
 
 	,@action_every_failure = 0
-	,@action_recovery = 1
+	,@action_recovery = 0
 	,@action_repeat_period_minutes = null 
 	,@action_hourly_limit = 6
 	,@action_template_id = -3
@@ -2771,7 +2777,7 @@ and snapshot_time > isnull((
 	,@check_action_id = -1
 
 	,@action_every_failure = 0
-	,@action_recovery = 1
+	,@action_recovery = 0
 	,@action_repeat_period_minutes = null 
 	,@action_hourly_limit = 6
 	,@action_template_id = -3
@@ -2805,7 +2811,7 @@ and snapshot_time > isnull((
 	,@check_action_id = -1
 
 	,@action_every_failure = 0
-	,@action_recovery = 1
+	,@action_recovery = 0
 	,@action_repeat_period_minutes = null 
 	,@action_hourly_limit = 6
 	,@action_template_id = -3
@@ -2842,7 +2848,7 @@ and snapshot_time > isnull((
 	,@check_action_id = -1
 
 	,@action_every_failure = 1
-	,@action_recovery = 1
+	,@action_recovery = 0
 	,@action_repeat_period_minutes = null 
 	,@action_hourly_limit = 6
 	,@action_template_id = -3
