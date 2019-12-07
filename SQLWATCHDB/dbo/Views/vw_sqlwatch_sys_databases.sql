@@ -17,6 +17,7 @@ select
 	, [d].[page_verify_option] 
 from sys.databases d
 
+/*	remove these joins and related where clauses when building for SQL2008 */
 /* https://github.com/marcingminski/sqlwatch/issues/108 */
 left join sys.dm_hadr_availability_replica_states hars 
 	on d.replica_id = hars.replica_id

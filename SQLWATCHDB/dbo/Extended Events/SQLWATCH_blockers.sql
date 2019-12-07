@@ -1,6 +1,8 @@
 ﻿CREATE EVENT SESSION [SQLWATCH_blockers] ON SERVER 
 /*  a custom session to capture blockers as the default health_session is quite busy and would sometimes drop messages
-	and generates relatively large xml that can take few seconds to parse. */
+	and generates relatively large xml that can take few seconds to parse. 
+	
+	Remove when targeting SQL2008	*/
 ADD EVENT sqlserver.blocked_process_report(
     ACTION(sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.database_name,sqlserver.plan_handle,sqlserver.session_id,sqlserver.session_nt_username,sqlserver.sql_text,sqlserver.tsql_stack,sqlserver.username)),
 ADD EVENT sqlserver.xml_deadlock_report

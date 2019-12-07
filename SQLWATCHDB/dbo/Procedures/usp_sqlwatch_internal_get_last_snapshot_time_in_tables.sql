@@ -124,6 +124,9 @@ from #snapshot_id_table
 group by sql_instance'
 
 exec (@sql) 
+
+/*	with result sets was introduced in SQL 2012. This will not build for SQL 2008.
+	Remove if building for SQL 2012.	*/
 with result sets (
  (		 
 	 sql_instance varchar(32)
