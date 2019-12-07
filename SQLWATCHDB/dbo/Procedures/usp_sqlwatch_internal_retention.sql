@@ -28,6 +28,7 @@ as
  Change Log:
 	1.0		2019-08		- Marcin Gminski, Initial version
 	1.1		2019-11-29	- Marcin Gminski, Ability to only leave most recent snapshot with -1 retention
+	1.2		2012-12-07	- Marcin Gminski, Added retention of the action queue
 -------------------------------------------------------------------------------------------------------------------
 */
 set nocount on;
@@ -72,4 +73,9 @@ while @row_count > 0
 			set @row_count = @@ROWCOUNT
 		commit tran
 	end
+
+	/*	delete old records from the action queue */
+	delete 
+	from [dbo].[sqlwatch_meta_action_queue] 
+	where [time_queued] < case when exec_status <> 'FAILED' then dateadd(day,-1,sysdatetime()) else dateadd(day,-7,sysdatetime()) end
 go
