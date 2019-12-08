@@ -1,7 +1,15 @@
 Copyright for SQLServer-Performance-Poster.pdf are held by Quest Software and are not part of this license. 
 The pdf was originally available as free download at http://www.quest.com/backstage/images/promotions/SQLServer-Perfmonance-Poster.pdf. 
 
-All other copyrights are held by me and shared under MIT license.
+---
+
+Some parts of the code come from MSSQL Tiger Team (https://blogs.msdn.microsoft.com/sql_server_team) https://github.com/microsoft/tigertoolbox avaiable under MIT license.
+Microsoft SQL Server Sample Code
+Copyright (c) Microsoft Corporation
+All rights reserved.
+MIT License.
+
+---
 
 MIT License
 
