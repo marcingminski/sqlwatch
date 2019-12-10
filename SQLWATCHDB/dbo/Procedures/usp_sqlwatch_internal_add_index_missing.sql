@@ -20,7 +20,7 @@ create clustered index idx_tmp_t on #t ([database_name], [create_date], [table_n
 
 
 insert into #t
-exec [dbo].[usp_sqlwatch_internal_foreachdb] 'use [?]
+exec [dbo].[usp_sqlwatch_internal_foreachdb] @exlude_databases = 'tempdb', @command = 'use [?]
 select
 	[database_name] = ''?'',
 	[create_date] = db.create_date,
@@ -30,9 +30,7 @@ select
 	[included_columns] ,
 	[statement] ,
 	id.[index_handle]
-
 from sys.dm_db_missing_index_details id
-
 inner join [?].sys.tables t
 	on t.object_id = id.object_id
 inner join [?].sys.schemas s
