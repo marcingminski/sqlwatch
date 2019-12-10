@@ -105,6 +105,13 @@ from [dbo].[sqlwatch_meta_index] mi
 		on sdb.name = md.database_name collate database_default
 		and sdb.create_date = md.database_create_date
 
+	/*	Index histograms can be very large and since its only required for a very specific performance tuning, 
+		we are only going to collect those exclusively included for collection	*/
+	inner join [dbo].[sqlwatch_config_include_index_histogram] ih
+		on md.[database_name] like parsename(ih.object_name_pattern,3)
+		and mt.table_name like parsename(ih.object_name_pattern,2) + '.' + parsename(ih.object_name_pattern,1)
+		and mi.index_name like ih.index_name_pattern
+
 	left join [dbo].[sqlwatch_config_exclude_database] ed
 		on md.[database_name] like ed.database_name_pattern
 		and ed.snapshot_type_id = @snapshot_type
@@ -227,7 +234,7 @@ deallocate c_index
 	insert into [dbo].[sqlwatch_logger_snapshot_header] (snapshot_time, snapshot_type_id)
 	values (@snapshot_time, @snapshot_type)
 
-	insert into [dbo].[sqlwatch_logger_index_usage_stats_histogram](
+	insert into [dbo].[sqlwatch_logger_index_histogram](
 			[sqlwatch_database_id], [sqlwatch_table_id], [sqlwatch_index_id],
 		RANGE_HI_KEY, RANGE_ROWS, EQ_ROWS, DISTINCT_RANGE_ROWS, AVG_RANGE_ROWS,
 		[snapshot_time], [snapshot_type_id], [collection_time])
@@ -245,7 +252,7 @@ deallocate c_index
 		[collection_time]
 	from #stats st
 
-	insert into [dbo].[sqlwatch_logger_index_usage_stats_histogram](
+	insert into [dbo].[sqlwatch_logger_index_histogram](
 			[sqlwatch_database_id], [sqlwatch_table_id], [sqlwatch_index_id],
 		RANGE_HI_KEY, RANGE_ROWS, EQ_ROWS, DISTINCT_RANGE_ROWS, AVG_RANGE_ROWS,
 		[snapshot_time], [snapshot_type_id], [collection_time])
@@ -263,7 +270,7 @@ deallocate c_index
 		[collection_time]
 	from #stats_hierarchical st
 
-	insert into [dbo].[sqlwatch_logger_index_usage_stats_histogram](
+	insert into [dbo].[sqlwatch_logger_index_histogram](
 			[sqlwatch_database_id], [sqlwatch_table_id], [sqlwatch_index_id],
 		RANGE_HI_KEY, RANGE_ROWS, EQ_ROWS, DISTINCT_RANGE_ROWS, AVG_RANGE_ROWS,
 		[snapshot_time], [snapshot_type_id], [collection_time])
