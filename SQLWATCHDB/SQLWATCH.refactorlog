@@ -1974,4 +1974,46 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[usp_sqlwatch_internal_action_queue_get_next]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="b7f66668-a362-4d05-b525-0aa8223b35be" ChangeDateTime="12/10/2019 12:14:30">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_logger_index_usage_stats_histogram]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[sqlwatch_logger_index_histogram]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="9f032e67-9a50-40e7-bed1-e2e5b8239dd0" ChangeDateTime="12/10/2019 12:15:43">
+    <Property Name="ElementName" Value="[dbo].[pk_logger_index_stats_histogram]" />
+    <Property Name="ElementType" Value="SqlPrimaryKeyConstraint" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_logger_index_histogram]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[pk_logger_index_histogram]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="626c0255-d4c6-46db-9ccb-3117412090cd" ChangeDateTime="12/10/2019 12:15:58">
+    <Property Name="ElementName" Value="[dbo].[pk_sqlwatch_logger_index_usage_stats_histogram_index]" />
+    <Property Name="ElementType" Value="SqlForeignKeyConstraint" />
+    <Property Name="ParentElementName" Value="" />
+    <Property Name="ParentElementType" Value="" />
+    <Property Name="NewName" Value="[fk_sqlwatch_logger_index_histogram_index]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="067cf04d-7002-4977-82db-a315299f8079" ChangeDateTime="12/10/2019 12:16:07">
+    <Property Name="ElementName" Value="[dbo].[fk_logger_index_stats_histogram]" />
+    <Property Name="ElementType" Value="SqlForeignKeyConstraint" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_logger_index_histogram]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[fk_logger_index_histogram]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="8dea0d0d-9751-41ae-a2f9-8970b90cdb53" ChangeDateTime="12/10/2019 12:52:54">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_config_azure_log_definition]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[sqlwatch_config_azure_log]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="9787bbce-933b-45f0-93eb-3b68ede33bc9" ChangeDateTime="12/10/2019 12:55:46">
+    <Property Name="ElementName" Value="[dbo].[vw_sqlwatch_report_fact_index_usage_stats_histogram]" />
+    <Property Name="ElementType" Value="SqlView" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[vw_sqlwatch_report_fact_index_histogram]" />
+  </Operation>
 </Operations>

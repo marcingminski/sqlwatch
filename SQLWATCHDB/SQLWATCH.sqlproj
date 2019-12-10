@@ -154,7 +154,7 @@
     <Build Include="dbo\Views\vw_sqlwatch_report_fact_disk_utilisation_volume.sql" />
     <Build Include="dbo\Views\vw_sqlwatch_report_fact_index_missing_stats.sql" />
     <Build Include="dbo\Views\vw_sqlwatch_report_fact_index_usage_stats.sql" />
-    <Build Include="dbo\Views\vw_sqlwatch_report_fact_index_usage_stats_histogram.sql" />
+    <Build Include="dbo\Views\vw_sqlwatch_report_fact_index_histogram.sql" />
     <Build Include="dbo\Views\vw_sqlwatch_report_fact_perf_os_memory_clerks.sql" />
     <Build Include="dbo\Views\vw_sqlwatch_report_fact_perf_os_process_memory.sql" />
     <Build Include="dbo\Views\vw_sqlwatch_report_fact_perf_os_schedulers.sql" />
@@ -217,6 +217,7 @@
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_log.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_action_queue_get_next.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_action_queue_update.sql" />
+    <Build Include="dbo\Tables\sqlwatch_config_include_index_histogram.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />

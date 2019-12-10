@@ -434,13 +434,13 @@ using (
 	select [snapshot_type_id] = 11, [snapshot_type_desc] = 'WhoIsActive', [snapshot_retention_days] = 3
 	union
 	/* index usage */
-	select [snapshot_type_id] = 14, [snapshot_type_desc] = 'Index Stats', [snapshot_retention_days] = 90
+	select [snapshot_type_id] = 14, [snapshot_type_desc] = 'Index Stats', [snapshot_retention_days] = 7
 	union
 	/* index histogram */
-	select [snapshot_type_id] = 15, [snapshot_type_desc] = 'Index Histogram', [snapshot_retention_days] = 90
+	select [snapshot_type_id] = 15, [snapshot_type_desc] = 'Index Histogram', [snapshot_retention_days] = -1
 	union
 	/* agent history */
-	select [snapshot_type_id] = 16, [snapshot_type_desc] = 'Agent History', [snapshot_retention_days] = 365
+	select [snapshot_type_id] = 16, [snapshot_type_desc] = 'Agent History', [snapshot_retention_days] = 30
 	union
 	/* Os volume utilisation */
 	select [snapshot_type_id] = 17, [snapshot_type_desc] = 'Disk Utilisation OS', [snapshot_retention_days] = 365
@@ -480,6 +480,13 @@ if (select count(*) from [dbo].[sqlwatch_config_exclude_database]) = 0
 		--exclude index stats and histogram collection from tempdb:
 				('tempdb',14),
 				('tempdb',15)
+	end
+
+
+if (select count(*) from [dbo].[sqlwatch_config_include_index_histogram]) = 0
+	begin
+		insert into [dbo].[sqlwatch_config_include_index_histogram] ([object_name_pattern],[index_name_pattern])
+		values ('%.dbo.table%','%')
 	end
 
 --------------------------------------------------------------------------------------
