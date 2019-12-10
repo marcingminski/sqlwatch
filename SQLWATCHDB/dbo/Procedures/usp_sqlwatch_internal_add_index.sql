@@ -1,5 +1,26 @@
 ﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_internal_add_index]
 as
+/*
+-------------------------------------------------------------------------------------------------------------------
+ Procedure:
+	usp_sqlwatch_internal_add_index
+
+ Description:
+	Builds meta reference table with all indexes from each database so we can alloate internal sqlwatchid
+
+ Parameters
+	None
+
+ Author:
+	Marcin Gminski
+
+ Change Log:
+	1.0		2019-08		- Marcin Gminski, Initial version
+	1.1		2019-12-10	- Fix https://github.com/marcingminski/sqlwatch/issues/130, HEAPs have NULL name in sys.indexes
+						  but for our purpose we are making it inherit table name.
+-------------------------------------------------------------------------------------------------------------------
+*/
+set nocount on;
 
 create table ##DB61B2CD92324E4B89019FFA7BEF1010 (
 	index_name nvarchar(128), 
@@ -11,22 +32,20 @@ create table ##DB61B2CD92324E4B89019FFA7BEF1010 (
 	sqlwatch_table_id int null
 )
 
-create unique clustered index icx_tmp_DB61B2CD92324E4B89019FFA7BEF1010 on ##DB61B2CD92324E4B89019FFA7BEF1010 ([table_name],[database_name],index_id)
+create unique clustered index icx_tmp_DB61B2CD92324E4B89019FFA7BEF1010 
+	on ##DB61B2CD92324E4B89019FFA7BEF1010 ([table_name],[database_name],index_id)
 
--- this should be a cursor from dbo.vw_sqlwatch_sys_databases
-exec sp_MSforeachdb'
-use [?]
 insert into ##DB61B2CD92324E4B89019FFA7BEF1010 (index_name, index_id, index_type_desc, [table_name], [database_name])
-select ix.name, ix.index_id, ix.type_desc, s.name + ''.'' + t.name, ''?''
+exec [dbo].[usp_sqlwatch_internal_foreachdb] @exlude_databases = 'tempdb', @command = 'use [?]
+insert into ##DB61B2CD92324E4B89019FFA7BEF1010 (index_name, index_id, index_type_desc, [table_name], [database_name])
+select isnull(ix.name,object_name(ix.object_id)), ix.index_id, ix.type_desc, s.name + ''.'' + t.name, ''?''
 from sys.indexes ix
 inner join sys.tables t 
 	on t.[object_id] = ix.[object_id]
 inner join sys.schemas s 
 	on s.[schema_id] = t.[schema_id]
-where ix.name is not null
-and ''?'' <> ''tempdb''
-and objectproperty( ix.object_id, ''IsMSShipped'' ) = 0 
-'
+where objectproperty( ix.object_id, ''IsMSShipped'' ) = 0 '
+
 update t
 	set sqlwatch_database_id = md.sqlwatch_database_id, 
 	sqlwatch_table_id = mt.sqlwatch_table_id
