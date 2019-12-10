@@ -33,7 +33,7 @@ values
 	('sqlwatch_logger_disk_utilisation_volume', 17),
 	('sqlwatch_logger_index_missing_stats', 3),
 	('sqlwatch_logger_index_usage_stats', 14),
-	('sqlwatch_logger_index_usage_stats_histogram', 15),
+	('sqlwatch_logger_index_histogram', 15),
 	('sqlwatch_logger_perf_file_stats', 1),
 	('sqlwatch_logger_perf_os_memory_clerks', 1),
 	('sqlwatch_logger_perf_os_performance_counters', 1),
@@ -140,8 +140,8 @@ with result sets (
 	,sqlwatch_logger_index_missing_stats_header varchar(23)
 	,sqlwatch_logger_index_usage_stats varchar(23)
 	,sqlwatch_logger_index_usage_stats_header varchar(23)
-	,sqlwatch_logger_index_usage_stats_histogram varchar(23)
-	,sqlwatch_logger_index_usage_stats_histogram_header varchar(23)
+	,sqlwatch_logger_index_histogram varchar(23)
+	,sqlwatch_logger_index_histogram_header varchar(23)
 	,sqlwatch_logger_perf_file_stats varchar(23)
 	,sqlwatch_logger_perf_file_stats_header varchar(23)
 	,sqlwatch_logger_perf_os_memory_clerks varchar(23)
