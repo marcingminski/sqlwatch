@@ -1,6 +1,7 @@
 ﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_internal_foreachdb]
    @command nvarchar(max),
-   @snapshot_type_id tinyint = null
+   @snapshot_type_id tinyint = null,
+   @exlude_databases varchar(max) = null
 as
 
 /*
@@ -16,12 +17,14 @@ as
 	@snapshot_type_id	-	additionaly, if we are executing this in a collector, we can pass snapshot_id 
 							in order to apply database/snapshot exlusion. This approach will prevent it
 							from even accessing the database in the first place.
+	@exlude_databases	-	list of comma separated database names to exclude from the loop
 	
  Author:
 	Marcin Gminski
 
  Change Log:
 	1.0		2019-12		- Marcin Gminski, Initial version
+	1.1		2019-12-10	- Marcin Gminski, database exclusion
 -------------------------------------------------------------------------------------------------------------------
 */
 begin
@@ -29,6 +32,10 @@ begin
 	declare @sql nvarchar(max),
 			@db	nvarchar(max),
 			@exclude_from_loop bit
+
+	select *
+	into #t
+	from [dbo].[ufn_sqlwatch_split_string] (@exlude_databases,',')
 
 	declare cur_database cursor
 	LOCAL FORWARD_ONLY STATIC READ_ONLY
@@ -53,9 +60,19 @@ begin
 					set @sql = ''
 					set @db = @db
 
-					set @sql = replace(@command,'?',@db)
-			
-					exec sp_executesql @sql
+					if not exists (
+						select * from #t
+						where @db like [value] collate database_default
+						)
+						begin
+							set @sql = replace(@command,'?',@db)
+	
+							exec sp_executesql @sql
+						end
+					else
+						begin
+							Print 'Database (' + @db + ') excluded from collection due to local exclusion'
+						end
 				end
 			else
 				begin
