@@ -2,12 +2,19 @@
 AS
 
 set xact_abort on
-begin tran
+
+declare @snapshot_type_id tinyint = 7,
+		@snapshot_time datetime2(0)
+
+if (select collect from [dbo].[sqlwatch_config_snapshot_type]
+	where snapshot_type_id = @snapshot_type_id) = 0
+		begin
+			return
+		end
 
 if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 	begin
-		declare @snapshot_time datetime = getutcdate()
-		declare @snapshot_type_id tinyint 
+		begin tran
 
 		select cast(target_data as xml) AS targetdata
 		into #xes
@@ -17,13 +24,12 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 		where xes.name = 'SQLWATCH_long_queries'
 			and xet.target_name = 'ring_buffer'
 
-
 		--------------------------------------------------------------------------------------------------------------------------------
 		-- long queries
 		--------------------------------------------------------------------------------------------------------------------------------
-		set @snapshot_type_id = 7
-		insert into dbo.[sqlwatch_logger_snapshot_header] (snapshot_time, snapshot_type_id)
-		select @snapshot_time, @snapshot_type_id
+		exec [dbo].[usp_sqlwatch_internal_insert_header] 
+			@snapshot_time_new = @snapshot_time OUTPUT,
+			@snapshot_type_id = @snapshot_type_id
 
 		SELECT 
 			 [activity_id] = xed.event_data.value('(action[@name="attach_activity_id"]/value )[1]', 'varchar(255)')
@@ -69,15 +75,22 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 			, tx.offset_end, tx.statement, tx.username, tx.sql_text, tx.object_name, tx.client_hostname, tx.client_app_name, tx.duration_ms, tx.wait_type
 			, tx.snapshot_time, tx.snapshot_type_id
 		from #t_queries tx
+
 			left join dbo.[sqlwatch_logger_xes_long_queries] x
 				on x.activity_id = substring(tx.[activity_id],1,len(tx.[activity_id])-charindex('-',reverse(tx.[activity_id]))) 
 				and x.activity_sequence = right(tx.[activity_id],charindex('-',reverse(tx.[activity_id]))-1)
+
+			left join [dbo].[sqlwatch_config_exclude_xes_long_query] ex
+				on case when ex.statement is not null then tx.statement else '%' end like isnull(ex.statement,'%')
+				and case when ex.sql_text is not null then tx.sql_text else '%' end like isnull(ex.sql_text,'%')
+				and case when ex.client_app_name is not null then tx.client_app_name else '%' end like isnull(ex.client_app_name,'%')
+				and case when ex.client_hostname is not null then tx.client_hostname else '%' end like isnull(ex.client_hostname,'%')
+				and case when ex.username is not null then tx.username else '%' end like isnull(ex.username,'%')
+
 		where x.activity_id is null
-		/*	2019-11-26 Marcin Gminski
-			extended event session can only include LIKE but not exclude we have to drop few events we do not want log here: */
-		and tx.client_app_name not like 'DatabaseMail%'
+		and ex.[exclusion_id] is null
+
+		commit tran
 	end
 else
 	print 'Product version must be 11 or higher'
-
-commit tran
