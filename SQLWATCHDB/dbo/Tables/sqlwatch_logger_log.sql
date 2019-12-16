@@ -1,9 +1,9 @@
 ﻿CREATE TABLE [dbo].[sqlwatch_logger_log](
 	[event_sequence]		int	identity(1,1),
 	[snapshot_time]			datetime2(0) not null,
-	[snapshot_type_id]		tinyint not null constraint df_sqlwatch_logger_type_id default 21,
+	[snapshot_type_id]		tinyint not null ,
 	[sql_instance]			varchar(32) not null constraint df_sqlwatch_logger_sql_instance default @@SERVERNAME,
-	[event_time_utc]		time constraint df_sqlwatch_logger_log_time default SYSDATETIME(),
+	[event_time]			time constraint df_sqlwatch_logger_log_time default SYSDATETIME(),
 	[process_name]			nvarchar(512),
 	[process_stage]			nvarchar(max),
 	[process_message]		nvarchar(max),
