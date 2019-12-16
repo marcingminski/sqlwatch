@@ -99,7 +99,6 @@ if @is_flapping = 1
 				set @error_message = 'Check (Id: ' + convert(varchar(10),@check_id) + ') Is flapping. Action (Id: ' + convert(varchar(10),@action_id) + ') is skipped.'
 				exec [dbo].[usp_sqlwatch_internal_log]
 						@proc_id = @@PROCID,
-						@snapshot_time = @snapshot_time,
 						@process_stage = '1D779244-0524-44B1-A00B-19BDA355D4EE',
 						@process_message = @error_message,
 						@process_message_type = 'WARNING'
@@ -110,7 +109,6 @@ if @is_flapping = 1
 				set @error_message = 'Check (Id: ' + convert(varchar(10),@check_id) + ') Is flapping but @action_every_failure is set to 1. Action (Id: ' + convert(varchar(10),@action_id) + ') will be performed.'
 				exec [dbo].[usp_sqlwatch_internal_log]
 						@proc_id = @@PROCID,
-						@snapshot_time = @snapshot_time,
 						@process_stage = '43A6F442-2272-4953-81E7-B7014212BA29',
 						@process_message = @error_message,
 						@process_message_type = 'INFO'
@@ -126,7 +124,6 @@ if @action_count_last_hour > @action_hourly_limit
 		set @error_message = 'Check (Id: ' + convert(varchar(10),@check_id) + '): Action (Id: ' + convert(varchar(10),@action_id) + ') has exceeded hourly allowed limit and it will not be performed.'
 		exec [dbo].[usp_sqlwatch_internal_log]
 				@proc_id = @@PROCID,
-				@snapshot_time = @snapshot_time,
 				@process_stage = '76C7745B-CDD2-4545-AF42-A3A5636D3F46',
 				@process_message = @error_message,
 				@process_message_type = 'WARNING'
@@ -318,7 +315,6 @@ if @action_type  <> 'NONE'
 						,@body = @body
 						,@check_threshold_warning = @check_threshold_warning
 						,@check_threshold_critical = @check_threshold_critical
-						,@snapshot_time = @snapshot_time
 				end try
 				begin catch
 					set @has_errors = 1		
@@ -327,7 +323,6 @@ if @action_type  <> 'NONE'
 						@proc_id = @@PROCID,
 						@process_stage = 'F7A4AA65-1BE9-4D0B-8B1F-054CA1E24A6E',
 						@process_message = @error_message,
-						@snapshot_time = @snapshot_time,
 						@process_message_type = 'ERROR'
 
 					--select @error_message_xml = [dbo].[ufn_sqlwatch_get_error_detail_xml](

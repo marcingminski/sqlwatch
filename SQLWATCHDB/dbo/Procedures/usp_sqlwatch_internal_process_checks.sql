@@ -66,8 +66,9 @@ declare @snapshot_type_id tinyint = 18,
 
 declare @mail_return_code int
 
-insert into [dbo].[sqlwatch_logger_snapshot_header]
-values (@snapshot_time, @snapshot_type_id, @@SERVERNAME)
+exec [dbo].[usp_sqlwatch_internal_insert_header] 
+	@snapshot_time_new = @snapshot_time OUTPUT,
+	@snapshot_type_id = @snapshot_type_id
 
 declare cur_rules cursor LOCAL FAST_FORWARD for
 select 
@@ -117,7 +118,7 @@ begin
 		set @check_query = 'SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
 SET NOCOUNT ON 
 SET ANSI_WARNINGS OFF
-' + @check_query
+' + replace(@check_query,'{LAST_CHECK_DATE}',convert(varchar(23),@previous_check_date,121))
 		exec sp_executesql @check_query, N'@output decimal(28,5) OUTPUT', @output = @check_value output;
 		set @check_end_time = SYSDATETIME()
 		set @check_exec_time_ms = convert(real,datediff(MICROSECOND,@check_start_time,@check_end_time) / 1000.0 )
@@ -134,8 +135,7 @@ SET ANSI_WARNINGS OFF
 			@proc_id = @@PROCID,
 			@process_stage = '5980A79A-D6BC-4BA0-8B86-A388E8DB621D',
 			@process_message = @error_message,
-			@process_message_type = 'ERROR',
-			@snapshot_time = @snapshot_time
+			@process_message_type = 'ERROR'
 
 		update	[dbo].[sqlwatch_meta_check]
 		set last_check_date = @check_end_time,
@@ -179,7 +179,6 @@ SET ANSI_WARNINGS OFF
 			set @error_message = 'Check (Id: ' + convert(varchar(10),@check_id) + ') is flapping.'
 			exec [dbo].[usp_sqlwatch_internal_log]
 					@proc_id = @@PROCID,
-					@snapshot_time = @snapshot_time,
 					@process_stage = '040D0A86-83B8-4543-A34C-9F328DAE5488',
 					@process_message = @error_message,
 					@process_message_type = 'WARNING'
@@ -237,19 +236,18 @@ SET ANSI_WARNINGS OFF
 
 				open cur_actions
 
-				set @snapshot_time_action = @snapshot_time
-				
-				if @@CURSOR_ROWS > 0
+				if @@CURSOR_ROWS <> 0
 					begin
 						/*	logging header here so we only get one header for the batch of actions
 							datetime2(0) has a resolution of 1 second and if we had multuple actions, the below
 							procedure would have iterated quicker that that causing PK violation on insertion of the subsequent action headers	*/
-						insert into dbo.sqlwatch_logger_snapshot_header (snapshot_time, snapshot_type_id, sql_instance)
-						values (@snapshot_time_action, @snapshot_type_id_action, @@SERVERNAME)
+							exec [dbo].[usp_sqlwatch_internal_insert_header] 
+								@snapshot_time_new = @snapshot_time_action OUTPUT,
+								@snapshot_type_id = @snapshot_type_id_action
 
 						Print 'Processing actions for check.'
 					end
-  
+ 
 				fetch next from cur_actions 
 				into @action_id
 
@@ -278,7 +276,6 @@ SET ANSI_WARNINGS OFF
 								@proc_id = @@PROCID,
 								@process_stage = '28B7A898-27D7-44C0-B6EB-5238021FD855',
 								@process_message = @error_message,
-								@snapshot_time = @snapshot_time,
 								@process_message_type = 'ERROR'
 							GoTo NextAction
 						end catch

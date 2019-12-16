@@ -1,5 +1,5 @@
 ﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_internal_process_reports] (
-	@report_batch_id tinyint = null,
+	@report_batch_id varchar(255) = null,
 	@report_id smallint = null,
 	@check_status nvarchar(50) = null,
 	@check_value decimal(28,5) = null,
@@ -8,8 +8,7 @@
 	@body nvarchar(max) = null,
 	--so we can apply filter to the reports:
 	@check_threshold_warning varchar(100) = null,
-	@check_threshold_critical varchar(100) = null,
-	@snapshot_time datetime2(0) = null
+	@check_threshold_critical varchar(100) = null
 	)
 as
 /*
@@ -23,12 +22,18 @@ as
 SET NOCOUNT ON 
 SET ANSI_NULLS ON
 
+
+if @report_batch_id is null and @report_id is null
+	begin
+		raiserror('Either @report_batch_id or @report_id required',16,1)
+	end
+
 declare @sql_instance varchar(32),
 		@report_title varchar(255),
 		@report_description varchar(4000),
 		@report_definition nvarchar(max),
 		@delivery_target_id smallint,
-		@definition_type varchar(10),
+		@definition_type varchar(25),
 
 		@delivery_command nvarchar(max),
 		@target_address nvarchar(max),
@@ -39,9 +44,13 @@ declare @sql_instance varchar(32),
 		@css nvarchar(max),
 		@html nvarchar(max),
 		@snapshot_type_id tinyint = 20,
+		@snapshot_time datetime2(0),
 
 		@error_message nvarchar(max) = '',
-		@has_errored bit = 0
+		@has_errored bit = 0,
+		@report_last_run_date datetime,
+		@report_current_run_date datetime,
+		@report_current_run_date_utc datetime
 
 declare @sqlwatch_logger_report_action table (
 	 [sql_instance] varchar(32)
@@ -52,46 +61,21 @@ declare @sqlwatch_logger_report_action table (
 	,[error_message] xml
 )
 
-/*	In rare circumstances, we could have different checks that call the same report, 
-	in which case action would call this procedure in a cursor. The snapshot_time in
-	dbo.sqlwatch_logger_snapshot_header has resolution of 1 second (datetime2(0)) to 
-	reduce space utilisation, however, when called frequently in a loop it will cause
-	PK violation. To overcome this, we are going to check if the snapshot_time already
-	exists and only create one if it does not.
-
-	We are also passing @snapshot_time from parent proc to make sure we are not
-	generating new @snapshot_time as this would caused a few ms difference and would
-	still violate PK
-	
-	This will not introduce performance bottleck considering that we are not going to
-	be calling reports every few seconds	*/
-
-if @snapshot_time is null
-	begin
-		set @snapshot_time = getutcdate()
-	end
-
-if not exists (
-		select * from dbo.sqlwatch_logger_snapshot_header
-		where sql_instance = @@SERVERNAME
-		and snapshot_type_id = @snapshot_type_id
-		and snapshot_time = @snapshot_time
-)
-	begin
-		insert into dbo.sqlwatch_logger_snapshot_header ([snapshot_time], [snapshot_type_id], [sql_instance])
-		values (@snapshot_time, @snapshot_type_id, @@SERVERNAME)
-	end
+exec [dbo].[usp_sqlwatch_internal_insert_header] 
+	@snapshot_time_new = @snapshot_time OUTPUT,
+	@snapshot_type_id = @snapshot_type_id
 
 declare cur_reports cursor for
 select cr.[report_id]
-      ,[report_title]
-      ,[report_description]
-      ,[report_definition]
-	  ,[report_definition_type]
+      ,cr.[report_title]
+      ,cr.[report_description]
+      ,cr.[report_definition]
+	  ,cr.[report_definition_type]
 	  ,t.[action_exec]
 	  ,t.[action_exec_type]
-	  ,rs.style
+	  ,isnull(rs.style,'')
 	  ,ra.action_id
+	  ,mr.report_last_run_date
   from [dbo].[sqlwatch_config_report] cr
 
   inner join [dbo].[sqlwatch_config_report_action] ra
@@ -100,7 +84,11 @@ select cr.[report_id]
 	inner join dbo.[sqlwatch_config_action] t
 	on ra.[action_id] = t.[action_id]
 
-	inner join [dbo].[sqlwatch_config_report_style] rs
+	inner join [dbo].[sqlwatch_meta_report] mr
+		on mr.report_id = cr.report_id
+		and mr.sql_instance = @@SERVERNAME
+
+	left join [dbo].[sqlwatch_config_report_style] rs
 		on rs.report_style_id = cr.report_style_id
 
   where [report_active] = 1
@@ -115,12 +103,16 @@ select cr.[report_id]
   --a batch_id indicates that we run reports from a batch job, i.e. some daily scheduled server summary reports etc, something that is not triggered by an action.
   --remember, an action is triggred on the back of a failed check so unsuitable for a "scheduled daily reports"
 
-  and case /* no batch id passed, we are runing individual report */ when @report_batch_id is null then @report_id else @report_batch_id end = case when @report_batch_id is null then cr.[report_id] else cr.[report_batch_id] end
-		
+  and case /* no batch id passed, we are runing individual report */ when @report_batch_id is null then convert(varchar(255),@report_id) else @report_batch_id end = 
+	case when @report_batch_id is null then convert(varchar(255),cr.[report_id]) else cr.[report_batch_id] end
+
+
+order by cr.report_id
+
 open cur_reports
 
 fetch next from cur_reports
-into @report_id, @report_title, @report_description, @report_definition, @definition_type, @action_exec, @action_exec_type, @css, @action_id
+into @report_id, @report_title, @report_description, @report_definition, @definition_type, @action_exec, @action_exec_type, @css, @action_id, @report_last_run_date
 
 while @@FETCH_STATUS = 0  
 	begin
@@ -128,12 +120,40 @@ while @@FETCH_STATUS = 0
 		delete from @sqlwatch_logger_report_action
 		set @html = ''
 
-		set @report_definition = case 
-			when @check_status = 'CRITICAL' and @check_threshold_critical is not null then replace(@report_definition,'{THRESHOLD}',@check_threshold_critical)
-			when @check_status = 'WARNING' and @check_threshold_warning is not null then replace(@report_definition,'{THRESHOLD}',@check_threshold_warning)
-			else @report_definition end
+		select @report_current_run_date = GETDATE(), @report_current_run_date_utc = GETUTCDATE()
 
+		select @report_definition = replace(
+										replace(
+											replace(@report_definition,'{REPORT_LAST_RUN_DATE}',convert(varchar(23),@report_last_run_date,121)
+											),'{REPORT_CURRENT_RUN_DATE}',convert(varchar(23),@report_current_run_date,121)
+										),'{REPORT_CURRENT_RUN_DATE_UTC}',convert(varchar(23),@report_current_run_date_utc,121)
+									)
+		 
+		/*	Query type does not get processed but is being passed straight into action for further processing i.e.
+			in case we want to extract data to file:
+			Invoke-SqlCmd -Query "{BODY}" | Out-File -Path .....
+			Or for Azure Log Monitor Extractor	*/
 		if @definition_type = 'Query'
+			begin
+				select 
+					@body = @report_definition,
+					@subject = @report_title
+
+					GoTo QueueAction
+			end
+
+
+
+		if @check_status is not null
+			begin
+				set @report_definition = case 
+					when @check_status = 'CRITICAL' and @check_threshold_critical is not null then replace(@report_definition,'{THRESHOLD}',@check_threshold_critical)
+					when @check_status = 'WARNING' and @check_threshold_warning is not null then replace(@report_definition,'{THRESHOLD}',@check_threshold_warning)
+					else @report_definition end
+			end
+
+		/*	Table type must be a single T-SQL query that will be converted into a HTML table	*/
+		if @definition_type in ('HTML-Table','Table')
 			begin
 				begin try
 					exec [dbo].[usp_sqlwatch_internal_query_to_html_table] @html = @html output, @query = @report_definition
@@ -143,7 +163,6 @@ while @@FETCH_STATUS = 0
 					set @error_message = 'Error when executing Query Report (usp_sqlwatch_internal_query_to_html_table), @report_batch_id: ' + isnull(convert(varchar(max),@report_batch_id),'NULL') + ', @report_id: ' + isnull(convert(varchar(max),@report_id),'NULL')
 					exec [dbo].[usp_sqlwatch_internal_log]
 							@proc_id = @@PROCID,
-							@snapshot_time = @snapshot_time,
 							@process_stage = '31FF6B08-735E-45F9-BAAB-D1F7E446BB1B',
 							@process_message = @error_message,
 							@process_message_type = 'ERROR'
@@ -155,7 +174,9 @@ while @@FETCH_STATUS = 0
 				end catch
 			end
 
-		if @definition_type = 'Template'
+		/*	Template type is complex template that must produce an output ready to be passed into action, 
+			i.e. a complete html report	*/
+		if @definition_type in ('HTML-Template', 'Template')
 			begin
 				begin try
 					exec sp_executesql @report_definition, N'@output nvarchar(max) OUTPUT', @output = @html output;
@@ -166,7 +187,6 @@ while @@FETCH_STATUS = 0
 					set @error_message = 'Error when executing Template Report (usp_sqlwatch_internal_query_to_html_table), @report_batch_id: ' + isnull(convert(varchar(max),@report_batch_id),'NULL') + ', @report_id: ' + isnull(convert(varchar(max),@report_id),'NULL')
 					exec [dbo].[usp_sqlwatch_internal_log]
 							@proc_id = @@PROCID,
-							@snapshot_time = @snapshot_time,
 							@process_stage = 'E3796F4B-3C89-450E-8FC7-09926979074F',
 							@process_message = @error_message,
 							@process_message_type = 'ERROR'
@@ -205,14 +225,31 @@ while @@FETCH_STATUS = 0
 			
 			However, if we are here from the check or from "Template" based report, 
 			the footers (as the whole content) are customisaible in the template */
-		if @definition_type = 'Query' and @check_name is null 
+		if @definition_type = 'Table' and @check_name is null 
 			begin
 				set @body = @body + '<p>Email sent from SQLWATCH on host: ' + @@SERVERNAME +'
 		<a href="https://sqlwatch.io">https://sqlwatch.io</a></p></body></html>'
 			end
 
-		set @action_exec = replace(replace(@action_exec,'{BODY}', replace(@body,'''','''''')),'{SUBJECT}',@subject)
-		
+		QueueAction:
+
+		update [dbo].[sqlwatch_meta_report]
+			set [report_last_run_date] = @report_current_run_date_utc
+		where [sql_instance] = @@SERVERNAME
+		and [report_id] = @report_id
+
+		set @action_exec = case @action_exec_type 
+			/* for sql actions we have to escape quotes */
+			when 'T-SQL' then replace(replace(@action_exec,'{BODY}', replace(@body,'''','''''')),'{SUBJECT}',@subject)
+			else replace(replace(@action_exec,'{BODY}',@body),'{SUBJECT}',@subject)
+		end
+
+		if @action_exec is null
+			begin
+				Print 'Report (Id: ' + convert(varchar(255),@report_id) + ') @action_exec is NULL (Id: ' + convert(varchar(255),@action_id) + ')'
+				GoTo NextReport
+			end
+
 		--now insert into the delivery queue for further processing:
 		insert into [dbo].[sqlwatch_meta_action_queue] ([sql_instance], [time_queued], [action_exec_type], [action_exec])
 		values (@@SERVERNAME, sysdatetime(), @action_exec_type, @action_exec)
@@ -230,7 +267,7 @@ while @@FETCH_STATUS = 0
 		from @sqlwatch_logger_report_action
 
 		fetch next from cur_reports 
-		into @report_id, @report_title, @report_description, @report_definition, @definition_type, @action_exec, @action_exec_type, @css, @action_id
+		into @report_id, @report_title, @report_description, @report_definition, @definition_type, @action_exec, @action_exec_type, @css, @action_id, @report_last_run_date
 
 	end
 
