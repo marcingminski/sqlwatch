@@ -1,5 +1,4 @@
 ﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_internal_log]
-	@snapshot_time			datetime2(0) = null,
 	@process_name			nvarchar(max) = null,
 	@process_stage			nvarchar(max),
 	@process_message		nvarchar(max),
@@ -36,42 +35,21 @@ SET XACT_ABORT ON
 SET NOCOUNT ON 
 
 begin try		
-	declare @snapshot_type_id tinyint = 21
+	declare @snapshot_type_id tinyint = 21,
+			@snapshot_time datetime2(0)
 
 	if @process_name is null and @proc_id is not null
 		begin
 			set @process_name = OBJECT_NAME(@proc_id)
 		end
 
-	set @snapshot_time = case when @snapshot_time is null then convert(datetime2(0),GETUTCDATE()) else @snapshot_time end
-
-	--in rare scenarios we may be calling this frequently in a loop in which case we have to be aware of the datetime2(0)
-	--which is at 1 second resoltuion, anything more frequent that that will cause PK violation.
-	if not exists (
-		select *
-		from dbo.sqlwatch_logger_snapshot_header
-		where sql_instance = @@SERVERNAME
-		and snapshot_time = @snapshot_time
-		and snapshot_type_id = @snapshot_type_id
-		)
-		begin
-			insert into dbo.sqlwatch_logger_snapshot_header (sql_instance, snapshot_time, snapshot_type_id)
-			select s.sql_instance, s.snapshot_time, s.snapshot_type_id
-			from (
-				select 
-					sql_instance = @@SERVERNAME
-					, snapshot_time = @snapshot_time
-					, snapshot_type_id = @snapshot_type_id
-				) s
-			left join dbo.sqlwatch_logger_snapshot_header t
-				on s.sql_instance = t.sql_instance
-				and s.snapshot_time = t.snapshot_time
-				and s.snapshot_type_id = t.snapshot_type_id
-			where t.snapshot_time is null
-		end
+	exec [dbo].[usp_sqlwatch_internal_insert_header] 
+		@snapshot_time_new = @snapshot_time OUTPUT,
+		@snapshot_type_id = @snapshot_type_id
 
 	insert into dbo.sqlwatch_logger_log (
 		 [snapshot_time]
+		,[snapshot_type_id]
 		,[process_name]			
 		,[process_stage]			
 		,[process_message]		
@@ -82,7 +60,7 @@ begin try
 		,[SQL_ERROR]		
 	)
 	values (
-		@snapshot_time, @process_name, @process_stage, @process_message, @process_message_type,
+		@snapshot_time, @snapshot_type_id, @process_name, @process_stage, @process_message, @process_message_type,
 		@@SPID, SYSTEM_USER, USER, [dbo].[ufn_sqlwatch_get_error_detail_xml]()
 	)
 

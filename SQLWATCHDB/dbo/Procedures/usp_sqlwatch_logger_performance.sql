@@ -48,9 +48,9 @@ declare @sql nvarchar(4000)
 		where snapshot_type_id = @snapshot_type_id
 		and sql_instance = @@SERVERNAME
 		
-		set @date_snapshot_current = getutcdate();
-		insert into [dbo].[sqlwatch_logger_snapshot_header] (snapshot_time, snapshot_type_id)
-		values (@date_snapshot_current, @snapshot_type_id)		
+		exec [dbo].[usp_sqlwatch_internal_insert_header] 
+			@snapshot_time_new = @date_snapshot_current OUTPUT,
+			@snapshot_type_id = @snapshot_type_id
 		--------------------------------------------------------------------------------------------------------------
 		-- 1. get cpu
 		--------------------------------------------------------------------------------------------------------------
@@ -453,30 +453,11 @@ declare @sql nvarchar(4000)
 		from sys.dm_os_wait_stats
 
 		-- exclude idle waits and noise
-		where 
-
-			-- reference https://github.com/microsoft/tigertoolbox/blob/master/Waits-and-Latches/view_Waits.sql
-			wait_type not in ('RESOURCE_QUEUE','SQLTRACE_INCREMENTAL_FLUSH_SLEEP', 
-			'SP_SERVER_DIAGNOSTICS_SLEEP','SOSHOST_SLEEP','SP_PREEMPTIVE_SERVER_DIAGNOSTICS_SLEEP','QDS_PERSIST_TASK_MAIN_LOOP_SLEEP',
-			'QDS_CLEANUP_STALE_QUERIES_TASK_MAIN_LOOP_SLEEP','LOGMGR_QUEUE','CHECKPOINT_QUEUE','REQUEST_FOR_DEADLOCK_SEARCH','XE_TIMER_EVENT',
-			'BROKER_TASK_STOP','CLR_MANUAL_EVENT','CLR_AUTO_EVENT','DISPATCHER_QUEUE_SEMAPHORE','FT_IFTS_SCHEDULER_IDLE_WAIT','BROKER_TO_FLUSH',
-			'XE_DISPATCHER_WAIT','XE_DISPATCHER_JOIN','MSQL_XP','WAIT_FOR_RESULTS','CLR_SEMAPHORE','LAZYWRITER_SLEEP','SLEEP_TASK',
-			'SLEEP_SYSTEMTASK','SQLTRACE_BUFFER_FLUSH','WAITFOR','BROKER_EVENTHANDLER','TRACEWRITE','FT_IFTSHC_MUTEX','BROKER_RECEIVE_WAITFOR', 
-			'ONDEMAND_TASK_QUEUE','DBMIRROR_EVENTS_QUEUE','DBMIRRORING_CMD','BROKER_TRANSMITTER','SQLTRACE_WAIT_ENTRIES','SLEEP_BPOOL_FLUSH','SQLTRACE_LOCK',
-			'DIRTY_PAGE_POLL','HADR_FILESTREAM_IOMGR_IOCOMPLETION', 
-			'WAIT_XTP_OFFLINE_CKPT_NEW_LOG') 
-			and wait_type not like 'SLEEP_%'
-
-			-- reference https://www.sqlskills.com/blogs/paul/capturing-wait-statistics-period-time/
-			and wait_type not in (
-			'BROKER_RECEIVE_WAITFOR','BROKER_TRANSMITTER','CHKPT', 'CXCONSUMER', 'EXECSYNC','FSAGENT',  
-			'KSOURCE_WAKEUP', 'MEMORY_ALLOCATION_EXT', 'ONDEMAND_TASK_QUEUE', 'PARALLEL_REDO_DRAIN_WORKER','PARALLEL_REDO_LOG_CACHE', 
-			'PARALLEL_REDO_TRAN_LIST', 'PARALLEL_REDO_WORKER_SYNC', 'PARALLEL_REDO_WORKER_WAIT_WORK','PREEMPTIVE_XE_GETTARGETSTATE', 
-			'PWAIT_ALL_COMPONENTS_INITIALIZED', 'PWAIT_DIRECTLOGCONSUMER_GETNEXT', 'QDS_ASYNC_QUEUE', 'QDS_SHUTDOWN_QUEUE', 
-			'REDO_THREAD_PENDING_WORK', 'RESOURCE_QUEUE', 'SERVER_IDLE_CHECK','SLEEP_DBSTARTUP','SLEEP_DCOMSTARTUP', 
-			'SLEEP_MASTERDBREADY','SLEEP_MASTERMDREADY', 'SLEEP_MASTERUPGRADED', 'SLEEP_MSDBSTARTUP', 'SLEEP_TEMPDBSTARTUP', 
-			'SNI_HTTP_ACCEPT', 'SOS_WORK_DISPATCHER', 'SQLTRACE_INCREMENTAL_FLUSH_SLEEP', 'SQLTRACE_WAIT_ENTRIES', 'WAITFOR_TASKSHUTDOWN', 
-			'WAIT_XTP_RECOVERY', 'WAIT_XTP_HOST_WAIT', 'WAIT_XTP_CKPT_CLOSE')
+		where wait_type not like 'SLEEP_%'
+		and wait_type collate database_default not in (
+			select wait_type 
+			from [dbo].[sqlwatch_config_exclude_wait_stats]
+			)
 
 		insert into [dbo].[sqlwatch_logger_perf_os_wait_stats]
 			select 

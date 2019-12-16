@@ -20,37 +20,33 @@ AS
 							In some cases, trying to get index stats from tempdb may deadlock due to schema locks in tempdb.
 							Excluding tempdb from iteration means the code will not even be executed there.
 	1.2		2012-12-09	- Marcin Gminski, Fixed cartersian product #129
+	1.3		2012-12-14	- Marcin Gminski, use usp_sqlwatch_internal_insert_header isntead of direct insert
 -------------------------------------------------------------------------------------------------------------------
 */
 
 set xact_abort on
+set nocount on
+
 begin tran
 
-declare @snapshot_time datetime2(0) = getutcdate();
-declare @snapshot_type tinyint = 14
-declare @database_name sysname
-declare @sql varchar(max)
-declare @date_snapshot_previous datetime2(0)
-
-declare @object_id int
-declare @index_name sysname
-declare @index_id int
-declare @object_name nvarchar(256)
-
-set nocount on ;
+declare @snapshot_time datetime2(0),
+		@snapshot_type_id tinyint = 14,
+		@database_name sysname,
+		@sql varchar(max),
+		@date_snapshot_previous datetime2(0),
+		@object_id int,
+		@index_name sysname,
+		@index_id int,
+		@object_name nvarchar(256)
 
 select @date_snapshot_previous = max([snapshot_time])
 	from [dbo].[sqlwatch_logger_snapshot_header] (nolock) --so we dont get blocked by central repository. this is safe at this point.
-	where snapshot_type_id = @snapshot_type
+	where snapshot_type_id = @snapshot_type_id
 	and sql_instance = @@SERVERNAME
 
-/* step 1, get indexes from each database.
-   we're creating snapshot timestamp here and because index collection may take few minutes,
-   the timepstamp will not be 100% accureate but it does not matter much in this instance as
-   we're not collecting very frequently and it will be enough to provide a common time anchor,
-   to more accurately reflect the time when the index was collected we have [collection_time] */
-insert into [dbo].[sqlwatch_logger_snapshot_header] (snapshot_time, snapshot_type_id)
-values (@snapshot_time, @snapshot_type)
+	exec [dbo].[usp_sqlwatch_internal_insert_header] 
+		@snapshot_time_new = @snapshot_time OUTPUT,
+		@snapshot_type_id = @snapshot_type_id
 
 /* step 2 , collect indexes from all databases */
 		set @sql = 'insert into [dbo].[sqlwatch_logger_index_usage_stats] (
@@ -75,7 +71,7 @@ values (@snapshot_time, @snapshot_type)
 				ixus.[last_user_update],
 				[stats_date]=STATS_DATE(ix.object_id, ix.index_id),
 				[snapshot_time] = ''' + convert(varchar(23),@snapshot_time,121) + ''',
-				[snapshot_type_id] = ' + convert(varchar(5),@snapshot_type) + ',
+				[snapshot_type_id] = ' + convert(varchar(5),@snapshot_type_id) + ',
 				[is_disabled]=ix.is_disabled,
 				partition_id = -1,
 				mi.sqlwatch_table_id
@@ -137,13 +133,13 @@ values (@snapshot_time, @snapshot_type)
 				and usprev.sqlwatch_database_id = mi.sqlwatch_database_id
 				and usprev.sqlwatch_table_id = mi.sqlwatch_table_id
 				and usprev.sqlwatch_index_id = mi.sqlwatch_index_id
-				and usprev.snapshot_type_id = ' + convert(varchar(5),@snapshot_type) + '
+				and usprev.snapshot_type_id = ' + convert(varchar(5),@snapshot_type_id) + '
 				and usprev.snapshot_time = ''' + convert(varchar(23),@date_snapshot_previous,121) + '''
 				and usprev.partition_id = -1
 
 			Print ''['' + convert(varchar(23),getdate(),121) + ''] Collecting index statistics for database: ?''
 '
 
-exec [dbo].[usp_sqlwatch_internal_foreachdb] @command = @sql, @snapshot_type_id = @snapshot_type
+exec [dbo].[usp_sqlwatch_internal_foreachdb] @command = @sql, @snapshot_type_id = @snapshot_type_id
 
 commit tran

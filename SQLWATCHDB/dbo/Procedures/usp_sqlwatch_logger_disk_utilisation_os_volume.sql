@@ -4,11 +4,12 @@
 	@volume_total_space_bytes bigint
 as
 
-declare @snapshot_type_id smallint = 17
-declare @snapshot_time datetime = GETUTCDATE()
+declare @snapshot_type_id smallint = 17,
+		@snapshot_time datetime
 
-insert into [dbo].[sqlwatch_logger_snapshot_header] (snapshot_time, snapshot_type_id)
-values (@snapshot_time, @snapshot_type_id)		
+exec [dbo].[usp_sqlwatch_internal_insert_header] 
+	@snapshot_time_new = @snapshot_time OUTPUT,
+	@snapshot_type_id = @snapshot_type_id
 
 insert into [dbo].[sqlwatch_logger_disk_utilisation_volume] (
 	[sqlwatch_volume_id],

@@ -36,7 +36,7 @@
 --				and remove [snapshot_type_id] TINYINT NULL DEFAULT 1 and
 --				give it its own snapshot_id with its own retention and schedule
 --			10. I am going to create necessary PKs and FKs
---			11. I am going to rename @date_snapshot_current to @snapshot_type to
+--			11. I am going to rename @date_snapshot_current to @snapshot_type_id to
 --				make it consistent with other procedures. The snapshot _current and
 --				_previous only apply to cumulative snapshots where we calculate
 --				deltas.
@@ -62,10 +62,12 @@ begin tran
 	--------------------------------------------------------------------------------------------------------------
     -- variables
 	--------------------------------------------------------------------------------------------------------------
-	declare @snapshot_time datetime = getutcdate();
-	declare @snapshot_type tinyint = 3
-	insert into [dbo].[sqlwatch_logger_snapshot_header] (snapshot_time, snapshot_type_id)
-	values (@snapshot_time, @snapshot_type)
+	declare @snapshot_time datetime,
+			@snapshot_type_id tinyint = 3
+
+	exec [dbo].[usp_sqlwatch_internal_insert_header] 
+		@snapshot_time_new = @snapshot_time OUTPUT,
+		@snapshot_type_id = @snapshot_type_id
 
 	--only enterprise and developer will allow online index build/rebuild
 	declare @allows_online_index bit
@@ -98,7 +100,7 @@ begin tran
 		igs.[user_scans], 
 		igs.[avg_total_user_cost], 
 		igs.[avg_user_impact],
-		[snapshot_type_id] = @snapshot_type,
+		[snapshot_type_id] = @snapshot_type_id,
 		@@SERVERNAME
 	from sys.dm_db_missing_index_groups ig 
 
@@ -132,7 +134,7 @@ begin tran
 		-- this is not required as in this case we not populating [dbo].[sqlwatch_meta_index_missing] at all to reduce noise
 		--left join [dbo].[sqlwatch_config_logger_exclude_database] ed
 		--	on db.[database_name] like ed.database_name_pattern
-		--	and ed.snapshot_type_id = @snapshot_type
+		--	and ed.snapshot_type_id = @snapshot_type_id
 
 	where mi.equality_columns is not null
 	and mi.statement is not null

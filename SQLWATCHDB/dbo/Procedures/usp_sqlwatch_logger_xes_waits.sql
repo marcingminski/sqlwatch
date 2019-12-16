@@ -6,8 +6,8 @@ begin tran
 
 if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 	begin
-		declare @snapshot_time datetime = getutcdate()
-		declare @snapshot_type_id tinyint
+		declare @snapshot_time datetime2(0),
+				@snapshot_type_id tinyint = 6
 
 		select cast(target_data as xml) AS targetdata
 		into #xes
@@ -22,9 +22,9 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 		--------------------------------------------------------------------------------------------------------------------------------
 		-- waits
 		--------------------------------------------------------------------------------------------------------------------------------
-		set @snapshot_type_id = 6
-		insert into dbo.[sqlwatch_logger_snapshot_header] (snapshot_time, snapshot_type_id)
-		select @snapshot_time, @snapshot_type_id
+		exec [dbo].[usp_sqlwatch_internal_insert_header] 
+			@snapshot_time_new = @snapshot_time OUTPUT,
+			@snapshot_type_id = @snapshot_type_id
 
 		;with cte_xes_waits as (
 			select

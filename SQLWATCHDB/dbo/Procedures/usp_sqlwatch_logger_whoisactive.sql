@@ -5,11 +5,9 @@ AS
 set xact_abort on
 begin tran
 
-	declare @sp_whoisactive_destination_table varchar(255)
-	declare @snapshot_time datetime
-	declare @snapshot_type_id tinyint 
-
-	set @snapshot_type_id = 11
+	declare @sp_whoisactive_destination_table varchar(255),
+			@snapshot_time datetime,
+			@snapshot_type_id tinyint  = 11
 
 	--------------------------------------------------------------------------------------------------------------
 	-- sp_whoisactive
@@ -56,9 +54,9 @@ begin tran
 			-- snapshot_time and enforce referential integrity with the header table and
 			-- to apply any additional filtering:
 
-			set @snapshot_time = getutcdate()
-			insert into dbo.[sqlwatch_logger_snapshot_header]  ([snapshot_time], [snapshot_type_id])
-			select @snapshot_time, @snapshot_type_id
+			exec [dbo].[usp_sqlwatch_internal_insert_header] 
+				@snapshot_time_new = @snapshot_time OUTPUT,
+				@snapshot_type_id = @snapshot_type_id
 
 			insert into [dbo].[sqlwatch_logger_whoisactive] ([snapshot_time],[start_time],
 					 [session_id],[status],[percent_complete],[host_name]
