@@ -23,3 +23,11 @@
 --where name in (	'SQLWATCH_blockers', 'SQLWATCH_waits','SQLWATCH_long_queries')
 
 --exec (@sqlstmt)
+
+
+
+:r .\Scripts\Pre-Deployment\SetDacVersion.sql
+
+declare @dacverion varchar(max)
+set @dacverion = '$(DacVersion)'
+

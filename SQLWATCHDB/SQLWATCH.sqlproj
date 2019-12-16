@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+<Project DefaultTargets="Build;WriteDacVersion" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <Import Project="WriteDacVersion.targets" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -73,6 +74,15 @@
     <Folder Include="dbo\Procedures" />
     <Folder Include="dbo\Extended Events" />
     <Folder Include="dbo\Functions" />
+    <Folder Include="Scripts" />
+    <Folder Include="Scripts\Pre-Deployment" />
+    <Folder Include="Scripts\Post-Deployment" />
+    <Folder Include="Scripts\Extended Properties" />
+    <Folder Include="Scripts\Post-Deployment\Data-Fixes" />
+    <Folder Include="Scripts\Post-Deployment\Reference-Data" />
+    <Folder Include="Scripts\Tools" />
+    <Folder Include="Scripts\HotFixes" />
+    <Folder Include="Scripts\Data Migrations" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\sqlwatch_logger_snapshot_header.sql" />
@@ -116,7 +126,6 @@
     <Build Include="dbo\Procedures\usp_sqlwatch_logger_index_usage_stats.sql" />
     <Build Include="dbo\Tables\sqlwatch_logger_index_usage_stats_histogram.sql" />
     <Build Include="dbo\Tables\sqlwatch_config_sql_instance.sql" />
-    <Build Include="ExtendedProperty-SQLWATCH-Information.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_config_set_blocked_proc_threshold.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_config_set_default_agent_jobs.sql" />
     <Build Include="dbo\Tables\sqlwatch_meta_agent_job.sql" />
@@ -218,9 +227,33 @@
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_action_queue_get_next.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_action_queue_update.sql" />
     <Build Include="dbo\Tables\sqlwatch_config_include_index_histogram.sql" />
+    <Build Include="dbo\Tables\sqlwatch_meta_report.sql" />
+    <None Include="Scripts\Pre-Deployment\SetDacVersion.sql" />
+    <Build Include="Scripts\Extended Properties\SQLWATCH Version.sql" />
+    <Build Include="Scripts\Extended Properties\SQLWATCH Documentation.sql" />
+    <Build Include="Scripts\Extended Properties\SQLWATCH License.sql" />
+    <None Include="Scripts\Post-Deployment\Reference-Data\Script.PostDeployment-CreateDefaultActions.sql" />
+    <None Include="Scripts\Post-Deployment\Reference-Data\Script.PostDeployment-CreateDefaultActionTemplate.sql" />
+    <None Include="Scripts\Post-Deployment\Reference-Data\Script.PostDeployment-CreateDefaultChecks.sql" />
+    <None Include="Scripts\Post-Deployment\Reference-Data\Script.PostDeployment-CreateDefaultReportActions.sql" />
+    <None Include="Scripts\Post-Deployment\Reference-Data\Script.PostDeployment-CreateDefaultReports.sql" />
+    <None Include="Scripts\Post-Deployment\Reference-Data\Script.PostDeployment-CreateDefaultReportStyles.sql" />
+    <None Include="Scripts\Post-Deployment\Reference-Data\Script.PostDeployment-LoadConfig-DefaultExclusions.sql" />
+    <None Include="Scripts\Post-Deployment\Reference-Data\Script.PostDeployment-LoadConfig-PerformanceCounters.sql" />
+    <None Include="Scripts\Post-Deployment\Reference-Data\Script.PostDeployment-LoadConfig-SnapshotTypes.sql" />
+    <None Include="Scripts\Post-Deployment\Reference-Data\Script.PostDeployment-LoadMeta-Server.sql" />
+    <Build Include="dbo\Views\vw_sqlwatch_meta_action_queue_recent_failure.sql" />
+    <Build Include="dbo\Functions\ufn_sqlwatch_get_file_type_desc.sql" />
+    <Build Include="dbo\Tables\sqlwatch_config_exclude_xes_long_query.sql" />
+    <Build Include="dbo\Tables\sqlwatch_config_exclude_wait_stats.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_insert_header.sql" />
+    <Build Include="dbo\Tables\sqlwatch_version.sql" />
+    <Build Include="dbo\Functions\ufn_sqlwatch_get_version.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
+    <None Include="Scripts\Post-Deployment\Data-Fixes\Script.PostDeployment-DataFix-SetDefaultLastSeenDates.sql" />
+    <None Include="Scripts\Post-Deployment\Data-Fixes\Script.PostDeployment-DataFix-MigrateReportTime.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SQLWATCH.refactorlog" />

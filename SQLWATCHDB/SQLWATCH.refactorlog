@@ -2016,4 +2016,60 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[vw_sqlwatch_report_fact_index_histogram]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="e4764922-3abe-488d-9d38-d96255271cb4" ChangeDateTime="12/11/2019 23:41:12">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_meta_action_queue].[time_executed]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_meta_action_queue]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[exec_time_start]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="ac3c5611-a457-4f9d-adc3-6290aefe47d8" ChangeDateTime="12/12/2019 09:33:21">
+    <Property Name="ElementName" Value="[dbo].[vw_sqlwatch_meta_action_queue_failure]" />
+    <Property Name="ElementType" Value="SqlView" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[vw_sqlwatch_meta_action_queue_recent_failure]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="4ff789d7-fa4d-466a-9054-b3ad28dd617c" ChangeDateTime="12/12/2019 10:47:52">
+    <Property Name="ElementName" Value="[dbo].[fn_sqlwatch_get_master_file_type]" />
+    <Property Name="ElementType" Value="SqlScalarFunction" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[fn_sqlwatch_get_master_file_type_desc]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="92712fa0-553f-4dd0-ac7e-f044cd7bb370" ChangeDateTime="12/13/2019 10:46:44">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_config_exclude_wait_stats].[wait_stat_pattern]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_config_exclude_wait_stats]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[wait_type]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="ccc68c70-ad96-40a0-a884-e1f92310507f" ChangeDateTime="12/14/2019 15:26:53">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_logger_snapshot_header].[snapshot_time_offset]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_logger_snapshot_header]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[snapshot_time_offset_minutes]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="c511c9bb-2075-422c-a1fa-05cb4b2faead" ChangeDateTime="12/14/2019 17:38:29">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_logger_snapshot_header].[snapshot_time_offset_minutes]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_logger_snapshot_header]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[snapshot_time_offset]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="89678062-0fe4-4641-8d0d-420aa0cf9cdf" ChangeDateTime="12/14/2019 20:49:14">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_logger_log].[event_time_utc]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_logger_log]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[event_time]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="4f9c1597-7423-4c37-b665-17928d3d84c5" ChangeDateTime="12/16/2019 09:23:08">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_logger_snapshot_header].[snapshot_time_offset]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_logger_snapshot_header]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[snapshot_time_utc_offset]" />
+  </Operation>
 </Operations>
