@@ -91,7 +91,7 @@ while @row_count > 0
 	/*	delete old records from the action queue */
 	delete 
 	from [dbo].[sqlwatch_meta_action_queue] 
-	where [time_queued] < case when exec_status <> 'FAILED' then dateadd(day,-1,sysdatetime()) else dateadd(day,-7,sysdatetime()) end
+	where [time_queued] < case when exec_status <> 'FAILED' then dateadd(day,-1,sysdatetime()) else dateadd(day,-30,sysdatetime()) end
 	Print 'Deleted ' + convert(varchar(max),@@ROWCOUNT) + ' record' + case when @@ROWCOUNT > 1 then 's' else '' end + ' from [dbo].[sqlwatch_meta_action_queue]'
 
 	/*	Trend tables retention.
