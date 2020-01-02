@@ -2072,4 +2072,214 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="[snapshot_time_utc_offset]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="c2126214-abac-4f61-84ee-476c70341aef" ChangeDateTime="12/16/2019 15:45:23">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_config_sql_instance].[is_active]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_config_sql_instance]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[repo_collector_is_active]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="cd2d0505-eb62-4e57-9290-a4c13033b75f" ChangeDateTime="12/16/2019 15:45:36">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_config_sql_instance].[last_collection_time]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_config_sql_instance]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[repo_last_collection_time]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="786115dc-7a0f-4d26-8ca5-051c347dc8cc" ChangeDateTime="12/16/2019 15:45:52">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_config_sql_instance].[collection_status]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_config_sql_instance]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[repo_last_collection_status]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="a00928fe-7261-4d3f-b6c1-202a6b50240e" ChangeDateTime="12/16/2019 17:22:51">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_config_sql_instance].[repo_last_collection_success]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_config_sql_instance]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[repo_last_collection_success_time]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="0a917b44-d25e-4aa8-b5c2-cf7bdb04ca15" ChangeDateTime="12/16/2019 17:23:30">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_config_sql_instance].[repo_last_collection_time]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_config_sql_instance]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[repo_last_collection_finish_time]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="13f9140a-01b1-499a-ac81-3a32f36a6141" ChangeDateTime="12/17/2019 13:00:00">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_repository_get_data]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_repository_import_remote_data]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="813e6e9c-2646-41f8-baa9-8905e1f76f88" ChangeDateTime="12/17/2019 15:59:52">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_repository_dequeue_item]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_repository_remote_item_dequeue]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="97e04dfb-b7c4-4dba-8ccb-59460fc5fece" ChangeDateTime="12/17/2019 16:00:13">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_repository_queue_item]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_repository_remote_item_enqueue]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="97681360-a6a9-45b7-bf1c-35c478979da7" ChangeDateTime="12/17/2019 16:00:52">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_repository_import_remote_data]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_repository_remote_item_import]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="8de9f0b6-19df-45a3-86b4-28ad4e965286" ChangeDateTime="12/17/2019 16:09:29">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_repository_ls_create]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_config_repository_create_ls]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="577da6e8-df95-4a23-90cb-75aec59280ee" ChangeDateTime="12/17/2019 16:35:10">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_repository_import_queue]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[sqlwatch_meta_repository_import_queue]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="bdc9727d-8589-4006-8355-a429de5656fb" ChangeDateTime="12/17/2019 19:46:32">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_config_repository_create_ls]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_config_repository_create_linked_server]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="b69f259b-8ac9-4314-8a28-47047ffe7250" ChangeDateTime="12/22/2019 20:28:02">
+    <Property Name="ElementName" Value="[dbo].[vw_sqlwatch_meta_action_queue_recent_failure]" />
+    <Property Name="ElementType" Value="SqlView" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[vw_sqlwatch_help_action_queue_failures]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="95981edb-a585-4a9f-bfed-6a0274b866e6" ChangeDateTime="12/22/2019 21:00:38">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_logger_repository_import]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[sqlwatch_meta_repository_import_status]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="bbe55bed-e37a-45bf-80c2-5c8c9ec778a8" ChangeDateTime="12/22/2019 23:03:07">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_repository_add_remote_instance]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_user_repository_add_remote_instance]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="ceb6d08d-911b-4904-b792-f354c475c831" ChangeDateTime="12/22/2019 23:03:44">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_config_repository_create_linked_server]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_user_repository_create_linked_server]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="5f1e170f-3a29-45d7-8486-03179909f1e7" ChangeDateTime="12/25/2019 18:15:41">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_repository_remote_table_import]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_repository_remote_table_import_workder]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="d1752c4b-b5e9-4a4c-ba15-509d8d66a4b5" ChangeDateTime="12/25/2019 18:16:01">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_repository_remote_item_import]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_repository_remote_table_import]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="2fdc3f22-3027-4bcc-8c68-428fc0b93902" ChangeDateTime="12/25/2019 18:16:22">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_repository_remote_item_enqueue]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_repository_remote_table_enqueue]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="3d5ac803-74b5-40df-8e52-42eb970f16ba" ChangeDateTime="12/25/2019 18:16:38">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_repository_remote_item_dequeue]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_repository_remote_table_dequeue]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="136fcd43-4dd5-4c28-b713-d042e7844a10" ChangeDateTime="12/25/2019 18:16:55">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_repository_remote_table_import_workder]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_repository_remote_table_import_worker]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="a07d3af3-1928-45ae-b21f-8253480fbf60" ChangeDateTime="12/25/2019 20:16:15">
+    <Property Name="ElementName" Value="[dbo].[vw_sqlwatch_report_perf_os_performance_counters_rate]" />
+    <Property Name="ElementType" Value="SqlView" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[vw_sqlwatch_report_fact_perf_os_performance_counters_rate]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="0e188b9f-98c3-45d8-a216-bd62cd3a72b2" ChangeDateTime="12/30/2019 20:14:23">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_logger_log]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[sqlwatch_log]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="71dcda44-e1e3-4cc5-9900-1df3cfc578b6" ChangeDateTime="12/30/2019 20:22:36">
+    <Property Name="ElementName" Value="[dbo].[vw_sqlwatch_version]" />
+    <Property Name="ElementType" Value="SqlView" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[vw_sqlwatch_sys_version]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="83e53048-5661-4535-b71b-f27eb7ad726c" ChangeDateTime="12/30/2019 20:22:56">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_log]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[sqlwatch_sys_log]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="1eba3710-93f1-4daf-85a1-abd35ca55591" ChangeDateTime="12/30/2019 20:23:09">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_version]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[sqlwatch_sys_version]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="baad6c4d-42c9-4379-8a00-f29cc5dfca30" ChangeDateTime="12/30/2019 23:55:55">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_sys_config]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[sqlwatch_config]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="c02a03c6-bfa5-4e0c-9a5d-412de499293b" ChangeDateTime="12/31/2019 00:05:23">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_sys_version]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[sqlwatch_app_version]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="093f539f-c0f7-47c8-afe3-d89e10c80db9" ChangeDateTime="12/31/2019 00:06:10">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_sys_log]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[sqlwatch_app_log]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="1fca495f-1a40-41c6-acc4-41919bcb2c91" ChangeDateTime="12/31/2019 00:15:26">
+    <Property Name="ElementName" Value="[dbo].[vw_sqlwatch_sys_version]" />
+    <Property Name="ElementType" Value="SqlView" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[vw_sqlwatch_app_version]" />
+  </Operation>
 </Operations>

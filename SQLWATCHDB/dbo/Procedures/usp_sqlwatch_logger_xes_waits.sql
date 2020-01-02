@@ -7,10 +7,19 @@ begin tran
 if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 	begin
 		declare @snapshot_time datetime2(0),
-				@snapshot_type_id tinyint = 6
+				@snapshot_type_id tinyint = 6,
+				@target_data_char nvarchar(max),
+				@target_data_xml xml
 
-		select cast(target_data as xml) AS targetdata
-		into #xes
+
+		/*	it has been reported that some users are getting xml conversion errors on SQL Server 2012 in this step of the scritp.
+			-- Steps 2,3, and 5 fail with "Executed as user: <redacted>. XML parsing: line 35, character 54, illegal name character [SQLSTATE 42000] (Error 9421).  
+			-- The step failed.
+
+		    The content of the target_data is xml but stored as string, there is not much I can about it apart from catching the error and logging into table
+			to be able to debug what part of the code/query is causing the problem	*/
+
+		select @target_data_char = target_data
 		from sys.dm_xe_session_targets xet
 		inner join sys.dm_xe_sessions xes
 			on xes.address = xet.event_session_address
@@ -18,6 +27,19 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 			if SQLWATCH session is switched off we will use system_health otherwise use SQLWATCH_* */
 		where xes.name = isnull((select name from sys.dm_xe_sessions where name = 'SQLWATCH_waits'),'system_health')
 			and xet.target_name = 'ring_buffer'
+
+		begin try
+			select @target_data_xml = convert(xml,@target_data_char)
+		end try
+		begin catch
+			exec [dbo].[usp_sqlwatch_internal_log]
+				@proc_id = @@PROCID,
+				@process_stage = '237002DB-19E6-487A-8F2B-15E557466A1E',
+				@process_message = @target_data_char,
+				@process_message_type = 'ERROR'
+
+				return
+		end catch
 
 		--------------------------------------------------------------------------------------------------------------------------------
 		-- waits
@@ -43,7 +65,7 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 				[activity_id_xfer] = xed.event_data.value('(action[@name="attach_activity_id_xfer"]/value)[1]', 'varchar(255)'),
 				[snapshot_time] = @snapshot_time,
 				[snapshot_type_id] = @snapshot_type_id
-			from #xes t
+			from (select targetdata = @target_data_xml )t
 				cross apply targetdata.nodes('//RingBufferTarget/event') AS xed (event_data)
 			--where xed.event_data.value('(@name)[1]', 'varchar(255)') in ('wait_info','wait_info_external')
 		)

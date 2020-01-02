@@ -8,6 +8,7 @@
 	[status_end_time] = isnull(t.snapshot_time,getutcdate())
 	, h.report_time
 	, check_count = t.check_count
+	, l1.snapshot_type_id
 from [dbo].[sqlwatch_logger_check] l1
 inner join dbo.sqlwatch_logger_snapshot_header h
 	on h.snapshot_time = l1.snapshot_time

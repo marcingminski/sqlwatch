@@ -222,7 +222,7 @@
     <Build Include="dbo\Functions\ufn_sqlwatch_get_error_detail_text.sql" />
     <Build Include="dbo\Views\vw_sqlwatch_report_config_check_action.sql" />
     <Build Include="dbo\Views\vw_sqlwatch_report_fact_check_status_change.sql" />
-    <Build Include="dbo\Tables\sqlwatch_logger_log.sql" />
+    <Build Include="dbo\Tables\sqlwatch_app_log.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_log.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_action_queue_get_next.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_action_queue_update.sql" />
@@ -242,18 +242,45 @@
     <None Include="Scripts\Post-Deployment\Reference-Data\Script.PostDeployment-LoadConfig-PerformanceCounters.sql" />
     <None Include="Scripts\Post-Deployment\Reference-Data\Script.PostDeployment-LoadConfig-SnapshotTypes.sql" />
     <None Include="Scripts\Post-Deployment\Reference-Data\Script.PostDeployment-LoadMeta-Server.sql" />
-    <Build Include="dbo\Views\vw_sqlwatch_meta_action_queue_recent_failure.sql" />
+    <Build Include="dbo\Views\vw_sqlwatch_help_action_queue_failures.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_get_file_type_desc.sql" />
     <Build Include="dbo\Tables\sqlwatch_config_exclude_xes_long_query.sql" />
     <Build Include="dbo\Tables\sqlwatch_config_exclude_wait_stats.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_insert_header.sql" />
-    <Build Include="dbo\Tables\sqlwatch_version.sql" />
+    <Build Include="dbo\Tables\sqlwatch_app_version.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_get_version.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_repository_get_remote_data.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_repository_get_next_server.sql" />
+    <Build Include="dbo\Tables\sqlwatch_meta_repository_import_queue.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_repository_remote_table_enqueue.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_repository_remote_table_dequeue.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_repository_remote_table_import.sql" />
+    <Build Include="dbo\Views\vw_sqlwatch_internal_table_snapshot.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_user_repository_create_linked_server.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_repository_remote_table_import_worker.sql" />
+    <Build Include="dbo\Views\vw_sqlwatch_help_logger_log_failures.sql" />
+    <Build Include="dbo\Tables\sqlwatch_meta_repository_import_status.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_user_repository_add_remote_instance.sql" />
+    <Build Include="dbo\Views\vw_sqlwatch_help_last_snapshot_time.sql" />
+    <Build Include="dbo\Views\vw_sqlwatch_help_diagnostics.sql" />
+    <Build Include="dbo\Tables\sqlwatch_logger_disk_utilisation_table.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_logger_disk_utilisation_table.sql" />
+    <Build Include="dbo\Views\vw_sqlwatch_report_fact_disk_utilisation_table.sql" />
+    <Build Include="dbo\Functions\ufn_sqlwatch_format_bytes.sql" />
+    <Build Include="dbo\Tables\sqlwatch_meta_repository_import_thread.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_config_set_repository_agent_jobs.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_create_agent_job.sql" />
+    <Build Include="dbo\Views\vw_sqlwatch_report_fact_perf_os_performance_counters_rate.sql" />
+    <Build Include="dbo\Views\vw_sqlwatch_app_version.sql" />
+    <Build Include="dbo\Tables\sqlwatch_config.sql" />
+    <Build Include="dbo\Functions\ufn_sqlwatch_get_config_value.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
     <None Include="Scripts\Post-Deployment\Data-Fixes\Script.PostDeployment-DataFix-SetDefaultLastSeenDates.sql" />
     <None Include="Scripts\Post-Deployment\Data-Fixes\Script.PostDeployment-DataFix-MigrateReportTime.sql" />
+    <None Include="Scripts\Post-Deployment\Data-Fixes\Script.PostDeployment-FixNonTrustedConstraints.sql" />
+    <None Include="Scripts\Post-Deployment\Reference-Data\Script.PostDeployment-LoadConfig-Global.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SQLWATCH.refactorlog" />

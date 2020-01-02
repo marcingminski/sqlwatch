@@ -19,6 +19,7 @@ select [sqlwatch_database_id], [sqlwatch_master_file_id]
 , [bytes_read_per_second] = [num_of_bytes_read_delta] / [delta_seconds]
  --for backward compatibility with existing pbi, this column will become report_time as we could be aggregating many snapshots in a report_period
 , d.snapshot_time
+, d.snapshot_type_id
 	from [dbo].[sqlwatch_logger_perf_file_stats] d
 
   	inner join dbo.sqlwatch_logger_snapshot_header h

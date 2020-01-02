@@ -60,7 +60,10 @@ using (
 	select [snapshot_type_id] = 20, [snapshot_type_desc] = 'Reports', [snapshot_retention_days] = 2
 	union
 	/* Error Logging */
-	select [snapshot_type_id] = 21, [snapshot_type_desc] = 'Log', [snapshot_retention_days] = 7
+	select [snapshot_type_id] = 21, [snapshot_type_desc] = 'N/A', [snapshot_retention_days] = 7
+	union
+	/* Table Size */
+	select [snapshot_type_id] = 22, [snapshot_type_desc] = 'Disk Utilisation Table', [snapshot_retention_days] = 30
 
 
 ) as source

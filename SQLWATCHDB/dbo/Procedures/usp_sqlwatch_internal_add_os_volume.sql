@@ -17,6 +17,10 @@ using (
 on target.[volume_name] = source.[volume_name]
 and target.[sql_instance] = source.[sql_instance]
 
+		
+when not matched by source and target.sql_instance = @@SERVERNAME then
+	update set [is_record_deleted] = 1
+
 when matched then 
 	update set [label] = source.[label],
 		[file_system] = source.[file_system],
@@ -26,7 +30,8 @@ when matched then
 								or	target.[file_system] <> source.[file_system]
 								or	target.[volume_block_size_bytes] <> source.[volume_block_size_bytes]
 								then GETUTCDATE() else [date_updated] end,
-		[date_last_seen] = GETUTCDATE()
+		[date_last_seen] = GETUTCDATE(),
+		[is_record_deleted] = 0
 
 when not matched by target then
 	insert ([sql_instance], [volume_name], [label], [file_system], [volume_block_size_bytes], [date_created], [date_last_seen])

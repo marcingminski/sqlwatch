@@ -27,29 +27,8 @@ create table #snapshot_id_table (
 
 /* maintain relation between snapshots and tables */
 insert into #snapshot_id_table(table_name, snapshot_type_id)
-values 
-	('sqlwatch_logger_agent_job_history', 16),
-	('sqlwatch_logger_disk_utilisation_database', 2),
-	('sqlwatch_logger_disk_utilisation_volume', 17),
-	('sqlwatch_logger_index_missing_stats', 3),
-	('sqlwatch_logger_index_usage_stats', 14),
-	('sqlwatch_logger_index_histogram', 15),
-	('sqlwatch_logger_perf_file_stats', 1),
-	('sqlwatch_logger_perf_os_memory_clerks', 1),
-	('sqlwatch_logger_perf_os_performance_counters', 1),
-	('sqlwatch_logger_perf_os_process_memory', 1),
-	('sqlwatch_logger_perf_os_schedulers', 1),
-	('sqlwatch_logger_perf_os_wait_stats', 1),
-	('sqlwatch_logger_whoisactive', 11),
-	('sqlwatch_logger_xes_blockers', 9),
-	('sqlwatch_logger_xes_iosubsystem', 10),
-	('sqlwatch_logger_xes_long_queries', 7),
-	('sqlwatch_logger_xes_query_processing', 10),
-	('sqlwatch_logger_xes_waits_stats', 6),
-	('sqlwatch_logger_check',18),
-	('sqlwatch_logger_check_action',18)
-
-
+select *
+from [dbo].[vw_sqlwatch_internal_table_snapshot]
 
 update t
 	--if we get null it means we have no snapshot at all.

@@ -10,6 +10,7 @@
 		, total_growth_days = datediff(day,fg.snapshot_time,lg.snapshot_time)
 
 		, [free_space_percentage] = vc.[volume_free_space_bytes] * 1.0 / vc.[volume_total_space_bytes]
+		, [is_record_deleted]
 		from dbo.sqlwatch_meta_os_volume d
 
 		outer apply (
@@ -54,30 +55,15 @@
 	, growth_bytes_per_day = case when [total_growth_days] > 0 and volume_bytes_growth > 0 then [volume_bytes_growth] / [total_growth_days] else 0 end
 	, days_until_full = case when [total_growth_days] > 0 and volume_bytes_growth > 0 then volume_free_space_bytes_current / ([volume_bytes_growth] / [total_growth_days]) else 0 end
 	, [free_space_percentage]
+	, [is_record_deleted]
 	from cte_volume
 	)
 	select [sql_instance], [sqlwatch_volume_id], [volume_name], [label], [file_system], [volume_block_size_bytes], [date_created], [date_updated], [date_last_seen]
 		, [volume_total_space_bytes_current], [volume_free_space_bytes_current], [volume_bytes_growth], [total_growth_days], [free_space_percentage]
-		, [growth_bytes_per_day], [days_until_full]
-	, [total_space_formatted] = case 
-			when volume_total_space_bytes_current / 1024.0 < 1000 then convert(varchar(100),convert(decimal(10,2),volume_total_space_bytes_current / 1024.0 )) + ' KB'
-			when volume_total_space_bytes_current / 1024.0 / 1024.0 < 1000 then convert(varchar(100),convert(decimal(10,2),volume_total_space_bytes_current / 1024.0 / 1024.0)) + ' MB'
-			when volume_total_space_bytes_current / 1024.0 / 1024.0 / 1024.0 < 1000 then convert(varchar(100),convert(decimal(10,2),volume_total_space_bytes_current / 1024.0 / 1024.0 / 1024.0)) + ' GB' 
-			else convert(varchar(100),convert(decimal(10,2),volume_total_space_bytes_current / 1024.0 / 1024.0 / 1024.0 / 1024.0)) + ' TB' 
-			end
-	, [free_space_formatted] = case
-			when [volume_free_space_bytes_current] / 1024.0 < 1000 then convert(varchar(100),convert(decimal(10,2),[volume_free_space_bytes_current] / 1024.0 )) + ' KB'
-			when [volume_free_space_bytes_current] / 1024.0 / 1024.0 < 1000 then convert(varchar(100),convert(decimal(10,2),[volume_free_space_bytes_current] / 1024.0 / 1024.0)) + ' MB'
-			when [volume_free_space_bytes_current] / 1024.0 / 1024.0 / 1024.0 < 1000 then convert(varchar(100),convert(decimal(10,2),[volume_free_space_bytes_current] / 1024.0 / 1024.0 / 1024.0)) + ' GB' 
-			else convert(varchar(100),convert(decimal(10,2),[volume_free_space_bytes_current] / 1024.0 / 1024.0 / 1024.0 / 1024.0)) + ' TB' 
-			end
-
-	, [growth_bytes_per_day_formatted] = case
-			when growth_bytes_per_day / 1024.0 < 1000 then convert(varchar(100),convert(decimal(10,2),growth_bytes_per_day / 1024.0 )) + ' KB / Day'
-			when growth_bytes_per_day / 1024.0 / 1024.0 < 1000 then convert(varchar(100),convert(decimal(10,2),growth_bytes_per_day / 1024.0 / 1024.0)) + ' MB / Day'
-			when growth_bytes_per_day / 1024.0 / 1024.0 / 1024.0 < 1000 then convert(varchar(100),convert(decimal(10,2),growth_bytes_per_day / 1024.0 / 1024.0 / 1024.0)) + ' GB / Day' 
-			else convert(varchar(100),convert(decimal(10,2),growth_bytes_per_day / 1024.0 / 1024.0 / 1024.0 / 1024.0)) + ' TB' 
-			end
+		, [growth_bytes_per_day], [days_until_full], [is_record_deleted]
+	, [total_space_formatted] = [dbo].[ufn_sqlwatch_format_bytes] ( volume_total_space_bytes_current )
+	, [free_space_formatted] = [dbo].[ufn_sqlwatch_format_bytes] ( [volume_free_space_bytes_current] )
+	, [growth_bytes_per_day_formatted] = [dbo].[ufn_sqlwatch_format_bytes] ( growth_bytes_per_day ) + ' /Day'
 	, [free_space_percentage_formatted] = convert(varchar(50),convert(decimal(10,0),volume_free_space_bytes_current * 1.0 / volume_total_space_bytes_current  * 100.0)) + ' %'
 	from cte_volume_growth
 

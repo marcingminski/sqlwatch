@@ -3,6 +3,8 @@ as
 
 select 
 	  [sql_instance]
+	, [snapshot_type_id]
+	, [snapshot_time]
 	, [report_time] 
 	, [date] = convert(date,report_time)
 	, [year] = datepart(year,report_time)
@@ -31,4 +33,9 @@ select
 	, baseline_1_report_time = dateadd(DAY,-1,report_time)
 	, baseline_2_report_time = dateadd(WEEK,-1,report_time)
 	, baseline_3_report_time = dateadd(MONTH,-1,report_time)
+
+	, baseline_1_snapshot_time = dateadd(DAY,-1,snapshot_time)
+	, baseline_2_snapshot_time = dateadd(WEEK,-1,snapshot_time)
+	, baseline_3_snapshot_time = dateadd(MONTH,-1,snapshot_time)
+	, report_time_utc = dateadd(minute,([snapshot_time_utc_offset]*-1),report_time)
 from dbo.sqlwatch_logger_snapshot_header

@@ -71,8 +71,12 @@ and target.sqlwatch_table_id = source.sqlwatch_table_id
 and target.sql_instance = @@SERVERNAME
 and target.index_name = source.index_name collate database_default
 
+when not matched by source and target.sql_instance = @@SERVERNAME then
+	update set [is_record_deleted] = 1
+
 when matched then
 	update set [date_last_seen] = getutcdate(),
+		[is_record_deleted] = 0,
 		index_id = case when source.index_id <> target.index_id then source.index_id else target.index_id end,
 		index_type_desc = case when source.index_type_desc <> target.index_type_desc collate database_default then source.index_type_desc else target.index_type_desc end collate database_default,
 		date_updated = case when source.index_id <> target.index_id or source.index_type_desc <> target.index_type_desc collate database_default then GETUTCDATE() else date_updated end

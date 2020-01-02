@@ -17,8 +17,17 @@
 	
 	/*	foreign key on server to process delete cascades in central repository when removing server
 		and to make sure we only have valid server. this will also simplify fks in child tables */
-	constraint fk_snapshot_header_sql_instance foreign key (sql_instance) 
-		references dbo.sqlwatch_config_sql_instance (sql_instance) on delete cascade on update cascade
+	/*	https://support.microsoft.com/en-us/help/321843/error-message-1785-occurs-when-you-create-a-foreign-key-constraint-tha 
+		This is because logger tables will have delete cascaded from header as well as meta tables.
+		we can delete database , table or entire server and it will delete corresponding records from meta and logger tables,
+		or, we can delete the header (as part of the retenion) which will delete logger tables only but not meta,
+		SQL Server cannot handle multiple paths for cascade deletion (this is good for consistency and integrity)
+		but in this case we need it. MS recommends a work around via triggers 
+		
+		This was achieved via dbo.trg_sqlwatch_meta_server_delete_header trigger on [dbo].[sqlwatch_meta_server]
+		*/
+	--constraint fk_snapshot_header_sql_instance foreign key (sql_instance) 
+	--	references dbo.sqlwatch_meta_server (servername) on delete cascade on update cascade
 )
 go
 

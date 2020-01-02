@@ -35,22 +35,20 @@ SET XACT_ABORT ON
 SET NOCOUNT ON 
 
 begin try		
-	declare @snapshot_type_id tinyint = 21,
-			@snapshot_time datetime2(0)
+	declare @snapshot_time datetime2(0)
+
+	if @process_message_type = 'INFO' and dbo.ufn_sqlwatch_get_config_value(7, null) <> 1
+		begin
+			return
+		end
 
 	if @process_name is null and @proc_id is not null
 		begin
 			set @process_name = OBJECT_NAME(@proc_id)
 		end
 
-	exec [dbo].[usp_sqlwatch_internal_insert_header] 
-		@snapshot_time_new = @snapshot_time OUTPUT,
-		@snapshot_type_id = @snapshot_type_id
-
-	insert into dbo.sqlwatch_logger_log (
-		 [snapshot_time]
-		,[snapshot_type_id]
-		,[process_name]			
+	insert into dbo.[sqlwatch_app_log] (
+		 [process_name]			
 		,[process_stage]			
 		,[process_message]		
 		,[process_message_type]	
@@ -60,19 +58,21 @@ begin try
 		,[SQL_ERROR]		
 	)
 	values (
-		@snapshot_time, @snapshot_type_id, @process_name, @process_stage, @process_message, @process_message_type,
-		@@SPID, SYSTEM_USER, USER, [dbo].[ufn_sqlwatch_get_error_detail_xml]()
+		@process_name, @process_stage, @process_message, @process_message_type,
+		@@SPID, SYSTEM_USER, USER, case when @process_message_type <> 'INFO' then [dbo].[ufn_sqlwatch_get_error_detail_xml]() else null end
 	)
 
 	begin
-		Print '---- ' + @process_message_type + '------------------------------------' +
-'Time' + convert(nvarchar(23),@snapshot_time,121) + 
-'Process Name: ' + @process_name +
-'Stage: ' + @process_stage + 
-'Message: ' + @process_message + 
-'Message Type' + @process_message_type + 
-'Error: ' + [dbo].[ufn_sqlwatch_get_error_detail_text] ()
-	end
+		Print char(10) + '>>>---- ' + @process_message_type + ' ------------------------------------' + char(10) +
+'Time: ' + convert(nvarchar(23),@snapshot_time,121) + char(10) + 
+'Process Name: ' + @process_name + char(10) + 
+'Stage: ' + @process_stage + char(10) +  
+'Message: ' + @process_message + char(10) + 
+'Message Type: ' + @process_message_type + char(10) + 
+case when @process_message_type <> 'INFO' then 'Error: ' + [dbo].[ufn_sqlwatch_get_error_detail_text] () else '' end + char(10) +
+'---- ' + @process_message_type + ' ------------------------------------<<<' + char(10)
+	end 
+
 end try
 begin catch
 	--fatal error in the error loggin procedure

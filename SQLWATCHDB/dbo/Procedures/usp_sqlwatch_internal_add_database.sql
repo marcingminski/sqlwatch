@@ -15,11 +15,11 @@ as
 								 , [user_access], [state], [snapshot_isolation_state] , [is_read_committed_snapshot_on] 
 							 	 , [recovery_model] , [page_verify_option])
 		from dbo.vw_sqlwatch_sys_databases
-		union all
+		--union all
 		/* mssqlsystemresource database appears in the performance counters
 		so we need it as a dimensions to be able to filter in the report */
-		select 'mssqlsystemresource', '1970-01-01', @@SERVERNAME
-			, null, null, null, null, null, null, null, null, null, null
+		--select 'mssqlsystemresource', '1970-01-01', @@SERVERNAME
+		--	, null, null, null, null, null, null, null, null, null, null
 	) as source
 		on (
 				source.[name] = target.[database_name] collate database_default
@@ -27,8 +27,12 @@ as
 			and source.[sql_instance] = target.[sql_instance] collate database_default
 		)
 	/* dropped databases are going to be updated to current = 0 */
+	when not matched by source and target.sql_instance = @@SERVERNAME then
+		update set [is_record_deleted] = 1
+
 	when matched then
 		update set [date_last_seen] = GETUTCDATE()
+			,[is_record_deleted] = 0
 			,[is_auto_close_on] = case when target.[is_auto_close_on] is null or target.[is_auto_close_on] <> source.[is_auto_close_on] then source.[is_auto_close_on] else target.[is_auto_close_on] end
 			,[is_auto_shrink_on] = case when target.[is_auto_shrink_on] is null or target.[is_auto_shrink_on] <> source.[is_auto_shrink_on] then source.[is_auto_shrink_on] else target.[is_auto_shrink_on] end
 			,[is_auto_update_stats_on] = case when target.[is_auto_update_stats_on] is null or target.[is_auto_update_stats_on] <> source.[is_auto_update_stats_on] then source.[is_auto_update_stats_on] else target.[is_auto_update_stats_on] end

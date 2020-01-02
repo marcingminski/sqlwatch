@@ -5,6 +5,8 @@
 
 		, file_type_desc = [dbo].[ufn_sqlwatch_get_file_type_desc](d.file_type)
 		, [d].[file_name], [d].[file_physical_name], [d].[sql_instance], [d].[date_last_seen], [d].[logical_disk], lg.size_on_disk_bytes
+		, [is_record_deleted]
+
 		from [dbo].[sqlwatch_meta_master_file] d
 
 			outer apply (

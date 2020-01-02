@@ -14,3 +14,4 @@
 	constraint fk_sqlwatch_meta_report_server foreign key ([sql_instance])
 		references dbo.sqlwatch_meta_server ([servername]) on delete cascade
 )
+go

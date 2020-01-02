@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[sqlwatch_version]
+﻿CREATE TABLE [dbo].[sqlwatch_app_version]
 (
 	[install_sequence] smallint identity(1,1) not null,
 	[install_date] datetimeoffset not null,

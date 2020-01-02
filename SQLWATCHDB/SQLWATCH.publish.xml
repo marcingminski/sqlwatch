@@ -13,5 +13,6 @@
     <IgnoreIndexOptions>True</IgnoreIndexOptions>
     <IgnoreWithNocheckOnCheckConstraints>False</IgnoreWithNocheckOnCheckConstraints>
     <DropObjectsNotInSource>True</DropObjectsNotInSource>
+    <IgnoreWithNocheckOnForeignKeys>False</IgnoreWithNocheckOnForeignKeys>
   </PropertyGroup>
 </Project>

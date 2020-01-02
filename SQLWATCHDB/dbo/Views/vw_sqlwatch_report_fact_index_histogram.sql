@@ -16,6 +16,7 @@ SELECT d.[sqlwatch_database_id]
 	  ,is_latest = case when d.snapshot_time = t.snapshot_time and d.sql_instance = t.sql_instance then 1 else 0 end
  --for backward compatibility with existing pbi, this column will become report_time as we could be aggregating many snapshots in a report_period
 , d.snapshot_time
+, d.snapshot_type_id
   FROM [dbo].[sqlwatch_logger_index_histogram] d
   	inner join dbo.sqlwatch_logger_snapshot_header h
 		on  h.snapshot_time = d.[snapshot_time]

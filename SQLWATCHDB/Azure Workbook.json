@@ -1,0 +1,581 @@
+{
+  "version": "Notebook/1.0",
+  "items": [
+    {
+      "type": 1,
+      "content": {
+        "json": "### Filters"
+      },
+      "name": "text - 4",
+      "styleSettings": {
+        "padding": "0px"
+      }
+    },
+    {
+      "type": 9,
+      "content": {
+        "version": "KqlParameterItem/1.0",
+        "parameters": [
+          {
+            "id": "b58801ea-eb1b-4871-91d7-36b06543fff2",
+            "version": "KqlParameterItem/1.0",
+            "name": "ReportTimeRange",
+            "type": 4,
+            "isRequired": true,
+            "value": {
+              "durationMs": 14400000
+            },
+            "typeSettings": {
+              "selectableValues": [
+                {
+                  "durationMs": 300000
+                },
+                {
+                  "durationMs": 900000
+                },
+                {
+                  "durationMs": 1800000
+                },
+                {
+                  "durationMs": 3600000
+                },
+                {
+                  "durationMs": 14400000
+                },
+                {
+                  "durationMs": 43200000
+                },
+                {
+                  "durationMs": 86400000
+                },
+                {
+                  "durationMs": 172800000
+                },
+                {
+                  "durationMs": 259200000
+                },
+                {
+                  "durationMs": 604800000
+                },
+                {
+                  "durationMs": 1209600000
+                },
+                {
+                  "durationMs": 2419200000
+                },
+                {
+                  "durationMs": 2592000000
+                },
+                {
+                  "durationMs": 5184000000
+                },
+                {
+                  "durationMs": 7776000000
+                }
+              ],
+              "allowCustom": true
+            },
+            "label": "Report Time Range"
+          },
+          {
+            "id": "84017fb1-0e88-479a-aefb-683a5cd0d9c3",
+            "version": "KqlParameterItem/1.0",
+            "name": "SqlInstance",
+            "type": 2,
+            "isRequired": true,
+            "query": "SQLWATCH_Instance_CL | top 1 by TimeGenerated | distinct sql_instance_s | where sql_instance_s != \"\" | sort by sql_instance_s",
+            "value": "VM-QVZUXJGPDTMR",
+            "typeSettings": {
+              "additionalResourceOptions": []
+            },
+            "queryType": 0,
+            "resourceType": "microsoft.operationalinsights/workspaces",
+            "label": "SQL Instance"
+          },
+          {
+            "id": "ef583ac0-52a1-4757-9105-f3cd12bc9021",
+            "version": "KqlParameterItem/1.0",
+            "name": "Aggregation",
+            "label": "Aggregation (minutes)",
+            "type": 1,
+            "isRequired": true,
+            "value": "1",
+            "timeContext": {
+              "durationMs": 0
+            },
+            "timeContextFromParameter": "ReportTimeRange"
+          },
+          {
+            "id": "fc13b691-71b3-4afe-8832-a80096c1eb80",
+            "version": "KqlParameterItem/1.0",
+            "name": "FilterChecks",
+            "label": "Filter Check Status",
+            "type": 2,
+            "isRequired": true,
+            "multiSelect": true,
+            "quote": "'",
+            "delimiter": ",",
+            "query": "SQLWATCH_Checks_CL | distinct check_status_s",
+            "value": [
+              "CRITICAL",
+              "WARNING"
+            ],
+            "typeSettings": {
+              "additionalResourceOptions": []
+            },
+            "timeContext": {
+              "durationMs": 0
+            },
+            "timeContextFromParameter": "ReportTimeRange",
+            "queryType": 0,
+            "resourceType": "microsoft.operationalinsights/workspaces"
+          }
+        ],
+        "style": "pills",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "name": "parameters - 5",
+      "styleSettings": {
+        "padding": "20px"
+      }
+    },
+    {
+      "type": 11,
+      "content": {
+        "version": "LinkItem/1.0",
+        "style": "nav",
+        "links": [
+          {
+            "cellValue": "query - 1",
+            "linkTarget": "step",
+            "linkLabel": "CPU Utilisation",
+            "preText": "",
+            "style": "primary"
+          },
+          {
+            "cellValue": "query - 2",
+            "linkTarget": "step",
+            "linkLabel": "Activity",
+            "preText": "",
+            "style": "primary"
+          },
+          {
+            "cellValue": "query - 7",
+            "linkTarget": "step",
+            "linkLabel": "Process Memory",
+            "preText": "",
+            "style": "primary"
+          },
+          {
+            "cellValue": "query - 10",
+            "linkTarget": "step",
+            "linkLabel": "Wait Stats",
+            "style": "primary"
+          },
+          {
+            "cellValue": "query - 12",
+            "linkTarget": "step",
+            "linkLabel": "Database IO Latency",
+            "style": "primary"
+          }
+        ]
+      },
+      "name": "links - 8",
+      "styleSettings": {
+        "padding": "20px"
+      }
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "### Checks"
+      },
+      "name": "text - 13"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "SQLWATCH_Checks_CL\r\n| where snapshot_time_t {ReportTimeRange:value}\r\n| where sql_instance_s == \"{SqlInstance}\"\r\n| where check_status_s in ({FilterChecks})\r\n| summarize argmax(TimeGenerated, *) by check_name_s",
+        "size": 1,
+        "timeContext": {
+          "durationMs": 0
+        },
+        "timeContextFromParameter": "ReportTimeRange",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "visualization": "tiles",
+        "tileSettings": {
+          "titleContent": {
+            "columnMatch": "check_name_s",
+            "formatter": 1,
+            "formatOptions": {
+              "palette": "blue",
+              "showIcon": true
+            }
+          },
+          "subtitleContent": {
+            "columnMatch": "max_TimeGenerated_check_value_d",
+            "formatter": 1,
+            "formatOptions": {
+              "showIcon": true
+            },
+            "dateFormat": {
+              "formatName": "shortDateTimePattern"
+            }
+          },
+          "rightContent": {
+            "columnMatch": "max_TimeGenerated_check_status_s",
+            "formatter": 18,
+            "formatOptions": {
+              "showIcon": true,
+              "thresholdsOptions": "icons",
+              "thresholdsGrid": [
+                {
+                  "operator": "==",
+                  "thresholdValue": "OK",
+                  "representation": "success",
+                  "text": "{0}{1}"
+                },
+                {
+                  "operator": "==",
+                  "thresholdValue": "WARNING",
+                  "representation": "warning",
+                  "text": "{0}{1}"
+                },
+                {
+                  "operator": "==",
+                  "thresholdValue": "CRITICAL",
+                  "representation": "critical",
+                  "text": "{0}{1}"
+                },
+                {
+                  "operator": "Default",
+                  "thresholdValue": null,
+                  "representation": "more",
+                  "text": "{0}{1}"
+                }
+              ]
+            }
+          },
+          "showBorder": true,
+          "sortCriteriaField": "max_TimeGenerated_check_status_s",
+          "sortOrderField": 1
+        }
+      },
+      "name": "query - 14",
+      "styleSettings": {
+        "padding": "20px"
+      }
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "### CPU Utilisation"
+      },
+      "customWidth": "33",
+      "name": "text - 2"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "### Activity"
+      },
+      "customWidth": "33",
+      "name": "text - 3"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "### Process Memory"
+      },
+      "customWidth": "33",
+      "name": "text - 6"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "SQLWATCH_Performance_Counters_CL \r\n| where counter_name_s == \"Processor Time %\"\r\n| where snapshot_time_t {ReportTimeRange:value}\r\n| where sql_instance_s == \"{SqlInstance}\"\r\n| summarize avg(cntr_value_calculated_d) by counter_name_s, instance_name_s, bin(snapshot_time_t, {Aggregation}m)",
+        "size": 0,
+        "aggregation": 3,
+        "color": "magenta",
+        "timeContext": {
+          "durationMs": 86400000
+        },
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "visualization": "linechart",
+        "chartSettings": {
+          "group": "instance_name_s",
+          "createOtherGroup": null,
+          "xSettings": {
+            "unit": 17,
+            "min": null,
+            "max": null
+          },
+          "ySettings": {
+            "unit": 1,
+            "min": 0,
+            "max": 0
+          }
+        }
+      },
+      "customWidth": "33",
+      "name": "query - 1",
+      "styleSettings": {
+        "padding": "20px"
+      }
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "SQLWATCH_Performance_Counters_CL\r\n| where counter_name_s in (\"Batch Requests/sec\",\"Logins/sec\",\"Transactions/sec\",\"User Connections\") \r\n| where snapshot_time_t {ReportTimeRange:value}\r\n| where sql_instance_s == \"{SqlInstance}\"\r\n| summarize avg(cntr_value_calculated_d) by counter_name_s, instance_name_s, bin(snapshot_time_t, {Aggregation}m)\r\n",
+        "size": 0,
+        "timeContext": {
+          "durationMs": 86400000
+        },
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "visualization": "linechart"
+      },
+      "customWidth": "33",
+      "name": "query - 2",
+      "styleSettings": {
+        "padding": "20px"
+      }
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "SQLWATCH_Performance_Counters_CL\r\n| where counter_name_s in (\"Total Server Memory (KB)\",\"Stolen Server Memory (KB)\",\"Target Server Memory (KB)\") \r\n| where snapshot_time_t {ReportTimeRange:value}\r\n| where sql_instance_s == \"{SqlInstance}\"\r\n| summarize avg(cntr_value_calculated_d) by counter_name_s, instance_name_s, bin(snapshot_time_t, {Aggregation}m)\r\n",
+        "size": 0,
+        "timeContext": {
+          "durationMs": 0
+        },
+        "timeContextFromParameter": "ReportTimeRange",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "visualization": "linechart",
+        "chartSettings": {
+          "ySettings": {
+            "unit": 3,
+            "min": null,
+            "max": null
+          }
+        }
+      },
+      "customWidth": "33",
+      "name": "query - 7",
+      "styleSettings": {
+        "padding": "20px"
+      }
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "### Wait Stats"
+      },
+      "name": "text - 9",
+      "styleSettings": {
+        "margin": "100"
+      }
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "SQLWATCH_Wait_Stats_CL \r\n| where snapshot_time_t {ReportTimeRange:value}\r\n| where sql_instance_s == \"{SqlInstance}\"\r\n| summarize avg(wait_time_ms_delta_d) by wait_category_s, wait_type_s, sql_instance_s, bin(snapshot_time_t, {Aggregation}m)\r\n",
+        "size": 2,
+        "aggregation": 3,
+        "timeContext": {
+          "durationMs": 0
+        },
+        "timeContextFromParameter": "ReportTimeRange",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "visualization": "categoricalbar",
+        "chartSettings": {
+          "ySettings": {
+            "unit": 23,
+            "min": null,
+            "max": null
+          }
+        }
+      },
+      "name": "query - 10",
+      "styleSettings": {
+        "padding": "20px"
+      }
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "### Database IO Latency"
+      },
+      "name": "text - 11"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "SQLWATCH_File_Stats_CL \r\n| where snapshot_time_t {ReportTimeRange:value}\r\n| where sql_instance_s == \"{SqlInstance}\"\r\n| summarize io_latency=avg(io_latency_read_d)+avg(io_latency_write_d) by database_name_s, bin(snapshot_time_t, {Aggregation}m) \r\n",
+        "size": 0,
+        "aggregation": 2,
+        "timeContext": {
+          "durationMs": 0
+        },
+        "timeContextFromParameter": "ReportTimeRange",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "visualization": "linechart",
+        "tileSettings": {
+          "showBorder": false,
+          "titleContent": {
+            "columnMatch": "database_name_s",
+            "formatter": 1
+          },
+          "leftContent": {
+            "columnMatch": "io_latency",
+            "formatter": 12,
+            "formatOptions": {
+              "palette": "auto"
+            },
+            "numberFormat": {
+              "unit": 17,
+              "options": {
+                "maximumSignificantDigits": 3,
+                "maximumFractionDigits": 2
+              }
+            }
+          }
+        },
+        "graphSettings": {
+          "type": 0,
+          "topContent": {
+            "columnMatch": "database_name_s",
+            "formatter": 1
+          },
+          "centerContent": {
+            "columnMatch": "io_latency",
+            "formatter": 1,
+            "numberFormat": {
+              "unit": 17,
+              "options": {
+                "maximumSignificantDigits": 3,
+                "maximumFractionDigits": 2
+              }
+            }
+          }
+        },
+        "chartSettings": {
+          "ySettings": {
+            "unit": 23,
+            "min": null,
+            "max": null
+          }
+        }
+      },
+      "name": "query - 12",
+      "styleSettings": {
+        "padding": "20px"
+      }
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "### File Size"
+      },
+      "name": "text - 16"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "SQLWATCH_File_Stats_CL\r\n| where snapshot_time_t {ReportTimeRange:value}\r\n| where sql_instance_s == \"{SqlInstance}\"\r\n| summarize avg(size_on_disk_bytes_d) by file_physical_name_s, bin(snapshot_time_t, {Aggregation}m)",
+        "size": 0,
+        "aggregation": 3,
+        "timeContext": {
+          "durationMs": 0
+        },
+        "timeContextFromParameter": "ReportTimeRange",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "visualization": "linechart",
+        "chartSettings": {
+          "ySettings": {
+            "unit": 2,
+            "min": null,
+            "max": null
+          }
+        }
+      },
+      "customWidth": "50",
+      "name": "query - 15",
+      "styleSettings": {
+        "padding": "20px"
+      }
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "let last_file_snapshot = \r\nSQLWATCH_File_Stats_CL\r\n| where sql_instance_s == \"{SqlInstance}\"\r\n| summarize arg_max(snapshot_time_t, *) by file_physical_name_s, sql_instance_s;\r\n\r\nlast_file_snapshot\r\n| summarize sum(size_on_disk_bytes_d) by database_name_s",
+        "size": 0,
+        "timeContext": {
+          "durationMs": 0
+        },
+        "timeContextFromParameter": "ReportTimeRange",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "visualization": "table",
+        "gridSettings": {
+          "formatters": [
+            {
+              "columnMatch": "database_name_s",
+              "formatter": 0,
+              "formatOptions": {
+                "showIcon": true
+              }
+            },
+            {
+              "columnMatch": "sum_size_on_disk_bytes_d",
+              "formatter": 3,
+              "formatOptions": {
+                "palette": "yellow",
+                "showIcon": true
+              },
+              "numberFormat": {
+                "unit": 2,
+                "options": {
+                  "style": "decimal"
+                }
+              }
+            }
+          ],
+          "sortBy": [
+            {
+              "itemKey": "$gen_bar_sum_size_on_disk_bytes_d_1",
+              "sortOrder": 2
+            }
+          ]
+        },
+        "sortBy": [
+          {
+            "itemKey": "$gen_bar_sum_size_on_disk_bytes_d_1",
+            "sortOrder": 2
+          }
+        ]
+      },
+      "customWidth": "50",
+      "name": "query - 17",
+      "styleSettings": {
+        "padding": "20px"
+      }
+    }
+  ],
+  "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
+}

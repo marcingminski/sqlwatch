@@ -1,7 +1,8 @@
 ﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_internal_foreachdb]
    @command nvarchar(max),
    @snapshot_type_id tinyint = null,
-   @exlude_databases varchar(max) = null
+   @exlude_databases varchar(max) = null,
+   @debug bit = 0
 as
 
 /*
@@ -25,13 +26,16 @@ as
  Change Log:
 	1.0		2019-12		- Marcin Gminski, Initial version
 	1.1		2019-12-10	- Marcin Gminski, database exclusion
+	1.2		2012-12-23	- Marcin Gminski, added error handling and additional messaging
 -------------------------------------------------------------------------------------------------------------------
 */
 begin
 	set nocount on;
 	declare @sql nvarchar(max),
 			@db	nvarchar(max),
-			@exclude_from_loop bit
+			@exclude_from_loop bit,
+			@has_errors bit = 0,
+			@error_message nvarchar(max)
 
 	select *
 	into #t
@@ -66,8 +70,23 @@ begin
 						)
 						begin
 							set @sql = replace(@command,'?',@db)
-	
-							exec sp_executesql @sql
+							Print 'Processing database: ' + quotename(@db)
+							begin try
+								if @debug = 1
+									begin
+										Print @sql
+									end
+								exec sp_executesql @sql
+							end try
+							begin catch
+								set @has_errors = 1
+								exec [dbo].[usp_sqlwatch_internal_log]
+										@proc_id = @@PROCID,
+										@process_stage = 'F445D2BC-2CF3-4F41-9284-A4C3ACA513EB',
+										@process_message = @sql,
+										@process_message_type = 'ERROR'
+								GoTo NextDatabase
+							end catch
 						end
 					else
 						begin
@@ -78,7 +97,14 @@ begin
 				begin
 					Print 'Database (' + @db + ') excluded from collection (snapshot_type_id: ' + isnull(convert(varchar(10), @snapshot_type_id),'NULL') + ') due to global exclusion.'
 				end
+			NextDatabase:
 			fetch next from cur_database into @db, @exclude_from_loop
 		end
+
+		if @has_errors <> 0
+			begin
+				set @error_message = 'Errors during execution (' + OBJECT_NAME(@@PROCID) + ')'
+				raiserror ('%s',16,1,@error_message)
+			end
 end
 

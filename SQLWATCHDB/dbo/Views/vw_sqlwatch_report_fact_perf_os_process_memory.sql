@@ -14,6 +14,7 @@ SELECT report_time
       ,[process_physical_memory_low]
       ,[process_virtual_memory_low]
       ,d.[sql_instance]
+	  ,d.snapshot_type_id
  --for backward compatibility with existing pbi, this column will become report_time as we could be aggregating many snapshots in a report_period
 , d.snapshot_time
   FROM [dbo].[sqlwatch_logger_perf_os_process_memory] d

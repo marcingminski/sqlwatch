@@ -4,7 +4,9 @@ AS
 set xact_abort on
 
 declare @snapshot_type_id tinyint = 7,
-		@snapshot_time datetime2(0)
+		@snapshot_time datetime2(0),
+		@target_data_char nvarchar(max),
+		@target_data_xml xml
 
 if (select collect from [dbo].[sqlwatch_config_snapshot_type]
 	where snapshot_type_id = @snapshot_type_id) = 0
@@ -16,13 +18,32 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 	begin
 		begin tran
 
-		select cast(target_data as xml) AS targetdata
-		into #xes
+		/*	it has been reported that some users are getting xml conversion errors on SQL Server 2012 in this step of the scritp.
+			-- Steps 2,3, and 5 fail with "Executed as user: <redacted>. XML parsing: line 35, character 54, illegal name character [SQLSTATE 42000] (Error 9421).  
+			-- The step failed.
+
+		    The content of the target_data is xml but stored as string, there is not much I can about it apart from catching the error and logging into table
+			to be able to debug what part of the code/query is causing the problem	*/
+		select @target_data_char = target_data
 		from sys.dm_xe_session_targets xet
 		inner join sys.dm_xe_sessions xes
 			on xes.address = xet.event_session_address
 		where xes.name = 'SQLWATCH_long_queries'
 			and xet.target_name = 'ring_buffer'
+
+
+		begin try
+			select @target_data_xml = convert(xml,@target_data_char)
+		end try
+		begin catch
+			exec [dbo].[usp_sqlwatch_internal_log]
+				@proc_id = @@PROCID,
+				@process_stage = '46A3944F-B725-44EA-9475-13A0D9648137',
+				@process_message = @target_data_char,
+				@process_message_type = 'ERROR'
+
+				return
+		end catch
 
 		--------------------------------------------------------------------------------------------------------------------------------
 		-- long queries
@@ -59,7 +80,7 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 			--,[blocking_report]=convert(xml,nullif(convert(varchar(max),xed.event_data.query('(data[@name="blocked_process"]/value/blocked-process-report )[1]')),''))
 			--,[deadlock_report]=convert(xml,nullif(convert(varchar(max),xed.event_data.query('(data[@name="xml_report"]/value/deadlock )[1]')),''))
 		into #t_queries
-		FROM #xes t
+		FROM ( select targetdata = @target_data_xml ) t
 			CROSS APPLY targetdata.nodes('//RingBufferTarget/event') AS xed (event_data)
 		--where xed.event_data.value('(@name)[1]', 'varchar(255)') not in ( 'wait_info', 'wait_info_external')
 	

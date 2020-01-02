@@ -79,8 +79,12 @@ select
 	and isnull(target.[included_columns],'') = isnull(source.[included_columns],'') collate database_default
 	and isnull(target.[statement],'') = isnull(source.[statement],'') collate database_default
 
+when not matched by source and target.sql_instance = @@SERVERNAME then
+	update set [is_record_deleted] = 1
+
 when matched then
-	update set [date_last_seen] = getutcdate()
+	update set [date_last_seen] = getutcdate(),
+		[is_record_deleted] = 0
 
 when not matched by target then
 	insert ([sql_instance], [sqlwatch_database_id], [sqlwatch_table_id],		[equality_columns] ,

@@ -1,5 +1,5 @@
-﻿CREATE VIEW [dbo].[vw_sqlwatch_meta_action_queue_recent_failure] with schemabinding
-	AS select top 1000 
+﻿CREATE VIEW [dbo].[vw_sqlwatch_help_action_queue_failures] with schemabinding
+	AS select top 100 percent
 		  [sql_instance]
 		, [queue_item_id]
 		, [action_exec_type]

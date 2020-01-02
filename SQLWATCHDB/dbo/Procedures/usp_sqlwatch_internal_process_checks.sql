@@ -124,7 +124,9 @@ SET ANSI_WARNINGS OFF
 		set @check_exec_time_ms = convert(real,datediff(MICROSECOND,@check_start_time,@check_end_time) / 1000.0 )
 		if @check_value is null
 			begin
-				set @error_message = 'Unable to evaluate thresholds because Check (Id: ' + convert(varchar(10),@check_id) + ') has returned NULL value.'
+				set @error_message = 'Unable to evaluate thresholds because Check (Id: ' + convert(varchar(10),@check_id) + ') has returned NULL value:
+--- Query -------------------------------------------------
+' + @check_query + ''
 				raiserror (@error_message, 16, 1)
 			end
 	end try
@@ -138,7 +140,7 @@ SET ANSI_WARNINGS OFF
 			@process_message_type = 'ERROR'
 
 		update	[dbo].[sqlwatch_meta_check]
-		set last_check_date = @check_end_time,
+		set last_check_date = isnull(@check_end_time,SYSDATETIME()),
 			last_check_status = 'CHECK ERROR'
 		where [check_id] = @check_id
 		and sql_instance = @@SERVERNAME

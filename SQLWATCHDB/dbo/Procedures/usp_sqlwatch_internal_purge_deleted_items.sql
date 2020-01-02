@@ -1,9 +1,11 @@
-﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_internal_purge_deleted_items] (
-	@purge_after_days tinyint = 30,
-	@row_batch_size int = 100
-	)
+﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_internal_purge_deleted_items]
 as
-declare @sql varchar(max)
+declare @sql varchar(max),
+		@purge_after_days tinyint,
+		@row_batch_size int
+
+set @purge_after_days = [dbo].[ufn_sqlwatch_get_config_value]  (2, null)
+set @row_batch_size = [dbo].[ufn_sqlwatch_get_config_value]  (5, null)
 set @sql = 'declare @rows_affected bigint'
 
 select @sql = @sql + '

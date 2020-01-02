@@ -14,6 +14,7 @@ SELECT d.[sqlwatch_database_id]
       ,d.[sql_instance]
  --for backward compatibility with existing pbi, this column will become report_time as we could be aggregating many snapshots in a report_period
 , d.snapshot_time
+, d.snapshot_type_id
   FROM [dbo].[sqlwatch_logger_index_missing_stats] d
   	inner join dbo.sqlwatch_logger_snapshot_header h
 		on  h.snapshot_time = d.[snapshot_time]

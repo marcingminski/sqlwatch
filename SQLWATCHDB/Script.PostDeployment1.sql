@@ -70,6 +70,11 @@ exec [dbo].[usp_sqlwatch_internal_add_database]
 --------------------------------------------------------------------------------------
 :r .\Scripts\Post-Deployment\Reference-Data\Script.PostDeployment-CreateDefaultChecks.sql
 
+-------------------------------------------------------------------------------------
+-- Load Global Config
+-------------------------------------------------------------------------------------
+:r .\Scripts\Post-Deployment\Reference-Data\Script.PostDeployment-LoadConfig-Global.sql
+
 --------------------------------------------------------------------------------------
 --setup jobs
 --we have to switch database to msdb but we also need to know which db jobs should run in so have to capture current database:
@@ -83,9 +88,10 @@ if (select case when @@VERSION like '%Express Edition%' then 1 else 0 end) = 0
 
 
 
-
-
-
+-------------------------------------------------------------------------------------
+-- Make Constraints Trusted Again
+-------------------------------------------------------------------------------------
+:r .\Scripts\Post-Deployment\Data-Fixes\Script.PostDeployment-FixNonTrustedConstraints.sql
 
 -------------------------------------------------------------------------------------
 -- Migrate Data
@@ -97,5 +103,5 @@ if (select case when @@VERSION like '%Express Edition%' then 1 else 0 end) = 0
 -- ON THE CURRENT VERSION. IF WE UPDATE VERSION BEFORE RUNNING DATA MIGRATION IT WILL
 -- BE A DISASTER
 --------------------------------------------------------------------------------------
-insert into [dbo].[sqlwatch_version] ( [install_date], [sqlwatch_version] )
+insert into [dbo].[sqlwatch_app_version] ( [install_date], [sqlwatch_version] )
 values (SYSDATETIMEOFFSET(), RTRIM(LTRIM(REPLACE(REPLACE('$(DacVersion)',CHAR(10),''),CHAR(13),''))))

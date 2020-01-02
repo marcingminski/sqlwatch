@@ -5,6 +5,7 @@ SELECT [report_time]
       ,omc.[allocated_kb]
       ,omc.[sql_instance]
 	  ,mdc.clerk_name
+	  , omc.snapshot_type_id
  --for backward compatibility with existing pbi, this column will become report_time as we could be aggregating many snapshots in a report_period
 , omc.snapshot_time
   FROM [dbo].[sqlwatch_logger_perf_os_memory_clerks] omc

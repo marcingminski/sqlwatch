@@ -1,7 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_internal_retention](
-	@retention_period_days smallint = 7, 
-	@batch_size smallint = 500
-	)
+﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_internal_retention]
 as
 
 /*
@@ -30,11 +27,28 @@ as
 	1.1		2019-11-29	- Marcin Gminski, Ability to only leave most recent snapshot with -1 retention
 	1.2		2019-12-07	- Marcin Gminski, Added retention of the action queue
 	1.3		2019-12-09	- Marcin Gminski, build deletion keys out of the loop to improve loop performance and reduce contention
+	1.4		2019-12-31	- Marcin Gminski, changed hardcoded to configurable retention periods for non-logger tables,
+										  replaced input parameters with global config
 -------------------------------------------------------------------------------------------------------------------
 */
 set nocount on;
+set xact_abort on;
 
-declare @snapshot_type_id tinyint
+declare @snapshot_type_id tinyint,
+		@batch_size smallint,
+		@row_count int,
+		@action_queue_retention_days_failed smallint,
+		@action_queue_retention_days_success smallint,
+		@application_log_retention_days smallint
+
+select 
+	@batch_size = case when config_id = 6 then config_value else null end,
+	@action_queue_retention_days_failed = case when config_id = 3 then config_value else null end,
+	@action_queue_retention_days_success = case when config_id = 4 then config_value else null end,
+	@application_log_retention_days = case when config_id = 1 then config_value else null end,
+	@row_count = 1
+from dbo.sqlwatch_config
+where config_id in (1,3,4,6)
 
 declare @cutoff_dates as table (
 	snapshot_time datetime2(0),
@@ -44,7 +58,7 @@ declare @cutoff_dates as table (
 )
 	
 /*	To account for central repository, we need a list of all possible snapshot types cross joined with servers list
-	and calculate retention times from the type. This cannot be done for retention -1 as for that scenarios, 
+	and calculate retention times from the type. This cannot be done for retention -1 as for that scenario, 
 	we need to know the latest current snapshot.	*/
 insert into @cutoff_dates
 	select snapshot_time = case when st.snapshot_retention_days >0 then dateadd(day,-st.snapshot_retention_days,GETUTCDATE()) else null end
@@ -72,7 +86,6 @@ on t.sql_instance = c.sql_instance collate database_default
 and t.snapshot_type_id = c.snapshot_type_id
 
 
-declare @row_count int = 1
 while @row_count > 0
 	begin
 		begin tran
@@ -89,10 +102,20 @@ while @row_count > 0
 	end
 
 	/*	delete old records from the action queue */
-	delete 
-	from [dbo].[sqlwatch_meta_action_queue] 
-	where [time_queued] < case when exec_status <> 'FAILED' then dateadd(day,-1,sysdatetime()) else dateadd(day,-30,sysdatetime()) end
-	Print 'Deleted ' + convert(varchar(max),@@ROWCOUNT) + ' record' + case when @@ROWCOUNT > 1 then 's' else '' end + ' from [dbo].[sqlwatch_meta_action_queue]'
+	begin tran
+		delete 
+		from [dbo].[sqlwatch_meta_action_queue] 
+		where [time_queued] < case when exec_status <> 'FAILED' then dateadd(day,-@action_queue_retention_days_success,sysdatetime()) else dateadd(day,-@action_queue_retention_days_failed,sysdatetime()) end
+		Print 'Deleted ' + convert(varchar(max),@@ROWCOUNT) + ' record' + case when @@ROWCOUNT > 1 then 's' else '' end + ' from [dbo].[sqlwatch_meta_action_queue]'
+	commit tran
+
+	/* Application log retention */
+	begin tran
+		delete
+		from dbo.sqlwatch_app_log
+		where event_time < dateadd(day,-@application_log_retention_days, SYSDATETIME())
+		Print 'Deleted ' + convert(varchar(max),@@ROWCOUNT) + ' record' + case when @@ROWCOUNT > 1 then 's' else '' end + ' from [dbo].[sqlwatch_app_log]'
+	commit tran
 
 	/*	Trend tables retention.
 		These are detached from the header so we can keep more history and in a slightly different format to utilise less storage.

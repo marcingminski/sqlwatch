@@ -22,7 +22,7 @@ BEGIN
 		select [sqlwatch_version]
 		from (
 				select top 1 [sqlwatch_version]
-				from [dbo].[sqlwatch_version]
+				from [dbo].[sqlwatch_app_version]
 				order by [install_sequence] desc	
 			) v
 		) t

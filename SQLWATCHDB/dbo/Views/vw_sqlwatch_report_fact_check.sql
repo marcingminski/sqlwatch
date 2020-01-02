@@ -11,6 +11,7 @@ select
 	, [d].[check_exec_time_ms]
 	, h.report_time
 	, [d].status_change
+	, d.snapshot_type_id
 from dbo.sqlwatch_logger_check d
   	inner join dbo.sqlwatch_logger_snapshot_header h
 		on  h.snapshot_time = d.[snapshot_time]

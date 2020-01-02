@@ -13,7 +13,7 @@ as
 		, index_size_bytes_current = lg.index_size_bytes
 		, [unused_bytes_current] = lg.unused_bytes
 		, unallocated_space_bytes_current = lg.unallocated_space_bytes
-		, is_current = case when ROW_NUMBER() over (partition by [database_name] order by [database_create_date] desc) = 1 then 1 else 0 end
+		, [is_record_deleted]
 
 		from dbo.sqlwatch_meta_database d
 
@@ -58,37 +58,21 @@ as
 		, [database_size_bytes_current], [database_bytes_growth], [total_growth_days] , [log_size_total_bytes_current], [log_size_bytes_growth]
 		, database_growth_bytes_per_day = case when [total_growth_days] > 0 and [database_bytes_growth] > 0 then [database_bytes_growth] / total_growth_days else 0 end
 		, log_growth_bytes_per_day = case when [total_growth_days] > 0 and [log_size_bytes_growth] > 0 then [log_size_bytes_growth] / total_growth_days else 0 end
-		, data_bytes_current, index_size_bytes_current, [unused_bytes_current], unallocated_space_bytes_current
+		, data_bytes_current, index_size_bytes_current, [unused_bytes_current], unallocated_space_bytes_current, [is_record_deleted]
 	from cte_database
 	)
 	select [database_name], [database_create_date], [sql_instance], [sqlwatch_database_id], [date_last_seen]
 		, [database_size_bytes_current], [database_bytes_growth]
 		, [total_growth_days], database_growth_bytes_per_day, log_growth_bytes_per_day, [log_size_total_bytes_current]
 		, data_bytes_current, index_size_bytes_current, [unused_bytes_current], unallocated_space_bytes_current
-	, [database_size_bytes_current_formatted] = case 
-			when [database_size_bytes_current] / 1024.0 < 1000 then convert(varchar(100),convert(decimal(10,2),[database_size_bytes_current] / 1024.0 )) + ' KB'
-			when [database_size_bytes_current] / 1024.0 / 1024.0 < 1000 then convert(varchar(100),convert(decimal(10,2),[database_size_bytes_current] / 1024.0 / 1024.0)) + ' MB'
-			when [database_size_bytes_current] / 1024.0 / 1024.0 / 1024.0 < 1000 then convert(varchar(100),convert(decimal(10,2),[database_size_bytes_current] / 1024.0 / 1024.0 / 1024.0)) + ' GB' 
-			else convert(varchar(100),convert(decimal(10,2),[database_size_bytes_current] / 1024.0 / 1024.0 / 1024.0 / 1024.0)) + ' TB' 
-			end
-	, [growth_bytes_per_day_formatted] = case
-			when database_growth_bytes_per_day / 1024.0 < 1000 then convert(varchar(100),convert(decimal(10,2),database_growth_bytes_per_day / 1024.0 )) + ' KB / Day'
-			when database_growth_bytes_per_day / 1024.0 / 1024.0 < 1000 then convert(varchar(100),convert(decimal(10,2),database_growth_bytes_per_day / 1024.0 / 1024.0)) + ' MB / Day'
-			when database_growth_bytes_per_day / 1024.0 / 1024.0 / 1024.0 < 1000 then convert(varchar(100),convert(decimal(10,2),database_growth_bytes_per_day / 1024.0 / 1024.0 / 1024.0)) + ' GB / Day' 
-			else convert(varchar(100),convert(decimal(10,2),database_growth_bytes_per_day / 1024.0 / 1024.0 / 1024.0 / 1024.0)) + ' TB' 
-			end
 
-	, [log_size_bytes_current_formatted] = case 
-			when [log_size_total_bytes_current] / 1024.0 < 1000 then convert(varchar(100),convert(decimal(10,2),[log_size_total_bytes_current] / 1024.0 )) + ' KB'
-			when [log_size_total_bytes_current] / 1024.0 / 1024.0 < 1000 then convert(varchar(100),convert(decimal(10,2),[log_size_total_bytes_current] / 1024.0 / 1024.0)) + ' MB'
-			when [log_size_total_bytes_current] / 1024.0 / 1024.0 / 1024.0 < 1000 then convert(varchar(100),convert(decimal(10,2),[log_size_total_bytes_current] / 1024.0 / 1024.0 / 1024.0)) + ' GB' 
-			else convert(varchar(100),convert(decimal(10,2),[log_size_total_bytes_current] / 1024.0 / 1024.0 / 1024.0 / 1024.0)) + ' TB' 
-			end
+		, is_current = case when ROW_NUMBER() over (partition by sql_instance, [database_name] order by [database_create_date] desc) = 1 then 1 else 0 end
+		, last_seen_days = datediff(day,date_last_seen,getutcdate())
+		, [is_record_deleted]
 
-	, [log_growth_bytes_per_day_formatted] = case
-			when log_growth_bytes_per_day / 1024.0 < 1000 then convert(varchar(100),convert(decimal(10,2),log_growth_bytes_per_day / 1024.0 )) + ' KB / Day'
-			when log_growth_bytes_per_day / 1024.0 / 1024.0 < 1000 then convert(varchar(100),convert(decimal(10,2),log_growth_bytes_per_day / 1024.0 / 1024.0)) + ' MB / Day'
-			when log_growth_bytes_per_day / 1024.0 / 1024.0 / 1024.0 < 1000 then convert(varchar(100),convert(decimal(10,2),log_growth_bytes_per_day / 1024.0 / 1024.0 / 1024.0)) + ' GB / Day' 
-			else convert(varchar(100),convert(decimal(10,2),log_growth_bytes_per_day / 1024.0 / 1024.0 / 1024.0 / 1024.0)) + ' TB' 
-			end
+		, [database_size_bytes_current_formatted] =  [dbo].[ufn_sqlwatch_format_bytes] ([database_size_bytes_current])
+		, [growth_bytes_per_day_formatted] = [dbo].[ufn_sqlwatch_format_bytes] (database_growth_bytes_per_day) + ' / Day'
+		, [log_size_bytes_current_formatted] = [dbo].[ufn_sqlwatch_format_bytes] ([log_size_total_bytes_current])
+		, [log_growth_bytes_per_day_formatted] = [dbo].[ufn_sqlwatch_format_bytes] (log_growth_bytes_per_day) + ' / Day'
+
 	from cte_database_growth
