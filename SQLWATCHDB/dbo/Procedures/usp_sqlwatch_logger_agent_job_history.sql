@@ -8,10 +8,10 @@ declare @snapshot_time datetime
 declare @snapshot_type_id smallint
 
 set @snapshot_type_id = 16
-set @snapshot_time = getutcdate();
 
-insert into sqlwatch_logger_snapshot_header (snapshot_time, snapshot_type_id)
-select @snapshot_time, @snapshot_type_id
+exec [dbo].[usp_sqlwatch_internal_insert_header] 
+	@snapshot_time_new = @snapshot_time OUTPUT,
+	@snapshot_type_id = @snapshot_type_id
 
 insert into [dbo].[sqlwatch_logger_agent_job_history] (sql_instance, sqlwatch_job_id, sqlwatch_job_step_id, sysjobhistory_instance_id, sysjobhistory_step_id,
 	run_duration_s, run_date, run_status, snapshot_time, snapshot_type_id)

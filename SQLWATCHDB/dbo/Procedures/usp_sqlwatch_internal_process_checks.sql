@@ -9,8 +9,7 @@ AS
 -------------------------------------------------------------------------------------------------------------------
 */
 
-set nocount on;
-set xact_abort on;
+SET NOCOUNT ON 
 
 declare @check_name nvarchar(100),
 		@check_description nvarchar(2048),
@@ -20,13 +19,14 @@ declare @check_name nvarchar(100),
 		@check_query_instance varchar(32),
 		@check_id smallint,
 		@check_start_time datetime2(7),
+		@check_end_time datetime2(7),
 		@check_exec_time_ms real,
 		@actions xml
 
 declare @check_status varchar(50),
-		@check_value decimal(28,2),
+		@check_value decimal(28,5),
 		@last_check_status varchar(50),
-		@previous_value decimal(28,2),
+		@previous_value decimal(28,5),
 		@last_status_change datetime,
 		@retrigger_time smallint,
 		@last_trigger_time datetime,
@@ -37,7 +37,10 @@ declare @check_status varchar(50),
 		@target_type varchar(50),
 		@error_message nvarchar(max) = '',
 		@trigger_limit_hour tinyint, --max number of messages per hour
-		@trigger_current_count smallint
+		@trigger_current_count smallint,
+		@error_message_single nvarchar(max) = '',
+		@error_message_xml xml,
+		@has_errors bit = 0
 
 declare @email_subject nvarchar(255),
 		@email_body nvarchar(4000),
@@ -50,22 +53,24 @@ declare @action_id smallint,
 		@body nvarchar(max),
 		@previous_check_date datetime, 
 		@previous_check_value real, 
-		@previous_check_status varchar(50)
+		@previous_check_status varchar(50),
+		@check_time datetime,
+		@ignore_flapping bit,
+		@is_flapping bit
+
 
 declare @snapshot_type_id tinyint = 18,
-		@snapshot_date datetime2(0) = getutcdate()
+		@snapshot_type_id_action tinyint = 19,
+		@snapshot_time datetime2(0) = getutcdate(),
+		@snapshot_time_action datetime2(0)
 
 declare @mail_return_code int
 
-declare @check_output as table (
-	value decimal(28,2) not null
-	)
+exec [dbo].[usp_sqlwatch_internal_insert_header] 
+	@snapshot_time_new = @snapshot_time OUTPUT,
+	@snapshot_type_id = @snapshot_type_id
 
-insert into [dbo].[sqlwatch_logger_snapshot_header]
-values (@snapshot_date, @snapshot_type_id, @@SERVERNAME)
-
-
-declare cur_rules cursor for
+declare cur_rules cursor LOCAL FAST_FORWARD for
 select 
 	  cc.[check_id]
 	, cc.[check_name]
@@ -76,6 +81,7 @@ select
 	, last_check_date = isnull(mc.last_check_date,'1970-01-01')
 	, mc.last_check_value
 	, mc.last_check_status
+	, cc.[ignore_flapping]
 from [dbo].[sqlwatch_config_check] cc
 
 inner join [dbo].[sqlwatch_meta_check] mc
@@ -84,59 +90,101 @@ inner join [dbo].[sqlwatch_meta_check] mc
 
 where [check_enabled] = 1
 and datediff(minute,isnull(mc.last_check_date,'1970-01-01'),getdate()) >= isnull(mc.[check_frequency_minutes],0)
---and cc.sql_instance = @@SERVERNAME
 order by cc.[check_id]
 
 open cur_rules   
   
 fetch next from cur_rules 
 into @check_id, @check_name, @check_description , @check_query, @check_warning_threshold, @check_critical_threshold
-	, @previous_check_date, @previous_check_value, @previous_check_status
+	, @previous_check_date, @previous_check_value, @previous_check_status, @ignore_flapping
 
 
 while @@FETCH_STATUS = 0  
 begin
 	
-
 	set @check_status = null
 	set @check_value = null
 	set @actions = null
-	delete from @check_output
-
-	Print 'Check (Id: ' + convert(varchar(10),@check_id) + ')'
+	set @error_message = ''
+	set @is_flapping = 0
 
 	-------------------------------------------------------------------------------------------------------------------
 	-- execute check and log output in variable:
+	-- APP_STAGE: 5980A79A-D6BC-4BA0-8B86-A388E8DB621D
 	-------------------------------------------------------------------------------------------------------------------
 	set @check_start_time = SYSDATETIME()
 
 	begin try
-		insert into @check_output ([value])
-		exec sp_executesql @check_query
+		set @check_query = 'SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+SET NOCOUNT ON 
+SET ANSI_WARNINGS OFF
+' + replace(@check_query,'{LAST_CHECK_DATE}',convert(varchar(23),@previous_check_date,121))
+		exec sp_executesql @check_query, N'@output decimal(28,5) OUTPUT', @output = @check_value output;
+		set @check_end_time = SYSDATETIME()
+		set @check_exec_time_ms = convert(real,datediff(MICROSECOND,@check_start_time,@check_end_time) / 1000.0 )
+		if @check_value is null
+			begin
+				set @error_message = 'Unable to evaluate thresholds because Check (Id: ' + convert(varchar(10),@check_id) + ') has returned NULL value:
+--- Query -------------------------------------------------
+' + @check_query + ''
+				raiserror (@error_message, 16, 1)
+			end
 	end try
 	begin catch
-		select @error_message = @error_message + '
-' + convert(varchar(23),getdate(),121) + ': CheckID: ' + convert(varchar(10),@check_id) + ': ' + ERROR_MESSAGE()
+		set @has_errors = 1
+
+		exec [dbo].[usp_sqlwatch_internal_log]
+			@proc_id = @@PROCID,
+			@process_stage = '5980A79A-D6BC-4BA0-8B86-A388E8DB621D',
+			@process_message = @error_message,
+			@process_message_type = 'ERROR'
 
 		update	[dbo].[sqlwatch_meta_check]
-		set last_check_date = getdate(),
+		set last_check_date = isnull(@check_end_time,SYSDATETIME()),
 			last_check_status = 'CHECK ERROR'
 		where [check_id] = @check_id
 		and sql_instance = @@SERVERNAME
 
+		set @error_message = 'CheckID : ' + convert(varchar(10),@check_id)
+						
+		insert into [dbo].[sqlwatch_logger_check] (sql_instance, snapshot_time, snapshot_type_id, check_id, 
+			[check_value], [check_status], check_exec_time_ms)
+		values (@@SERVERNAME, @snapshot_time, @snapshot_type_id, @check_id, null, 'CHECK ERROR', @check_exec_time_ms)
+			
 		goto ProcessNextCheck
 	end catch
 
-	set @check_exec_time_ms = convert(real,datediff(MICROSECOND,@check_start_time,SYSDATETIME()) / 1000.0 )
 
-	select @check_value = [value] from @check_output
-	--although we have already capturing errors let's double check that the value is in fact not null
-
-	if @check_value is null
-		goto ProcessNextCheck
-
-	-- override send_email flag based on the trigger (message) limit per hour:
-	--set @send_email = case when @send_email = 1 and isnull(@trigger_current_count,0) <= @trigger_limit_hour then 1 else 0 end
+	-------------------------------------------------------------------------------------------------------------------
+	--	Check for flapping
+	--  needs some work to be more reliable
+	--  we take last 12 checks (based on 5 minute check = 60 minutes)
+	--  and calculate change ratio. result 0.5 will mean exact number of failures and OK which means flapping.
+	--  to give it some leaway, we say ignore if betwen 0.35 and 0.65.
+	--	this approach is far from ideal but will do for now. if causing trouble it can be disabled in config_check
+	-------------------------------------------------------------------------------------------------------------------
+	if @ignore_flapping = 0 and (
+						select avg(convert(decimal(10,2),status_change))
+							from (
+								select top 12 *
+								from dbo.[sqlwatch_logger_check] lc
+								where snapshot_time > dateadd(hour,-6,getutcdate())
+								and sql_instance = @@SERVERNAME
+								and check_id = @check_id
+								and snapshot_type_id = @snapshot_type_id
+								order by snapshot_time desc
+							) t
+						) between 0.35 and 0.65
+		begin
+			set @is_flapping = 1
+			--warning only:
+			set @error_message = 'Check (Id: ' + convert(varchar(10),@check_id) + ') is flapping.'
+			exec [dbo].[usp_sqlwatch_internal_log]
+					@proc_id = @@PROCID,
+					@process_stage = '040D0A86-83B8-4543-A34C-9F328DAE5488',
+					@process_message = @error_message,
+					@process_message_type = 'WARNING'
+		end
 
 	-------------------------------------------------------------------------------------------------------------------
 	-- set check status based on the output:
@@ -147,41 +195,36 @@ begin
 	--	3. we can have a trigger that checks for a number of databases and any change is critical either greater or lower.
 	-------------------------------------------------------------------------------------------------------------------
 
-	--get last check value for substition:
-	--select @previous_check_value = [last_check_value]
-	--from [dbo].[sqlwatch_meta_check]
-	--where check_id = @check_id
-
-	--we can also pass variables into the tresholds. for example we may only want to be notified if number of failed agent jobs increaeses.
-	--if @previous_check_value is not null
-	--	begin
-	--		set @check_critical_threshold = replace(@check_critical_threshold,'{LAST_CHECK_VALUE}',convert(varchar(100),@previous_check_value))
-	--		set @check_warning_threshold  = replace(@check_warning_threshold,'{LAST_CHECK_VALUE}',convert(varchar(100),@previous_check_value))
-	--	end
-
 	--we must either have critical value or warning and critical. constraints dissalow the critical warning to be null and previous check ensured check_value is not null:
-	select @check_status = case when [dbo].[ufn_sqlwatch_get_check_status] ( @check_critical_threshold, @check_value ) = 1 then 'CRITICAL' end
+	select @check_status = case 
+		when [dbo].[ufn_sqlwatch_get_check_status] ( @check_critical_threshold, @check_value ) = 1 then 'CRITICAL'
+		when @check_warning_threshold is not null and [dbo].[ufn_sqlwatch_get_check_status] ( @check_warning_threshold, @check_value ) = 1 then 'WARNING'
+		else 'OK' end
 
-	--if @check_status is still null then check if its warning, but we may not have warning so need to account for that:
-	select @check_status = case when @check_status is null and @check_warning_threshold is not null and [dbo].[ufn_sqlwatch_get_check_status] ( @check_warning_threshold, @check_value ) = 1 then 'WARNING' else @check_status end
+	----if @check_status is still null then check if its warning, but we may not have warning so need to account for that:
+	--select @check_status = case when @check_status is null 
+	--			and @check_warning_threshold is not null 
+	--			and [dbo].[ufn_sqlwatch_get_check_status] ( @check_warning_threshold, @check_value ) = 1 then 'WARNING' else @check_status end
 
-	--if not warninig or critical then OK
-	if @check_status is null
-		set @check_status = 'OK'
+	----if not warninig or critical then OK
+	--if @check_status is null
+	--	set @check_status = 'OK'
 
 	-------------------------------------------------------------------------------------------------------------------
 	-- log check results:
 	-------------------------------------------------------------------------------------------------------------------
 	insert into [dbo].[sqlwatch_logger_check] (sql_instance, snapshot_time, snapshot_type_id, check_id, 
-		[check_value], [check_status], check_exec_time_ms)
-	values (@@SERVERNAME, @snapshot_date, @snapshot_type_id, @check_id, @check_value, @check_status, @check_exec_time_ms)
+		[check_value], [check_status], check_exec_time_ms, [status_change], [is_flapping])
+	values (@@SERVERNAME, @snapshot_time, @snapshot_type_id, @check_id, @check_value, @check_status, @check_exec_time_ms, 
+		case when isnull(@check_status,'') <> isnull(@previous_check_status,'') then 1 else 0 end,
+		@is_flapping )
 
 	-------------------------------------------------------------------------------------------------------------------
 	-- process any actions for this check but only if status not OK or previous status was not OK (so we can process recovery)
 	-- if current and previous status was OK we wouldnt have any actions anyway so there is no point calling the proc.
 	-- assuming 99% of time all checks will come back as OK, this will save significant CPU time
 	-------------------------------------------------------------------------------------------------------------------
-	if @check_status <> 'OK' or @last_check_status <> 'OK'
+	if @check_status <> 'OK' or @previous_check_status <> 'OK'
 		begin
 			declare cur_actions cursor for
 			select cca.[action_id]
@@ -194,37 +237,49 @@ begin
 				order by cca.check_id
 
 				open cur_actions
-  
+
+				if @@CURSOR_ROWS <> 0
+					begin
+						/*	logging header here so we only get one header for the batch of actions
+							datetime2(0) has a resolution of 1 second and if we had multuple actions, the below
+							procedure would have iterated quicker that that causing PK violation on insertion of the subsequent action headers	*/
+							exec [dbo].[usp_sqlwatch_internal_insert_header] 
+								@snapshot_time_new = @snapshot_time_action OUTPUT,
+								@snapshot_type_id = @snapshot_type_id_action
+
+						Print 'Processing actions for check.'
+					end
+ 
 				fetch next from cur_actions 
 				into @action_id
 
 				while @@FETCH_STATUS = 0  
 					begin
-						begin try
+						begin try						
 							exec [dbo].[usp_sqlwatch_internal_process_actions] 
 								@sql_instance = @@SERVERNAME,
 								@check_id = @check_id,
 								@action_id = @action_id,
 								@check_status = @check_status,
 								@check_value = @check_value,
-								@check_snapshot_time = @snapshot_date,
 								@check_description = @check_description,
 								@check_name = @check_name,
 								@check_threshold_warning = @check_warning_threshold,
-								@check_threshold_critical = @check_critical_threshold
+								@check_threshold_critical = @check_critical_threshold,
+								@snapshot_time = @snapshot_time_action,
+								@snapshot_type_id = @snapshot_type_id_action,
+								@is_flapping = @is_flapping
 						end try
 						begin catch
-							select @error_message = @error_message + '
-		' + convert(varchar(23),getdate(),121) + ': CheckID: ' + convert(varchar(10),@check_id) + ': ActionID: ' + convert(varchar(10),@action_id) + '
-			 ERROR_NUMBER: ' + isnull(convert(varchar(10),ERROR_NUMBER()),'') + '
-             ERROR_SEVERITY : ' + isnull(convert(varchar(max),ERROR_SEVERITY()),'') + '
-             ERROR_STATE : ' + isnull(convert(varchar(max),ERROR_STATE()),'') + '   
-             ERROR_PROCEDURE : ' + isnull(convert(varchar(max),ERROR_PROCEDURE()),'') + '   
-             ERROR_LINE : ' + isnull(convert(varchar(max),ERROR_LINE()),'') + '   
-             ERROR_MESSAGE : ' + isnull(convert(varchar(max),ERROR_MESSAGE()),'') + ''
-						
-							--immediate feedback without terminating the batch and continue processing remaining checks:
-							--raiserror ('%s',1, 1, @error_message)
+							--28B7A898-27D7-44C0-B6EB-5238021FD855
+							set @has_errors = 1				
+							set @error_message = 'Errors when processing Action (Id: ' + convert(varchar(10),@action_id) + ') for Check (Id: ' + convert(varchar(10),@check_id) + ')'
+							exec [dbo].[usp_sqlwatch_internal_log]
+								@proc_id = @@PROCID,
+								@process_stage = '28B7A898-27D7-44C0-B6EB-5238021FD855',
+								@process_message = @error_message,
+								@process_message_type = 'ERROR'
+							GoTo NextAction
 						end catch
 
 						NextAction:
@@ -235,13 +290,14 @@ begin
 			close cur_actions
 			deallocate cur_actions
 		end
+
 	-------------------------------------------------------------------------------------------------------------------
 	-- update meta with the latest values.
 	-- we have to do this after we have triggered actions as the [usp_sqlwatch_internal_process_actions] needs
 	-- previous values
 	-------------------------------------------------------------------------------------------------------------------
 	update	[dbo].[sqlwatch_meta_check]
-	set last_check_date = getdate(),
+	set last_check_date = @check_end_time,
 		last_check_value = @check_value,
 		last_check_status = @check_status,
 		last_status_change_date = case when @previous_check_status <> @check_status then getdate() else last_status_change_date end
@@ -252,21 +308,17 @@ begin
 
 	fetch next from cur_rules 
 	into @check_id, @check_name, @check_description , @check_query, @check_warning_threshold, @check_critical_threshold
-		, @previous_check_date, @previous_check_value, @previous_check_status
+		, @previous_check_date, @previous_check_value, @previous_check_status, @ignore_flapping
 	
 end
 
 close cur_rules
 deallocate cur_rules
 
-Print 'No Checks to Process'
 
-
-if nullif(@error_message,'') is not null
+if @has_errors = 1
 	begin
-		set @error_message = 'Errors during check execution (' + OBJECT_NAME(@@PROCID) + '): 
-' + @error_message
-
+		set @error_message = 'Errors during execution (' + OBJECT_NAME(@@PROCID) + ')'
 		--print all errors and terminate the batch which will also fail the agent job for the attention:
 		raiserror ('%s',16,1,@error_message)
 	end

@@ -12,3 +12,5 @@ SELECT [physical_name]
   FROM [dbo].[sqlwatch_meta_server] d
   inner join dbo.sqlwatch_config_sql_instance c
 	on d.servername = c.sql_instance
+  /* ignore any remote instances that are not being collected */
+  where case when servername <> @@SERVERNAME then 1 else 0 end = c.repo_collector_is_active

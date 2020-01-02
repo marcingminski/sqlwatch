@@ -36,13 +36,18 @@ BEGIN TRAN
 		and target.step_name = source.step_name collate database_default
 		and target.sqlwatch_job_id = source.sqlwatch_job_id
 	)
+
+	when not matched by source and target.sql_instance = @@SERVERNAME then
+		update set [is_record_deleted] = 1
+
 	when not matched by target then 
 		insert (sql_instance, sqlwatch_job_id, step_name)
 		values (@@SERVERNAME, source.sqlwatch_job_id, source.step_name)
 
 	when matched then
 		update set
-			[date_last_seen] = GETUTCDATE()
+			[date_last_seen] = GETUTCDATE(),
+			[is_record_deleted] = 0
 
 	;
 

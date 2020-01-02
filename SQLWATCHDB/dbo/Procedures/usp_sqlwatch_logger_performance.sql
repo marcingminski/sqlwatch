@@ -48,9 +48,9 @@ declare @sql nvarchar(4000)
 		where snapshot_type_id = @snapshot_type_id
 		and sql_instance = @@SERVERNAME
 		
-		set @date_snapshot_current = getutcdate();
-		insert into [dbo].[sqlwatch_logger_snapshot_header] (snapshot_time, snapshot_type_id)
-		values (@date_snapshot_current, @snapshot_type_id)		
+		exec [dbo].[usp_sqlwatch_internal_insert_header] 
+			@snapshot_time_new = @date_snapshot_current OUTPUT,
+			@snapshot_type_id = @snapshot_type_id
 		--------------------------------------------------------------------------------------------------------------
 		-- 1. get cpu
 		--------------------------------------------------------------------------------------------------------------
@@ -88,22 +88,39 @@ declare @sql nvarchar(4000)
 		insert into dbo.[sqlwatch_logger_perf_os_performance_counters] ([performance_counter_id],[instance_name], [cntr_value], [base_cntr_value],
 			[snapshot_time], [snapshot_type_id], [sql_instance], [cntr_value_calculated])
 		select
-			 --[object_name] = rtrim(pc.[object_name])
 			 mc.[performance_counter_id]
 			,instance_name = rtrim(pc.instance_name)
-			--,counter_name = rtrim(pc.counter_name)
 			,pc.cntr_value
 			,base_cntr_value=bc.cntr_value
-			--,pc.cntr_type
 			,snapshot_time=@date_snapshot_current
 			, @snapshot_type_id
 			, @@SERVERNAME
 			,[cntr_value_calculated] = convert(real,(
 				case 
+					--https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.performancecountertype?view=netframework-4.8
+					--https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.performancedata.countertype?view=netframework-4.8
 					when mc.object_name = 'Batch Resp Statistics' then case when pc.cntr_value > prev.cntr_value then cast((pc.cntr_value - prev.cntr_value) as real) else 0 end -- delta absolute
-					when mc.cntr_type = 65792 then isnull(pc.cntr_value,0) -- point-in-time
+					
+					/*	65792
+						An instantaneous counter that shows the most recently observed value. Used, for example, to maintain a simple count of a very large number of items or operations. 
+						It is the same as NumberOfItems32 except that it uses larger fields to accommodate larger values.	*/
+					when mc.cntr_type = 65792 then isnull(pc.cntr_value,0) 	
+					
+					/*	272696576
+						A difference counter that shows the average number of operations completed during each second of the sample interval. Counters of this type measure time in ticks of the system clock. 
+						This counter type is the same as the RateOfCountsPerSecond32 type, but it uses larger fields to accommodate larger values to track a high-volume number of items or operations per second, 
+						such as a byte-transmission rate. Counters of this type include System\ File Read Bytes/sec.	*/
 					when mc.cntr_type = 272696576 then case when (pc.cntr_value > prev.cntr_value) then (pc.cntr_value - prev.cntr_value) / cast(datediff(second,prev.snapshot_time,@date_snapshot_current) as real) else 0 end -- delta rate
+					
+					/*	537003264	
+						This counter type shows the ratio of a subset to its set as a percentage. For example, it compares the number of bytes in use on a disk to the total number of bytes on the disk. 
+						Counters of this type display the current percentage only, not an average over time. It is the same as the RawFraction32 counter type, except that it uses larger fields to accommodate larger values.	*/
 					when mc.cntr_type = 537003264 then isnull(cast(100.0 as real) * pc.cntr_value / nullif(bc.cntr_value, 0),0) -- ratio
+
+					/*	1073874176		
+						An average counter that shows how many items are processed, on average, during an operation. Counters of this type display a ratio of the items processed to the number of operations completed. 
+						The ratio is calculated by comparing the number of items processed during the last interval to the number of operations completed during the last interval. 
+						Counters of this type include PhysicalDisk\ Avg. Disk Bytes/Transfer.	*/
 					when mc.cntr_type = 1073874176 then isnull(case when pc.cntr_value > prev.cntr_value then isnull((pc.cntr_value - prev.cntr_value) / nullif(bc.cntr_value - prev.base_cntr_value, 0) / cast(datediff(second,prev.snapshot_time,@date_snapshot_current) as real), 0) else 0 end,0) -- delta ratio
 				end))
 		from (
@@ -436,30 +453,11 @@ declare @sql nvarchar(4000)
 		from sys.dm_os_wait_stats
 
 		-- exclude idle waits and noise
-		where 
-
-			-- reference https://github.com/microsoft/tigertoolbox/blob/master/Waits-and-Latches/view_Waits.sql
-			wait_type not in ('RESOURCE_QUEUE','SQLTRACE_INCREMENTAL_FLUSH_SLEEP', 
-			'SP_SERVER_DIAGNOSTICS_SLEEP','SOSHOST_SLEEP','SP_PREEMPTIVE_SERVER_DIAGNOSTICS_SLEEP','QDS_PERSIST_TASK_MAIN_LOOP_SLEEP',
-			'QDS_CLEANUP_STALE_QUERIES_TASK_MAIN_LOOP_SLEEP','LOGMGR_QUEUE','CHECKPOINT_QUEUE','REQUEST_FOR_DEADLOCK_SEARCH','XE_TIMER_EVENT',
-			'BROKER_TASK_STOP','CLR_MANUAL_EVENT','CLR_AUTO_EVENT','DISPATCHER_QUEUE_SEMAPHORE','FT_IFTS_SCHEDULER_IDLE_WAIT','BROKER_TO_FLUSH',
-			'XE_DISPATCHER_WAIT','XE_DISPATCHER_JOIN','MSQL_XP','WAIT_FOR_RESULTS','CLR_SEMAPHORE','LAZYWRITER_SLEEP','SLEEP_TASK',
-			'SLEEP_SYSTEMTASK','SQLTRACE_BUFFER_FLUSH','WAITFOR','BROKER_EVENTHANDLER','TRACEWRITE','FT_IFTSHC_MUTEX','BROKER_RECEIVE_WAITFOR', 
-			'ONDEMAND_TASK_QUEUE','DBMIRROR_EVENTS_QUEUE','DBMIRRORING_CMD','BROKER_TRANSMITTER','SQLTRACE_WAIT_ENTRIES','SLEEP_BPOOL_FLUSH','SQLTRACE_LOCK',
-			'DIRTY_PAGE_POLL','HADR_FILESTREAM_IOMGR_IOCOMPLETION', 
-			'WAIT_XTP_OFFLINE_CKPT_NEW_LOG') 
-			and wait_type not like 'SLEEP_%'
-
-			-- reference https://www.sqlskills.com/blogs/paul/capturing-wait-statistics-period-time/
-			and wait_type not in (
-			'BROKER_RECEIVE_WAITFOR','BROKER_TRANSMITTER','CHKPT', 'CXCONSUMER', 'EXECSYNC','FSAGENT',  
-			'KSOURCE_WAKEUP', 'MEMORY_ALLOCATION_EXT', 'ONDEMAND_TASK_QUEUE', 'PARALLEL_REDO_DRAIN_WORKER','PARALLEL_REDO_LOG_CACHE', 
-			'PARALLEL_REDO_TRAN_LIST', 'PARALLEL_REDO_WORKER_SYNC', 'PARALLEL_REDO_WORKER_WAIT_WORK','PREEMPTIVE_XE_GETTARGETSTATE', 
-			'PWAIT_ALL_COMPONENTS_INITIALIZED', 'PWAIT_DIRECTLOGCONSUMER_GETNEXT', 'QDS_ASYNC_QUEUE', 'QDS_SHUTDOWN_QUEUE', 
-			'REDO_THREAD_PENDING_WORK', 'RESOURCE_QUEUE', 'SERVER_IDLE_CHECK','SLEEP_DBSTARTUP','SLEEP_DCOMSTARTUP', 
-			'SLEEP_MASTERDBREADY','SLEEP_MASTERMDREADY', 'SLEEP_MASTERUPGRADED', 'SLEEP_MSDBSTARTUP', 'SLEEP_TEMPDBSTARTUP', 
-			'SNI_HTTP_ACCEPT', 'SOS_WORK_DISPATCHER', 'SQLTRACE_INCREMENTAL_FLUSH_SLEEP', 'SQLTRACE_WAIT_ENTRIES', 'WAITFOR_TASKSHUTDOWN', 
-			'WAIT_XTP_RECOVERY', 'WAIT_XTP_HOST_WAIT', 'WAIT_XTP_CKPT_CLOSE')
+		where wait_type not like 'SLEEP_%'
+		and wait_type collate database_default not in (
+			select wait_type 
+			from [dbo].[sqlwatch_config_exclude_wait_stats]
+			)
 
 		insert into [dbo].[sqlwatch_logger_perf_os_wait_stats]
 			select 

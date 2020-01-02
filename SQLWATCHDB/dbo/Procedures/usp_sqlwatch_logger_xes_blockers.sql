@@ -21,12 +21,13 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 		/* for this to work you must enable blocked process monitor */
 		--inspired by and based on Michael J Stewart http://michaeljswart.com/2016/02/look-at-blocked-process-reports-collected-with-extended-events/
 
-		declare @snapshot_time datetime = getutcdate()
-		declare @snapshot_type_id tinyint = 9
-		declare @filename varchar(8000)
+		declare @snapshot_time datetime,
+				@snapshot_type_id tinyint = 9,
+				@filename varchar(8000)
 
-		insert into dbo.[sqlwatch_logger_snapshot_header] (snapshot_time, snapshot_type_id)
-		select @snapshot_time, @snapshot_type_id
+		exec [dbo].[usp_sqlwatch_internal_insert_header] 
+			@snapshot_time_new = @snapshot_time OUTPUT,
+			@snapshot_type_id = @snapshot_type_id
 
 		select cast(target_data as xml) AS target_data
 		into #xes

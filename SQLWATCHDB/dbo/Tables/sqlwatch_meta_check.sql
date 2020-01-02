@@ -17,7 +17,11 @@
 	[last_status_change_date] datetime null,
 
 	/*	primary key */
-	constraint pk_sqlwatch_meta_alert primary key clustered ([sql_instance], [check_id])
+	constraint pk_sqlwatch_meta_alert primary key clustered ([sql_instance], [check_id]),
+
+	/*	foreign key to meta server */
+	constraint fk_sqlwatch_meta_check_server foreign key (sql_instance)
+		references dbo.sqlwatch_meta_server (servername) on delete cascade
 
 	/*	foreign key to the config check to make sure we only have valid records in the meta 
 		and to process deletion when the check is deleted

@@ -27,29 +27,8 @@ create table #snapshot_id_table (
 
 /* maintain relation between snapshots and tables */
 insert into #snapshot_id_table(table_name, snapshot_type_id)
-values 
-	('sqlwatch_logger_agent_job_history', 16),
-	('sqlwatch_logger_disk_utilisation_database', 2),
-	('sqlwatch_logger_disk_utilisation_volume', 17),
-	('sqlwatch_logger_index_missing_stats', 3),
-	('sqlwatch_logger_index_usage_stats', 14),
-	('sqlwatch_logger_index_usage_stats_histogram', 15),
-	('sqlwatch_logger_perf_file_stats', 1),
-	('sqlwatch_logger_perf_os_memory_clerks', 1),
-	('sqlwatch_logger_perf_os_performance_counters', 1),
-	('sqlwatch_logger_perf_os_process_memory', 1),
-	('sqlwatch_logger_perf_os_schedulers', 1),
-	('sqlwatch_logger_perf_os_wait_stats', 1),
-	('sqlwatch_logger_whoisactive', 11),
-	('sqlwatch_logger_xes_blockers', 9),
-	('sqlwatch_logger_xes_iosubsystem', 10),
-	('sqlwatch_logger_xes_long_queries', 7),
-	('sqlwatch_logger_xes_query_processing', 10),
-	('sqlwatch_logger_xes_waits_stats', 6),
-	('sqlwatch_logger_check',18),
-	('sqlwatch_logger_check_action',18)
-
-
+select *
+from [dbo].[vw_sqlwatch_internal_table_snapshot]
 
 update t
 	--if we get null it means we have no snapshot at all.
@@ -124,6 +103,9 @@ from #snapshot_id_table
 group by sql_instance'
 
 exec (@sql) 
+
+/*	with result sets was introduced in SQL 2012. This will not build for SQL 2008.
+	Remove if building for SQL 2012.	*/
 with result sets (
  (		 
 	 sql_instance varchar(32)
@@ -137,8 +119,8 @@ with result sets (
 	,sqlwatch_logger_index_missing_stats_header varchar(23)
 	,sqlwatch_logger_index_usage_stats varchar(23)
 	,sqlwatch_logger_index_usage_stats_header varchar(23)
-	,sqlwatch_logger_index_usage_stats_histogram varchar(23)
-	,sqlwatch_logger_index_usage_stats_histogram_header varchar(23)
+	,sqlwatch_logger_index_histogram varchar(23)
+	,sqlwatch_logger_index_histogram_header varchar(23)
 	,sqlwatch_logger_perf_file_stats varchar(23)
 	,sqlwatch_logger_perf_file_stats_header varchar(23)
 	,sqlwatch_logger_perf_os_memory_clerks varchar(23)

@@ -32,7 +32,7 @@
 	constraint chk_sqlwatch_config_media_exec check (
 		(	[action_exec_type]='T-SQL' 
 		or	[action_exec_type]='PowerShell')
-		)
+		) 
 )
 go
 

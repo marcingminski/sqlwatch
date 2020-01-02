@@ -1,7 +1,9 @@
 ﻿CREATE EVENT SESSION [SQLWATCH_waits] 
 ON SERVER
 
-/* any query that waited over 1 second for a resource */
+/*	any query that waited over 1 second for a resource
+
+	Remove when targeting SQL2008	*/
 ADD EVENT sqlos.wait_info(
     ACTION(sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.database_name,sqlserver.plan_handle,sqlserver.session_id,sqlserver.session_nt_username,sqlserver.sql_text,sqlserver.tsql_stack,sqlserver.username)
     WHERE ([package0].[greater_than_uint64]([duration],(1000)) AND [package0].[equal_uint64]([opcode],(1)) AND [sqlserver].[sql_text]<>N'')),

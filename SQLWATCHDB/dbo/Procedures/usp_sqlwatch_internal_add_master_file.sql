@@ -27,9 +27,14 @@ using (
 	and source.physical_name = target.file_physical_name collate database_default
 	and	source.sql_instance = target.sql_instance
  )
+
+ when not matched by source and target.sql_instance = @@SERVERNAME then
+	update set [is_record_deleted] = 1
+
 when matched then
 	update
-		set [date_last_seen] = getutcdate()
+		set [date_last_seen] = getutcdate(),
+			[is_record_deleted] = 0
 
 when not matched by target then
 	insert ( [sqlwatch_database_id], [file_id], [file_type], [file_physical_name], [sql_instance], [file_name], [logical_disk] )

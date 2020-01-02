@@ -5,21 +5,23 @@ set nocount on;
 set xact_abort on
 begin tran
 
-declare @snapshot_type tinyint = 2
-declare	@product_version nvarchar(128)
-declare @product_version_major decimal(10,2)
-declare @product_version_minor decimal(10,2)
-declare @sql varchar(max)
+declare @snapshot_type_id tinyint = 2,
+		@snapshot_time datetime2(0),
+		@product_version nvarchar(128),
+		@product_version_major decimal(10,2),
+		@product_version_minor decimal(10,2),
+		@sql varchar(max)
 
-set @product_version = convert(nvarchar(128),serverproperty('productversion'));
+select @product_version = convert(nvarchar(128),serverproperty('productversion'));
 select @product_version_major = substring(@product_version, 1,charindex('.', @product_version) + 1 )
 	  ,@product_version_minor = parsename(convert(varchar(32), @product_version), 2);
+
 --------------------------------------------------------------------------------------------------------------
--- set the basics
+-- get new header
 --------------------------------------------------------------------------------------------------------------
-declare @snapshot_time datetime = getutcdate();
-insert into [dbo].[sqlwatch_logger_snapshot_header] (snapshot_time, snapshot_type_id)
-values (@snapshot_time, @snapshot_type)
+exec [dbo].[usp_sqlwatch_internal_insert_header] 
+	@snapshot_time_new = @snapshot_time OUTPUT,
+	@snapshot_type_id = @snapshot_type_id
 
 --------------------------------------------------------------------------------------------------------------
 -- get sp_spaceused
@@ -165,7 +167,7 @@ select
 	, ls.[total_log_size_in_bytes]
 	, ls.[used_log_space_in_bytes]
 	, [snapshot_time] = @snapshot_time
-	, [snapshot_type_id] = @snapshot_type
+	, [snapshot_type_id] = @snapshot_type_id
 	, @@SERVERNAME
 from @spaceused su
 inner join @logspace ls
@@ -181,7 +183,7 @@ inner join [dbo].[sqlwatch_meta_database] swd
 
 left join [dbo].[sqlwatch_config_exclude_database] ed
 	on swd.[database_name] like ed.database_name_pattern
-	and ed.snapshot_type_id = @snapshot_type
+	and ed.snapshot_type_id = @snapshot_type_id
 
 where ed.snapshot_type_id is null
 

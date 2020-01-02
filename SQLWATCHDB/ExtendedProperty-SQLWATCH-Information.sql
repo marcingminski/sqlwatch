@@ -1,1 +1,0 @@
-﻿EXEC sp_addextendedproperty @name=N'SQLWATCH Information', @value=N'Version: 2.0, April 2019; Open Source SQL Server monitoring solution: https://sqlwatch.io' 

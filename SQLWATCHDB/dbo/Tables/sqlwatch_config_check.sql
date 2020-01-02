@@ -10,10 +10,29 @@
 	[check_enabled] bit not null default 1, --if enabled the check will be processed
 	[date_created] datetime not null constraint df_sqlwatch_config_check_date_created default (getdate()),
 	[date_updated] datetime null,
+	[ignore_flapping] bit not null constraint df_sqlwatch_config_check_flapping default (0),
 
 	/* primary key */
-	constraint pk_sqlwatch_config_alert_check primary key clustered ([check_id])
+	constraint pk_sqlwatch_config_check primary key clustered ([check_id])
 )
+go
+
+/*	do not use negative IDs for user checks as they may be overwritten with the next release.
+	with that being said, if user updates default check we populate updated date and never
+	touch it again */
+create trigger dbo.trg_sqlwatch_config_check_id_I
+	on [dbo].[sqlwatch_config_check]
+	for insert
+	as
+	begin
+		set nocount on;
+		if exists (select * from inserted where check_id < 0)
+			begin
+				raiserror('Negative IDs are for checks shipped with SQLWATCH and may be overwritten in the future.',16,1)
+				if @@TRANCOUNT > 0
+					ROLLBACK TRAN
+			end
+	end
 go
 
 /*	maintain meta table withouth having to run extra DML every time checks run

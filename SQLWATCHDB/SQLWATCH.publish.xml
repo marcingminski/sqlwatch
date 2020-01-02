@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <IncludeCompositeObjects>True</IncludeCompositeObjects>
+    <TargetDatabaseName>SQLWATCH</TargetDatabaseName>
+    <DeployScriptFileName>SQLWATCH.sql</DeployScriptFileName>
+    <BlockOnPossibleDataLoss>False</BlockOnPossibleDataLoss>
+    <IgnoreTableOptions>True</IgnoreTableOptions>
+    <TargetConnectionString>Data Source=192.168.168.179;Persist Security Info=True;User ID=sa;Pooling=False;MultipleActiveResultSets=False;Connect Timeout=60;Encrypt=False;TrustServerCertificate=False</TargetConnectionString>
+    <ProfileVersionNumber>1</ProfileVersionNumber>
+    <IgnoreComments>True</IgnoreComments>
+    <IgnoreColumnOrder>True</IgnoreColumnOrder>
+    <IgnoreIndexOptions>True</IgnoreIndexOptions>
+    <IgnoreWithNocheckOnCheckConstraints>False</IgnoreWithNocheckOnCheckConstraints>
+    <DropObjectsNotInSource>True</DropObjectsNotInSource>
+    <IgnoreWithNocheckOnForeignKeys>False</IgnoreWithNocheckOnForeignKeys>
+  </PropertyGroup>
+</Project>

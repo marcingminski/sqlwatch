@@ -5,7 +5,7 @@
 	[sqlwatch_job_step_id] int,
 	[sysjobhistory_instance_id] int not null,
 	[sysjobhistory_step_id] int not null,
-	[run_duration_s] int not null,
+	[run_duration_s] real not null,
 	[run_date] datetime not null,
 	[run_status] tinyint not null,
 	[snapshot_time] datetime2(0) not null,

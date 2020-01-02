@@ -6,18 +6,17 @@ set xact_abort on
 set nocount on
 begin tran
 
-declare @snapshot_type tinyint = 14
-declare @database_name sysname
-declare @sql varchar(max)
-
-declare @object_id int
-declare @index_name sysname
-declare @index_id int
-declare @object_name nvarchar(256)
-
-declare @sqlwatch_database_id smallint
-declare @sqlwatch_table_id int
-declare @sqlwatch_index_id int
+declare @snapshot_type_id tinyint = 14,
+		@snapshot_time datetime,
+		@database_name sysname,
+		@sql varchar(max),
+		@object_id int,
+		@index_name sysname,
+		@index_id int,
+		@object_name nvarchar(256),
+		@sqlwatch_database_id smallint,
+		@sqlwatch_table_id int,
+		@sqlwatch_index_id int
 
 declare @indextype as table (
 	is_index_hierarchical bit,
@@ -86,7 +85,7 @@ create table #stats (
 declare @is_index_hierarchical bit
 declare @is_index_timestamp bit  
 
-set @snapshot_type = 15
+set  @snapshot_type_id = 15
 
 declare c_index cursor for
 select md.[database_name], table_name=mt.table_name , index_name = mi.index_name, mi.index_id, mi.sqlwatch_database_id, mi.sqlwatch_table_id, mi.sqlwatch_index_id
@@ -105,9 +104,16 @@ from [dbo].[sqlwatch_meta_index] mi
 		on sdb.name = md.database_name collate database_default
 		and sdb.create_date = md.database_create_date
 
+	/*	Index histograms can be very large and since its only required for a very specific performance tuning, 
+		we are only going to collect those exclusively included for collection	*/
+	inner join [dbo].[sqlwatch_config_include_index_histogram] ih
+		on md.[database_name] like parsename(ih.object_name_pattern,3)
+		and mt.table_name like parsename(ih.object_name_pattern,2) + '.' + parsename(ih.object_name_pattern,1)
+		and mi.index_name like ih.index_name_pattern
+
 	left join [dbo].[sqlwatch_config_exclude_database] ed
 		on md.[database_name] like ed.database_name_pattern
-		and ed.snapshot_type_id = @snapshot_type
+		and ed.snapshot_type_id = @snapshot_type_id
 
 	where ed.snapshot_type_id is null
 
@@ -223,12 +229,13 @@ if exists (
 close c_index
 deallocate c_index 
 
-	declare @snapshot_time datetime = getutcdate();
-	insert into [dbo].[sqlwatch_logger_snapshot_header] (snapshot_time, snapshot_type_id)
-	values (@snapshot_time, @snapshot_type)
 
-	insert into [dbo].[sqlwatch_logger_index_usage_stats_histogram](
-			[sqlwatch_database_id], [sqlwatch_table_id], [sqlwatch_index_id],
+	exec [dbo].[usp_sqlwatch_internal_insert_header] 
+		@snapshot_time_new = @snapshot_time OUTPUT,
+		@snapshot_type_id = @snapshot_type_id
+
+	insert into [dbo].[sqlwatch_logger_index_histogram](
+		[sqlwatch_database_id], [sqlwatch_table_id], [sqlwatch_index_id],
 		RANGE_HI_KEY, RANGE_ROWS, EQ_ROWS, DISTINCT_RANGE_ROWS, AVG_RANGE_ROWS,
 		[snapshot_time], [snapshot_type_id], [collection_time])
 	select
@@ -241,11 +248,11 @@ deallocate c_index
 		DISTINCT_RANGE_ROWS = convert(real,st.DISTINCT_RANGE_ROWS),
 		AVG_RANGE_ROWS = convert(real,st.AVG_RANGE_ROWS),
 		[snapshot_time] = @snapshot_time,
-		[snapshot_type_id] = @snapshot_type,
+		[snapshot_type_id] = @snapshot_type_id,
 		[collection_time]
 	from #stats st
 
-	insert into [dbo].[sqlwatch_logger_index_usage_stats_histogram](
+	insert into [dbo].[sqlwatch_logger_index_histogram](
 			[sqlwatch_database_id], [sqlwatch_table_id], [sqlwatch_index_id],
 		RANGE_HI_KEY, RANGE_ROWS, EQ_ROWS, DISTINCT_RANGE_ROWS, AVG_RANGE_ROWS,
 		[snapshot_time], [snapshot_type_id], [collection_time])
@@ -259,11 +266,11 @@ deallocate c_index
 		DISTINCT_RANGE_ROWS = convert(real,st.DISTINCT_RANGE_ROWS),
 		AVG_RANGE_ROWS = convert(real,st.AVG_RANGE_ROWS),
 		[snapshot_time] = @snapshot_time,
-		[snapshot_type_id] = @snapshot_type,
+		[snapshot_type_id] = @snapshot_type_id,
 		[collection_time]
 	from #stats_hierarchical st
 
-	insert into [dbo].[sqlwatch_logger_index_usage_stats_histogram](
+	insert into [dbo].[sqlwatch_logger_index_histogram](
 			[sqlwatch_database_id], [sqlwatch_table_id], [sqlwatch_index_id],
 		RANGE_HI_KEY, RANGE_ROWS, EQ_ROWS, DISTINCT_RANGE_ROWS, AVG_RANGE_ROWS,
 		[snapshot_time], [snapshot_type_id], [collection_time])
@@ -277,7 +284,7 @@ deallocate c_index
 		DISTINCT_RANGE_ROWS = convert(real,st.DISTINCT_RANGE_ROWS),
 		AVG_RANGE_ROWS = convert(real,st.AVG_RANGE_ROWS),
 		[snapshot_time] = @snapshot_time,
-		[snapshot_type_id] = @snapshot_type,
+		[snapshot_type_id] = @snapshot_type_id,
 		[collection_time]
 	from #stats_timestamp st
 

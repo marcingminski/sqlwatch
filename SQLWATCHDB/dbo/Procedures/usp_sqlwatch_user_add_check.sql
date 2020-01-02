@@ -15,7 +15,8 @@
 	@action_recovery bit = 1,
 	@action_repeat_period_minutes smallint = null,
 	@action_hourly_limit smallint = 2,
-	@action_template_id smallint = -1 --default template shipped with SQLWATCH
+	@action_template_id smallint = -1, --default template shipped with SQLWATCH
+	@ignore_flapping bit = 0
 )
 as
 
@@ -34,6 +35,7 @@ if @check_id < 0
 				,[check_threshold_warning] = @check_threshold_warning
 				,[check_threshold_critical] = @check_threshold_critical
 				,[check_enabled] = @check_enabled
+				,[ignore_flapping] = @ignore_flapping
 			) as source
 		on source.check_id = target.check_id
 
@@ -46,6 +48,7 @@ if @check_id < 0
 					,[check_threshold_warning]
 					,[check_threshold_critical]
 					,[check_enabled]
+					,[ignore_flapping]
 				   )
 			values ( source.[check_id]
 					,source.[check_name]
@@ -54,7 +57,8 @@ if @check_id < 0
 					,source.[check_frequency_minutes]
 					,source.[check_threshold_warning]
 					,source.[check_threshold_critical]
-					,source.[check_enabled])
+					,source.[check_enabled]
+					,source.[ignore_flapping])
 
 		when matched and target.[date_updated] is null 
 			then update 
@@ -65,7 +69,8 @@ if @check_id < 0
 				,[check_frequency_minutes] = source.[check_frequency_minutes]
 				,[check_threshold_warning] = source.[check_threshold_warning]
 				,[check_threshold_critical] = source.[check_threshold_critical]
-				,[check_enabled] = source.[check_enabled];
+				,[check_enabled] = source.[check_enabled]
+				,[ignore_flapping] = source.[ignore_flapping];
 	end
 else
 	begin
@@ -79,6 +84,7 @@ else
 				,[check_threshold_warning] = @check_threshold_warning
 				,[check_threshold_critical] = @check_threshold_critical
 				,[check_enabled] = @check_enabled
+				,[ignore_flapping] = @ignore_flapping
 			) as source
 		on source.check_id = target.check_id
 
@@ -90,6 +96,7 @@ else
 					,[check_threshold_warning]
 					,[check_threshold_critical]
 					,[check_enabled]
+					,[ignore_flapping]
 				   )
 			values ( source.[check_name]
 					,source.[check_description]
@@ -97,7 +104,8 @@ else
 					,source.[check_frequency_minutes]
 					,source.[check_threshold_warning]
 					,source.[check_threshold_critical]
-					,source.[check_enabled])
+					,source.[check_enabled]
+					,source.[ignore_flapping])
 
 		when matched then
 			update set
@@ -107,7 +115,8 @@ else
 				,[check_frequency_minutes] = source.[check_frequency_minutes]
 				,[check_threshold_warning] = source.[check_threshold_warning]
 				,[check_threshold_critical] = source.[check_threshold_critical]
-				,[check_enabled] = source.[check_enabled];
+				,[check_enabled] = source.[check_enabled]
+				,[ignore_flapping] = source.[ignore_flapping];
 
 			Print 'Check (Id: ' + convert(varchar(10),@check_id) + ') updated.'
 	end

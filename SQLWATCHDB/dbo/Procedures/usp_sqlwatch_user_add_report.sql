@@ -6,8 +6,8 @@
 	@report_definition nvarchar(max) ,
 	@report_definition_type varchar(10) ,
 	@report_active bit = 1,
-	@report_batch_id tinyint = null,
-	@report_style_id smallint = -1,
+	@report_batch_id varchar(255) = null,
+	@report_style_id smallint = null ,
 	--action to assosiate report with, in case of multiple actions, rerun the procedure with the same params but different action id
 	@report_action_id smallint = null
 )
@@ -15,6 +15,11 @@ as
 
 set xact_abort on;
 set nocount on;
+
+set @report_style_id = case 
+	when @report_style_id is null and @report_definition_type <> 'Query' then -1 
+	when @report_style_id is not null and @report_definition_type = 'Query' then null
+	else @report_style_id end
 
 if @report_id < 0 
 	begin

@@ -10,11 +10,14 @@
 	[action_template_recover_body] nvarchar(max) not null,
 	[date_created] datetime not null constraint df_sqlwatch_config_check_action_template_date_added default (getdate()),
 	[date_updated] datetime null,
+	[action_template_type] varchar(50) not null constraint df_sqlwatch_config_check_action_template_type default ('TEXT'),
 
 	/*	primary key */
 	constraint pk_sqlwatch_config_action_template primary key clustered (
 		[action_template_id]
-	)
+	),
+
+	constraint chk_sqlwatch_config_action_template_type check ([action_template_type] = 'TEXT' or [action_template_type] = 'HTML')
 )
 
 GO
