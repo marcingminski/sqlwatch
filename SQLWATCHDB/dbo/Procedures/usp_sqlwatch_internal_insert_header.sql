@@ -19,10 +19,10 @@ begin
 	set transaction isolation level serializable
 	begin transaction
 	set lock_timeout 1000; 
-	exec @lockresult = master.dbo.sp_getapplock @Resource = 'usp_sqlwatch_internal_insert_header', @LockMode = 'Exclusive'
+	--exec @lockresult = master.dbo.sp_getapplock @Resource = 'usp_sqlwatch_internal_insert_header', @LockMode = 'Exclusive'
 
-	if @lockresult >= 0
-		begin
+	--if @lockresult >= 0
+	--	begin
 			select @snapshot_time = convert(datetime2(0),GETUTCDATE()), @sql_instance = @@SERVERNAME
 
 			insert into [dbo].[sqlwatch_logger_snapshot_header] ([snapshot_time], [snapshot_type_id], [sql_instance], [report_time]) 
@@ -37,8 +37,8 @@ begin
 					and t.snapshot_time = @snapshot_time
 					)
 
-			exec @lockresult = master.dbo.sp_releaseapplock @Resource = 'usp_sqlwatch_internal_insert_header'
-		end
+			--exec @lockresult = master.dbo.sp_releaseapplock @Resource = 'usp_sqlwatch_internal_insert_header'
+		--end
 			
 	if @@TRANCOUNT > 0
 		commit transaction
