@@ -25,6 +25,16 @@ declare @xp_results table (
 select @job_id = job_id, @job_owner = owner_sid 
 from msdb.dbo.sysjobs where name = @job_name
 
+insert into @xp_results
+exec master.dbo.xp_sqlagent_enum_jobs 1, @job_owner, @job_id
+
+if exists (select top 1 * FROM @xp_results where running = 1)
+	begin
+		--job is running, quit
+		raiserror('Job ''%s'' is already running.',16, 1, @job_name)
+        return
+	end
+
 exec msdb.dbo.sp_start_job @job_name = @job_name
 waitfor delay '00:00:01' --without it we get incorrect results from enum_jobs as it does not register immedially
 

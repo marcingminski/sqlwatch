@@ -55,9 +55,22 @@ else
 	begin
 		Print ''Job ''''' + job_name + ''''' not created because it already exists.''
 	end;
-	exec [dbo].[usp_sqlwatch_internal_run_job] @job_name = ''' + job_name + '''
+	' + case when /* job has not run yet */ h.run_status is null and /* only if its the first deployment */ v.deployment_count = 0 and job_enabled = 1 then 'exec [dbo].[usp_sqlwatch_internal_run_job] @job_name = ''' + job_name + '''' else '' end + '
 	'
 	from ##sqlwatch_jobs
+	outer apply (
+		select top 1 run_status 
+		from msdb.dbo.sysjobhistory jh
+		inner join msdb.dbo.sysjobs sj
+			on sj.job_id = jh.job_id
+		where sj.name = job_name 
+		and step_id = 0 
+		order by run_date desc, run_time desc
+	) h
+	outer apply (
+		select count(*) as deployment_count
+		from [dbo].[sqlwatch_app_version]
+	) v
 	order by job_id
 	for xml path ('')
 )),'&#x0D;',''),'&amp;#x0D;','')
