@@ -42,6 +42,10 @@ select @sql = replace(replace(convert(nvarchar(max),(select ' if (select name fr
 		exec msdb.dbo.sp_add_job @job_name=N''' + job_name + ''',  @category_name=N''' + @job_category + ''', @enabled=' + convert(char(1),job_enabled) + ',@description=''' + @job_description + ''';
 		exec msdb.dbo.sp_add_jobserver @job_name=N''' + job_name + ''', @server_name = ''' + @server + ''';
 		' + (select 
+				/*	checks fail when the returned value is null, this is by design as checks should never return a null value. However, when the job runs right the deployment there will be nothing in the logger tables yet
+					and all checks will fail. This could be a problem as hundreds of alerts maybe raised to the IT mailboxes. In order to prevent that, we are also going to run each procedure here. Running job would be preferable
+					but this is asyncronous process so we would never know when it had finished and must manage dependencies. This change may make deployments longer */
+				case when step_subsystem = 'TSQL' then char(10) + step_command + char(10) else '' end +
 				' exec msdb.dbo.sp_add_jobstep @job_name=N''' + job_name + ''', @step_name=N''' + step_name + ''',@step_id= ' + convert(varchar(10),step_id) + ',@subsystem=N''' + step_subsystem + ''',@command=''' + replace(step_command,'''','''''') + ''',@on_success_action=' + case when ROW_NUMBER() over (partition by job_name order by step_id desc) = 1 then '1' else '3' end +', @on_fail_action=' + case when ROW_NUMBER() over (partition by job_name order by step_id desc) = 1 then '2' else '3' end + ', @database_name=''' + @database_name + ''''
 
 			 from ##sqlwatch_steps 
@@ -57,6 +61,7 @@ else
 		Print ''Job ''''' + job_name + ''''' not created because it already exists.''
 	end;'
 	from ##sqlwatch_jobs
+	order by job_id
 	for xml path ('')
 )),'&#x0D;',''),'&amp;#x0D;','')
 

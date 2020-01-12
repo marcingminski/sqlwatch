@@ -49,6 +49,7 @@ and name not like 'SQLWATCH-REPOSITORY-%'
 
 set @sql = ''
 create table ##sqlwatch_jobs (
+	job_id tinyint identity (1,1),
 	job_name sysname primary key,
 	freq_type int, 
 	freq_interval int, 
@@ -75,22 +76,25 @@ create table ##sqlwatch_steps (
 declare @enabled tinyint = 1
 set @enabled = case when object_id('master.dbo.sp_whoisactive') is not null or object_id('dbo.sp_whoisactive') is not null then 1 else 0 end
 
-/* job definition */
-insert into ##sqlwatch_jobs
+/* job definition must be in the right order as they are executed as part of deployment */
+insert into ##sqlwatch_jobs 
+			( job_name,							freq_type,	freq_interval,	freq_subday_type,	freq_subday_interval,	freq_relative_interval, freq_recurrence_factor,		active_start_date,	active_end_date,	active_start_time,	active_end_time,	job_enabled )
+	values	
+			('SQLWATCH-INTERNAL-CONFIG',		4,			1,				8,					1,						0,						1,							20180101,			99991231,			26,					235959,				1),
 
-			/* JOB_NAME                 freq:	type,	interval,	subday_type,	subday_intrval, relative_interval,	recurrence_factor,	start_date, end_date, start_time,	end_time,	enabled */
-	values	('SQLWATCH-LOGGER-WHOISACTIVE',		4,		1,			2,				15,				0,					0,					20180101,	99991231, 0,			235959,		@enabled),
-			('SQLWATCH-LOGGER-PERFORMANCE',		4,		1,			4,				1,				0,					1,					20180101,	99991231, 12,			235959,		1),
-			('SQLWATCH-LOGGER-DISK-UTILISATION',4,		1,			8,				1,				0,					1,					20180101,	99991231, 437,			235959,		1),
-			('SQLWATCH-LOGGER-INDEXES',			4,		1,			8,				6,				0,					1,					20180101,	99991231, 420,			235959,		1),
-			('SQLWATCH-LOGGER-AGENT-HISTORY',	4,		1,			4,				10,				0,					1,					20180101,	99991231, 0,			235959,		1),
+			('SQLWATCH-LOGGER-PERFORMANCE',		4,			1,				4,					1,						0,						1,							20180101,			99991231,			12,					235959,				1),
+			('SQLWATCH-LOGGER-DISK-UTILISATION',4,			1,				8,					1,						0,						1,							20180101,			99991231,			437,				235959,				1),
+			('SQLWATCH-LOGGER-INDEXES',			4,			1,				8,					6,						0,						1,							20180101,			99991231,			420,				235959,				1),
+			('SQLWATCH-LOGGER-AGENT-HISTORY',	4,			1,				4,					10,						0,						1,							20180101,			99991231,			0,					235959,				1),
 
-			('SQLWATCH-INTERNAL-RETENTION',		4,		1,			8,				1,				0,					1,					20180101,	99991231, 20,			235959,		1),
-			('SQLWATCH-INTERNAL-CONFIG',		4,		1,			8,				1,				0,					1,					20180101,	99991231, 26,			235959,		1),
-			('SQLWATCH-INTERNAL-TRENDS',		4,		1,			4,				60,				0,					1,					20180101,	99991231, 150,			235959,		1),
-			('SQLWATCH-INTERNAL-ACTIONS',		4,		1,			2,				15,				0,					1,					20180101,	99991231, 2,			235959,		1),
-			('SQLWATCH-INTERNAL-CHECKS',		4,		1,			4,				1,				0,					1,					20180101,	99991231, 43,			235959,		1),
-			('SQLWATCH-REPORT-AZMONITOR',		4,		1,			4,				10,				0,					1,					20180101,	99991231, 21,			235959,		1)
+			('SQLWATCH-INTERNAL-RETENTION',		4,			1,				8,					1,						0,						1,							20180101,			99991231,			20,					235959,				1),
+			('SQLWATCH-INTERNAL-TRENDS',		4,			1,				4,					60,						0,						1,							20180101,			99991231,			150,				235959,				1),
+
+			('SQLWATCH-INTERNAL-ACTIONS',		4,			1,				2,					15,						0,						1,							20180101,			99991231,			2,					235959,				1),
+			('SQLWATCH-INTERNAL-CHECKS',		4,			1,				4,					1,						0,						1,							20180101,			99991231,			43,					235959,				1),
+
+			('SQLWATCH-REPORT-AZMONITOR',		4,			1,				4,					10,						0,						1,							20180101,			99991231,			21,					235959,				1),
+			('SQLWATCH-LOGGER-WHOISACTIVE',		4,			1,				2,					15,						0,						0,							20180101,			99991231,			0,					235959,				@enabled)
 
 			--('SQLWATCH-USER-REPORTS',			4,		1,			1,				0,				0,					1,					20180101,	99991231, 80000,		235959,		1)
 
