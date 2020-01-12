@@ -9,21 +9,31 @@ Post-Deployment Script Template
                SELECT * FROM [$(TableName)]					
 --------------------------------------------------------------------------------------
 */
-if (select count(*) from [dbo].[sqlwatch_meta_server]) = 0
-	begin
-		insert into dbo.[sqlwatch_meta_server] ([physical_name],[servername], [service_name], [local_net_address], [local_tcp_port], [utc_offset_minutes], [sql_version])
-		select convert(sysname,SERVERPROPERTY('ComputerNamePhysicalNetBIOS'))
-			, convert(sysname,@@SERVERNAME), convert(sysname,@@SERVICENAME), convert(varchar(50),local_net_address), convert(varchar(50),local_tcp_port)
-			, DATEDIFF(mi, GETUTCDATE(), GETDATE())
-			, @@VERSION
+begin transaction
+	/* add local instance to server config so we can satify relations */
+	merge dbo.sqlwatch_config_sql_instance as target
+	using (select [servername] = @@SERVERNAME) as source
+	on target.sql_instance = source.[servername]
+	when not matched then
+		insert (sql_instance)
+		values (source.[servername]);
+
+	merge [dbo].[sqlwatch_meta_server] as target
+	using (
+		select [physical_name] = convert(sysname,SERVERPROPERTY('ComputerNamePhysicalNetBIOS'))
+			, [servername] = convert(sysname,@@SERVERNAME)
+			, [service_name] = convert(sysname,@@SERVICENAME)
+			, [local_net_address] = convert(varchar(50),local_net_address)
+			, [local_tcp_port] = convert(varchar(50),local_tcp_port)
+			, [utc_offset_minutes] = DATEDIFF(mi, GETUTCDATE(), GETDATE())
+			, [sql_version] = @@VERSION
 		from sys.dm_exec_connections where session_id = @@spid
-	end
+		) as source
+	on target.[servername] = source.[servername]
 
+	when not matched then
+		insert ([physical_name],[servername], [service_name], [local_net_address], [local_tcp_port], [utc_offset_minutes], [sql_version])
+		values (source.[physical_name],source.[servername], source.[service_name], source.[local_net_address], source.[local_tcp_port], source.[utc_offset_minutes], source.[sql_version])
 
-/* add local instance to server config so we can satify relations */
-merge dbo.sqlwatch_config_sql_instance as target
-using (select sql_instance = @@SERVERNAME) as source
-on target.sql_instance = source.sql_instance
-when not matched then
-	insert (sql_instance)
-	values (@@SERVERNAME);
+		;
+commit transaction
