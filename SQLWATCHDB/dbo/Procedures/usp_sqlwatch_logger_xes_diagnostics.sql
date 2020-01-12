@@ -16,28 +16,10 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 		/* using file target instead of ring buffer to have more resilient source as ring buffer can drop events if there are many */
 		select @filename= [dbo].[ufn_sqlwatch_get_xes_target_file] ('system_health')
 
-		/*	it has been reported that some users are getting xml conversion errors on SQL Server 2012 in this step of the scritp.
-			-- Steps 2,3, and 5 fail with "Executed as user: <redacted>. XML parsing: line 35, character 54, illegal name character [SQLSTATE 42000] (Error 9421).  
-			-- The step failed.
-
-		    The content of the target_data is xml but stored as string, there is not much I can about it apart from catching the error and logging into table
-			to be able to debug what part of the code/query is causing the problem	*/
-		select @target_data_char = event_data
+		select cast(event_data as xml) AS target_data
+		into #t
 		from sys.fn_xe_file_target_read_file(@filename, null, null, null) xet
 		where object_name = 'sp_server_diagnostics_component_result'
-
-		begin try
-			select @target_data_xml = convert(xml,@target_data_char)
-		end try
-		begin catch
-			exec [dbo].[usp_sqlwatch_internal_log]
-				@proc_id = @@PROCID,
-				@process_stage = '206D2A28-C4D4-43E5-A999-44096CB1F44C',
-				@process_message = @target_data_char,
-				@process_message_type = 'ERROR'
-
-				return
-		end catch
 
 		exec [dbo].[usp_sqlwatch_internal_insert_header] 
 			@snapshot_time_new = @snapshot_time OUTPUT,
@@ -57,7 +39,7 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 			[snapshot_time] = @snapshot_time,
 			[snapshot_type_id] = @snapshot_type_id
 		--from sys.fn_xe_file_target_read_file(@filename, null, null, null) xet
-		from ( select target_data = @target_data_xml ) xet
+		from #t xet
 		cross apply ( select cast(xet.target_data as xml) ) AS target_data ([xml])
 		cross apply target_data.[xml].nodes('/event[@name="sp_server_diagnostics_component_result"]') AS xml_nodes(xml_node)
 		cross apply xml_node.nodes('./data[@name="data"]/value/queryProcessing') AS report_xml_nodes(report_xml_node)
@@ -77,7 +59,7 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 			[snapshot_time] = @snapshot_time,
 			[snapshot_type_id] = @snapshot_type_id
 		--from sys.fn_xe_file_target_read_file(@filename, null, null, null) xet
-		from ( select target_data = @target_data_xml ) xet
+		from #t xet
 		cross apply ( select cast(xet.target_data as xml) ) AS target_data ([xml])
 		cross apply target_data.[xml].nodes('/event[@name="sp_server_diagnostics_component_result"]') AS xml_nodes(xml_node)
 		cross apply xml_node.nodes('./data[@name="data"]/value/ioSubsystem') AS report_xml_nodes(report_xml_node)
