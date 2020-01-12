@@ -10,6 +10,7 @@
 	[run_status] tinyint not null,
 	[snapshot_time] datetime2(0) not null,
 	[snapshot_type_id] tinyint not null,
+	[run_date_utc] datetime not null constraint df_sqlwatch_logger_agent_job_history_run_date_utc default ('1970-01-01'),
 	constraint pk_sqlwatch_logger_agent_job_history primary key (
 		[sql_instance], [snapshot_time], [sqlwatch_job_id], [sqlwatch_job_step_id], [sysjobhistory_instance_id], [snapshot_type_id]
 		),
@@ -20,4 +21,10 @@
 )
 go
 
---create nonclustered index idx_sqlwatch_logger_agent_job_history_001 on dbo.sqlwatch_logger_agent_job_history (run_date)
+create nonclustered index idx_sqlwatch_logger_agent_job_history_run_date
+	on dbo.sqlwatch_logger_agent_job_history (run_date)
+go
+
+create nonclustered index idx_sqlwatch_logger_agent_job_history_run_date_utc
+	on dbo.sqlwatch_logger_agent_job_history (run_date_utc)
+go
