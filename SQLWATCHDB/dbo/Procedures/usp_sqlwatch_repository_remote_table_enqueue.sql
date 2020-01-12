@@ -45,6 +45,7 @@ if not exists (select * from [dbo].[sqlwatch_meta_repository_import_queue])
 					maybe the logger_log would be useful to pull into central repo but will leave it out for now	*/
 					  'sqlwatch_meta_action_queue','sqlwatch_logger_log'
 					, 'sqlwatch_logger_check_action'
+					, 'sqlwatch_app_log'
 				)
 
 				/* exclude central repo tables as they will be empty on the remotes anyway */
