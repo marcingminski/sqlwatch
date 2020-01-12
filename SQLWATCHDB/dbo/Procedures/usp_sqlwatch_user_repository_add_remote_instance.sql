@@ -9,6 +9,12 @@
 	@rmtpassword nvarchar(128) = null
 as
 
+
+if @sql_instance = @@SERVERNAME
+	begin
+		raiserror ('Remote Instance is the same as local instance',16,1)
+	end
+
 merge [dbo].[sqlwatch_config_sql_instance] as target
 using (
 	select
