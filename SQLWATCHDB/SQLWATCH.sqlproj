@@ -274,6 +274,7 @@
     <Build Include="dbo\Views\vw_sqlwatch_app_version.sql" />
     <Build Include="dbo\Tables\sqlwatch_config.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_get_config_value.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_run_job.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />

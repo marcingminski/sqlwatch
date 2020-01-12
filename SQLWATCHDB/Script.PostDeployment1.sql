@@ -83,7 +83,6 @@ exec [dbo].[usp_sqlwatch_internal_add_database]
 if (select case when @@VERSION like '%Express Edition%' then 1 else 0 end) = 0
 	begin
 		exec dbo.[usp_sqlwatch_config_set_default_agent_jobs]
-		exec msdb.dbo.sp_start_job @job_name = 'SQLWATCH-INTERNAL-CONFIG'
 	end
 
 
