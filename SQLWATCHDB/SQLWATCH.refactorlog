@@ -2282,4 +2282,11 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[vw_sqlwatch_app_version]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="66c4a9b4-85d5-4d17-beb2-7dd728c5c683" ChangeDateTime="01/06/2020 22:51:15">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_trend_perf_os_performance_counters].[snapshot_time]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_trend_perf_os_performance_counters]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[report_time]" />
+  </Operation>
 </Operations>
