@@ -6,6 +6,7 @@ select m.[object_name], m.[counter_name], [instance_name], [cntr_value_raw]=[cnt
 	, [aggregation_interval_minutes] = 1
 	, d.snapshot_type_id
 	, d.snapshot_time
+	, d.performance_counter_id
 from [dbo].[sqlwatch_logger_perf_os_performance_counters] d
   	
 	inner join dbo.sqlwatch_logger_snapshot_header h
@@ -17,23 +18,21 @@ from [dbo].[sqlwatch_logger_perf_os_performance_counters] d
 		on m.sql_instance = d.sql_instance
 		and m.performance_counter_id = d.performance_counter_id
 
-	--left join [dbo].[sqlwatch_config_performance_counters_poster] pcp
-	--	on pcp.sql_instance = d.sql_instance
-	--	and pcp.object_name = m.object_name
-	--	and pcp.counter_name = m.counter_name
 
 	where m.cntr_type <> 1073939712
 
 	/* aggregated data. we are going to have to specify aggregataion level for every select */
 	union all
 
+	/* TO DO this table needs actual report_time of utc offset otherwise we wont be able to use it */
 	select m.[object_name], m.[counter_name], [instance_name], [cntr_value]=null
-	, report_time=[snapshot_time]
+	, [report_time]
 	, d.[sql_instance]
 	, [cntr_value_calculated]
 	, [trend_interval_minutes] 
 	, snapshot_type_id = 1
-	, snapshot_time
+	, snapshot_time = convert(datetime2(0),snapshot_time_offset)
+	, d.performance_counter_id
 	from [dbo].[sqlwatch_trend_perf_os_performance_counters] d
 	inner join [dbo].[sqlwatch_meta_performance_counter] m
 		on m.sql_instance = d.sql_instance

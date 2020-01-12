@@ -7,6 +7,7 @@ select report_time, d.[sql_instance], m.wait_type
  --for backward compatibility with existing pbi, this column will become report_time as we could be aggregating many snapshots in a report_period
 , d.snapshot_time
 , d.snapshot_type_id
+, d.wait_type_id
 from [dbo].[sqlwatch_logger_perf_os_wait_stats] d
   	
 	inner join dbo.sqlwatch_logger_snapshot_header h
