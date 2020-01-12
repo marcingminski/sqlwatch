@@ -16,7 +16,7 @@ set identity_insert [dbo].[sqlwatch_config_check] on;
 
 exec [dbo].[usp_sqlwatch_user_add_check]
 	 @check_id = -1
-	,@check_name = 'Agent Job failure' 
+	,@check_name = 'Failed Agent Job' 
 	,@check_description = 'One or more SQL Server Agent Jobs have failed.
 If there is a report assosiated with this check, details of the failures should be inlcuded below.'
 /*	offset by 1 second to capture own job,
@@ -42,7 +42,7 @@ and step_id <> 0'
 --------------------------------------------------------------------------------------
 exec [dbo].[usp_sqlwatch_user_add_check]
 	 @check_id = -2
-	,@check_name = 'Blocking detected'
+	,@check_name = 'Blocked Process'
 	,@check_description = 'One or more blocking chains have been detected.
 Blocking means processes are stuck and unable to carry any work, could cause downtime or major outage.
 If there is a report assosiated with this check, details of the blocking chain should be included below.'
@@ -92,7 +92,7 @@ and snapshot_time > ''{LAST_CHECK_DATE}'''
 --------------------------------------------------------------------------------------
 exec [dbo].[usp_sqlwatch_user_add_check]
 	 @check_id = -4
-	,@check_name = 'SQL Server Uptime is low'
+	,@check_name = 'SQL Server Uptime'
 	,@check_description = 'SQL Server Uptime Minutes is lower than expected. The server could have been restared in the last 60 minutes.'
 	,@check_query = 'select @output=datediff(minute,sqlserver_start_time,getdate()) from sys.dm_os_sys_info'
 	,@check_frequency_minutes = 10
@@ -110,7 +110,7 @@ exec [dbo].[usp_sqlwatch_user_add_check]
 --------------------------------------------------------------------------------------
 exec [dbo].[usp_sqlwatch_user_add_check]
 	 @check_id = -5
-	,@check_name = 'Action queue is high'
+	,@check_name = 'Action queue pending items'
 	,@check_description = 'There is a large number of items awaiting action. This could indicate a problem with the action mechanism. Note that in this context, the succesful action means that the item was succesfuly executed, for example sp_send_dbmail and not that the email was delivered.'
 	,@check_query = 'select @output=count(*) from dbo.sqlwatch_meta_action_queue where exec_status is null or exec_status <> ''OK'' and time_queued < dateadd(minute,-2,getdate())'
 	,@check_frequency_minutes = 5
@@ -128,7 +128,7 @@ exec [dbo].[usp_sqlwatch_user_add_check]
 --------------------------------------------------------------------------------------
 exec [dbo].[usp_sqlwatch_user_add_check]
 	 @check_id = -6
-	,@check_name = 'Action queue failure'
+	,@check_name = 'Action queue failed items'
 	,@check_description = 'There is one or more failed items in the action queue.'
 	,@check_query = 'select @output=count(*) from dbo.sqlwatch_meta_action_queue where exec_status in (''ERROR'',''FAILED'') and [exec_time_end] >= dateadd(second,-1,''{LAST_CHECK_DATE}'')'
 	,@check_frequency_minutes = 5
@@ -146,7 +146,7 @@ exec [dbo].[usp_sqlwatch_user_add_check]
 --------------------------------------------------------------------------------------
 exec [dbo].[usp_sqlwatch_user_add_check]
 	 @check_id = -7
-	,@check_name = 'Disk Free % is low'
+	,@check_name = 'Disk Free %'
 	,@check_description = 'The "Free Space %" value is lower than expected. One or more disks have less than expected free space. This does not mean that the disk will be full soon as it may not grow much. Please check the "days until full" value or the actual growth.
 If there is a report assosiated with this check, details of the storage utilistaion should be included below.'
 	,@check_query = 'select @output=free_space_percentage
@@ -167,7 +167,7 @@ where sql_instance = @@SERVERNAME'
 --------------------------------------------------------------------------------------
 exec [dbo].[usp_sqlwatch_user_add_check]
 	 @check_id = -8
-	,@check_name = 'One or more disk will be full soon'
+	,@check_name = 'Days left until disk full'
 	,@check_description = 'The "days until full" value is lower than expected. One or more disks will be full in few days. If there is a report assosiated with this check, details of the storage utilistaion should be included below.'
 	,@check_query = 'select @output=days_until_full
 from dbo.vw_sqlwatch_report_dim_os_volume
@@ -187,7 +187,7 @@ where sql_instance = @@SERVERNAME'
 --------------------------------------------------------------------------------------
 exec [dbo].[usp_sqlwatch_user_add_check]
 	 @check_id = -9
-	,@check_name = 'Check execution time is high'
+	,@check_name = 'Check execution time'
 	,@check_description = 'There are checks that take over 1 second to execute on average. Make sure checks tare lightweight and do not use up lots of resources and time. Checks are executed in series, in a single threaded cursor and not parralel. This means that 10 checks taking 1 second each will in total take 10 seconds to run. Each check should not take more than few miliseconds to run.
 You can view average check execution time in [dbo].[vw_sqlwatch_report_dim_check] and individual runs in [dbo].[sqlwatch_logger_check]'
 	,@check_query = 'select @output=max([avg_check_exec_time_ms])
@@ -208,7 +208,7 @@ where sql_instance = @@SERVERNAME'
 --------------------------------------------------------------------------------------
 exec [dbo].[usp_sqlwatch_user_add_check]
 	 @check_id = -10
-	,@check_name = 'Checks are failling'
+	,@check_name = 'Failed Checks'
 	,@check_description = 'There is one or more failed checks.
 You can view last_check_status in [dbo].[vw_sqlwatch_report_dim_check] and individual runs in [dbo].[sqlwatch_logger_check]'
 	,@check_query = 'select @output=count(*) 
@@ -230,7 +230,7 @@ and last_check_status = ''CHECK ERROR'''
 --------------------------------------------------------------------------------------
 exec [dbo].[usp_sqlwatch_user_add_check]
 	 @check_id = -11
-	,@check_name = 'Queued actions have not been processed'
+	,@check_name = 'Queued actions not processed'
 	,@check_description = 'There is one or more actions that have not been processed for more than 1 hour. This could indicate problems with the action processing mechanism.'
 	,@check_query = 'select @output=count(*)
 from [dbo].[sqlwatch_meta_action_queue]
@@ -1125,7 +1125,7 @@ and snapshot_time > ''{LAST_CHECK_DATE}'''
 --------------------------------------------------------------------------------------
 exec [dbo].[usp_sqlwatch_user_add_check]
 	 @check_id = -44
-	,@check_name = 'Snapshot age is above threshold'
+	,@check_name = 'Snapshot age'
 	,@check_description = 'This could indicate that the data is not being collected.
 If this alerts on central repository, it could indicate that the remote data is no longer being imported but the remote collection is enabled.
 Disabled snapshots on the local instance are ignored but if you have disabled snapshots that are being collected by central repository, you will need to modify this check and exclude them, or delete any previously collected snapshots that are no longer collected from the central repository header table.
@@ -1190,7 +1190,7 @@ exec [dbo].[usp_sqlwatch_user_add_check]
 --------------------------------------------------------------------------------------
 exec [dbo].[usp_sqlwatch_user_add_check]
 	 @check_id = -47
-	,@check_name = 'Errors in the SQLWATCH App Log'
+	,@check_name = 'SQLWATCH Errors'
 	,@check_description = 'Logger Log table is a central place for SQLWATCH to log execution messages. Any errors in this table could indicate serious problems with any SQLWATCH component.'
 	,@check_query = 'select @output=count(*) from [dbo].[sqlwatch_app_log]
 where [process_message_type] = ''ERROR''
