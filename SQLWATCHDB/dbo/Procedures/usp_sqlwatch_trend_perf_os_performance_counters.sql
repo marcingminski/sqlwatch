@@ -56,7 +56,7 @@ declare @snapshot_time datetime2(0)
 
 
 --60 minutes
-select @snapshot_time = max(snapshot_time)
+select @snapshot_time = max([report_time])
 from [dbo].[sqlwatch_trend_perf_os_performance_counters]
 where [trend_interval_minutes] = 60
 and sql_instance = @@SERVERNAME
@@ -64,10 +64,11 @@ and sql_instance = @@SERVERNAME
 insert into [dbo].[sqlwatch_trend_perf_os_performance_counters]
 select pc.[performance_counter_id]
       ,pc.[instance_name]
-      ,[snapshot_time] = t.[interval_minutes_60]
+      ,[snapshot_time] = t.[interval_minutes_60]  
       ,pc.[sql_instance]
       ,[cntr_value_calculated] = avg(pc.[cntr_value_calculated])
 	  ,[aggregation_interval_minutes] = 60
+	  ,[snapshot_time_offset] = TODATETIMEOFFSET ( t.[interval_minutes_60] , h.snapshot_time_utc_offset )  
   from [dbo].[sqlwatch_logger_perf_os_performance_counters] pc
   
   inner join [dbo].[sqlwatch_logger_snapshot_header] h
@@ -98,4 +99,5 @@ select pc.[performance_counter_id]
       ,pc.[instance_name]
       ,pc.[sql_instance]
 	  ,t.[interval_minutes_60]
+	  ,TODATETIMEOFFSET ( t.[interval_minutes_60] , h.snapshot_time_utc_offset )  
   option (recompile);
