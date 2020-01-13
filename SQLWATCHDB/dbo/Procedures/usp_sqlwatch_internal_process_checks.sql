@@ -112,7 +112,7 @@ begin
 	-- execute check and log output in variable:
 	-- APP_STAGE: 5980A79A-D6BC-4BA0-8B86-A388E8DB621D
 	-------------------------------------------------------------------------------------------------------------------
-	set @check_start_time = SYSDATETIME()
+	set @check_start_time = SYSUTCDATETIME()
 
 	begin try
 		set @check_query = 'SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
@@ -120,7 +120,7 @@ SET NOCOUNT ON
 SET ANSI_WARNINGS OFF
 ' + replace(@check_query,'{LAST_CHECK_DATE}',convert(varchar(23),@previous_check_date,121))
 		exec sp_executesql @check_query, N'@output decimal(28,5) OUTPUT', @output = @check_value output;
-		set @check_end_time = SYSDATETIME()
+		set @check_end_time = SYSUTCDATETIME()
 		set @check_exec_time_ms = convert(real,datediff(MICROSECOND,@check_start_time,@check_end_time) / 1000.0 )
 		if @check_value is null
 			begin
@@ -140,7 +140,7 @@ SET ANSI_WARNINGS OFF
 			@process_message_type = 'ERROR'
 
 		update	[dbo].[sqlwatch_meta_check]
-		set last_check_date = isnull(@check_end_time,SYSDATETIME()),
+		set last_check_date = isnull(@check_end_time,SYSUTCDATETIME()),
 			last_check_status = 'CHECK ERROR'
 		where [check_id] = @check_id
 		and sql_instance = @@SERVERNAME
@@ -300,7 +300,7 @@ SET ANSI_WARNINGS OFF
 	set last_check_date = @check_end_time,
 		last_check_value = @check_value,
 		last_check_status = @check_status,
-		last_status_change_date = case when @previous_check_status <> @check_status then getdate() else last_status_change_date end
+		last_status_change_date = case when @previous_check_status <> @check_status then getutcdate() else last_status_change_date end
 	where [check_id] = @check_id
 	and sql_instance = @@SERVERNAME
 
