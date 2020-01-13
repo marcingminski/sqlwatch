@@ -5,7 +5,7 @@
 	[sql_port] smallint null,
 	[sqlwatch_database_name] sysname not null constraint df_sqlwatch_config_sql_instance_database_name default (DB_NAME()),
 	[environment] sysname not null constraint df_sqlwatch_config_sql_instance_env default ('DEFAULT'),
-	[repo_collector_is_active] bit not null constraint df_sqlwatch_config_sql_instance default (1),
+	[repo_collector_is_active] bit not null constraint df_sqlwatch_config_sql_instance default (0),
 	[linked_server_name] nvarchar(255),
 	constraint pk_config_sql_instance primary key clustered (
 		[sql_instance]
