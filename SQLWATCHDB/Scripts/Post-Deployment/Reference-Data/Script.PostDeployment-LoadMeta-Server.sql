@@ -12,11 +12,11 @@ Post-Deployment Script Template
 begin transaction
 	/* add local instance to server config so we can satify relations */
 	merge dbo.sqlwatch_config_sql_instance as target
-	using (select [servername] = @@SERVERNAME) as source
+	using (select [servername] = @@SERVERNAME, [repo_collector_is_active] = 0) as source
 	on target.sql_instance = source.[servername]
 	when not matched then
-		insert (sql_instance)
-		values (source.[servername]);
+		insert (sql_instance, [repo_collector_is_active])
+		values (source.[servername], source.[repo_collector_is_active]);
 
 	merge [dbo].[sqlwatch_meta_server] as target
 	using (
