@@ -10,9 +10,13 @@
 	constraint pk_config_sql_instance primary key clustered (
 		[sql_instance]
 	),
+	/*  [repo_collector_is_active] only applies to remote instances.
+		we can pause collection by setting it to 0 and when set to 0 it will dissapear from PBI.
+		However, we cannot set local collector to 1 as it would attempt to collect data from local instance resulting in clash.
+		PBI will always show local collector as a minimum regardles this flag */
 	constraint chk_sqlwatch_config_sql_instance_is_active check (
 		([sql_instance] = @@SERVERNAME and [repo_collector_is_active] = 0)
-		or ([sql_instance] = @@SERVERNAME and [repo_collector_is_active] in (1,0))
+		or ([sql_instance] <> @@SERVERNAME and [repo_collector_is_active] in (1,0))
 		)
 )
 go
