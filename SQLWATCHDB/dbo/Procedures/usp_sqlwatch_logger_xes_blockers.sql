@@ -23,11 +23,20 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 
 		declare @snapshot_time datetime,
 				@snapshot_type_id tinyint = 9,
-				@filename varchar(8000)
+				@filename varchar(8000),
+				@session_name nvarchar(256)
 
 		exec [dbo].[usp_sqlwatch_internal_insert_header] 
 			@snapshot_time_new = @snapshot_time OUTPUT,
 			@snapshot_type_id = @snapshot_type_id
+
+		select @session_name = case 
+			/* always get SQLWATCH xes if exists */
+			when exists (select name from sys.dm_xe_sessions where name = 'SQLWATCH_blockers') then 'SQLWATCH_blockers'
+			/* if no SQLWATCH session, conditionally fail back to system_health */
+			when dbo.ufn_sqlwatch_get_config_value(9, null) = 1 then 'system_health'
+			else ''
+		end
 
 		select cast(target_data as xml) AS target_data
 		into #xes
@@ -36,9 +45,8 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 			on xes.address = xet.event_session_address
 		/* this will dynamically set session so the user has a choice to either use system_health session ot SQLWATCH_*. 
 			if SQLWATCH session is switched off we will use system_health otherwise use SQLWATCH_* */
-		where xes.name = isnull((select name from sys.dm_xe_sessions where name = 'SQLWATCH_blockers'),'system_health')
-			and xet.target_name = 'ring_buffer'
-
+		where xes.name = @session_name and xet.target_name = 'ring_buffer'
+	
 
 		merge [dbo].[sqlwatch_logger_xes_blockers] as target
 		using 
