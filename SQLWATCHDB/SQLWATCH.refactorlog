@@ -2289,4 +2289,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="[report_time]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="b2b86739-56c8-4f35-801b-a750d73512bc" ChangeDateTime="01/15/2020 10:58:36">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_config_start_xes]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_internal_start_xes]" />
+  </Operation>
 </Operations>

@@ -98,6 +98,11 @@ if (select case when @@VERSION like '%Express Edition%' then 1 else 0 end) = 0
 :r .\Scripts\Post-Deployment\Data-Fixes\Script.PostDeployment-DataFix-MigrateReportTime.sql
 
 -------------------------------------------------------------------------------------
+-- start XES
+-------------------------------------------------------------------------------------
+exec [dbo].[usp_sqlwatch_internal_start_xes]
+
+-------------------------------------------------------------------------------------
 -- THIS MUST BE LAST STATEMENT IN THE PROCESS SO WE CAN RUN DATA-MIGRATIONS BASED
 -- ON THE CURRENT VERSION. IF WE UPDATE VERSION BEFORE RUNNING DATA MIGRATION IT WILL
 -- BE A DISASTER
