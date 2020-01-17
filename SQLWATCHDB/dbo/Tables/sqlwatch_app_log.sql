@@ -9,7 +9,12 @@
 	[spid]					int,
 	[process_login]			nvarchar(512),
 	[process_user]			nvarchar(512),
-	[SQL_ERROR]				xml,
+	[ERROR_NUMBER]			int,
+	[ERROR_SEVERITY]		int,
+	[ERROR_STATE]			int,
+	[ERROR_PROCEDURE]		nvarchar(max),
+	[ERROR_LINE]			int,
+	[ERROR_MESSAGE]			nvarchar(max),
 	
 	constraint pk_sqlwatch_sys_log primary key clustered (
 		[event_sequence], [sql_instance]

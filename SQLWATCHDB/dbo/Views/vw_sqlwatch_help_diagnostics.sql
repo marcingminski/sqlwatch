@@ -94,7 +94,7 @@ select sqlwatch_diagnostics = (
 
 		, logger_log_errors = (
 			select event_sequence, event_time, sql_instance_anonym = master.dbo.fn_varbintohexstr(HashBytes('MD5', [sql_instance]))
-			, process_name, process_stage,  SQL_ERROR
+			, process_name, process_stage, [ERROR_NUMBER],[ERROR_SEVERITY],[ERROR_STATE],[ERROR_PROCEDURE],[ERROR_LINE],[ERROR_MESSAGE]
 			from [dbo].[sqlwatch_app_log]
 			where [event_time] > dateadd(hour,-24,getutcdate())
 			and [process_message_type] = 'ERROR'

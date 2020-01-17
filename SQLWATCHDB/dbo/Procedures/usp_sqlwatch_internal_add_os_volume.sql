@@ -17,9 +17,9 @@ using (
 on target.[volume_name] = source.[volume_name]
 and target.[sql_instance] = source.[sql_instance]
 
-		
-when not matched by source and target.sql_instance = @@SERVERNAME then
-	update set [is_record_deleted] = 1
+-- #140
+--when not matched by source and target.sql_instance = @@SERVERNAME then
+--	update set [is_record_deleted] = 1
 
 when matched then 
 	update set [label] = source.[label],
