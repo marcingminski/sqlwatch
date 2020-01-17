@@ -55,11 +55,22 @@ begin try
 		,[spid]					
 		,[process_login]			
 		,[process_user]			
-		,[SQL_ERROR]		
+		,[ERROR_NUMBER]
+		,[ERROR_SEVERITY]
+		,[ERROR_STATE]
+		,[ERROR_PROCEDURE]
+		,[ERROR_LINE]
+		,[ERROR_MESSAGE]
 	)
 	values (
 		@process_name, @process_stage, @process_message, @process_message_type,
-		@@SPID, SYSTEM_USER, USER, case when @process_message_type <> 'INFO' then [dbo].[ufn_sqlwatch_get_error_detail_xml]() else null end
+		@@SPID, SYSTEM_USER, USER
+			, case when @process_message_type <> 'INFO' then ERROR_NUMBER() else null end
+			, case when @process_message_type <> 'INFO' then ERROR_SEVERITY() else null end
+			, case when @process_message_type <> 'INFO' then ERROR_STATE() else null end
+			, case when @process_message_type <> 'INFO' then ERROR_PROCEDURE() else null end
+			, case when @process_message_type <> 'INFO' then ERROR_LINE() else null end
+			, case when @process_message_type <> 'INFO' then ERROR_MESSAGE() else null end
 	)
 
 	begin
