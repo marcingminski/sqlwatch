@@ -75,6 +75,11 @@ exec [dbo].[usp_sqlwatch_internal_add_database]
 -------------------------------------------------------------------------------------
 :r .\Scripts\Post-Deployment\Reference-Data\Script.PostDeployment-LoadConfig-Global.sql
 
+-------------------------------------------------------------------------------------
+-- start XES
+-------------------------------------------------------------------------------------
+exec [dbo].[usp_sqlwatch_internal_start_xes]
+
 --------------------------------------------------------------------------------------
 --setup jobs
 --we have to switch database to msdb but we also need to know which db jobs should run in so have to capture current database:
@@ -85,8 +90,6 @@ if (select case when @@VERSION like '%Express Edition%' then 1 else 0 end) = 0
 		exec dbo.[usp_sqlwatch_config_set_default_agent_jobs]
 	end
 
-
-
 -------------------------------------------------------------------------------------
 -- Make Constraints Trusted Again
 -------------------------------------------------------------------------------------
@@ -96,11 +99,6 @@ if (select case when @@VERSION like '%Express Edition%' then 1 else 0 end) = 0
 -- Migrate Data
 -------------------------------------------------------------------------------------
 :r .\Scripts\Post-Deployment\Data-Fixes\Script.PostDeployment-DataFix-MigrateReportTime.sql
-
--------------------------------------------------------------------------------------
--- start XES
--------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_internal_start_xes]
 
 -------------------------------------------------------------------------------------
 -- THIS MUST BE LAST STATEMENT IN THE PROCESS SO WE CAN RUN DATA-MIGRATIONS BASED
