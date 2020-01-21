@@ -149,9 +149,10 @@ exec [dbo].[usp_sqlwatch_user_add_check]
 	,@check_name = 'Disk Free %'
 	,@check_description = 'The "Free Space %" value is lower than expected. One or more disks have less than expected free space. This does not mean that the disk will be full soon as it may not grow much. Please check the "days until full" value or the actual growth.
 If there is a report assosiated with this check, details of the storage utilistaion should be included below.'
-	,@check_query = 'select @output=free_space_percentage
+	,@check_query = 'select @output=min(free_space_percentage)
 from dbo.vw_sqlwatch_report_dim_os_volume
-where sql_instance = @@SERVERNAME'
+where sql_instance = @@SERVERNAME
+and free_space_percentage is not null'
 	,@check_frequency_minutes = 60
 	,@check_threshold_warning = '<0.1'
 	,@check_threshold_critical = '<0.05'
@@ -169,9 +170,10 @@ exec [dbo].[usp_sqlwatch_user_add_check]
 	 @check_id = -8
 	,@check_name = 'Days left until disk full'
 	,@check_description = 'The "days until full" value is lower than expected. One or more disks will be full in few days. If there is a report assosiated with this check, details of the storage utilistaion should be included below.'
-	,@check_query = 'select @output=days_until_full
+	,@check_query = 'select @output=min(days_until_full)
 from dbo.vw_sqlwatch_report_dim_os_volume
-where sql_instance = @@SERVERNAME'
+where sql_instance = @@SERVERNAME
+and days_until_full is not null'
 	,@check_frequency_minutes = 60
 	,@check_threshold_warning = '<7'
 	,@check_threshold_critical = '<3'
