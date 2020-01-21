@@ -51,7 +51,7 @@ values
 	/*	when SQLWATCH xes are disabled we will try get data from system_health session if enabled.
 		Quite often however system_health session is quite large and it can take couple of minutes ot parse xml
 		It is recommended to use SQLWATCH sessions	*/
-	(9	,'Fail back to system_health session'				,1)  
+	(9	,'Fail back to system_health session'				,0)  
 ;
 
 merge dbo.sqlwatch_config as target
