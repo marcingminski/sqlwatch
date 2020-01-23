@@ -48,6 +48,7 @@ begin
 
 
 	create table ##sqlwatch_jobs (
+		job_id tinyint identity (1,1),
 		job_name sysname primary key,
 		freq_type int, 
 		freq_interval int, 
