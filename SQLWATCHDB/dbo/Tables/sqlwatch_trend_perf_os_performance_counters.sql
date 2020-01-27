@@ -4,7 +4,9 @@
 	[instance_name] nvarchar(128) not null,
 	[report_time] datetime2(0) not null,
 	[sql_instance] varchar(32) not null constraint df_sqlwatch_trend_perf_os_performance_counters_sql_instance default (@@SERVERNAME),
-	[cntr_value_calculated] real null,
+	[cntr_value_calculated_avg] real null,
+	[cntr_value_calculated_min] real null,
+	[cntr_value_calculated_max] real null,
 	[trend_interval_minutes] tinyint not null,
 	[snapshot_time_offset] datetimeoffset,
 	/* aggregates will be detached from header as no new snapshots will be created in the header table when aggregates are created 
@@ -19,6 +21,6 @@ go
 
 CREATE NONCLUSTERED INDEX sqlwatch_trend_perf_os_performance_counters_value
 ON [dbo].[sqlwatch_trend_perf_os_performance_counters] ([performance_counter_id],[sql_instance],[trend_interval_minutes])
-INCLUDE ([cntr_value_calculated])
+INCLUDE ([cntr_value_calculated_avg])
 
 go

@@ -2296,4 +2296,11 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[usp_sqlwatch_internal_start_xes]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="757c1434-050b-4076-a3ef-73904816eddf" ChangeDateTime="01/26/2020 15:40:42">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_trend_perf_os_performance_counters].[cntr_value_calculated]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_trend_perf_os_performance_counters]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[cntr_value_calculated_avg]" />
+  </Operation>
 </Operations>

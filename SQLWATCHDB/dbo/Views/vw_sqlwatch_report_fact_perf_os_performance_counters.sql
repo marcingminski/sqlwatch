@@ -28,7 +28,7 @@ from [dbo].[sqlwatch_logger_perf_os_performance_counters] d
 	select m.[object_name], m.[counter_name], [instance_name], [cntr_value]=null
 	, [report_time]
 	, d.[sql_instance]
-	, [cntr_value_calculated]
+	, [cntr_value_calculated_avg]
 	, [trend_interval_minutes] 
 	, snapshot_type_id = 1
 	, snapshot_time = convert(datetime2(0),snapshot_time_offset)

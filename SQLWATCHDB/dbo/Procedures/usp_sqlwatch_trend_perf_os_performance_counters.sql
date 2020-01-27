@@ -66,7 +66,9 @@ select pc.[performance_counter_id]
       ,pc.[instance_name]
       ,[snapshot_time] = t.[interval_minutes_60]  
       ,pc.[sql_instance]
-      ,[cntr_value_calculated] = avg(pc.[cntr_value_calculated])
+      ,[cntr_value_calculated_avg] = avg(pc.[cntr_value_calculated])
+	  ,[cntr_value_calculated_min] = min(pc.[cntr_value_calculated])
+	  ,[cntr_value_calculated_max] = max(pc.[cntr_value_calculated])
 	  ,[aggregation_interval_minutes] = 60
 	  ,[snapshot_time_offset] = TODATETIMEOFFSET ( t.[interval_minutes_60] , h.snapshot_time_utc_offset )  
   from [dbo].[sqlwatch_logger_perf_os_performance_counters] pc
