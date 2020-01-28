@@ -1,7 +1,7 @@
 ﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_user_repository_add_remote_instance]
 	@sql_instance varchar(32),
 	@hostname nvarchar(32) = null,
-	@sql_port smallint = null,
+	@sql_port int = null,
 	@sqlwatch_database_name sysname,
 	@environment sysname,
 	@linked_server_name nvarchar(255) = null,
