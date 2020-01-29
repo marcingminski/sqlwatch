@@ -1,5 +1,6 @@
 ﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_internal_create_agent_job]
-	@print_WTS_command bit
+	@print_WTS_command bit,
+	@job_owner sysname = null
 as
 set nocount on;
 /*
@@ -21,6 +22,7 @@ set nocount on;
 
  Change Log:
 	1.0		2019-12-25	- Marcin Gminski, Initial version
+	1.1		2020-01-29	- Marcin Gminski, add job owner
 -------------------------------------------------------------------------------------------------------------------
 */
 
@@ -35,11 +37,22 @@ declare @job_description nvarchar(255) = 'https://sqlwatch.io',
 
 set @server = @@SERVERNAME
 
+/* fixed job ownership originally submmited by SvenLowry
+	https://github.com/marcingminski/sqlwatch/pull/101/commits/8772e56df3aa80849b1dac85405641feb6112e5c 
+	
+	if no user specified job owner passed, we are going to assume sa, or renamed sa based on the sid. */
+
+if @job_owner is null
+	begin
+		set @job_owner = (select [name] from syslogins where [sid] = 0x01)
+	end
+
+
 
 /* create job and steps */
 select @sql = replace(replace(convert(nvarchar(max),(select ' if (select name from msdb.dbo.sysjobs where name = ''' + job_name + ''') is null 
 	begin
-		exec msdb.dbo.sp_add_job @job_name=N''' + job_name + ''',  @category_name=N''' + @job_category + ''', @enabled=' + convert(char(1),job_enabled) + ',@description=''' + @job_description + ''';
+		exec msdb.dbo.sp_add_job @job_name=N''' + job_name + ''',  @owner_login_name=N''' + @job_owner + ''', @category_name=N''' + @job_category + ''', @enabled=' + convert(char(1),job_enabled) + ',@description=''' + @job_description + ''';
 		exec msdb.dbo.sp_add_jobserver @job_name=N''' + job_name + ''', @server_name = ''' + @server + ''';
 		' + (select 
 				' exec msdb.dbo.sp_add_jobstep @job_name=N''' + job_name + ''', @step_name=N''' + step_name + ''',@step_id= ' + convert(varchar(10),step_id) + ',@subsystem=N''' + step_subsystem + ''',@command=''' + replace(step_command,'''','''''') + ''',@on_success_action=' + case when ROW_NUMBER() over (partition by job_name order by step_id desc) = 1 then '1' else '3' end +', @on_fail_action=' + case when ROW_NUMBER() over (partition by job_name order by step_id desc) = 1 then '2' else '3' end + ', @database_name=''' + @database_name + ''''

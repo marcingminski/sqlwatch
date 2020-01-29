@@ -1,6 +1,7 @@
 CREATE PROCEDURE [dbo].[usp_sqlwatch_config_set_default_agent_jobs]
 	@remove_existing bit = 0,
-	@print_WTS_command bit = 0
+	@print_WTS_command bit = 0,
+	@job_owner sysname = null
 AS
 
 /*
@@ -25,6 +26,7 @@ AS
  Change Log:
 	1.0		2019-xx-xx	- Marcin Gminski, Initial version
 	1.1		2019-12-04	- Marcin Gminski, Print command to create Windows Scheduled Tasks for editions without agent
+	1.2		2020-01-29	- Marcin Gminski, add job owner
 -------------------------------------------------------------------------------------------------------------------
 */
 set nocount on;
@@ -212,5 +214,5 @@ Get-WMIObject Win32_Volume | ?{$_.DriveType -eq 3} | %{
 
 
 	exec [dbo].[usp_sqlwatch_internal_create_agent_job]
-		@print_WTS_command = @print_WTS_command
+		@print_WTS_command = @print_WTS_command, @job_owner = @job_owner
 
