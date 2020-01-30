@@ -227,6 +227,7 @@ declare @sql nvarchar(4000)
 
 		--------------------------------------------------------------------------------------------------------------
 		-- get sql memory. dynamic again based on sql version
+		-- based on [msdb].[dbo].[syscollector_collection_items]
 		--------------------------------------------------------------------------------------------------------------
 		declare @dm_os_memory_clerks table (
 			[type] varchar(60),
