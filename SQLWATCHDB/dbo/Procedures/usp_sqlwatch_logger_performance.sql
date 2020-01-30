@@ -246,8 +246,6 @@ declare @sql nvarchar(4000)
 				select 
 					type,
 					memory_node_id as memory_node_id,
-					-- see comment in the sys.dm_os_memory_nodes query (above) for more info on 
-					-- [single_pages_kb] and [multi_pages_kb]. 
 					sum(single_pages_kb) as single_pages_kb,
 					0 as multi_pages_kb,
 					sum(virtual_memory_reserved_kb) as virtual_memory_reserved_kb,
@@ -267,8 +265,6 @@ declare @sql nvarchar(4000)
 				select 
 					type,
 					memory_node_id as memory_node_id,
-					-- see comment in the sys.dm_os_memory_nodes query (above) for more info on 
-					-- [single_pages_kb] and [multi_pages_kb]. 
 					sum(pages_kb) as single_pages_kb,
 					0 as multi_pages_kb,
 					sum(virtual_memory_reserved_kb) as virtual_memory_reserved_kb,
