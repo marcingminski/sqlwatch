@@ -58,7 +58,8 @@ if not exists (select * from [dbo].[sqlwatch_meta_repository_import_queue])
 
 				/* linked servers do not support xml columns, lets skip these for now	*/
 				and TABLE_NAME NOT IN (
-					'sqlwatch_logger_xes_blockers', 'sqlwatch_logger_whoisactive '
+					'THIS IS NOW SUPPORTED AND SHOULD WORK'
+					--'sqlwatch_logger_xes_blockers', 'sqlwatch_logger_whoisactive '
 					--select TABLE_NAME from INFORMATION_SCHEMA.COLUMNS
 					--where DATA_TYPE = 'xml'
 				)

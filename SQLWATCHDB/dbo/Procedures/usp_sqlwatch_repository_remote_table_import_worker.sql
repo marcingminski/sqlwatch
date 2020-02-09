@@ -18,6 +18,8 @@ declare @sql nvarchar(max),
 		@table_name nvarchar(128),
 		@table_schema nvarchar(128),
 		@all_columns nvarchar(max),
+		@all_columns_from_source nvarchar(max),
+		@all_columns_to_destination nvarchar(max),
 		@pk_columns nvarchar(max),
 		@nonpk_columns nvarchar(max),
 		@has_errors bit = 0,
@@ -78,6 +80,21 @@ declare @sql nvarchar(max),
 						order by ORDINAL_POSITION
 						for xml path('')),1,1,'')
 
+				/* get columns, linked servers do not support xml data type so we need to convert to char and back to xml */
+				select @all_columns_from_source = stuff ((
+						select ',' + case when DATA_TYPE like '%xml%' then quotename(COLUMN_NAME) + ' = convert(nvarchar(max),' + quotename(COLUMN_NAME) + ')' else quotename(COLUMN_NAME) end
+						from INFORMATION_SCHEMA.COLUMNS
+						where TABLE_NAME = @table_name
+						order by ORDINAL_POSITION
+						for xml path('')),1,1,'')
+
+				select @all_columns_to_destination = stuff ((
+						select ',' + case when DATA_TYPE like '%xml%' then quotename(COLUMN_NAME) + ' = convert(xml,' + quotename(COLUMN_NAME) + ')' else quotename(COLUMN_NAME) end
+						from INFORMATION_SCHEMA.COLUMNS
+						where TABLE_NAME = @table_name
+						order by ORDINAL_POSITION
+						for xml path('')),1,1,'')
+
 
 				/* update columns */
 				select @update_columns = stuff((
@@ -126,9 +143,9 @@ declare @sql nvarchar(max),
 			------------------------------------------------------------------------------------------------------------
 			if @load_type = 'F'
 				begin
-					set @sql = 'select * from ' + @object_name
+					set @sql = 'select ' + @all_columns_from_source + ' from ' + @object_name
 					set @sql = '
-select * 
+select ' + @all_columns_to_destination + ' 
 into #t
 from openquery([' + @ls_server + '],''' + replace(@sql,'''','''''') + ''')
 set @rowcount_imported_out = @@ROWCOUNT
@@ -183,7 +200,7 @@ and snapshot_type_id = ' + convert(varchar(10),@snapshot_type_id)
 					exec sp_executesql @sql, N'@snapshot_time_end_out datetime2(0) OUTPUT', @snapshot_time_end_out = @snapshot_time_end output;
 				
 					/*	build the remote command limited to dates from the above calcualations	*/
-					set @sql = 'select * from ' + @object_name + '
+					set @sql = 'select ' + @all_columns_from_source + ' from ' + @object_name + '
 where sql_instance = ''' + @sql_instance + ''' 
 and snapshot_time > ''' + isnull( convert(varchar(23),@snapshot_time_start,121),'1970-01-01') + '''
 ' 
@@ -193,7 +210,7 @@ and snapshot_time > ''' + isnull( convert(varchar(23),@snapshot_time_start,121),
 					set @sql = '
 ' + case when @has_identity = 1 then 'set identity_insert ' + quotename(@table_name) + ' on' else '' end + '
 insert into '+ quotename(@table_schema) + '.' + quotename(@table_name) + ' (' + @all_columns + ')
-select ' + @all_columns + ' from openquery([' + @ls_server + '],''' + replace(@sql,'''','''''') + ''')
+select ' + @all_columns_to_destination + ' from openquery([' + @ls_server + '],''' + replace(@sql,'''','''''') + ''')
 set @rowcount_loaded_out = @@ROWCOUNT
 ' + case when @has_identity = 1 then 'set identity_insert ' + quotename(@table_name) + ' off' else '' end + '
 					'
