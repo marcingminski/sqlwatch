@@ -61,7 +61,17 @@ from [dbo].[sqlwatch_trend_perf_os_performance_counters]
 where [trend_interval_minutes] = 60
 and sql_instance = @@SERVERNAME
 
-insert into [dbo].[sqlwatch_trend_perf_os_performance_counters]
+insert into [dbo].[sqlwatch_trend_perf_os_performance_counters] (
+	performance_counter_id
+	, instance_name
+	, report_time
+	, sql_instance
+	, cntr_value_calculated_avg
+	, cntr_value_calculated_min
+	, cntr_value_calculated_max
+	, trend_interval_minutes
+	, snapshot_time_offset
+	)
 select pc.[performance_counter_id]
       ,pc.[instance_name]
       ,[snapshot_time] = t.[interval_minutes_60]  
