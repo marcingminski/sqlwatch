@@ -26,4 +26,5 @@ if exists (
 		Print 'Migrating Report Time to Offset Time...'
 		update sqlwatch_logger_snapshot_header
 			set report_time = dateadd(mi, datepart(TZOFFSET,SYSDATETIMEOFFSET()), (CONVERT([smalldatetime],dateadd(minute,ceiling(datediff(second,(0),CONVERT([time],CONVERT([datetime],[snapshot_time])))/(60.0)),datediff(day,(0),[snapshot_time])))))
+			where report_time is null
 	end
