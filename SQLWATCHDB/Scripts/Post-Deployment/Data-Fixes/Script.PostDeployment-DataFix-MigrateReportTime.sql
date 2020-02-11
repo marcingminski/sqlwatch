@@ -17,7 +17,11 @@ if exists (
 	and minor = 2
 	and patch <= 7287
 	and build <= 38400
-	)
+	) or (
+		select count(*)
+		from sqlwatch_logger_snapshot_header
+		where report_time is null
+		) > 0
 	begin
 		Print 'Migrating Report Time to Offset Time...'
 		update sqlwatch_logger_snapshot_header
