@@ -85,7 +85,7 @@
 
 			, row_count_current
 			, [row_count_growth_per_day]
-
+			, [used_pages_growth_per_day]
 			, last_snapshot_time
 			, data_compression = case data_compression
 when 0 then 'NONE'
