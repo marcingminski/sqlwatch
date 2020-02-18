@@ -15,20 +15,20 @@ as
 	Average execution does not exceed few seconds.
 
  Parameters
-	@retention_period_days	-	Not used and only kept for backward compatibility with 1.3.x jobs. 
-								It will be removed at some point. The period days is now stored in the snapshot type table
-	@batch_size				-	Batch size of how many rows to delete at once. Default 500.
+	N/A
 
  Author:
 	Marcin Gminski
 
  Change Log:
-	1.0		2019-08		- Marcin Gminski, Initial version
-	1.1		2019-11-29	- Marcin Gminski, Ability to only leave most recent snapshot with -1 retention
-	1.2		2019-12-07	- Marcin Gminski, Added retention of the action queue
-	1.3		2019-12-09	- Marcin Gminski, build deletion keys out of the loop to improve loop performance and reduce contention
-	1.4		2019-12-31	- Marcin Gminski, changed hardcoded to configurable retention periods for non-logger tables,
-										  replaced input parameters with global config
+	1.0		2019-08		- Marcin Gminski,	Initial version
+	1.1		2019-11-29	- Marcin Gminski,	Ability to only leave most recent snapshot with -1 retention
+	1.2		2019-12-07	- Marcin Gminski,	Added retention of the action queue
+	1.3		2019-12-09	- Marcin Gminski,	build deletion keys out of the loop to improve loop performance and reduce contention
+	1.4		2019-12-31	- Marcin Gminski,	changed hardcoded to configurable retention periods for non-logger tables,
+											replaced input parameters with global config
+	1.5		2020-02-18	- Marcin Gminski,	fixed an issue where retention would not be correctly applied due to null variables,
+											code cleanse
 -------------------------------------------------------------------------------------------------------------------
 */
 set nocount on;
@@ -41,14 +41,10 @@ declare @snapshot_type_id tinyint,
 		@action_queue_retention_days_success smallint,
 		@application_log_retention_days smallint
 
-select 
-	@batch_size = case when config_id = 6 then config_value else null end,
-	@action_queue_retention_days_failed = case when config_id = 3 then config_value else null end,
-	@action_queue_retention_days_success = case when config_id = 4 then config_value else null end,
-	@application_log_retention_days = case when config_id = 1 then config_value else null end,
-	@row_count = 1
-from dbo.sqlwatch_config
-where config_id in (1,3,4,6)
+select @batch_size = [dbo].[ufn_sqlwatch_get_config_value](6, null)
+select @action_queue_retention_days_failed = [dbo].[ufn_sqlwatch_get_config_value](3, null)
+select @action_queue_retention_days_success = [dbo].[ufn_sqlwatch_get_config_value](4, null)
+select @application_log_retention_days = [dbo].[ufn_sqlwatch_get_config_value](1, null)
 
 declare @cutoff_dates as table (
 	snapshot_time datetime2(0),
@@ -97,25 +93,21 @@ while @row_count > 0
 				and h.snapshot_type_id = c.snapshot_type_id
 
 			set @row_count = @@ROWCOUNT
-			print 'Deleted: ' + convert(varchar(max),@row_count) + case when @row_count = 1 then ' row' else ' rows' end
+			print 'Deleted ' + convert(varchar(max),@row_count) + ' records from [dbo].[sqlwatch_logger_snapshot_header]'
 		commit tran
 	end
 
 	/*	delete old records from the action queue */
-	begin tran
-		delete 
-		from [dbo].[sqlwatch_meta_action_queue] 
-		where [time_queued] < case when exec_status <> 'FAILED' then dateadd(day,-@action_queue_retention_days_success,sysdatetime()) else dateadd(day,-@action_queue_retention_days_failed,sysdatetime()) end
-		Print 'Deleted ' + convert(varchar(max),@@ROWCOUNT) + ' record' + case when @@ROWCOUNT > 1 then 's' else '' end + ' from [dbo].[sqlwatch_meta_action_queue]'
-	commit tran
+	delete 
+	from [dbo].[sqlwatch_meta_action_queue] 
+	where [time_queued] < case when exec_status <> 'FAILED' then dateadd(day,-@action_queue_retention_days_success,sysdatetime()) else dateadd(day,-@action_queue_retention_days_failed,sysdatetime()) end
+	Print 'Deleted ' + convert(varchar(max),@@ROWCOUNT) + ' records from [dbo].[sqlwatch_meta_action_queue]'
 
 	/* Application log retention */
-	begin tran
-		delete
-		from dbo.sqlwatch_app_log
-		where event_time < dateadd(day,-@application_log_retention_days, SYSDATETIME())
-		Print 'Deleted ' + convert(varchar(max),@@ROWCOUNT) + ' record' + case when @@ROWCOUNT > 1 then 's' else '' end + ' from [dbo].[sqlwatch_app_log]'
-	commit tran
+	delete
+	from dbo.sqlwatch_app_log
+	where event_time < dateadd(day,-@application_log_retention_days, SYSDATETIME())
+	Print 'Deleted ' + convert(varchar(max),@@ROWCOUNT) + ' records from [dbo].[sqlwatch_app_log]'
 
 	/*	Trend tables retention.
 		These are detached from the header so we can keep more history and in a slightly different format to utilise less storage.
@@ -130,6 +122,6 @@ while @row_count > 0
 		where snapshot_type_id = @snapshot_type_id
 		and [snapshot_retention_days_trend] is not null
 		)
-	Print 'Deleted ' + convert(varchar(max),@@ROWCOUNT) + ' record' + case when @@ROWCOUNT > 1 then 's' else '' end + ' from [dbo].[sqlwatch_trend_perf_os_performance_counters]'
+	Print 'Deleted ' + convert(varchar(max),@@ROWCOUNT) + ' records from [dbo].[sqlwatch_trend_perf_os_performance_counters]'
 
 go
