@@ -59,24 +59,24 @@
 		, [volume_total_space_bytes_current], [volume_free_space_bytes_current], [volume_bytes_growth], [total_growth_days], [free_space_percentage]
 		, [growth_bytes_per_day], [days_until_full]
 	, [total_space_formatted] = case 
-			when volume_total_space_bytes_current / 1024.0 < 1000 then convert(varchar(100),convert(decimal(5,2),volume_total_space_bytes_current / 1024.0 )) + ' KB'
-			when volume_total_space_bytes_current / 1024.0 / 1024.0 < 1000 then convert(varchar(100),convert(decimal(5,2),volume_total_space_bytes_current / 1024.0 / 1024.0)) + ' MB'
-			when volume_total_space_bytes_current / 1024.0 / 1024.0 / 1024.0 < 1000 then convert(varchar(100),convert(decimal(5,2),volume_total_space_bytes_current / 1024.0 / 1024.0 / 1024.0)) + ' GB' 
-			else convert(varchar(100),convert(decimal(5,2),volume_total_space_bytes_current / 1024.0 / 1024.0 / 1024.0)) + ' TB' 
+			when volume_total_space_bytes_current / 1024.0 < 1000 then convert(varchar(100),convert(decimal(6,2),volume_total_space_bytes_current / 1024.0 )) + ' KB'
+			when volume_total_space_bytes_current / 1024.0 / 1024.0 < 1000 then convert(varchar(100),convert(decimal(6,2),volume_total_space_bytes_current / 1024.0 / 1024.0)) + ' MB'
+			when volume_total_space_bytes_current / 1024.0 / 1024.0 / 1024.0 < 1000 then convert(varchar(100),convert(decimal(6,2),volume_total_space_bytes_current / 1024.0 / 1024.0 / 1024.0)) + ' GB' 
+			else convert(varchar(100),convert(decimal(6,2),volume_total_space_bytes_current / 1024.0 / 1024.0 / 1024.0 / 1024.0)) + ' TB' 
 			end
 	, [free_space_formatted] = case
-			when [volume_free_space_bytes_current] / 1024.0 < 1000 then convert(varchar(100),convert(decimal(5,2),[volume_free_space_bytes_current] / 1024.0 )) + ' KB'
-			when [volume_free_space_bytes_current] / 1024.0 / 1024.0 < 1000 then convert(varchar(100),convert(decimal(5,2),[volume_free_space_bytes_current] / 1024.0 / 1024.0)) + ' MB'
-			when [volume_free_space_bytes_current] / 1024.0 / 1024.0 / 1024.0 < 1000 then convert(varchar(100),convert(decimal(5,2),[volume_free_space_bytes_current] / 1024.0 / 1024.0 / 1024.0)) + ' GB' 
-			else convert(varchar(100),convert(decimal(5,2),[volume_free_space_bytes_current] / 1024.0 / 1024.0 / 1024.0 / 1024.0)) + ' TB' 
+			when [volume_free_space_bytes_current] / 1024.0 < 1000 then convert(varchar(100),convert(decimal(6,2),[volume_free_space_bytes_current] / 1024.0 )) + ' KB'
+			when [volume_free_space_bytes_current] / 1024.0 / 1024.0 < 1000 then convert(varchar(100),convert(decimal(6,2),[volume_free_space_bytes_current] / 1024.0 / 1024.0)) + ' MB'
+			when [volume_free_space_bytes_current] / 1024.0 / 1024.0 / 1024.0 < 1000 then convert(varchar(100),convert(decimal(6,2),[volume_free_space_bytes_current] / 1024.0 / 1024.0 / 1024.0)) + ' GB' 
+			else convert(varchar(100),convert(decimal(6,2),[volume_free_space_bytes_current] / 1024.0 / 1024.0 / 1024.0 / 1024.0)) + ' TB' 
 			end
 
 	, [growth_bytes_per_day_formatted] = case
-			when growth_bytes_per_day / 1024.0 < 1000 then convert(varchar(100),convert(decimal(5,2),growth_bytes_per_day / 1024.0 )) + ' KB / Day'
-			when growth_bytes_per_day / 1024.0 / 1024.0 < 1000 then convert(varchar(100),convert(decimal(5,2),growth_bytes_per_day / 1024.0 / 1024.0)) + ' MB / Day'
-			when growth_bytes_per_day / 1024.0 / 1024.0 / 1024.0 < 1000 then convert(varchar(100),convert(decimal(5,2),growth_bytes_per_day / 1024.0 / 1024.0 / 1024.0)) + ' GB / Day' 
+			when growth_bytes_per_day / 1024.0 < 1000 then convert(varchar(100),convert(decimal(6,2),growth_bytes_per_day / 1024.0 )) + ' KB / Day'
+			when growth_bytes_per_day / 1024.0 / 1024.0 < 1000 then convert(varchar(100),convert(decimal(6,2),growth_bytes_per_day / 1024.0 / 1024.0)) + ' MB / Day'
+			when growth_bytes_per_day / 1024.0 / 1024.0 / 1024.0 < 1000 then convert(varchar(100),convert(decimal(6,2),growth_bytes_per_day / 1024.0 / 1024.0 / 1024.0)) + ' GB / Day' 
 			else convert(varchar(100),convert(decimal(5,2),growth_bytes_per_day / 1024.0 / 1024.0 / 1024.0 / 1024.0)) + ' TB' 
 			end
-	, [free_space_percentage_formatted] = convert(varchar(50),convert(decimal(5,0),volume_free_space_bytes_current * 1.0 / volume_total_space_bytes_current  * 100.0)) + ' %'
+	, [free_space_percentage_formatted] = convert(varchar(50),convert(decimal(6,0),volume_free_space_bytes_current * 1.0 / volume_total_space_bytes_current  * 100.0)) + ' %'
 	from cte_volume_growth
 
