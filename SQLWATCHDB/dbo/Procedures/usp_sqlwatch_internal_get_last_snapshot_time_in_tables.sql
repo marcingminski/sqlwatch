@@ -149,6 +149,8 @@ with result sets (
 	,sqlwatch_logger_check_header varchar(23)
 	,sqlwatch_logger_check_action varchar(23)
 	,sqlwatch_logger_check_action_header varchar(23)
+	,sqlwatch_logger_disk_utilisation_table varchar(23)
+	,sqlwatch_logger_disk_utilisation_table_header varchar(23)
 	)
 )
 
