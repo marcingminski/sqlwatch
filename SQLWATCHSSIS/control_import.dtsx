@@ -13,8 +13,8 @@
   DTS:MaxConcurrentExecutables="99"
   DTS:ObjectName="control_import"
   DTS:PackageType="5"
-  DTS:VersionBuild="255"
-  DTS:VersionGUID="{767B52A7-5053-4AD8-872F-61C5AAA4DA09}">
+  DTS:VersionBuild="265"
+  DTS:VersionGUID="{90D0207A-AC9D-4E02-A530-6F79556D1BFE}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">6</DTS:Property>
   <DTS:ConnectionManagers>
@@ -36,11 +36,11 @@
       <DTS:ObjectData>
         <DTS:ConnectionManager
           DTS:Retain="True"
-          DTS:ConnectionString="Data Source=192.168.168.133;User ID=sa;Initial Catalog=SQLWATCH;Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;Packet Size=32767;">
+          DTS:ConnectionString="Data Source=sqlwatch-repo-1;User ID=sqlwatch_collector;Initial Catalog=SQLWATCH;Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;Packet Size=32767;">
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAACwJil7hlNcQ2hz24cI5zhZAAAAAASAAACgAAAAEAAAAEBLUcgJM1irSBt8Bzd1xpUYAAAADXY6Habmq0U2LGZUfCMXLyDMyxmPXAFFFAAAAGJFZmXSU+7NdQPHMz/DiYgfwOBU</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAADmwGxqhMtw20aX6DLBOzNTAAAAAASAAACgAAAAEAAAADZDIT3EXawFOthHGetxjcEYAAAAamTed+rbKQaZw5i8JyJzVHWudPAAbH62FAAAALG2Wm4gWuHZ8MsKkSw10y6lkJY5</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -77,7 +77,7 @@
       DTS:Required="True">
       <DTS:Property
         DTS:DataType="8"
-        DTS:Name="ParameterValue">192.168.168.133</DTS:Property>
+        DTS:Name="ParameterValue">sqlwatch-repo-1</DTS:Property>
     </DTS:PackageParameter>
     <DTS:PackageParameter
       DTS:CreationName=""
@@ -91,7 +91,7 @@
         <DTS:Property
           DTS:DataType="8"
           DTS:Name="ParameterValue"
-          Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAABEyRAfhPQBgBAh2oJ77XX5AAAAAASAAACgAAAAEAAAAA9QBv01r9okYu4N2olSSZoYAAAAacd0SBvpDUhzKM2ME/4+/Z5hwVBHMzV1FAAAAK/UkMzWdIa2b+pThXUbr9b6Mpid</DTS:Property>
+          Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAACqKAM+IWpEbnLp8OccIUSVAAAAAASAAACgAAAAEAAAANhNfwqTKVkyRZH5ZtRwZgcYAAAAKnTUcEvZOauk24SAtoCKI7tD9dDODEuRFAAAAH7yc+ll4FAx6I890PCK2mSaVO6Y</DTS:Property>
       </DTS:Property>
     </DTS:PackageParameter>
     <DTS:PackageParameter
@@ -102,7 +102,7 @@
       DTS:ObjectName="repository_user_name">
       <DTS:Property
         DTS:DataType="8"
-        DTS:Name="ParameterValue">sa</DTS:Property>
+        DTS:Name="ParameterValue">sqlwatch_collector</DTS:Property>
     </DTS:PackageParameter>
   </DTS:PackageParameters>
   <DTS:Variables>
@@ -1783,19 +1783,19 @@
           <DTS:Variables />
           <DTS:Executables>
             <DTS:Executable
-              DTS:refId="Package\Sequence Container\Foreach Loop Container 1\execute remote data import THREAD 1"
+              DTS:refId="Package\Sequence Container\Foreach Loop Container 1\execute remote data import"
               DTS:CreationName="SSIS.ExecutePackageTask.3"
               DTS:Description="Execute Package Task"
               DTS:DTSID="{31c1d0fd-3186-49be-ba87-59632c4b815b}"
               DTS:ExecutableType="SSIS.ExecutePackageTask.3"
               DTS:ForceExecutionResult="0"
               DTS:LocaleID="-1"
-              DTS:ObjectName="execute remote data import THREAD 1"
+              DTS:ObjectName="execute remote data import"
               DTS:TaskContact="Microsoft Corporation; Microsoft SQL Server; Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
               <DTS:Variables />
               <DTS:EventHandlers>
                 <DTS:EventHandler
-                  DTS:refId="Package\Sequence Container\Foreach Loop Container 1\execute remote data import THREAD 1.EventHandlers[OnPostExecute]"
+                  DTS:refId="Package\Sequence Container\Foreach Loop Container 1\execute remote data import.EventHandlers[OnPostExecute]"
                   DTS:CreationName="OnPostExecute"
                   DTS:DTSID="{1BDC515E-1983-46DF-8E4D-695F8A28BD0C}"
                   DTS:EventID="1459637248"
@@ -1815,7 +1815,7 @@
                   </DTS:Variables>
                   <DTS:Executables>
                     <DTS:Executable
-                      DTS:refId="Package\Sequence Container\Foreach Loop Container 1\execute remote data import THREAD 1.EventHandlers[OnPostExecute]\REMOVE Tread from sqlwatch_meta_repository_import_thread"
+                      DTS:refId="Package\Sequence Container\Foreach Loop Container 1\execute remote data import.EventHandlers[OnPostExecute]\REMOVE Tread from sqlwatch_meta_repository_import_thread"
                       DTS:CreationName="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
                       DTS:Description="Execute SQL Task"
                       DTS:DTSID="{3b218c91-94c6-4997-8c36-d5fa5f1ea677}"
@@ -1828,51 +1828,6 @@
                           SQLTask:Connection="{1DF2B296-3953-4499-98EA-13E6C4575138}"
                           SQLTask:SqlStmtSourceType="Variable"
                           SQLTask:SqlStatementSource="User::sql_remove_thread_status" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
-                          <SQLTask:ParameterBinding
-                            SQLTask:ParameterName="0"
-                            SQLTask:DtsVariableName="User::remote_instance_name_t1"
-                            SQLTask:ParameterDirection="Input"
-                            SQLTask:DataType="129"
-                            SQLTask:ParameterSize="-1" />
-                        </SQLTask:SqlTaskData>
-                      </DTS:ObjectData>
-                    </DTS:Executable>
-                  </DTS:Executables>
-                </DTS:EventHandler>
-                <DTS:EventHandler
-                  DTS:refId="Package\Sequence Container\Foreach Loop Container 1\execute remote data import THREAD 1.EventHandlers[OnPreExecute]"
-                  DTS:CreationName="OnPreExecute"
-                  DTS:DTSID="{27FAC498-C27B-4ECD-9164-4777C1696F0B}"
-                  DTS:EventID="0"
-                  DTS:EventName="OnPreExecute"
-                  DTS:LocaleID="-1">
-                  <DTS:Variables>
-                    <DTS:Variable
-                      DTS:CreationName=""
-                      DTS:Description="The propagate property of the event"
-                      DTS:DTSID="{460FC81F-E182-456C-9B32-57B47573C117}"
-                      DTS:IncludeInDebugDump="6789"
-                      DTS:Namespace="System"
-                      DTS:ObjectName="Propagate">
-                      <DTS:VariableValue
-                        DTS:DataType="11">-1</DTS:VariableValue>
-                    </DTS:Variable>
-                  </DTS:Variables>
-                  <DTS:Executables>
-                    <DTS:Executable
-                      DTS:refId="Package\Sequence Container\Foreach Loop Container 1\execute remote data import THREAD 1.EventHandlers[OnPreExecute]\ADD Tread to sqlwatch_meta_repository_import_thread"
-                      DTS:CreationName="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
-                      DTS:Description="Execute SQL Task"
-                      DTS:DTSID="{df9eeeb6-b3f7-48ad-a20b-366f12208f57}"
-                      DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
-                      DTS:LocaleID="-1"
-                      DTS:ObjectName="ADD Tread to sqlwatch_meta_repository_import_thread">
-                      <DTS:Variables />
-                      <DTS:ObjectData>
-                        <SQLTask:SqlTaskData
-                          SQLTask:Connection="{1DF2B296-3953-4499-98EA-13E6C4575138}"
-                          SQLTask:SqlStmtSourceType="Variable"
-                          SQLTask:SqlStatementSource="User::sql_set_thread_status" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
                           <SQLTask:ParameterBinding
                             SQLTask:ParameterName="0"
                             SQLTask:DtsVariableName="User::remote_instance_name_t1"
@@ -1913,6 +1868,54 @@
               </DTS:ObjectData>
             </DTS:Executable>
           </DTS:Executables>
+          <DTS:EventHandlers>
+            <DTS:EventHandler
+              DTS:refId="Package\Sequence Container\Foreach Loop Container 1.EventHandlers[OnPreExecute]"
+              DTS:CreationName="OnPreExecute"
+              DTS:DTSID="{B80401DC-4CCC-4F92-885A-805AD54EF710}"
+              DTS:EventID="1459637248"
+              DTS:EventName="OnPreExecute"
+              DTS:LocaleID="-1">
+              <DTS:Variables>
+                <DTS:Variable
+                  DTS:CreationName=""
+                  DTS:Description="The propagate property of the event"
+                  DTS:DTSID="{C34BD48A-323D-412D-B18D-3B11D3C93992}"
+                  DTS:IncludeInDebugDump="6789"
+                  DTS:Namespace="System"
+                  DTS:ObjectName="Propagate">
+                  <DTS:VariableValue
+                    DTS:DataType="11">-1</DTS:VariableValue>
+                </DTS:Variable>
+              </DTS:Variables>
+              <DTS:Executables>
+                <DTS:Executable
+                  DTS:refId="Package\Sequence Container\Foreach Loop Container 1.EventHandlers[OnPreExecute]\ADD Tread to sqlwatch_meta_repository_import_thread"
+                  DTS:CreationName="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+                  DTS:Description="Execute SQL Task"
+                  DTS:Disabled="True"
+                  DTS:DTSID="{40a5919c-b8b2-47c5-b3f3-88185da54cfd}"
+                  DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+                  DTS:LocaleID="-1"
+                  DTS:ObjectName="ADD Tread to sqlwatch_meta_repository_import_thread">
+                  <DTS:Variables />
+                  <DTS:ObjectData>
+                    <SQLTask:SqlTaskData
+                      SQLTask:Connection="{1DF2B296-3953-4499-98EA-13E6C4575138}"
+                      SQLTask:SqlStmtSourceType="Variable"
+                      SQLTask:SqlStatementSource="User::sql_set_thread_status" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+                      <SQLTask:ParameterBinding
+                        SQLTask:ParameterName="0"
+                        SQLTask:DtsVariableName="System::SourceName"
+                        SQLTask:ParameterDirection="Input"
+                        SQLTask:DataType="129"
+                        SQLTask:ParameterSize="-1" />
+                    </SQLTask:SqlTaskData>
+                  </DTS:ObjectData>
+                </DTS:Executable>
+              </DTS:Executables>
+            </DTS:EventHandler>
+          </DTS:EventHandlers>
           <DTS:ForEachVariableMappings>
             <DTS:ForEachVariableMapping
               DTS:CreationName=""
@@ -1944,19 +1947,19 @@
           <DTS:Variables />
           <DTS:Executables>
             <DTS:Executable
-              DTS:refId="Package\Sequence Container\Foreach Loop Container 2\execute remote data import THREAD 2"
+              DTS:refId="Package\Sequence Container\Foreach Loop Container 2\execute remote data import"
               DTS:CreationName="SSIS.ExecutePackageTask.3"
               DTS:Description="Execute Package Task"
               DTS:DTSID="{e988eb1a-27cc-4568-bb92-4e6cf29779f0}"
               DTS:ExecutableType="SSIS.ExecutePackageTask.3"
               DTS:ForceExecutionResult="0"
               DTS:LocaleID="-1"
-              DTS:ObjectName="execute remote data import THREAD 2"
+              DTS:ObjectName="execute remote data import"
               DTS:TaskContact="Microsoft Corporation; Microsoft SQL Server; Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
               <DTS:Variables />
               <DTS:EventHandlers>
                 <DTS:EventHandler
-                  DTS:refId="Package\Sequence Container\Foreach Loop Container 2\execute remote data import THREAD 2.EventHandlers[OnPostExecute]"
+                  DTS:refId="Package\Sequence Container\Foreach Loop Container 2\execute remote data import.EventHandlers[OnPostExecute]"
                   DTS:CreationName="OnPostExecute"
                   DTS:DTSID="{BA30E9B4-224D-41D1-8596-CD8BBA91E381}"
                   DTS:EventID="0"
@@ -1976,7 +1979,7 @@
                   </DTS:Variables>
                   <DTS:Executables>
                     <DTS:Executable
-                      DTS:refId="Package\Sequence Container\Foreach Loop Container 2\execute remote data import THREAD 2.EventHandlers[OnPostExecute]\REMOVE Tread from sqlwatch_meta_repository_import_thread"
+                      DTS:refId="Package\Sequence Container\Foreach Loop Container 2\execute remote data import.EventHandlers[OnPostExecute]\REMOVE Tread from sqlwatch_meta_repository_import_thread"
                       DTS:CreationName="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
                       DTS:Description="Execute SQL Task"
                       DTS:DTSID="{292e884b-3b17-4acb-a7a4-36981407efa6}"
@@ -1989,51 +1992,6 @@
                           SQLTask:Connection="{1DF2B296-3953-4499-98EA-13E6C4575138}"
                           SQLTask:SqlStmtSourceType="Variable"
                           SQLTask:SqlStatementSource="User::sql_remove_thread_status" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
-                          <SQLTask:ParameterBinding
-                            SQLTask:ParameterName="0"
-                            SQLTask:DtsVariableName="User::remote_instance_name_t2"
-                            SQLTask:ParameterDirection="Input"
-                            SQLTask:DataType="129"
-                            SQLTask:ParameterSize="-1" />
-                        </SQLTask:SqlTaskData>
-                      </DTS:ObjectData>
-                    </DTS:Executable>
-                  </DTS:Executables>
-                </DTS:EventHandler>
-                <DTS:EventHandler
-                  DTS:refId="Package\Sequence Container\Foreach Loop Container 2\execute remote data import THREAD 2.EventHandlers[OnPreExecute]"
-                  DTS:CreationName="OnPreExecute"
-                  DTS:DTSID="{8557EBF7-DF9D-42A6-AEB8-BD49240CED73}"
-                  DTS:EventID="0"
-                  DTS:EventName="OnPreExecute"
-                  DTS:LocaleID="-1">
-                  <DTS:Variables>
-                    <DTS:Variable
-                      DTS:CreationName=""
-                      DTS:Description="The propagate property of the event"
-                      DTS:DTSID="{D21CC9FA-7E26-44CB-8728-D6AA59D8BC0F}"
-                      DTS:IncludeInDebugDump="6789"
-                      DTS:Namespace="System"
-                      DTS:ObjectName="Propagate">
-                      <DTS:VariableValue
-                        DTS:DataType="11">-1</DTS:VariableValue>
-                    </DTS:Variable>
-                  </DTS:Variables>
-                  <DTS:Executables>
-                    <DTS:Executable
-                      DTS:refId="Package\Sequence Container\Foreach Loop Container 2\execute remote data import THREAD 2.EventHandlers[OnPreExecute]\ADD Tread to sqlwatch_meta_repository_import_thread"
-                      DTS:CreationName="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
-                      DTS:Description="Execute SQL Task"
-                      DTS:DTSID="{b9d234ca-71ae-4d6f-ad80-0447c6552f26}"
-                      DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
-                      DTS:LocaleID="-1"
-                      DTS:ObjectName="ADD Tread to sqlwatch_meta_repository_import_thread">
-                      <DTS:Variables />
-                      <DTS:ObjectData>
-                        <SQLTask:SqlTaskData
-                          SQLTask:Connection="{1DF2B296-3953-4499-98EA-13E6C4575138}"
-                          SQLTask:SqlStmtSourceType="Variable"
-                          SQLTask:SqlStatementSource="User::sql_set_thread_status" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
                           <SQLTask:ParameterBinding
                             SQLTask:ParameterName="0"
                             SQLTask:DtsVariableName="User::remote_instance_name_t2"
@@ -2074,6 +2032,54 @@
               </DTS:ObjectData>
             </DTS:Executable>
           </DTS:Executables>
+          <DTS:EventHandlers>
+            <DTS:EventHandler
+              DTS:refId="Package\Sequence Container\Foreach Loop Container 2.EventHandlers[OnPreExecute]"
+              DTS:CreationName="OnPreExecute"
+              DTS:DTSID="{99587187-2EF5-4957-B141-B5BBF69945EC}"
+              DTS:EventID="0"
+              DTS:EventName="OnPreExecute"
+              DTS:LocaleID="-1">
+              <DTS:Variables>
+                <DTS:Variable
+                  DTS:CreationName=""
+                  DTS:Description="The propagate property of the event"
+                  DTS:DTSID="{656F869B-652A-421F-A780-D50FDF372794}"
+                  DTS:IncludeInDebugDump="6789"
+                  DTS:Namespace="System"
+                  DTS:ObjectName="Propagate">
+                  <DTS:VariableValue
+                    DTS:DataType="11">-1</DTS:VariableValue>
+                </DTS:Variable>
+              </DTS:Variables>
+              <DTS:Executables>
+                <DTS:Executable
+                  DTS:refId="Package\Sequence Container\Foreach Loop Container 2.EventHandlers[OnPreExecute]\ADD Tread to sqlwatch_meta_repository_import_thread"
+                  DTS:CreationName="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+                  DTS:Description="Execute SQL Task"
+                  DTS:Disabled="True"
+                  DTS:DTSID="{efd485aa-6b5a-491f-8ff1-97c2bc2fa136}"
+                  DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+                  DTS:LocaleID="-1"
+                  DTS:ObjectName="ADD Tread to sqlwatch_meta_repository_import_thread">
+                  <DTS:Variables />
+                  <DTS:ObjectData>
+                    <SQLTask:SqlTaskData
+                      SQLTask:Connection="{1DF2B296-3953-4499-98EA-13E6C4575138}"
+                      SQLTask:SqlStmtSourceType="Variable"
+                      SQLTask:SqlStatementSource="User::sql_set_thread_status" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+                      <SQLTask:ParameterBinding
+                        SQLTask:ParameterName="0"
+                        SQLTask:DtsVariableName="System::SourceName"
+                        SQLTask:ParameterDirection="Input"
+                        SQLTask:DataType="129"
+                        SQLTask:ParameterSize="-1" />
+                    </SQLTask:SqlTaskData>
+                  </DTS:ObjectData>
+                </DTS:Executable>
+              </DTS:Executables>
+            </DTS:EventHandler>
+          </DTS:EventHandlers>
           <DTS:ForEachVariableMappings>
             <DTS:ForEachVariableMapping
               DTS:CreationName=""
@@ -2105,19 +2111,19 @@
           <DTS:Variables />
           <DTS:Executables>
             <DTS:Executable
-              DTS:refId="Package\Sequence Container\Foreach Loop Container 3\execute remote data import THREAD 3"
+              DTS:refId="Package\Sequence Container\Foreach Loop Container 3\execute remote data import"
               DTS:CreationName="SSIS.ExecutePackageTask.3"
               DTS:Description="Execute Package Task"
               DTS:DTSID="{e80fa4b6-b1d2-436d-9265-119f4ac4313b}"
               DTS:ExecutableType="SSIS.ExecutePackageTask.3"
               DTS:ForceExecutionResult="0"
               DTS:LocaleID="-1"
-              DTS:ObjectName="execute remote data import THREAD 3"
+              DTS:ObjectName="execute remote data import"
               DTS:TaskContact="Microsoft Corporation; Microsoft SQL Server; Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
               <DTS:Variables />
               <DTS:EventHandlers>
                 <DTS:EventHandler
-                  DTS:refId="Package\Sequence Container\Foreach Loop Container 3\execute remote data import THREAD 3.EventHandlers[OnPostExecute]"
+                  DTS:refId="Package\Sequence Container\Foreach Loop Container 3\execute remote data import.EventHandlers[OnPostExecute]"
                   DTS:CreationName="OnPostExecute"
                   DTS:DTSID="{1DEB84F9-CEA7-4433-8AC0-C2DC75870D5F}"
                   DTS:EventID="0"
@@ -2137,7 +2143,7 @@
                   </DTS:Variables>
                   <DTS:Executables>
                     <DTS:Executable
-                      DTS:refId="Package\Sequence Container\Foreach Loop Container 3\execute remote data import THREAD 3.EventHandlers[OnPostExecute]\REMOVE Tread from sqlwatch_meta_repository_import_thread"
+                      DTS:refId="Package\Sequence Container\Foreach Loop Container 3\execute remote data import.EventHandlers[OnPostExecute]\REMOVE Tread from sqlwatch_meta_repository_import_thread"
                       DTS:CreationName="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
                       DTS:Description="Execute SQL Task"
                       DTS:DTSID="{b3e6f31a-6bf5-4482-ab15-3a44fda8b341}"
@@ -2150,51 +2156,6 @@
                           SQLTask:Connection="{1DF2B296-3953-4499-98EA-13E6C4575138}"
                           SQLTask:SqlStmtSourceType="Variable"
                           SQLTask:SqlStatementSource="User::sql_remove_thread_status" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
-                          <SQLTask:ParameterBinding
-                            SQLTask:ParameterName="0"
-                            SQLTask:DtsVariableName="User::remote_instance_name_t3"
-                            SQLTask:ParameterDirection="Input"
-                            SQLTask:DataType="129"
-                            SQLTask:ParameterSize="-1" />
-                        </SQLTask:SqlTaskData>
-                      </DTS:ObjectData>
-                    </DTS:Executable>
-                  </DTS:Executables>
-                </DTS:EventHandler>
-                <DTS:EventHandler
-                  DTS:refId="Package\Sequence Container\Foreach Loop Container 3\execute remote data import THREAD 3.EventHandlers[OnPreExecute]"
-                  DTS:CreationName="OnPreExecute"
-                  DTS:DTSID="{0361A2D8-8CA1-477F-B9A7-BD542A0E63BE}"
-                  DTS:EventID="0"
-                  DTS:EventName="OnPreExecute"
-                  DTS:LocaleID="-1">
-                  <DTS:Variables>
-                    <DTS:Variable
-                      DTS:CreationName=""
-                      DTS:Description="The propagate property of the event"
-                      DTS:DTSID="{EFD9BED7-A48E-4918-BAD3-A34DF0E29C4D}"
-                      DTS:IncludeInDebugDump="6789"
-                      DTS:Namespace="System"
-                      DTS:ObjectName="Propagate">
-                      <DTS:VariableValue
-                        DTS:DataType="11">-1</DTS:VariableValue>
-                    </DTS:Variable>
-                  </DTS:Variables>
-                  <DTS:Executables>
-                    <DTS:Executable
-                      DTS:refId="Package\Sequence Container\Foreach Loop Container 3\execute remote data import THREAD 3.EventHandlers[OnPreExecute]\ADD Tread to sqlwatch_meta_repository_import_thread"
-                      DTS:CreationName="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
-                      DTS:Description="Execute SQL Task"
-                      DTS:DTSID="{66b0e78f-54fd-490c-b70d-6f010f7d813e}"
-                      DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
-                      DTS:LocaleID="-1"
-                      DTS:ObjectName="ADD Tread to sqlwatch_meta_repository_import_thread">
-                      <DTS:Variables />
-                      <DTS:ObjectData>
-                        <SQLTask:SqlTaskData
-                          SQLTask:Connection="{1DF2B296-3953-4499-98EA-13E6C4575138}"
-                          SQLTask:SqlStmtSourceType="Variable"
-                          SQLTask:SqlStatementSource="User::sql_set_thread_status" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
                           <SQLTask:ParameterBinding
                             SQLTask:ParameterName="0"
                             SQLTask:DtsVariableName="User::remote_instance_name_t3"
@@ -2235,6 +2196,54 @@
               </DTS:ObjectData>
             </DTS:Executable>
           </DTS:Executables>
+          <DTS:EventHandlers>
+            <DTS:EventHandler
+              DTS:refId="Package\Sequence Container\Foreach Loop Container 3.EventHandlers[OnPreExecute]"
+              DTS:CreationName="OnPreExecute"
+              DTS:DTSID="{B12A916E-1ECA-49FC-B6F8-879C112C9806}"
+              DTS:EventID="0"
+              DTS:EventName="OnPreExecute"
+              DTS:LocaleID="-1">
+              <DTS:Variables>
+                <DTS:Variable
+                  DTS:CreationName=""
+                  DTS:Description="The propagate property of the event"
+                  DTS:DTSID="{FB0813EA-0279-4CD5-8DE7-623489E240CB}"
+                  DTS:IncludeInDebugDump="6789"
+                  DTS:Namespace="System"
+                  DTS:ObjectName="Propagate">
+                  <DTS:VariableValue
+                    DTS:DataType="11">-1</DTS:VariableValue>
+                </DTS:Variable>
+              </DTS:Variables>
+              <DTS:Executables>
+                <DTS:Executable
+                  DTS:refId="Package\Sequence Container\Foreach Loop Container 3.EventHandlers[OnPreExecute]\ADD Tread to sqlwatch_meta_repository_import_thread"
+                  DTS:CreationName="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+                  DTS:Description="Execute SQL Task"
+                  DTS:Disabled="True"
+                  DTS:DTSID="{d056342b-cb43-4b00-af77-75f9d3af1245}"
+                  DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+                  DTS:LocaleID="-1"
+                  DTS:ObjectName="ADD Tread to sqlwatch_meta_repository_import_thread">
+                  <DTS:Variables />
+                  <DTS:ObjectData>
+                    <SQLTask:SqlTaskData
+                      SQLTask:Connection="{1DF2B296-3953-4499-98EA-13E6C4575138}"
+                      SQLTask:SqlStmtSourceType="Variable"
+                      SQLTask:SqlStatementSource="User::sql_set_thread_status" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+                      <SQLTask:ParameterBinding
+                        SQLTask:ParameterName="0"
+                        SQLTask:DtsVariableName="System::SourceName"
+                        SQLTask:ParameterDirection="Input"
+                        SQLTask:DataType="129"
+                        SQLTask:ParameterSize="-1" />
+                    </SQLTask:SqlTaskData>
+                  </DTS:ObjectData>
+                </DTS:Executable>
+              </DTS:Executables>
+            </DTS:EventHandler>
+          </DTS:EventHandlers>
           <DTS:ForEachVariableMappings>
             <DTS:ForEachVariableMapping
               DTS:CreationName=""
@@ -2266,19 +2275,19 @@
           <DTS:Variables />
           <DTS:Executables>
             <DTS:Executable
-              DTS:refId="Package\Sequence Container\Foreach Loop Container 4\execute remote data import THREAD 4"
+              DTS:refId="Package\Sequence Container\Foreach Loop Container 4\execute remote data import"
               DTS:CreationName="SSIS.ExecutePackageTask.3"
               DTS:Description="Execute Package Task"
               DTS:DTSID="{ec79b54d-83ac-4e43-a9cc-7d2b75f221a5}"
               DTS:ExecutableType="SSIS.ExecutePackageTask.3"
               DTS:ForceExecutionResult="0"
               DTS:LocaleID="-1"
-              DTS:ObjectName="execute remote data import THREAD 4"
+              DTS:ObjectName="execute remote data import"
               DTS:TaskContact="Microsoft Corporation; Microsoft SQL Server; Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
               <DTS:Variables />
               <DTS:EventHandlers>
                 <DTS:EventHandler
-                  DTS:refId="Package\Sequence Container\Foreach Loop Container 4\execute remote data import THREAD 4.EventHandlers[OnPostExecute]"
+                  DTS:refId="Package\Sequence Container\Foreach Loop Container 4\execute remote data import.EventHandlers[OnPostExecute]"
                   DTS:CreationName="OnPostExecute"
                   DTS:DTSID="{799F9EF2-7263-49BF-848C-C413D4C0998B}"
                   DTS:EventID="1459637248"
@@ -2298,7 +2307,7 @@
                   </DTS:Variables>
                   <DTS:Executables>
                     <DTS:Executable
-                      DTS:refId="Package\Sequence Container\Foreach Loop Container 4\execute remote data import THREAD 4.EventHandlers[OnPostExecute]\REMOVE Tread from sqlwatch_meta_repository_import_thread"
+                      DTS:refId="Package\Sequence Container\Foreach Loop Container 4\execute remote data import.EventHandlers[OnPostExecute]\REMOVE Tread from sqlwatch_meta_repository_import_thread"
                       DTS:CreationName="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
                       DTS:Description="Execute SQL Task"
                       DTS:DTSID="{bd0c8a90-6a8b-40d7-bb48-9e9fc538e5d3}"
@@ -2311,51 +2320,6 @@
                           SQLTask:Connection="{1DF2B296-3953-4499-98EA-13E6C4575138}"
                           SQLTask:SqlStmtSourceType="Variable"
                           SQLTask:SqlStatementSource="User::sql_remove_thread_status" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
-                          <SQLTask:ParameterBinding
-                            SQLTask:ParameterName="0"
-                            SQLTask:DtsVariableName="User::remote_instance_name_t4"
-                            SQLTask:ParameterDirection="Input"
-                            SQLTask:DataType="129"
-                            SQLTask:ParameterSize="-1" />
-                        </SQLTask:SqlTaskData>
-                      </DTS:ObjectData>
-                    </DTS:Executable>
-                  </DTS:Executables>
-                </DTS:EventHandler>
-                <DTS:EventHandler
-                  DTS:refId="Package\Sequence Container\Foreach Loop Container 4\execute remote data import THREAD 4.EventHandlers[OnPreExecute]"
-                  DTS:CreationName="OnPreExecute"
-                  DTS:DTSID="{638D558A-B67B-4B64-AE01-88EABE598BE1}"
-                  DTS:EventID="1459637248"
-                  DTS:EventName="OnPreExecute"
-                  DTS:LocaleID="-1">
-                  <DTS:Variables>
-                    <DTS:Variable
-                      DTS:CreationName=""
-                      DTS:Description="The propagate property of the event"
-                      DTS:DTSID="{4E4050D2-01AE-46D5-B687-A298A794560E}"
-                      DTS:IncludeInDebugDump="6789"
-                      DTS:Namespace="System"
-                      DTS:ObjectName="Propagate">
-                      <DTS:VariableValue
-                        DTS:DataType="11">-1</DTS:VariableValue>
-                    </DTS:Variable>
-                  </DTS:Variables>
-                  <DTS:Executables>
-                    <DTS:Executable
-                      DTS:refId="Package\Sequence Container\Foreach Loop Container 4\execute remote data import THREAD 4.EventHandlers[OnPreExecute]\ADD Tread to sqlwatch_meta_repository_import_thread"
-                      DTS:CreationName="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
-                      DTS:Description="Execute SQL Task"
-                      DTS:DTSID="{0ff13507-a984-4e7f-b81b-974ad23bf925}"
-                      DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
-                      DTS:LocaleID="-1"
-                      DTS:ObjectName="ADD Tread to sqlwatch_meta_repository_import_thread">
-                      <DTS:Variables />
-                      <DTS:ObjectData>
-                        <SQLTask:SqlTaskData
-                          SQLTask:Connection="{1DF2B296-3953-4499-98EA-13E6C4575138}"
-                          SQLTask:SqlStmtSourceType="Variable"
-                          SQLTask:SqlStatementSource="User::sql_set_thread_status" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
                           <SQLTask:ParameterBinding
                             SQLTask:ParameterName="0"
                             SQLTask:DtsVariableName="User::remote_instance_name_t4"
@@ -2396,6 +2360,54 @@
               </DTS:ObjectData>
             </DTS:Executable>
           </DTS:Executables>
+          <DTS:EventHandlers>
+            <DTS:EventHandler
+              DTS:refId="Package\Sequence Container\Foreach Loop Container 4.EventHandlers[OnPreExecute]"
+              DTS:CreationName="OnPreExecute"
+              DTS:DTSID="{CE31F965-6D7A-4F3D-BE76-6F021381FBAF}"
+              DTS:EventID="0"
+              DTS:EventName="OnPreExecute"
+              DTS:LocaleID="-1">
+              <DTS:Variables>
+                <DTS:Variable
+                  DTS:CreationName=""
+                  DTS:Description="The propagate property of the event"
+                  DTS:DTSID="{44BB16C1-760C-4091-ABE9-6A879256CA3C}"
+                  DTS:IncludeInDebugDump="6789"
+                  DTS:Namespace="System"
+                  DTS:ObjectName="Propagate">
+                  <DTS:VariableValue
+                    DTS:DataType="11">-1</DTS:VariableValue>
+                </DTS:Variable>
+              </DTS:Variables>
+              <DTS:Executables>
+                <DTS:Executable
+                  DTS:refId="Package\Sequence Container\Foreach Loop Container 4.EventHandlers[OnPreExecute]\ADD Tread to sqlwatch_meta_repository_import_thread"
+                  DTS:CreationName="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+                  DTS:Description="Execute SQL Task"
+                  DTS:Disabled="True"
+                  DTS:DTSID="{92ff5c55-6674-48cf-a448-00524ea7127e}"
+                  DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+                  DTS:LocaleID="-1"
+                  DTS:ObjectName="ADD Tread to sqlwatch_meta_repository_import_thread">
+                  <DTS:Variables />
+                  <DTS:ObjectData>
+                    <SQLTask:SqlTaskData
+                      SQLTask:Connection="{1DF2B296-3953-4499-98EA-13E6C4575138}"
+                      SQLTask:SqlStmtSourceType="Variable"
+                      SQLTask:SqlStatementSource="User::sql_set_thread_status" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+                      <SQLTask:ParameterBinding
+                        SQLTask:ParameterName="0"
+                        SQLTask:DtsVariableName="System::SourceName"
+                        SQLTask:ParameterDirection="Input"
+                        SQLTask:DataType="129"
+                        SQLTask:ParameterSize="-1" />
+                    </SQLTask:SqlTaskData>
+                  </DTS:ObjectData>
+                </DTS:Executable>
+              </DTS:Executables>
+            </DTS:EventHandler>
+          </DTS:EventHandlers>
           <DTS:ForEachVariableMappings>
             <DTS:ForEachVariableMapping
               DTS:CreationName=""
@@ -2427,19 +2439,19 @@
           <DTS:Variables />
           <DTS:Executables>
             <DTS:Executable
-              DTS:refId="Package\Sequence Container\Foreach Loop Container 5\execute remote data import THREAD 5"
+              DTS:refId="Package\Sequence Container\Foreach Loop Container 5\execute remote data import"
               DTS:CreationName="SSIS.ExecutePackageTask.3"
               DTS:Description="Execute Package Task"
               DTS:DTSID="{b7c1653b-d94a-4715-985d-308b42f1ba80}"
               DTS:ExecutableType="SSIS.ExecutePackageTask.3"
               DTS:ForceExecutionResult="0"
               DTS:LocaleID="-1"
-              DTS:ObjectName="execute remote data import THREAD 5"
+              DTS:ObjectName="execute remote data import"
               DTS:TaskContact="Microsoft Corporation; Microsoft SQL Server; Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
               <DTS:Variables />
               <DTS:EventHandlers>
                 <DTS:EventHandler
-                  DTS:refId="Package\Sequence Container\Foreach Loop Container 5\execute remote data import THREAD 5.EventHandlers[OnPostExecute]"
+                  DTS:refId="Package\Sequence Container\Foreach Loop Container 5\execute remote data import.EventHandlers[OnPostExecute]"
                   DTS:CreationName="OnPostExecute"
                   DTS:DTSID="{1DB6F68B-1308-4554-B491-132E47AA5391}"
                   DTS:EventID="0"
@@ -2459,7 +2471,7 @@
                   </DTS:Variables>
                   <DTS:Executables>
                     <DTS:Executable
-                      DTS:refId="Package\Sequence Container\Foreach Loop Container 5\execute remote data import THREAD 5.EventHandlers[OnPostExecute]\REMOVE Tread from sqlwatch_meta_repository_import_thread"
+                      DTS:refId="Package\Sequence Container\Foreach Loop Container 5\execute remote data import.EventHandlers[OnPostExecute]\REMOVE Tread from sqlwatch_meta_repository_import_thread"
                       DTS:CreationName="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
                       DTS:Description="Execute SQL Task"
                       DTS:DTSID="{2343b8af-3556-46da-b3fa-2da2f1e99187}"
@@ -2472,51 +2484,6 @@
                           SQLTask:Connection="{1DF2B296-3953-4499-98EA-13E6C4575138}"
                           SQLTask:SqlStmtSourceType="Variable"
                           SQLTask:SqlStatementSource="User::sql_remove_thread_status" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
-                          <SQLTask:ParameterBinding
-                            SQLTask:ParameterName="0"
-                            SQLTask:DtsVariableName="User::remote_instance_name_t5"
-                            SQLTask:ParameterDirection="Input"
-                            SQLTask:DataType="129"
-                            SQLTask:ParameterSize="-1" />
-                        </SQLTask:SqlTaskData>
-                      </DTS:ObjectData>
-                    </DTS:Executable>
-                  </DTS:Executables>
-                </DTS:EventHandler>
-                <DTS:EventHandler
-                  DTS:refId="Package\Sequence Container\Foreach Loop Container 5\execute remote data import THREAD 5.EventHandlers[OnPreExecute]"
-                  DTS:CreationName="OnPreExecute"
-                  DTS:DTSID="{06824960-9CFE-4873-8190-27E51DB2FC77}"
-                  DTS:EventID="1459637248"
-                  DTS:EventName="OnPreExecute"
-                  DTS:LocaleID="-1">
-                  <DTS:Variables>
-                    <DTS:Variable
-                      DTS:CreationName=""
-                      DTS:Description="The propagate property of the event"
-                      DTS:DTSID="{4F04810A-EF8E-40DB-A320-D5247F3EFB26}"
-                      DTS:IncludeInDebugDump="6789"
-                      DTS:Namespace="System"
-                      DTS:ObjectName="Propagate">
-                      <DTS:VariableValue
-                        DTS:DataType="11">-1</DTS:VariableValue>
-                    </DTS:Variable>
-                  </DTS:Variables>
-                  <DTS:Executables>
-                    <DTS:Executable
-                      DTS:refId="Package\Sequence Container\Foreach Loop Container 5\execute remote data import THREAD 5.EventHandlers[OnPreExecute]\ADD Tread to sqlwatch_meta_repository_import_thread"
-                      DTS:CreationName="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
-                      DTS:Description="Execute SQL Task"
-                      DTS:DTSID="{e6e597d3-e77a-4b7d-a8cc-400025ab6040}"
-                      DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
-                      DTS:LocaleID="-1"
-                      DTS:ObjectName="ADD Tread to sqlwatch_meta_repository_import_thread">
-                      <DTS:Variables />
-                      <DTS:ObjectData>
-                        <SQLTask:SqlTaskData
-                          SQLTask:Connection="{1DF2B296-3953-4499-98EA-13E6C4575138}"
-                          SQLTask:SqlStmtSourceType="Variable"
-                          SQLTask:SqlStatementSource="User::sql_set_thread_status" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
                           <SQLTask:ParameterBinding
                             SQLTask:ParameterName="0"
                             SQLTask:DtsVariableName="User::remote_instance_name_t5"
@@ -2557,6 +2524,54 @@
               </DTS:ObjectData>
             </DTS:Executable>
           </DTS:Executables>
+          <DTS:EventHandlers>
+            <DTS:EventHandler
+              DTS:refId="Package\Sequence Container\Foreach Loop Container 5.EventHandlers[OnPreExecute]"
+              DTS:CreationName="OnPreExecute"
+              DTS:DTSID="{3A6F9AF4-798A-4DB4-AC5A-81496DD3E5E7}"
+              DTS:EventID="0"
+              DTS:EventName="OnPreExecute"
+              DTS:LocaleID="-1">
+              <DTS:Variables>
+                <DTS:Variable
+                  DTS:CreationName=""
+                  DTS:Description="The propagate property of the event"
+                  DTS:DTSID="{7D074434-8C60-4763-B362-50BAC6BFA6EB}"
+                  DTS:IncludeInDebugDump="6789"
+                  DTS:Namespace="System"
+                  DTS:ObjectName="Propagate">
+                  <DTS:VariableValue
+                    DTS:DataType="11">-1</DTS:VariableValue>
+                </DTS:Variable>
+              </DTS:Variables>
+              <DTS:Executables>
+                <DTS:Executable
+                  DTS:refId="Package\Sequence Container\Foreach Loop Container 5.EventHandlers[OnPreExecute]\ADD Tread to sqlwatch_meta_repository_import_thread"
+                  DTS:CreationName="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+                  DTS:Description="Execute SQL Task"
+                  DTS:Disabled="True"
+                  DTS:DTSID="{955aafdd-6ba8-4355-9acd-dd376618c85f}"
+                  DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+                  DTS:LocaleID="-1"
+                  DTS:ObjectName="ADD Tread to sqlwatch_meta_repository_import_thread">
+                  <DTS:Variables />
+                  <DTS:ObjectData>
+                    <SQLTask:SqlTaskData
+                      SQLTask:Connection="{1DF2B296-3953-4499-98EA-13E6C4575138}"
+                      SQLTask:SqlStmtSourceType="Variable"
+                      SQLTask:SqlStatementSource="User::sql_set_thread_status" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+                      <SQLTask:ParameterBinding
+                        SQLTask:ParameterName="0"
+                        SQLTask:DtsVariableName="System::SourceName"
+                        SQLTask:ParameterDirection="Input"
+                        SQLTask:DataType="129"
+                        SQLTask:ParameterSize="-1" />
+                    </SQLTask:SqlTaskData>
+                  </DTS:ObjectData>
+                </DTS:Executable>
+              </DTS:Executables>
+            </DTS:EventHandler>
+          </DTS:EventHandlers>
           <DTS:ForEachVariableMappings>
             <DTS:ForEachVariableMapping
               DTS:CreationName=""
@@ -2588,19 +2603,19 @@
           <DTS:Variables />
           <DTS:Executables>
             <DTS:Executable
-              DTS:refId="Package\Sequence Container\Foreach Loop Container 6\execute remote data import THREAD 6"
+              DTS:refId="Package\Sequence Container\Foreach Loop Container 6\execute remote data import"
               DTS:CreationName="SSIS.ExecutePackageTask.3"
               DTS:Description="Execute Package Task"
               DTS:DTSID="{ba59d739-339b-4c55-8ec3-f37ed0519ff1}"
               DTS:ExecutableType="SSIS.ExecutePackageTask.3"
               DTS:ForceExecutionResult="0"
               DTS:LocaleID="-1"
-              DTS:ObjectName="execute remote data import THREAD 6"
+              DTS:ObjectName="execute remote data import"
               DTS:TaskContact="Microsoft Corporation; Microsoft SQL Server; Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
               <DTS:Variables />
               <DTS:EventHandlers>
                 <DTS:EventHandler
-                  DTS:refId="Package\Sequence Container\Foreach Loop Container 6\execute remote data import THREAD 6.EventHandlers[OnPostExecute]"
+                  DTS:refId="Package\Sequence Container\Foreach Loop Container 6\execute remote data import.EventHandlers[OnPostExecute]"
                   DTS:CreationName="OnPostExecute"
                   DTS:DTSID="{93F343D2-9A70-4858-B934-0523FF3C9E93}"
                   DTS:EventID="0"
@@ -2620,7 +2635,7 @@
                   </DTS:Variables>
                   <DTS:Executables>
                     <DTS:Executable
-                      DTS:refId="Package\Sequence Container\Foreach Loop Container 6\execute remote data import THREAD 6.EventHandlers[OnPostExecute]\REMOVE Tread from sqlwatch_meta_repository_import_thread"
+                      DTS:refId="Package\Sequence Container\Foreach Loop Container 6\execute remote data import.EventHandlers[OnPostExecute]\REMOVE Tread from sqlwatch_meta_repository_import_thread"
                       DTS:CreationName="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
                       DTS:Description="Execute SQL Task"
                       DTS:DTSID="{03ef00dc-ca54-4d17-902e-81a79bd46f2e}"
@@ -2633,51 +2648,6 @@
                           SQLTask:Connection="{1DF2B296-3953-4499-98EA-13E6C4575138}"
                           SQLTask:SqlStmtSourceType="Variable"
                           SQLTask:SqlStatementSource="User::sql_remove_thread_status" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
-                          <SQLTask:ParameterBinding
-                            SQLTask:ParameterName="0"
-                            SQLTask:DtsVariableName="User::remote_instance_name_t6"
-                            SQLTask:ParameterDirection="Input"
-                            SQLTask:DataType="129"
-                            SQLTask:ParameterSize="-1" />
-                        </SQLTask:SqlTaskData>
-                      </DTS:ObjectData>
-                    </DTS:Executable>
-                  </DTS:Executables>
-                </DTS:EventHandler>
-                <DTS:EventHandler
-                  DTS:refId="Package\Sequence Container\Foreach Loop Container 6\execute remote data import THREAD 6.EventHandlers[OnPreExecute]"
-                  DTS:CreationName="OnPreExecute"
-                  DTS:DTSID="{4ED80649-B7F8-4EEE-B7A2-51E682549074}"
-                  DTS:EventID="0"
-                  DTS:EventName="OnPreExecute"
-                  DTS:LocaleID="-1">
-                  <DTS:Variables>
-                    <DTS:Variable
-                      DTS:CreationName=""
-                      DTS:Description="The propagate property of the event"
-                      DTS:DTSID="{7292FA0A-BA9E-4AEB-AABD-08097C87E6B0}"
-                      DTS:IncludeInDebugDump="6789"
-                      DTS:Namespace="System"
-                      DTS:ObjectName="Propagate">
-                      <DTS:VariableValue
-                        DTS:DataType="11">-1</DTS:VariableValue>
-                    </DTS:Variable>
-                  </DTS:Variables>
-                  <DTS:Executables>
-                    <DTS:Executable
-                      DTS:refId="Package\Sequence Container\Foreach Loop Container 6\execute remote data import THREAD 6.EventHandlers[OnPreExecute]\ADD Tread to sqlwatch_meta_repository_import_thread"
-                      DTS:CreationName="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
-                      DTS:Description="Execute SQL Task"
-                      DTS:DTSID="{0b9e333d-4c0f-4212-adeb-cbff055a3b61}"
-                      DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
-                      DTS:LocaleID="-1"
-                      DTS:ObjectName="ADD Tread to sqlwatch_meta_repository_import_thread">
-                      <DTS:Variables />
-                      <DTS:ObjectData>
-                        <SQLTask:SqlTaskData
-                          SQLTask:Connection="{1DF2B296-3953-4499-98EA-13E6C4575138}"
-                          SQLTask:SqlStmtSourceType="Variable"
-                          SQLTask:SqlStatementSource="User::sql_set_thread_status" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
                           <SQLTask:ParameterBinding
                             SQLTask:ParameterName="0"
                             SQLTask:DtsVariableName="User::remote_instance_name_t6"
@@ -2718,6 +2688,54 @@
               </DTS:ObjectData>
             </DTS:Executable>
           </DTS:Executables>
+          <DTS:EventHandlers>
+            <DTS:EventHandler
+              DTS:refId="Package\Sequence Container\Foreach Loop Container 6.EventHandlers[OnPreExecute]"
+              DTS:CreationName="OnPreExecute"
+              DTS:DTSID="{A2E02E69-982F-4117-B0EA-D811FAA0B490}"
+              DTS:EventID="1761627136"
+              DTS:EventName="OnPreExecute"
+              DTS:LocaleID="-1">
+              <DTS:Variables>
+                <DTS:Variable
+                  DTS:CreationName=""
+                  DTS:Description="The propagate property of the event"
+                  DTS:DTSID="{5E2C485E-9C8D-4693-ADE5-7189D8B42493}"
+                  DTS:IncludeInDebugDump="6789"
+                  DTS:Namespace="System"
+                  DTS:ObjectName="Propagate">
+                  <DTS:VariableValue
+                    DTS:DataType="11">-1</DTS:VariableValue>
+                </DTS:Variable>
+              </DTS:Variables>
+              <DTS:Executables>
+                <DTS:Executable
+                  DTS:refId="Package\Sequence Container\Foreach Loop Container 6.EventHandlers[OnPreExecute]\ADD Tread to sqlwatch_meta_repository_import_thread"
+                  DTS:CreationName="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+                  DTS:Description="Execute SQL Task"
+                  DTS:Disabled="True"
+                  DTS:DTSID="{73fa13c2-ee4a-40ac-abf3-a8fe346b169e}"
+                  DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+                  DTS:LocaleID="-1"
+                  DTS:ObjectName="ADD Tread to sqlwatch_meta_repository_import_thread">
+                  <DTS:Variables />
+                  <DTS:ObjectData>
+                    <SQLTask:SqlTaskData
+                      SQLTask:Connection="{1DF2B296-3953-4499-98EA-13E6C4575138}"
+                      SQLTask:SqlStmtSourceType="Variable"
+                      SQLTask:SqlStatementSource="User::sql_set_thread_status" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+                      <SQLTask:ParameterBinding
+                        SQLTask:ParameterName="0"
+                        SQLTask:DtsVariableName="System::SourceName"
+                        SQLTask:ParameterDirection="Input"
+                        SQLTask:DataType="129"
+                        SQLTask:ParameterSize="-1" />
+                    </SQLTask:SqlTaskData>
+                  </DTS:ObjectData>
+                </DTS:Executable>
+              </DTS:Executables>
+            </DTS:EventHandler>
+          </DTS:EventHandlers>
           <DTS:ForEachVariableMappings>
             <DTS:ForEachVariableMapping
               DTS:CreationName=""
@@ -2749,19 +2767,19 @@
           <DTS:Variables />
           <DTS:Executables>
             <DTS:Executable
-              DTS:refId="Package\Sequence Container\Foreach Loop Container 7\execute remote data import THREAD 7"
+              DTS:refId="Package\Sequence Container\Foreach Loop Container 7\execute remote data import"
               DTS:CreationName="SSIS.ExecutePackageTask.3"
               DTS:Description="Execute Package Task"
               DTS:DTSID="{d3905dae-6574-4527-ae96-12ec7bafc1f0}"
               DTS:ExecutableType="SSIS.ExecutePackageTask.3"
               DTS:ForceExecutionResult="0"
               DTS:LocaleID="-1"
-              DTS:ObjectName="execute remote data import THREAD 7"
+              DTS:ObjectName="execute remote data import"
               DTS:TaskContact="Microsoft Corporation; Microsoft SQL Server; Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
               <DTS:Variables />
               <DTS:EventHandlers>
                 <DTS:EventHandler
-                  DTS:refId="Package\Sequence Container\Foreach Loop Container 7\execute remote data import THREAD 7.EventHandlers[OnPostExecute]"
+                  DTS:refId="Package\Sequence Container\Foreach Loop Container 7\execute remote data import.EventHandlers[OnPostExecute]"
                   DTS:CreationName="OnPostExecute"
                   DTS:DTSID="{A4E977B9-74D0-4014-AC20-83D41770EC0C}"
                   DTS:EventID="0"
@@ -2781,7 +2799,7 @@
                   </DTS:Variables>
                   <DTS:Executables>
                     <DTS:Executable
-                      DTS:refId="Package\Sequence Container\Foreach Loop Container 7\execute remote data import THREAD 7.EventHandlers[OnPostExecute]\REMOVE Tread from sqlwatch_meta_repository_import_thread"
+                      DTS:refId="Package\Sequence Container\Foreach Loop Container 7\execute remote data import.EventHandlers[OnPostExecute]\REMOVE Tread from sqlwatch_meta_repository_import_thread"
                       DTS:CreationName="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
                       DTS:Description="Execute SQL Task"
                       DTS:DTSID="{2b10fe73-b14e-410c-86e7-56fa3755fec4}"
@@ -2794,51 +2812,6 @@
                           SQLTask:Connection="{1DF2B296-3953-4499-98EA-13E6C4575138}"
                           SQLTask:SqlStmtSourceType="Variable"
                           SQLTask:SqlStatementSource="User::sql_remove_thread_status" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
-                          <SQLTask:ParameterBinding
-                            SQLTask:ParameterName="0"
-                            SQLTask:DtsVariableName="User::remote_instance_name_t7"
-                            SQLTask:ParameterDirection="Input"
-                            SQLTask:DataType="129"
-                            SQLTask:ParameterSize="-1" />
-                        </SQLTask:SqlTaskData>
-                      </DTS:ObjectData>
-                    </DTS:Executable>
-                  </DTS:Executables>
-                </DTS:EventHandler>
-                <DTS:EventHandler
-                  DTS:refId="Package\Sequence Container\Foreach Loop Container 7\execute remote data import THREAD 7.EventHandlers[OnPreExecute]"
-                  DTS:CreationName="OnPreExecute"
-                  DTS:DTSID="{06965F16-6B54-42F4-8B59-ABA640118778}"
-                  DTS:EventID="0"
-                  DTS:EventName="OnPreExecute"
-                  DTS:LocaleID="-1">
-                  <DTS:Variables>
-                    <DTS:Variable
-                      DTS:CreationName=""
-                      DTS:Description="The propagate property of the event"
-                      DTS:DTSID="{797D20F3-6BFE-4F95-A064-D7700AE1CE32}"
-                      DTS:IncludeInDebugDump="6789"
-                      DTS:Namespace="System"
-                      DTS:ObjectName="Propagate">
-                      <DTS:VariableValue
-                        DTS:DataType="11">-1</DTS:VariableValue>
-                    </DTS:Variable>
-                  </DTS:Variables>
-                  <DTS:Executables>
-                    <DTS:Executable
-                      DTS:refId="Package\Sequence Container\Foreach Loop Container 7\execute remote data import THREAD 7.EventHandlers[OnPreExecute]\ADD Tread to sqlwatch_meta_repository_import_thread"
-                      DTS:CreationName="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
-                      DTS:Description="Execute SQL Task"
-                      DTS:DTSID="{b311e29e-3c6a-4c6c-ac29-dfdd76cd32d0}"
-                      DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
-                      DTS:LocaleID="-1"
-                      DTS:ObjectName="ADD Tread to sqlwatch_meta_repository_import_thread">
-                      <DTS:Variables />
-                      <DTS:ObjectData>
-                        <SQLTask:SqlTaskData
-                          SQLTask:Connection="{1DF2B296-3953-4499-98EA-13E6C4575138}"
-                          SQLTask:SqlStmtSourceType="Variable"
-                          SQLTask:SqlStatementSource="User::sql_set_thread_status" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
                           <SQLTask:ParameterBinding
                             SQLTask:ParameterName="0"
                             SQLTask:DtsVariableName="User::remote_instance_name_t7"
@@ -2879,6 +2852,54 @@
               </DTS:ObjectData>
             </DTS:Executable>
           </DTS:Executables>
+          <DTS:EventHandlers>
+            <DTS:EventHandler
+              DTS:refId="Package\Sequence Container\Foreach Loop Container 7.EventHandlers[OnPreExecute]"
+              DTS:CreationName="OnPreExecute"
+              DTS:DTSID="{BD67F46C-BC61-4B8D-8957-78F706D2B861}"
+              DTS:EventID="0"
+              DTS:EventName="OnPreExecute"
+              DTS:LocaleID="-1">
+              <DTS:Variables>
+                <DTS:Variable
+                  DTS:CreationName=""
+                  DTS:Description="The propagate property of the event"
+                  DTS:DTSID="{85B374D6-BE39-452A-AE6E-B9CFD8669750}"
+                  DTS:IncludeInDebugDump="6789"
+                  DTS:Namespace="System"
+                  DTS:ObjectName="Propagate">
+                  <DTS:VariableValue
+                    DTS:DataType="11">-1</DTS:VariableValue>
+                </DTS:Variable>
+              </DTS:Variables>
+              <DTS:Executables>
+                <DTS:Executable
+                  DTS:refId="Package\Sequence Container\Foreach Loop Container 7.EventHandlers[OnPreExecute]\ADD Tread to sqlwatch_meta_repository_import_thread"
+                  DTS:CreationName="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+                  DTS:Description="Execute SQL Task"
+                  DTS:Disabled="True"
+                  DTS:DTSID="{d52aad97-06db-49fd-aba8-ba92f05a1732}"
+                  DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+                  DTS:LocaleID="-1"
+                  DTS:ObjectName="ADD Tread to sqlwatch_meta_repository_import_thread">
+                  <DTS:Variables />
+                  <DTS:ObjectData>
+                    <SQLTask:SqlTaskData
+                      SQLTask:Connection="{1DF2B296-3953-4499-98EA-13E6C4575138}"
+                      SQLTask:SqlStmtSourceType="Variable"
+                      SQLTask:SqlStatementSource="User::sql_set_thread_status" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+                      <SQLTask:ParameterBinding
+                        SQLTask:ParameterName="0"
+                        SQLTask:DtsVariableName="System::SourceName"
+                        SQLTask:ParameterDirection="Input"
+                        SQLTask:DataType="129"
+                        SQLTask:ParameterSize="-1" />
+                    </SQLTask:SqlTaskData>
+                  </DTS:ObjectData>
+                </DTS:Executable>
+              </DTS:Executables>
+            </DTS:EventHandler>
+          </DTS:EventHandlers>
           <DTS:ForEachVariableMappings>
             <DTS:ForEachVariableMapping
               DTS:CreationName=""
@@ -2910,19 +2931,19 @@
           <DTS:Variables />
           <DTS:Executables>
             <DTS:Executable
-              DTS:refId="Package\Sequence Container\Foreach Loop Container 8\execute remote data import THREAD 8"
+              DTS:refId="Package\Sequence Container\Foreach Loop Container 8\execute remote data import"
               DTS:CreationName="SSIS.ExecutePackageTask.3"
               DTS:Description="Execute Package Task"
               DTS:DTSID="{0de4bb4a-bb32-4747-ac1a-17ee43219ee9}"
               DTS:ExecutableType="SSIS.ExecutePackageTask.3"
               DTS:ForceExecutionResult="0"
               DTS:LocaleID="-1"
-              DTS:ObjectName="execute remote data import THREAD 8"
+              DTS:ObjectName="execute remote data import"
               DTS:TaskContact="Microsoft Corporation; Microsoft SQL Server; Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
               <DTS:Variables />
               <DTS:EventHandlers>
                 <DTS:EventHandler
-                  DTS:refId="Package\Sequence Container\Foreach Loop Container 8\execute remote data import THREAD 8.EventHandlers[OnPostExecute]"
+                  DTS:refId="Package\Sequence Container\Foreach Loop Container 8\execute remote data import.EventHandlers[OnPostExecute]"
                   DTS:CreationName="OnPostExecute"
                   DTS:DTSID="{C0B1F165-90C1-4A40-9E0A-C7E525539F30}"
                   DTS:EventID="1459637248"
@@ -2942,7 +2963,7 @@
                   </DTS:Variables>
                   <DTS:Executables>
                     <DTS:Executable
-                      DTS:refId="Package\Sequence Container\Foreach Loop Container 8\execute remote data import THREAD 8.EventHandlers[OnPostExecute]\REMOVE Tread from sqlwatch_meta_repository_import_thread"
+                      DTS:refId="Package\Sequence Container\Foreach Loop Container 8\execute remote data import.EventHandlers[OnPostExecute]\REMOVE Tread from sqlwatch_meta_repository_import_thread"
                       DTS:CreationName="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
                       DTS:Description="Execute SQL Task"
                       DTS:DTSID="{d804fb5e-36f1-499f-a786-2b9ff38e9400}"
@@ -2955,51 +2976,6 @@
                           SQLTask:Connection="{1DF2B296-3953-4499-98EA-13E6C4575138}"
                           SQLTask:SqlStmtSourceType="Variable"
                           SQLTask:SqlStatementSource="User::sql_remove_thread_status" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
-                          <SQLTask:ParameterBinding
-                            SQLTask:ParameterName="0"
-                            SQLTask:DtsVariableName="User::remote_instance_name_t8"
-                            SQLTask:ParameterDirection="Input"
-                            SQLTask:DataType="129"
-                            SQLTask:ParameterSize="-1" />
-                        </SQLTask:SqlTaskData>
-                      </DTS:ObjectData>
-                    </DTS:Executable>
-                  </DTS:Executables>
-                </DTS:EventHandler>
-                <DTS:EventHandler
-                  DTS:refId="Package\Sequence Container\Foreach Loop Container 8\execute remote data import THREAD 8.EventHandlers[OnPreExecute]"
-                  DTS:CreationName="OnPreExecute"
-                  DTS:DTSID="{E74BA56E-DAE3-4319-BA83-BBB75E534A3E}"
-                  DTS:EventID="1459637248"
-                  DTS:EventName="OnPreExecute"
-                  DTS:LocaleID="-1">
-                  <DTS:Variables>
-                    <DTS:Variable
-                      DTS:CreationName=""
-                      DTS:Description="The propagate property of the event"
-                      DTS:DTSID="{7695EED2-D9A5-4836-986C-7094511594F0}"
-                      DTS:IncludeInDebugDump="6789"
-                      DTS:Namespace="System"
-                      DTS:ObjectName="Propagate">
-                      <DTS:VariableValue
-                        DTS:DataType="11">-1</DTS:VariableValue>
-                    </DTS:Variable>
-                  </DTS:Variables>
-                  <DTS:Executables>
-                    <DTS:Executable
-                      DTS:refId="Package\Sequence Container\Foreach Loop Container 8\execute remote data import THREAD 8.EventHandlers[OnPreExecute]\ADD Tread to sqlwatch_meta_repository_import_thread"
-                      DTS:CreationName="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
-                      DTS:Description="Execute SQL Task"
-                      DTS:DTSID="{61442b78-587d-4af9-978c-8048b9e9fa6a}"
-                      DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
-                      DTS:LocaleID="-1"
-                      DTS:ObjectName="ADD Tread to sqlwatch_meta_repository_import_thread">
-                      <DTS:Variables />
-                      <DTS:ObjectData>
-                        <SQLTask:SqlTaskData
-                          SQLTask:Connection="{1DF2B296-3953-4499-98EA-13E6C4575138}"
-                          SQLTask:SqlStmtSourceType="Variable"
-                          SQLTask:SqlStatementSource="User::sql_set_thread_status" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
                           <SQLTask:ParameterBinding
                             SQLTask:ParameterName="0"
                             SQLTask:DtsVariableName="User::remote_instance_name_t8"
@@ -3040,6 +3016,54 @@
               </DTS:ObjectData>
             </DTS:Executable>
           </DTS:Executables>
+          <DTS:EventHandlers>
+            <DTS:EventHandler
+              DTS:refId="Package\Sequence Container\Foreach Loop Container 8.EventHandlers[OnPreExecute]"
+              DTS:CreationName="OnPreExecute"
+              DTS:DTSID="{25A15D39-4CA5-49FC-825F-48E4AB9429D8}"
+              DTS:EventID="0"
+              DTS:EventName="OnPreExecute"
+              DTS:LocaleID="-1">
+              <DTS:Variables>
+                <DTS:Variable
+                  DTS:CreationName=""
+                  DTS:Description="The propagate property of the event"
+                  DTS:DTSID="{BE372E7F-4C6A-41FF-AA8E-91D830AC7CFC}"
+                  DTS:IncludeInDebugDump="6789"
+                  DTS:Namespace="System"
+                  DTS:ObjectName="Propagate">
+                  <DTS:VariableValue
+                    DTS:DataType="11">-1</DTS:VariableValue>
+                </DTS:Variable>
+              </DTS:Variables>
+              <DTS:Executables>
+                <DTS:Executable
+                  DTS:refId="Package\Sequence Container\Foreach Loop Container 8.EventHandlers[OnPreExecute]\ADD Tread to sqlwatch_meta_repository_import_thread"
+                  DTS:CreationName="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+                  DTS:Description="Execute SQL Task"
+                  DTS:Disabled="True"
+                  DTS:DTSID="{c0bd2a82-5d97-47be-848c-31b4e3033c60}"
+                  DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+                  DTS:LocaleID="-1"
+                  DTS:ObjectName="ADD Tread to sqlwatch_meta_repository_import_thread">
+                  <DTS:Variables />
+                  <DTS:ObjectData>
+                    <SQLTask:SqlTaskData
+                      SQLTask:Connection="{1DF2B296-3953-4499-98EA-13E6C4575138}"
+                      SQLTask:SqlStmtSourceType="Variable"
+                      SQLTask:SqlStatementSource="User::sql_set_thread_status" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+                      <SQLTask:ParameterBinding
+                        SQLTask:ParameterName="0"
+                        SQLTask:DtsVariableName="System::SourceName"
+                        SQLTask:ParameterDirection="Input"
+                        SQLTask:DataType="129"
+                        SQLTask:ParameterSize="-1" />
+                    </SQLTask:SqlTaskData>
+                  </DTS:ObjectData>
+                </DTS:Executable>
+              </DTS:Executables>
+            </DTS:EventHandler>
+          </DTS:EventHandlers>
           <DTS:ForEachVariableMappings>
             <DTS:ForEachVariableMapping
               DTS:CreationName=""
@@ -3094,7 +3118,7 @@
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="begin transaction"
-              DTS:ThreadHint="9">
+              DTS:ThreadHint="0">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3110,7 +3134,7 @@
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="commit"
-              DTS:ThreadHint="11">
+              DTS:ThreadHint="2">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3126,7 +3150,7 @@
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="error"
-              DTS:ThreadHint="9">
+              DTS:ThreadHint="1">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3187,7 +3211,7 @@
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="get task"
-              DTS:ThreadHint="9">
+              DTS:ThreadHint="0">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3215,7 +3239,7 @@
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="success"
-              DTS:ThreadHint="10">
+              DTS:ThreadHint="0">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3324,7 +3348,7 @@
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="begin transaction"
-              DTS:ThreadHint="0">
+              DTS:ThreadHint="3">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3340,7 +3364,7 @@
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="commit"
-              DTS:ThreadHint="2">
+              DTS:ThreadHint="5">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3356,7 +3380,7 @@
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="error"
-              DTS:ThreadHint="0">
+              DTS:ThreadHint="4">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3417,7 +3441,7 @@
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="get task"
-              DTS:ThreadHint="0">
+              DTS:ThreadHint="3">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3445,7 +3469,7 @@
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="success"
-              DTS:ThreadHint="1">
+              DTS:ThreadHint="3">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3586,7 +3610,7 @@
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="error"
-              DTS:ThreadHint="7">
+              DTS:ThreadHint="6">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3675,7 +3699,7 @@
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="success"
-              DTS:ThreadHint="6">
+              DTS:ThreadHint="7">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3784,7 +3808,7 @@
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="begin transaction"
-              DTS:ThreadHint="21">
+              DTS:ThreadHint="9">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3800,7 +3824,7 @@
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="commit"
-              DTS:ThreadHint="23">
+              DTS:ThreadHint="11">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3816,7 +3840,7 @@
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="error"
-              DTS:ThreadHint="22">
+              DTS:ThreadHint="9">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3877,7 +3901,7 @@
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="get task"
-              DTS:ThreadHint="21">
+              DTS:ThreadHint="9">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -3905,7 +3929,7 @@
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="success"
-              DTS:ThreadHint="21">
+              DTS:ThreadHint="10">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -4014,7 +4038,7 @@
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="begin transaction"
-              DTS:ThreadHint="15">
+              DTS:ThreadHint="12">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -4030,7 +4054,7 @@
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="commit"
-              DTS:ThreadHint="17">
+              DTS:ThreadHint="14">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -4046,7 +4070,7 @@
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="error"
-              DTS:ThreadHint="16">
+              DTS:ThreadHint="12">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -4107,7 +4131,7 @@
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="get task"
-              DTS:ThreadHint="15">
+              DTS:ThreadHint="12">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -4135,7 +4159,7 @@
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="success"
-              DTS:ThreadHint="15">
+              DTS:ThreadHint="13">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -4244,7 +4268,7 @@
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="begin transaction"
-              DTS:ThreadHint="18">
+              DTS:ThreadHint="15">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -4260,7 +4284,7 @@
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="commit"
-              DTS:ThreadHint="20">
+              DTS:ThreadHint="17">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -4276,7 +4300,7 @@
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="error"
-              DTS:ThreadHint="18">
+              DTS:ThreadHint="15">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -4337,7 +4361,7 @@
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="get task"
-              DTS:ThreadHint="18">
+              DTS:ThreadHint="15">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -4365,7 +4389,7 @@
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="success"
-              DTS:ThreadHint="19">
+              DTS:ThreadHint="16">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -4474,7 +4498,7 @@
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="begin transaction"
-              DTS:ThreadHint="12">
+              DTS:ThreadHint="18">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -4490,7 +4514,7 @@
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="commit"
-              DTS:ThreadHint="14">
+              DTS:ThreadHint="20">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -4506,7 +4530,7 @@
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="error"
-              DTS:ThreadHint="13">
+              DTS:ThreadHint="18">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -4567,7 +4591,7 @@
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="get task"
-              DTS:ThreadHint="12">
+              DTS:ThreadHint="18">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -4595,7 +4619,7 @@
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="success"
-              DTS:ThreadHint="12">
+              DTS:ThreadHint="19">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -4704,7 +4728,7 @@
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="begin transaction"
-              DTS:ThreadHint="3">
+              DTS:ThreadHint="21">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -4720,7 +4744,7 @@
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="commit"
-              DTS:ThreadHint="5">
+              DTS:ThreadHint="23">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -4736,7 +4760,7 @@
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="error"
-              DTS:ThreadHint="4">
+              DTS:ThreadHint="21">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -4797,7 +4821,7 @@
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="get task"
-              DTS:ThreadHint="3">
+              DTS:ThreadHint="21">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -4825,7 +4849,7 @@
               DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
               DTS:LocaleID="-1"
               DTS:ObjectName="success"
-              DTS:ThreadHint="3">
+              DTS:ThreadHint="22">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -4944,8 +4968,8 @@
           Id="Package\Execute SQL Task"
           TopLeft="1518.66666666667,468.194442257974" />
         <NodeLayout
-          Size="270,42"
-          Id="Package\Sequence Container\Foreach Loop Container 1\execute remote data import THREAD 1"
+          Size="213,42"
+          Id="Package\Sequence Container\Foreach Loop Container 1\execute remote data import"
           TopLeft="19.75,27.0833340220981" />
         <ContainerLayout
           HeaderHeight="43"
@@ -4955,8 +4979,8 @@
           Id="Package\Sequence Container\Foreach Loop Container 1"
           TopLeft="36.0714285714284,35.6011928449722" />
         <NodeLayout
-          Size="270,42"
-          Id="Package\Sequence Container\Foreach Loop Container 2\execute remote data import THREAD 2"
+          Size="213,42"
+          Id="Package\Sequence Container\Foreach Loop Container 2\execute remote data import"
           TopLeft="28,28.7500006618599" />
         <ContainerLayout
           HeaderHeight="43"
@@ -4966,8 +4990,8 @@
           Id="Package\Sequence Container\Foreach Loop Container 2"
           TopLeft="354.821428571428,36.267861002169" />
         <NodeLayout
-          Size="270,42"
-          Id="Package\Sequence Container\Foreach Loop Container 3\execute remote data import THREAD 3"
+          Size="213,42"
+          Id="Package\Sequence Container\Foreach Loop Container 3\execute remote data import"
           TopLeft="30,29.8333339898122" />
         <ContainerLayout
           HeaderHeight="43"
@@ -4977,8 +5001,8 @@
           Id="Package\Sequence Container\Foreach Loop Container 3"
           TopLeft="675.321428571428,34.1011957668416" />
         <NodeLayout
-          Size="270,42"
-          Id="Package\Sequence Container\Foreach Loop Container 4\execute remote data import THREAD 4"
+          Size="213,42"
+          Id="Package\Sequence Container\Foreach Loop Container 4\execute remote data import"
           TopLeft="31,34.1666673016217" />
         <ContainerLayout
           HeaderHeight="43"
@@ -4988,8 +5012,8 @@
           Id="Package\Sequence Container\Foreach Loop Container 4"
           TopLeft="1000,31.6666651707557" />
         <NodeLayout
-          Size="270,42"
-          Id="Package\Sequence Container\Foreach Loop Container 5\execute remote data import THREAD 5"
+          Size="213,42"
+          Id="Package\Sequence Container\Foreach Loop Container 5\execute remote data import"
           TopLeft="31,34.1666673016217" />
         <ContainerLayout
           HeaderHeight="43"
@@ -4999,8 +5023,8 @@
           Id="Package\Sequence Container\Foreach Loop Container 5"
           TopLeft="30.8214285714284,219.833332084947" />
         <NodeLayout
-          Size="270,42"
-          Id="Package\Sequence Container\Foreach Loop Container 6\execute remote data import THREAD 6"
+          Size="213,42"
+          Id="Package\Sequence Container\Foreach Loop Container 6\execute remote data import"
           TopLeft="31,34.1666673016217" />
         <ContainerLayout
           HeaderHeight="43"
@@ -5010,8 +5034,8 @@
           Id="Package\Sequence Container\Foreach Loop Container 6"
           TopLeft="354.75,221.666664993183" />
         <NodeLayout
-          Size="270,42"
-          Id="Package\Sequence Container\Foreach Loop Container 7\execute remote data import THREAD 7"
+          Size="213,42"
+          Id="Package\Sequence Container\Foreach Loop Container 7\execute remote data import"
           TopLeft="31,34.1666673016217" />
         <ContainerLayout
           HeaderHeight="43"
@@ -5021,8 +5045,8 @@
           Id="Package\Sequence Container\Foreach Loop Container 7"
           TopLeft="673.5,219.916664977041" />
         <NodeLayout
-          Size="270,42"
-          Id="Package\Sequence Container\Foreach Loop Container 8\execute remote data import THREAD 8"
+          Size="213,42"
+          Id="Package\Sequence Container\Foreach Loop Container 8\execute remote data import"
           TopLeft="31,34.1666673016217" />
         <ContainerLayout
           HeaderHeight="43"
@@ -7399,7 +7423,9 @@
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -7433,7 +7459,9 @@
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -7467,7 +7495,9 @@
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -7501,7 +7531,9 @@
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -7535,7 +7567,9 @@
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -7569,7 +7603,9 @@
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -7603,7 +7639,9 @@
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -7829,7 +7867,9 @@
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -7863,14 +7903,16 @@
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <AnnotationLayout
           Text="Get list of servers to process and distribute based on thread_id into its own objets.&#xA;This way we can process 8 separate arrays. To add more threads follow this pattern."
           ParentId="Package\Data Flow Task"
           FontInfo="{assembly:Null}"
-          Size="468,56"
+          Size="468,NaN"
           Id="9041a37c-db4d-41a1-927b-09cd76b390bf"
           TopLeft="901.25,305.364581816571" />
       </GraphLayout>
@@ -7885,193 +7927,193 @@
     </Properties>
   </PipelineComponentMetadata>
   <DtsEventHandler
-    design-time-name="Package\Sequence Container\Foreach Loop Container 1\execute remote data import THREAD 1.EventHandlers[OnPreExecute]">
+    design-time-name="Package\Sequence Container\Foreach Loop Container 1.EventHandlers[OnPreExecute]">
     <LayoutInfo>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
         <NodeLayout
           Size="351,42"
-          Id="Package\Sequence Container\Foreach Loop Container 1\execute remote data import THREAD 1.EventHandlers[OnPreExecute]\ADD Tread to sqlwatch_meta_repository_import_thread"
+          Id="Package\Sequence Container\Foreach Loop Container 1.EventHandlers[OnPreExecute]\ADD Tread to sqlwatch_meta_repository_import_thread"
           TopLeft="60,60" />
       </GraphLayout>
     </LayoutInfo>
   </DtsEventHandler>
   <DtsEventHandler
-    design-time-name="Package\Sequence Container\Foreach Loop Container 1\execute remote data import THREAD 1.EventHandlers[OnPostExecute]">
+    design-time-name="Package\Sequence Container\Foreach Loop Container 1\execute remote data import.EventHandlers[OnPostExecute]">
     <LayoutInfo>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
         <NodeLayout
           Size="388,42"
-          Id="Package\Sequence Container\Foreach Loop Container 1\execute remote data import THREAD 1.EventHandlers[OnPostExecute]\REMOVE Tread from sqlwatch_meta_repository_import_thread"
+          Id="Package\Sequence Container\Foreach Loop Container 1\execute remote data import.EventHandlers[OnPostExecute]\REMOVE Tread from sqlwatch_meta_repository_import_thread"
           TopLeft="60,60" />
       </GraphLayout>
     </LayoutInfo>
   </DtsEventHandler>
   <DtsEventHandler
-    design-time-name="Package\Sequence Container\Foreach Loop Container 2\execute remote data import THREAD 2.EventHandlers[OnPreExecute]">
+    design-time-name="Package\Sequence Container\Foreach Loop Container 2.EventHandlers[OnPreExecute]">
     <LayoutInfo>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
         <NodeLayout
           Size="351,42"
-          Id="Package\Sequence Container\Foreach Loop Container 2\execute remote data import THREAD 2.EventHandlers[OnPreExecute]\ADD Tread to sqlwatch_meta_repository_import_thread"
+          Id="Package\Sequence Container\Foreach Loop Container 2.EventHandlers[OnPreExecute]\ADD Tread to sqlwatch_meta_repository_import_thread"
           TopLeft="60,60" />
       </GraphLayout>
     </LayoutInfo>
   </DtsEventHandler>
   <DtsEventHandler
-    design-time-name="Package\Sequence Container\Foreach Loop Container 3\execute remote data import THREAD 3.EventHandlers[OnPreExecute]">
+    design-time-name="Package\Sequence Container\Foreach Loop Container 2\execute remote data import.EventHandlers[OnPostExecute]">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
+        <NodeLayout
+          Size="388,42"
+          Id="Package\Sequence Container\Foreach Loop Container 2\execute remote data import.EventHandlers[OnPostExecute]\REMOVE Tread from sqlwatch_meta_repository_import_thread"
+          TopLeft="60,60" />
+      </GraphLayout>
+    </LayoutInfo>
+  </DtsEventHandler>
+  <DtsEventHandler
+    design-time-name="Package\Sequence Container\Foreach Loop Container 3.EventHandlers[OnPreExecute]">
     <LayoutInfo>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
         <NodeLayout
           Size="351,42"
-          Id="Package\Sequence Container\Foreach Loop Container 3\execute remote data import THREAD 3.EventHandlers[OnPreExecute]\ADD Tread to sqlwatch_meta_repository_import_thread"
+          Id="Package\Sequence Container\Foreach Loop Container 3.EventHandlers[OnPreExecute]\ADD Tread to sqlwatch_meta_repository_import_thread"
           TopLeft="60,60" />
       </GraphLayout>
     </LayoutInfo>
   </DtsEventHandler>
   <DtsEventHandler
-    design-time-name="Package\Sequence Container\Foreach Loop Container 4\execute remote data import THREAD 4.EventHandlers[OnPreExecute]">
+    design-time-name="Package\Sequence Container\Foreach Loop Container 3\execute remote data import.EventHandlers[OnPostExecute]">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
+        <NodeLayout
+          Size="388,42"
+          Id="Package\Sequence Container\Foreach Loop Container 3\execute remote data import.EventHandlers[OnPostExecute]\REMOVE Tread from sqlwatch_meta_repository_import_thread"
+          TopLeft="60,60" />
+      </GraphLayout>
+    </LayoutInfo>
+  </DtsEventHandler>
+  <DtsEventHandler
+    design-time-name="Package\Sequence Container\Foreach Loop Container 4.EventHandlers[OnPreExecute]">
     <LayoutInfo>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
         <NodeLayout
           Size="351,42"
-          Id="Package\Sequence Container\Foreach Loop Container 4\execute remote data import THREAD 4.EventHandlers[OnPreExecute]\ADD Tread to sqlwatch_meta_repository_import_thread"
+          Id="Package\Sequence Container\Foreach Loop Container 4.EventHandlers[OnPreExecute]\ADD Tread to sqlwatch_meta_repository_import_thread"
           TopLeft="60,60" />
       </GraphLayout>
     </LayoutInfo>
   </DtsEventHandler>
   <DtsEventHandler
-    design-time-name="Package\Sequence Container\Foreach Loop Container 5\execute remote data import THREAD 5.EventHandlers[OnPreExecute]">
+    design-time-name="Package\Sequence Container\Foreach Loop Container 4\execute remote data import.EventHandlers[OnPostExecute]">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
+        <NodeLayout
+          Size="388,42"
+          Id="Package\Sequence Container\Foreach Loop Container 4\execute remote data import.EventHandlers[OnPostExecute]\REMOVE Tread from sqlwatch_meta_repository_import_thread"
+          TopLeft="60,60" />
+      </GraphLayout>
+    </LayoutInfo>
+  </DtsEventHandler>
+  <DtsEventHandler
+    design-time-name="Package\Sequence Container\Foreach Loop Container 5.EventHandlers[OnPreExecute]">
     <LayoutInfo>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
         <NodeLayout
           Size="351,42"
-          Id="Package\Sequence Container\Foreach Loop Container 5\execute remote data import THREAD 5.EventHandlers[OnPreExecute]\ADD Tread to sqlwatch_meta_repository_import_thread"
+          Id="Package\Sequence Container\Foreach Loop Container 5.EventHandlers[OnPreExecute]\ADD Tread to sqlwatch_meta_repository_import_thread"
           TopLeft="60,60" />
       </GraphLayout>
     </LayoutInfo>
   </DtsEventHandler>
   <DtsEventHandler
-    design-time-name="Package\Sequence Container\Foreach Loop Container 6\execute remote data import THREAD 6.EventHandlers[OnPreExecute]">
+    design-time-name="Package\Sequence Container\Foreach Loop Container 5\execute remote data import.EventHandlers[OnPostExecute]">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
+        <NodeLayout
+          Size="388,42"
+          Id="Package\Sequence Container\Foreach Loop Container 5\execute remote data import.EventHandlers[OnPostExecute]\REMOVE Tread from sqlwatch_meta_repository_import_thread"
+          TopLeft="60,60" />
+      </GraphLayout>
+    </LayoutInfo>
+  </DtsEventHandler>
+  <DtsEventHandler
+    design-time-name="Package\Sequence Container\Foreach Loop Container 6.EventHandlers[OnPreExecute]">
     <LayoutInfo>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
         <NodeLayout
           Size="351,42"
-          Id="Package\Sequence Container\Foreach Loop Container 6\execute remote data import THREAD 6.EventHandlers[OnPreExecute]\ADD Tread to sqlwatch_meta_repository_import_thread"
+          Id="Package\Sequence Container\Foreach Loop Container 6.EventHandlers[OnPreExecute]\ADD Tread to sqlwatch_meta_repository_import_thread"
           TopLeft="60,60" />
       </GraphLayout>
     </LayoutInfo>
   </DtsEventHandler>
   <DtsEventHandler
-    design-time-name="Package\Sequence Container\Foreach Loop Container 7\execute remote data import THREAD 7.EventHandlers[OnPreExecute]">
+    design-time-name="Package\Sequence Container\Foreach Loop Container 6\execute remote data import.EventHandlers[OnPostExecute]">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
+        <NodeLayout
+          Size="388,42"
+          Id="Package\Sequence Container\Foreach Loop Container 6\execute remote data import.EventHandlers[OnPostExecute]\REMOVE Tread from sqlwatch_meta_repository_import_thread"
+          TopLeft="60,60" />
+      </GraphLayout>
+    </LayoutInfo>
+  </DtsEventHandler>
+  <DtsEventHandler
+    design-time-name="Package\Sequence Container\Foreach Loop Container 7.EventHandlers[OnPreExecute]">
     <LayoutInfo>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
         <NodeLayout
           Size="351,42"
-          Id="Package\Sequence Container\Foreach Loop Container 7\execute remote data import THREAD 7.EventHandlers[OnPreExecute]\ADD Tread to sqlwatch_meta_repository_import_thread"
+          Id="Package\Sequence Container\Foreach Loop Container 7.EventHandlers[OnPreExecute]\ADD Tread to sqlwatch_meta_repository_import_thread"
           TopLeft="60,60" />
       </GraphLayout>
     </LayoutInfo>
   </DtsEventHandler>
   <DtsEventHandler
-    design-time-name="Package\Sequence Container\Foreach Loop Container 8\execute remote data import THREAD 8.EventHandlers[OnPreExecute]">
+    design-time-name="Package\Sequence Container\Foreach Loop Container 7\execute remote data import.EventHandlers[OnPostExecute]">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
+        <NodeLayout
+          Size="388,42"
+          Id="Package\Sequence Container\Foreach Loop Container 7\execute remote data import.EventHandlers[OnPostExecute]\REMOVE Tread from sqlwatch_meta_repository_import_thread"
+          TopLeft="60,60" />
+      </GraphLayout>
+    </LayoutInfo>
+  </DtsEventHandler>
+  <DtsEventHandler
+    design-time-name="Package\Sequence Container\Foreach Loop Container 8.EventHandlers[OnPreExecute]">
     <LayoutInfo>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
         <NodeLayout
           Size="351,42"
-          Id="Package\Sequence Container\Foreach Loop Container 8\execute remote data import THREAD 8.EventHandlers[OnPreExecute]\ADD Tread to sqlwatch_meta_repository_import_thread"
+          Id="Package\Sequence Container\Foreach Loop Container 8.EventHandlers[OnPreExecute]\ADD Tread to sqlwatch_meta_repository_import_thread"
           TopLeft="60,60" />
       </GraphLayout>
     </LayoutInfo>
   </DtsEventHandler>
   <DtsEventHandler
-    design-time-name="Package\Sequence Container\Foreach Loop Container 2\execute remote data import THREAD 2.EventHandlers[OnPostExecute]">
+    design-time-name="Package\Sequence Container\Foreach Loop Container 8\execute remote data import.EventHandlers[OnPostExecute]">
     <LayoutInfo>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
         <NodeLayout
           Size="388,42"
-          Id="Package\Sequence Container\Foreach Loop Container 2\execute remote data import THREAD 2.EventHandlers[OnPostExecute]\REMOVE Tread from sqlwatch_meta_repository_import_thread"
-          TopLeft="60,60" />
-      </GraphLayout>
-    </LayoutInfo>
-  </DtsEventHandler>
-  <DtsEventHandler
-    design-time-name="Package\Sequence Container\Foreach Loop Container 3\execute remote data import THREAD 3.EventHandlers[OnPostExecute]">
-    <LayoutInfo>
-      <GraphLayout
-        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
-        <NodeLayout
-          Size="388,42"
-          Id="Package\Sequence Container\Foreach Loop Container 3\execute remote data import THREAD 3.EventHandlers[OnPostExecute]\REMOVE Tread from sqlwatch_meta_repository_import_thread"
-          TopLeft="60,60" />
-      </GraphLayout>
-    </LayoutInfo>
-  </DtsEventHandler>
-  <DtsEventHandler
-    design-time-name="Package\Sequence Container\Foreach Loop Container 4\execute remote data import THREAD 4.EventHandlers[OnPostExecute]">
-    <LayoutInfo>
-      <GraphLayout
-        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
-        <NodeLayout
-          Size="388,42"
-          Id="Package\Sequence Container\Foreach Loop Container 4\execute remote data import THREAD 4.EventHandlers[OnPostExecute]\REMOVE Tread from sqlwatch_meta_repository_import_thread"
-          TopLeft="60,60" />
-      </GraphLayout>
-    </LayoutInfo>
-  </DtsEventHandler>
-  <DtsEventHandler
-    design-time-name="Package\Sequence Container\Foreach Loop Container 5\execute remote data import THREAD 5.EventHandlers[OnPostExecute]">
-    <LayoutInfo>
-      <GraphLayout
-        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
-        <NodeLayout
-          Size="388,42"
-          Id="Package\Sequence Container\Foreach Loop Container 5\execute remote data import THREAD 5.EventHandlers[OnPostExecute]\REMOVE Tread from sqlwatch_meta_repository_import_thread"
-          TopLeft="60,60" />
-      </GraphLayout>
-    </LayoutInfo>
-  </DtsEventHandler>
-  <DtsEventHandler
-    design-time-name="Package\Sequence Container\Foreach Loop Container 6\execute remote data import THREAD 6.EventHandlers[OnPostExecute]">
-    <LayoutInfo>
-      <GraphLayout
-        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
-        <NodeLayout
-          Size="388,42"
-          Id="Package\Sequence Container\Foreach Loop Container 6\execute remote data import THREAD 6.EventHandlers[OnPostExecute]\REMOVE Tread from sqlwatch_meta_repository_import_thread"
-          TopLeft="60,60" />
-      </GraphLayout>
-    </LayoutInfo>
-  </DtsEventHandler>
-  <DtsEventHandler
-    design-time-name="Package\Sequence Container\Foreach Loop Container 7\execute remote data import THREAD 7.EventHandlers[OnPostExecute]">
-    <LayoutInfo>
-      <GraphLayout
-        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
-        <NodeLayout
-          Size="388,42"
-          Id="Package\Sequence Container\Foreach Loop Container 7\execute remote data import THREAD 7.EventHandlers[OnPostExecute]\REMOVE Tread from sqlwatch_meta_repository_import_thread"
-          TopLeft="60,60" />
-      </GraphLayout>
-    </LayoutInfo>
-  </DtsEventHandler>
-  <DtsEventHandler
-    design-time-name="Package\Sequence Container\Foreach Loop Container 8\execute remote data import THREAD 8.EventHandlers[OnPostExecute]">
-    <LayoutInfo>
-      <GraphLayout
-        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
-        <NodeLayout
-          Size="388,42"
-          Id="Package\Sequence Container\Foreach Loop Container 8\execute remote data import THREAD 8.EventHandlers[OnPostExecute]\REMOVE Tread from sqlwatch_meta_repository_import_thread"
+          Id="Package\Sequence Container\Foreach Loop Container 8\execute remote data import.EventHandlers[OnPostExecute]\REMOVE Tread from sqlwatch_meta_repository_import_thread"
           TopLeft="60,60" />
       </GraphLayout>
     </LayoutInfo>

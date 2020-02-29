@@ -25,7 +25,7 @@
           <SSIS:Property SSIS:Name="CreatorComputerName">VM-MBPWIN10-1</SSIS:Property>
           <SSIS:Property SSIS:Name="Description">
           </SSIS:Property>
-          <SSIS:Property SSIS:Name="PasswordVerifier" SSIS:Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAACAAAAAAADZgAAwAAAABAAAAAhbztp34WK0NAAzSYOV3cEAAAAAASAAACgAAAAEAAAAGlCJsOZ0vVS7+pmV8GyJfaIAAAA5vikTx9d5FKDMjslcx5UgDUiE6D/rGFk5yMv4lZgJMIRogHyD7vERBIwB3O99ZezkTtgdEx0sAh+gRZJFxuqDnn14Plw6dql08CoT8wdpBM1lGWzHZSDGHOgVy1ln2Swt4mX9aXL1JPCLRXW554gXsdK7fYaGE5huocL5aHr/S/EXQD9kZSA2hQAAABeukTv/phW9ghg0UvTwj7u7UEy1A==</SSIS:Property>
+          <SSIS:Property SSIS:Name="PasswordVerifier" SSIS:Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAACAAAAAAADZgAAwAAAABAAAAAennk9juIlnwTfuCBxkhY5AAAAAASAAACgAAAAEAAAALbiL8qpXVRaxgG7p+WXaY2IAAAAWdIymDLIhqtI4F6oU/GKDsHAFsVGcAJN0OZe1ks9sZU6g2ovP3qFYKavmoHClo1c9Jq0yR0Ewz6rM5/LpVOGwZypWTABxOa2TSPFdNgCOru8XWyk/FFsxYW3NC/iTYlmdm/+0TP4cHj4yYsEwcbUmApQGmjdB9az+G4IhyZqVX7Hxa9j+6DkZhQAAADcJ7qFthBC1uXLrAZtEDy1MdB9fA==</SSIS:Property>
           <SSIS:Property SSIS:Name="FormatVersion">1</SSIS:Property>
         </SSIS:Properties>
         <SSIS:Packages>
@@ -42,10 +42,10 @@
                 <SSIS:Property SSIS:Name="Name">control_import</SSIS:Property>
                 <SSIS:Property SSIS:Name="VersionMajor">1</SSIS:Property>
                 <SSIS:Property SSIS:Name="VersionMinor">0</SSIS:Property>
-                <SSIS:Property SSIS:Name="VersionBuild">255</SSIS:Property>
+                <SSIS:Property SSIS:Name="VersionBuild">265</SSIS:Property>
                 <SSIS:Property SSIS:Name="VersionComments">
                 </SSIS:Property>
-                <SSIS:Property SSIS:Name="VersionGUID">{767B52A7-5053-4AD8-872F-61C5AAA4DA09}</SSIS:Property>
+                <SSIS:Property SSIS:Name="VersionGUID">{90D0207A-AC9D-4E02-A530-6F79556D1BFE}</SSIS:Property>
                 <SSIS:Property SSIS:Name="PackageFormatVersion">6</SSIS:Property>
                 <SSIS:Property SSIS:Name="Description">
                 </SSIS:Property>
@@ -87,7 +87,7 @@
                     <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Required">1</SSIS:Property>
                     <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
-                    <SSIS:Property SSIS:Name="Value">192.168.168.133</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">sqlwatch-repo-1</SSIS:Property>
                     <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
                   </SSIS:Properties>
                 </SSIS:Parameter>
@@ -100,7 +100,7 @@
                     <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Sensitive">1</SSIS:Property>
-                    <SSIS:Property SSIS:Name="Value" SSIS:Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAACAAAAAAADZgAAwAAAABAAAADpMXf3BMXWC3gVQEFsIJOXAAAAAASAAACgAAAAEAAAAAudg/+YYdMoOnMjP1nSxeOAAAAAv5ZFH6qDGo2IkDiUyJAkr9LI2EE61Wmeq46Y0cQIsWzEES/5orLiYI+Lrft08kcTy9NPsg/w2qp+McrZzzJJV+0EQq2UvQsQs4I/4hpcK4VW5MK89kd3PHYLaegFlNfUvQ3iIdRUzaE7/ENQ7UnpmSJVcD4cnujAf8Q6ydpDSU8UAAAAW8xVHs6Tpra2lPctCWPMbYiVN7o=</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value" SSIS:Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAACAAAAAAADZgAAwAAAABAAAAD33LKuWu6rlQi273K0BPXLAAAAAASAAACgAAAAEAAAAIlXJIFO1fH8qRMToDl2XJ2AAAAA4Ez+g/RxcECbYeTW6/dARiJ0xg6VxEMCQgRZ6lG9YC9sZVMgPEwWBgcfvZU6FYRDZlU3o8XFJUOngYQai+kHZHPugaGkSJnaGSmX9XKRQ1e+6rRQqDmiraWHu/xygm0EGmpSvs1cko6INrreatrhokIA3taCcFkNDc2lt3jLzHUUAAAAGruacwbTXP7Q+3q3yiR3PbtZUJs=</SSIS:Property>
                     <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
                   </SSIS:Properties>
                 </SSIS:Parameter>
@@ -113,7 +113,7 @@
                     <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
-                    <SSIS:Property SSIS:Name="Value">sa</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">sqlwatch_collector</SSIS:Property>
                     <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
                   </SSIS:Properties>
                 </SSIS:Parameter>
@@ -170,10 +170,10 @@
                 <SSIS:Property SSIS:Name="Name">import_remote_data</SSIS:Property>
                 <SSIS:Property SSIS:Name="VersionMajor">1</SSIS:Property>
                 <SSIS:Property SSIS:Name="VersionMinor">0</SSIS:Property>
-                <SSIS:Property SSIS:Name="VersionBuild">1125</SSIS:Property>
+                <SSIS:Property SSIS:Name="VersionBuild">1139</SSIS:Property>
                 <SSIS:Property SSIS:Name="VersionComments">
                 </SSIS:Property>
-                <SSIS:Property SSIS:Name="VersionGUID">{7BB6AF48-BB27-449A-97B8-B6626C856A46}</SSIS:Property>
+                <SSIS:Property SSIS:Name="VersionGUID">{5DF72DE5-38D2-4ED4-938C-2F0861A8A9F3}</SSIS:Property>
                 <SSIS:Property SSIS:Name="PackageFormatVersion">6</SSIS:Property>
                 <SSIS:Property SSIS:Name="Description">
                 </SSIS:Property>
@@ -202,7 +202,7 @@
                     <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Required">1</SSIS:Property>
                     <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
-                    <SSIS:Property SSIS:Name="Value">192.168.168.153</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">SQLWATCH-TEST-1</SSIS:Property>
                     <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
                   </SSIS:Properties>
                 </SSIS:Parameter>
@@ -215,7 +215,7 @@
                     <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Sensitive">1</SSIS:Property>
-                    <SSIS:Property SSIS:Name="Value" SSIS:Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAACAAAAAAADZgAAwAAAABAAAAAKMdslh/9QuJN/+UXrYiuZAAAAAASAAACgAAAAEAAAAIqHfq7klCUkNFrZ7V+ZOMCAAAAAzw6lESob7O2nhJnYM7cgwsUVXgJLZZBkEM54/dNUwP1ekFMZwlurOHqKerWJ8m7nIiPYZcUcwJCIkX877UQCj143Z1xuWu4dkwI+jYSQEl+gsoGzzwDgtsca52esZlpFz6b1VdnATcUGFxa7HunJ8p0kMWcYm0IJl5G8sCdHpPwUAAAAn2CrIW+XxQ4O/dvs7+8+WvIXdvc=</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value" SSIS:Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAACAAAAAAADZgAAwAAAABAAAAClIeqLezo1jMfxclftWO27AAAAAASAAACgAAAAEAAAAG8B4U3oJGOyPR+evMRcqcuAAAAA/oN+In7rtoGGhdO5RztycRRZZpRWyEgiocL6a1arvdhnVZEOP1zEFCzQreMzVlcgfxcDZ1Fk2K4bPJNj5VdjPbQNQqfVGItC/HWTP+uICDAjFc0c+twiUAl46F8R1f8H6Z0YH03pvMkCoF/1q4G00eQst9elUmYGvsEQX9FNAzkUAAAA/2UJdv+8dbiceg3nGym3drC4NS0=</SSIS:Property>
                     <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
                   </SSIS:Properties>
                 </SSIS:Parameter>
@@ -228,7 +228,7 @@
                     <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
-                    <SSIS:Property SSIS:Name="Value">sa</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">sqlwatch_collector</SSIS:Property>
                     <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
                   </SSIS:Properties>
                 </SSIS:Parameter>
@@ -254,7 +254,7 @@
                     <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Required">1</SSIS:Property>
                     <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
-                    <SSIS:Property SSIS:Name="Value">192.168.168.133</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">sqlwatch-repo-1</SSIS:Property>
                     <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
                   </SSIS:Properties>
                 </SSIS:Parameter>
@@ -267,7 +267,7 @@
                     <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Sensitive">1</SSIS:Property>
-                    <SSIS:Property SSIS:Name="Value" SSIS:Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAACAAAAAAADZgAAwAAAABAAAACvTCik83WWAD/F0Itd/nR2AAAAAASAAACgAAAAEAAAAFH04mCJcA06qyfSAsb+rvSAAAAAkqLUM+G+HaCUg5qCbGfT0pvq+ZOeRe8oKXDKjE8jnKKZiGGhgZj8Ueq4V2pFcC/74jEl52O1+VRLHLPEkuGGzdY76nE/1f6PqVO6CqYigSlpXUsg3fDiODn5DZOovba+qiG0rRggfXXMy1rd+JULDaaxCobRKzPGaiHgvpgZSH8UAAAA96kw4VR4amttnPhv/4zJbCl87ik=</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value" SSIS:Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAACAAAAAAADZgAAwAAAABAAAADdcSz7WHBaLmED+X6VnVyqAAAAAASAAACgAAAAEAAAAKBm2jjMuepysAgbzzKfHt6AAAAAB4VfoL5VGqQMwrX1U/WSgDhrl46Cc/nQuEHu496byzmULoEAbge/gpBDNdKqXj7h1JqvQJeXHVvz+yY8fDZSE5RGD2F7QcJmfCVHjlTLZ87WQZ8G3GlSWhdVZL+/SbLPsJv/6cnVp1dp6xSxXc6DhHsVb4SJJZLD652ppWAiiR8UAAAApwh9i+XBnr1HGEAuxYhvqgzPhp4=</SSIS:Property>
                     <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
                   </SSIS:Properties>
                 </SSIS:Parameter>
@@ -280,7 +280,7 @@
                     <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
-                    <SSIS:Property SSIS:Name="Value">sa</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">sqlwatch_collector</SSIS:Property>
                     <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
                   </SSIS:Properties>
                 </SSIS:Parameter>

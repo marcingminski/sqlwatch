@@ -12,8 +12,8 @@
   DTS:LocaleID="2057"
   DTS:ObjectName="import_remote_data"
   DTS:PackageType="5"
-  DTS:VersionBuild="1125"
-  DTS:VersionGUID="{7BB6AF48-BB27-449A-97B8-B6626C856A46}">
+  DTS:VersionBuild="1139"
+  DTS:VersionGUID="{5DF72DE5-38D2-4ED4-938C-2F0861A8A9F3}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">6</DTS:Property>
   <DTS:ConnectionManagers>
@@ -52,6 +52,7 @@
     <DTS:ConnectionManager
       DTS:refId="Package.ConnectionManagers[central_repository]"
       DTS:CreationName="OLEDB"
+      DTS:DelayValidation="True"
       DTS:DTSID="{F9823568-DB38-44D9-8D48-7A993CF9C520}"
       DTS:ObjectName="central_repository">
       <DTS:PropertyExpression
@@ -66,17 +67,18 @@
         DTS:Name="UserName">@[$Package::repository_user_name]</DTS:PropertyExpression>
       <DTS:ObjectData>
         <DTS:ConnectionManager
-          DTS:ConnectionString="Data Source=192.168.168.133;User ID=sa;Initial Catalog=SQLWATCH;Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;Packet Size=32767;">
+          DTS:ConnectionString="Data Source=sqlwatch-repo-1;User ID=sqlwatch_collector;Initial Catalog=SQLWATCH;Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;Packet Size=32767;">
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAACdDk75+Gu3GRMqsa/lkvVZAAAAAASAAACgAAAAEAAAAAYgJBQhHssxgSxCE+v82zMYAAAADjEVVKiG75OZ/21C9e/a9xS/RghZwQY4FAAAAA8IZjhPe2qY3dX8Vgcmv6RRNhAP</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAACg0ZUX9H1LuroSF28YDdwBAAAAAASAAACgAAAAEAAAADTvwWHRbPJGwaAu4A5sCRwYAAAALYASMeMcgVh4jTghqEA747UKsu+u96JHFAAAAMgaNdK5CHY27vC7EutuEGu+dZPk</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
     <DTS:ConnectionManager
       DTS:refId="Package.ConnectionManagers[central_repository_config]"
       DTS:CreationName="OLEDB"
+      DTS:DelayValidation="True"
       DTS:DTSID="{27dbb649-bd10-402d-8c7e-48c5b49fc6d5}"
       DTS:ObjectName="central_repository_config">
       <DTS:PropertyExpression
@@ -92,18 +94,17 @@
       <DTS:ObjectData>
         <DTS:ConnectionManager
           DTS:Retain="True"
-          DTS:ConnectionString="Data Source=192.168.168.133;User ID=sa;Initial Catalog=SQLWATCH;Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;Packet Size=32767;">
+          DTS:ConnectionString="Data Source=sqlwatch-repo-1;User ID=sqlwatch_collector;Initial Catalog=SQLWATCH;Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;Packet Size=32767;">
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAADfNygJ0gIh6Nbq8AZkwkBAAAAAAASAAACgAAAAEAAAAGcEgpdBEymeXT7RqK1Gh9cYAAAAw77wz/kkftneZ2ZKPj5QArpyDEEL42dDFAAAACa1dWF/r4P/a5VlcIlSdu1KEpYO</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAADLqvQ5auT/EDhaXfaTDv/QAAAAAASAAACgAAAAEAAAAAuuMBi/yggINRUjnYELe/EYAAAAXq4QB4t6kHRog4Yf73luR+XMzVSLUfNzFAAAAF8vYkyjvDbxmLosWY8IElOn1+GI</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
     <DTS:ConnectionManager
       DTS:refId="Package.ConnectionManagers[central_repository_landing]"
       DTS:CreationName="OLEDB"
-      DTS:DelayValidation="True"
       DTS:DTSID="{73634AE9-C2BC-44BD-906C-C4E72B261DCC}"
       DTS:ObjectName="central_repository_landing">
       <DTS:PropertyExpression
@@ -116,18 +117,17 @@
         DTS:Name="UserName">@[$Package::repository_user_name]</DTS:PropertyExpression>
       <DTS:ObjectData>
         <DTS:ConnectionManager
-          DTS:ConnectionString="Data Source=192.168.168.133;User ID=sa;Initial Catalog=tempdb;Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;Packet Size=32767;">
+          DTS:ConnectionString="Data Source=sqlwatch-repo-1;User ID=sqlwatch_collector;Initial Catalog=tempdb;Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;Packet Size=32767;">
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAABB+P/4684Ljzy0APmR27hUAAAAAASAAACgAAAAEAAAAIS4XEB8rJt+CwDx2xtMWxQYAAAAQWdLC2geH+UY4LCZlQClT0qbzVHgZpekFAAAAI5avxtKYn0qg6s5t/pIBQWThMdv</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAD2dLswym1bFhbNNLEWL9LFAAAAAASAAACgAAAAEAAAABsVjGrucvJx8W2g0kasu14YAAAAfqvPjWKQ7azXdlyHuPJ7sOPotfzwhatGFAAAAHiW9vEIUT4Ziofj9x73FxH8DgAx</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
     <DTS:ConnectionManager
       DTS:refId="Package.ConnectionManagers[central_repository_tempdb]"
       DTS:CreationName="OLEDB"
-      DTS:DelayValidation="True"
       DTS:DTSID="{FCAE1DEC-120D-4B37-9B26-9F288DFB310B}"
       DTS:ObjectName="central_repository_tempdb">
       <DTS:PropertyExpression
@@ -141,11 +141,11 @@
       <DTS:ObjectData>
         <DTS:ConnectionManager
           DTS:Retain="True"
-          DTS:ConnectionString="Data Source=192.168.168.133;User ID=sa;Initial Catalog=tempdb;Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;Packet Size=32767;">
+          DTS:ConnectionString="Data Source=sqlwatch-repo-1;User ID=sqlwatch_collector;Initial Catalog=tempdb;Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;Packet Size=32767;">
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAACr+JRijJEjiRCNR8Eiur9mAAAAAASAAACgAAAAEAAAAI4UgrBSDrE8vn1bWsCuSO4YAAAAhHSkQRI2fvSMCYBlcNCYip+lt6qng9IkFAAAADGg/ug/pSqme7y1Noc/8DiYgB9o</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAAOXgQ2eG8UvRNuNni8kw6GAAAAAASAAACgAAAAEAAAAMdUT8QMy7iymvu2VRfzGo4YAAAAdWcUgx8rc41PMw8bOFHYoWngxPYCNh2uFAAAAEVa2oLOS3p0C+lYh/6vXVm0wRbV</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -167,11 +167,11 @@
         DTS:Name="UserName">@[$Package::remote_user_name]</DTS:PropertyExpression>
       <DTS:ObjectData>
         <DTS:ConnectionManager
-          DTS:ConnectionString="Data Source=192.168.168.153;User ID=sa;Initial Catalog=SQLWATCH;Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;Packet Size=32767;">
+          DTS:ConnectionString="Data Source=SQLWATCH-TEST-1;User ID=sqlwatch_collector;Initial Catalog=SQLWATCH;Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;Packet Size=32767;">
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAABWK/xZ4eTPpsE9G740Jj1YAAAAAASAAACgAAAAEAAAABS9vJbr/NBafbJCdOAkPZAYAAAAiQf0x84VSqEelQYqN36ePTjaLA6opoWjFAAAAL5dOlRLIHSJjewlILBMvmZtYZqe</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAADYuqjMVxB2RQabolPEByWqAAAAAASAAACgAAAAEAAAAG+GqxIX7Mh6ueD0jNw7YDkYAAAAxtuJJgxUFgSViPl/CNKUlv94L8SdTvpTFAAAAEdIJ+vSTcUZSivvVM0QHqxNI8hN</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -192,11 +192,11 @@
       <DTS:ObjectData>
         <DTS:ConnectionManager
           DTS:Retain="True"
-          DTS:ConnectionString="Data Source=192.168.168.153;User ID=sa;Initial Catalog=tempdb;Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;Packet Size=32767;">
+          DTS:ConnectionString="Data Source=SQLWATCH-TEST-1;User ID=sqlwatch_collector;Initial Catalog=tempdb;Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;Packet Size=32767;">
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAACe5pdmkCZ8qZbA9Bd0pW0vAAAAAASAAACgAAAAEAAAAADtFRgSE5yTP3gPiyh7zFIYAAAAH4BeVQidrDUuR0obutQ2anMUGMmUwYf5FAAAADNbFcqFquAnX6OUUiYaFNM+gyK5</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAByZ6lfEixhZifOkc66hcYEAAAAAASAAACgAAAAEAAAAPGIcGHcurXAFhHmhKucRmcYAAAA9Hsd0uFfWLwiZPIKpdW+Z5NpfKtDDrIbFAAAAByoI+2mrcooUKxlsHWwCkUdnKVD</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -221,7 +221,7 @@
       DTS:Required="True">
       <DTS:Property
         DTS:DataType="8"
-        DTS:Name="ParameterValue">192.168.168.153</DTS:Property>
+        DTS:Name="ParameterValue">SQLWATCH-TEST-1</DTS:Property>
     </DTS:PackageParameter>
     <DTS:PackageParameter
       DTS:CreationName=""
@@ -235,7 +235,7 @@
         <DTS:Property
           DTS:DataType="8"
           DTS:Name="ParameterValue"
-          Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAACDNKFw68U41Rhn1mUbtP3dAAAAAASAAACgAAAAEAAAAG+F870nmznpwqauG0yeKDsYAAAAM9xrHWclQz8EF39L1ZONHpLUhpCE+wX3FAAAAPDyog86+3ibYW9E7qH7heeASbEo</DTS:Property>
+          Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAADmIDW2T6O/X/0vu7xFZfxtAAAAAASAAACgAAAAEAAAAMprhn5dLFdQA75F01FYqr4YAAAA7FFx5xs3paXYHrr0y5h0DdsJYQR5AgMcFAAAANQdDJyrBS+SqiGKbvoSJEDeVf+8</DTS:Property>
       </DTS:Property>
     </DTS:PackageParameter>
     <DTS:PackageParameter
@@ -246,7 +246,7 @@
       DTS:ObjectName="remote_user_name">
       <DTS:Property
         DTS:DataType="8"
-        DTS:Name="ParameterValue">sa</DTS:Property>
+        DTS:Name="ParameterValue">sqlwatch_collector</DTS:Property>
     </DTS:PackageParameter>
     <DTS:PackageParameter
       DTS:CreationName=""
@@ -268,7 +268,7 @@
       DTS:Required="True">
       <DTS:Property
         DTS:DataType="8"
-        DTS:Name="ParameterValue">192.168.168.133</DTS:Property>
+        DTS:Name="ParameterValue">sqlwatch-repo-1</DTS:Property>
     </DTS:PackageParameter>
     <DTS:PackageParameter
       DTS:CreationName=""
@@ -282,7 +282,7 @@
         <DTS:Property
           DTS:DataType="8"
           DTS:Name="ParameterValue"
-          Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAABtXknA1C7ya7KLipfb2y2pAAAAAASAAACgAAAAEAAAAM4+B/RpJc9sxBnpAa84CCkYAAAAz8DsOtxP9lK8/Yeyt8Rv0cgCSfzgQwt1FAAAAInAyXq1zYizObC97JbwWwfKa8mR</DTS:Property>
+          Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAC3kD0yt/c1KeGjxQ6jpWLBAAAAAASAAACgAAAAEAAAAN1LCs4JsxpTbTbfSOPQ7cQYAAAAk3NFFGdfwqvYLML3Avtw6uAVGI0yj4VAFAAAAJuIOb4nMt1YawzE41xaoMkblJpy</DTS:Property>
       </DTS:Property>
     </DTS:PackageParameter>
     <DTS:PackageParameter
@@ -293,7 +293,7 @@
       DTS:ObjectName="repository_user_name">
       <DTS:Property
         DTS:DataType="8"
-        DTS:Name="ParameterValue">sa</DTS:Property>
+        DTS:Name="ParameterValue">sqlwatch_collector</DTS:Property>
     </DTS:PackageParameter>
   </DTS:PackageParameters>
   <DTS:Variables>
@@ -322,7 +322,7 @@
       DTS:Namespace="User"
       DTS:ObjectName="hostname">
       <DTS:VariableValue
-        DTS:DataType="8">192.168.168.153</DTS:VariableValue>
+        DTS:DataType="8">SQLWATCH-TEST-1</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -331,7 +331,7 @@
       DTS:Namespace="User"
       DTS:ObjectName="internal_remote_instance_servername">
       <DTS:VariableValue
-        DTS:DataType="8">dummy</DTS:VariableValue>
+        DTS:DataType="8">SQLWATCH-TEST-1</DTS:VariableValue>
     </DTS:Variable>
     <DTS:Variable
       DTS:CreationName=""
@@ -520,7 +520,7 @@
               DTS:ObjectName="flow_sql_get_delta">
               <DTS:VariableValue
                 DTS:DataType="8">/* sqlwatch central repository collector */
-select * from dbo.sqlwatch_logger_agent_job_history where snapshot_time &gt; convert(datetime2(0), '1970-01-01') and sql_instance ='dummy'
+select * from dbo.sqlwatch_logger_agent_job_history where snapshot_time &gt; convert(datetime2(0), '1970-01-01') and sql_instance ='SQLWATCH-TEST-1'
  and snapshot_time &lt;= convert(datetime2(0),'2099-12-31')</DTS:VariableValue>
             </DTS:Variable>
             <DTS:Variable
@@ -1424,7 +1424,7 @@ and snapshot_time &lt;= convert(datetime,?)</property>
               DTS:ObjectName="flow_sql_get_delta">
               <DTS:VariableValue
                 DTS:DataType="8">/* sqlwatch central repository collector */
-select * from dbo.sqlwatch_logger_check where snapshot_time &gt; convert(datetime2(0), '1970-01-01') and sql_instance ='dummy'
+select * from dbo.sqlwatch_logger_check where snapshot_time &gt; convert(datetime2(0), '1970-01-01') and sql_instance ='SQLWATCH-TEST-1'
  and snapshot_time &lt;= convert(datetime2(0),'2099-12-31')</DTS:VariableValue>
             </DTS:Variable>
             <DTS:Variable
@@ -2282,7 +2282,7 @@ and snapshot_time &lt;= convert(datetime,?)</property>
               DTS:ObjectName="flow_sql_get_delta">
               <DTS:VariableValue
                 DTS:DataType="8">/* sqlwatch central repository collector */
-select * from dbo.sqlwatch_logger_disk_utilisation_database where snapshot_time &gt; convert(datetime2(0), '1970-01-01') and sql_instance ='dummy'
+select * from dbo.sqlwatch_logger_disk_utilisation_database where snapshot_time &gt; convert(datetime2(0), '1970-01-01') and sql_instance ='SQLWATCH-TEST-1'
  and snapshot_time &lt;= convert(datetime2(0),'2099-12-31')</DTS:VariableValue>
             </DTS:Variable>
             <DTS:Variable
@@ -3214,7 +3214,7 @@ and snapshot_time &lt;= convert(datetime,?)</property>
               DTS:ObjectName="flow_sql_get_delta">
               <DTS:VariableValue
                 DTS:DataType="8">/* sqlwatch central repository collector */
-select * from dbo.sqlwatch_logger_disk_utilisation_table where snapshot_time &gt; convert(datetime2(0), '1970-01-01') and sql_instance ='dummy'
+select * from dbo.sqlwatch_logger_disk_utilisation_table where snapshot_time &gt; convert(datetime2(0), '1970-01-01') and sql_instance ='SQLWATCH-TEST-1'
  and snapshot_time &lt;= convert(datetime2(0),'2099-12-31')</DTS:VariableValue>
             </DTS:Variable>
             <DTS:Variable
@@ -4146,7 +4146,7 @@ and snapshot_time &lt;= convert(datetime,?)</property>
               DTS:ObjectName="flow_sql_get_delta">
               <DTS:VariableValue
                 DTS:DataType="8">/* sqlwatch central repository collector */
-select * from dbo.sqlwatch_logger_disk_utilisation_volume where snapshot_time &gt; convert(datetime2(0), '1970-01-01') and sql_instance ='dummy'
+select * from dbo.sqlwatch_logger_disk_utilisation_volume where snapshot_time &gt; convert(datetime2(0), '1970-01-01') and sql_instance ='SQLWATCH-TEST-1'
  and snapshot_time &lt;= convert(datetime2(0),'2099-12-31')</DTS:VariableValue>
             </DTS:Variable>
             <DTS:Variable
@@ -4910,7 +4910,7 @@ and snapshot_time &lt;= convert(datetime,?)</property>
               DTS:ObjectName="flow_sql_get_delta">
               <DTS:VariableValue
                 DTS:DataType="8">/* sqlwatch central repository collector */
-select * from dbo.sqlwatch_logger_index_histogram where snapshot_time &gt; convert(datetime2(0), '1970-01-01') and sql_instance ='dummy'
+select * from dbo.sqlwatch_logger_index_histogram where snapshot_time &gt; convert(datetime2(0), '1970-01-01') and sql_instance ='SQLWATCH-TEST-1'
  and snapshot_time &lt;= convert(datetime2(0),'2099-12-31')</DTS:VariableValue>
             </DTS:Variable>
             <DTS:Variable
@@ -5870,7 +5870,7 @@ and snapshot_time &lt;= convert(datetime,?)</property>
               DTS:ObjectName="flow_sql_get_delta">
               <DTS:VariableValue
                 DTS:DataType="8">/* sqlwatch central repository collector */
-select * from dbo.sqlwatch_logger_index_missing_stats where snapshot_time &gt; convert(datetime2(0), '1970-01-01') and sql_instance ='dummy'
+select * from dbo.sqlwatch_logger_index_missing_stats where snapshot_time &gt; convert(datetime2(0), '1970-01-01') and sql_instance ='SQLWATCH-TEST-1'
  and snapshot_time &lt;= convert(datetime2(0),'2099-12-31')</DTS:VariableValue>
             </DTS:Variable>
             <DTS:Variable
@@ -6830,7 +6830,7 @@ and snapshot_time &lt;= convert(datetime,?)</property>
               DTS:ObjectName="flow_sql_get_delta">
               <DTS:VariableValue
                 DTS:DataType="8">/* sqlwatch central repository collector */
-select * from dbo.sqlwatch_logger_index_usage_stats where snapshot_time &gt; convert(datetime2(0), '1970-01-01') and sql_instance ='dummy'
+select * from dbo.sqlwatch_logger_index_usage_stats where snapshot_time &gt; convert(datetime2(0), '1970-01-01') and sql_instance ='SQLWATCH-TEST-1'
  and snapshot_time &lt;= convert(datetime2(0),'2099-12-31')</DTS:VariableValue>
             </DTS:Variable>
             <DTS:Variable
@@ -8154,7 +8154,7 @@ and snapshot_time &lt;= convert(datetime,?)</property>
               DTS:ObjectName="flow_sql_get_delta">
               <DTS:VariableValue
                 DTS:DataType="8">/* sqlwatch central repository collector */
-select * from dbo.sqlwatch_logger_perf_file_stats where snapshot_time &gt; convert(datetime2(0), '1970-01-01') and sql_instance ='dummy'
+select * from dbo.sqlwatch_logger_perf_file_stats where snapshot_time &gt; convert(datetime2(0), '1970-01-01') and sql_instance ='SQLWATCH-TEST-1'
  and snapshot_time &lt;= convert(datetime2(0),'2099-12-31')</DTS:VariableValue>
             </DTS:Variable>
             <DTS:Variable
@@ -9313,7 +9313,7 @@ and snapshot_time &lt;= convert(datetime,?)</property>
               DTS:ObjectName="flow_sql_get_delta">
               <DTS:VariableValue
                 DTS:DataType="8">/* sqlwatch central repository collector */
-select * from dbo.sqlwatch_logger_perf_os_memory_clerks where snapshot_time &gt; convert(datetime2(0), '1970-01-01') and sql_instance ='dummy'
+select * from dbo.sqlwatch_logger_perf_os_memory_clerks where snapshot_time &gt; convert(datetime2(0), '1970-01-01') and sql_instance ='SQLWATCH-TEST-1'
  and snapshot_time &lt;= convert(datetime2(0),'2099-12-31')</DTS:VariableValue>
             </DTS:Variable>
             <DTS:Variable
@@ -10077,7 +10077,7 @@ and snapshot_time &lt;= convert(datetime,?)</property>
               DTS:ObjectName="flow_sql_get_delta">
               <DTS:VariableValue
                 DTS:DataType="8">/* sqlwatch central repository collector */
-select * from dbo.sqlwatch_logger_perf_os_performance_counters where snapshot_time &gt; convert(datetime2(0), '1970-01-01') and sql_instance ='dummy'
+select * from dbo.sqlwatch_logger_perf_os_performance_counters where snapshot_time &gt; convert(datetime2(0), '1970-01-01') and sql_instance ='SQLWATCH-TEST-1'
  and snapshot_time &lt;= convert(datetime2(0),'2099-12-31')</DTS:VariableValue>
             </DTS:Variable>
             <DTS:Variable
@@ -10902,7 +10902,7 @@ and snapshot_time &lt;= convert(datetime,?)</property>
               DTS:ObjectName="flow_sql_get_delta">
               <DTS:VariableValue
                 DTS:DataType="8">/* sqlwatch central repository collector */
-select * from dbo.sqlwatch_logger_perf_os_process_memory where snapshot_time &gt; convert(datetime2(0), '1970-01-01') and sql_instance ='dummy'
+select * from dbo.sqlwatch_logger_perf_os_process_memory where snapshot_time &gt; convert(datetime2(0), '1970-01-01') and sql_instance ='SQLWATCH-TEST-1'
  and snapshot_time &lt;= convert(datetime2(0),'2099-12-31')</DTS:VariableValue>
             </DTS:Variable>
             <DTS:Variable
@@ -11918,7 +11918,7 @@ and snapshot_time &lt;= convert(datetime,?)</property>
               DTS:ObjectName="flow_sql_get_delta">
               <DTS:VariableValue
                 DTS:DataType="8">/* sqlwatch central repository collector */
-select * from dbo.sqlwatch_logger_perf_os_schedulers where snapshot_time &gt; convert(datetime2(0), '1970-01-01') and sql_instance ='dummy'
+select * from dbo.sqlwatch_logger_perf_os_schedulers where snapshot_time &gt; convert(datetime2(0), '1970-01-01') and sql_instance ='SQLWATCH-TEST-1'
  and snapshot_time &lt;= convert(datetime2(0),'2099-12-31')</DTS:VariableValue>
             </DTS:Variable>
             <DTS:Variable
@@ -13046,7 +13046,7 @@ and snapshot_time &lt;= convert(datetime,?)</property>
               DTS:ObjectName="flow_sql_get_delta">
               <DTS:VariableValue
                 DTS:DataType="8">/* sqlwatch central repository collector */
-select * from dbo.sqlwatch_logger_perf_os_wait_stats where snapshot_time &gt; convert(datetime2(0), '1970-01-01') and sql_instance ='dummy'
+select * from dbo.sqlwatch_logger_perf_os_wait_stats where snapshot_time &gt; convert(datetime2(0), '1970-01-01') and sql_instance ='SQLWATCH-TEST-1'
  and snapshot_time &lt;= convert(datetime2(0),'2099-12-31')</DTS:VariableValue>
             </DTS:Variable>
             <DTS:Variable
@@ -14006,7 +14006,7 @@ and snapshot_time &lt;= convert(datetime,?)</property>
               DTS:ObjectName="flow_sql_get_delta">
               <DTS:VariableValue
                 DTS:DataType="8">/* sqlwatch central repository collector */
-select * from dbo.sqlwatch_logger_whoisactive where snapshot_time &gt; convert(datetime2(0), '1970-01-01') and sql_instance ='dummy'
+select * from dbo.sqlwatch_logger_whoisactive where snapshot_time &gt; convert(datetime2(0), '1970-01-01') and sql_instance ='SQLWATCH-TEST-1'
  and snapshot_time &lt;= convert(datetime2(0),'2099-12-31')</DTS:VariableValue>
             </DTS:Variable>
             <DTS:Variable
@@ -15465,7 +15465,7 @@ and snapshot_time &lt;= convert(datetime,?)</property>
               DTS:ObjectName="flow_sql_get_delta">
               <DTS:VariableValue
                 DTS:DataType="8">/* sqlwatch central repository collector */
-select * from dbo.sqlwatch_logger_xes_blockers where snapshot_time &gt; convert(datetime2(0), '1970-01-01') and sql_instance ='dummy'
+select * from dbo.sqlwatch_logger_xes_blockers where snapshot_time &gt; convert(datetime2(0), '1970-01-01') and sql_instance ='SQLWATCH-TEST-1'
  and snapshot_time &lt;= convert(datetime2(0),'2099-12-31')</DTS:VariableValue>
             </DTS:Variable>
             <DTS:Variable
@@ -16618,7 +16618,7 @@ and snapshot_time &lt;= convert(datetime,?)</property>
               DTS:ObjectName="flow_sql_get_delta">
               <DTS:VariableValue
                 DTS:DataType="8">/* sqlwatch central repository collector */
-select * from dbo.sqlwatch_logger_xes_iosubsystem where snapshot_time &gt; convert(datetime2(0), '1970-01-01') and sql_instance ='dummy'
+select * from dbo.sqlwatch_logger_xes_iosubsystem where snapshot_time &gt; convert(datetime2(0), '1970-01-01') and sql_instance ='SQLWATCH-TEST-1'
  and snapshot_time &lt;= convert(datetime2(0),'2099-12-31')</DTS:VariableValue>
             </DTS:Variable>
             <DTS:Variable
@@ -17448,7 +17448,7 @@ and snapshot_time &lt;= convert(datetime,?)</property>
               DTS:ObjectName="flow_sql_get_delta">
               <DTS:VariableValue
                 DTS:DataType="8">/* sqlwatch central repository collector */
-select * from dbo.sqlwatch_logger_xes_long_queries where snapshot_time &gt; convert(datetime2(0), '1970-01-01') and sql_instance ='dummy'
+select * from dbo.sqlwatch_logger_xes_long_queries where snapshot_time &gt; convert(datetime2(0), '1970-01-01') and sql_instance ='SQLWATCH-TEST-1'
  and snapshot_time &lt;= convert(datetime2(0),'2099-12-31')</DTS:VariableValue>
             </DTS:Variable>
             <DTS:Variable
@@ -18875,7 +18875,7 @@ and snapshot_time &lt;= convert(datetime,?)</property>
               DTS:ObjectName="flow_sql_get_delta">
               <DTS:VariableValue
                 DTS:DataType="8">/* sqlwatch central repository collector */
-select * from dbo.sqlwatch_logger_xes_query_processing where snapshot_time &gt; convert(datetime2(0), '1970-01-01') and sql_instance ='dummy'
+select * from dbo.sqlwatch_logger_xes_query_processing where snapshot_time &gt; convert(datetime2(0), '1970-01-01') and sql_instance ='SQLWATCH-TEST-1'
  and snapshot_time &lt;= convert(datetime2(0),'2099-12-31')</DTS:VariableValue>
             </DTS:Variable>
             <DTS:Variable
@@ -19751,7 +19751,7 @@ and snapshot_time &lt;= convert(datetime,?)</property>
               DTS:ObjectName="flow_sql_get_delta">
               <DTS:VariableValue
                 DTS:DataType="8">/* sqlwatch central repository collector */
-select * from dbo.sqlwatch_logger_xes_waits_stats where snapshot_time &gt; convert(datetime2(0), '1970-01-01') and sql_instance ='dummy'
+select * from dbo.sqlwatch_logger_xes_waits_stats where snapshot_time &gt; convert(datetime2(0), '1970-01-01') and sql_instance ='SQLWATCH-TEST-1'
  and snapshot_time &lt;= convert(datetime2(0),'2099-12-31')</DTS:VariableValue>
             </DTS:Variable>
             <DTS:Variable
@@ -41000,6 +41000,40 @@ ORDER BY [sql_instance], [wait_type_id]</property>
           Id="Package\Sustain tempDB connection on repo"
           TopLeft="1276.30952380952,1201.58729548888" />
         <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint]"
+          TopLeft="1433.83333333333,211.305554201342">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-229.499999999997,71.027779131991"
+              Start="0,0"
+              End="-229.499999999997,63.527779131991">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,31.5138895659955" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,31.5138895659955"
+                    Point2="0,35.5138895659955"
+                    Point3="-4,35.5138895659955" />
+                  <mssgle:LineSegment
+                    End="-225.499999999997,35.5138895659955" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-225.499999999997,35.5138895659955"
+                    Point2="-229.499999999997,35.5138895659955"
+                    Point3="-229.499999999997,39.5138895659955" />
+                  <mssgle:LineSegment
+                    End="-229.499999999997,63.527779131991" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 10]"
           TopLeft="2169.5238095238,1102.10912055834">
           <EdgeLayout.Curve>
@@ -41169,7 +41203,7 @@ ORDER BY [sql_instance], [wait_type_id]</property>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
             <mssgm:EdgeLabel
-              BoundingBox="-241.419919084825,58.916413349002,30.4826953125,9.7490234375"
+              BoundingBox="-241.419919084824,58.916413349002,30.4826953125,9.7490234375"
               RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
@@ -41299,40 +41333,6 @@ ORDER BY [sql_instance], [wait_type_id]</property>
                     Point3="-301.14285714286,-49.5273520373473" />
                   <mssgle:LineSegment
                     End="-301.14285714286,-83.0575398664" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package.PrecedenceConstraints[Constraint]"
-          TopLeft="1433.83333333333,211.305554201342">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="-229.499999999997,71.027779131991"
-              Start="0,0"
-              End="-229.499999999997,63.527779131991">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,31.5138895659955" />
-                  <mssgle:CubicBezierSegment
-                    Point1="0,31.5138895659955"
-                    Point2="0,35.5138895659955"
-                    Point3="-4,35.5138895659955" />
-                  <mssgle:LineSegment
-                    End="-225.499999999997,35.5138895659955" />
-                  <mssgle:CubicBezierSegment
-                    Point1="-225.499999999997,35.5138895659955"
-                    Point2="-229.499999999997,35.5138895659955"
-                    Point3="-229.499999999997,39.5138895659955" />
-                  <mssgle:LineSegment
-                    End="-229.499999999997,63.527779131991" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -41522,13 +41522,13 @@ ORDER BY [sql_instance], [wait_type_id]</property>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
         <NodeLayout
-          Size="358,42"
-          Id="Package\Load Logger Data (Delta)\sqlwatch_logger_agent_job_history.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
-          TopLeft="60,60" />
-        <NodeLayout
           Size="251,42"
           Id="Package\Load Logger Data (Delta)\sqlwatch_logger_agent_job_history.EventHandlers[OnError]\ERROR usp_sqlwatch_internal_log"
           TopLeft="60,162" />
+        <NodeLayout
+          Size="358,42"
+          Id="Package\Load Logger Data (Delta)\sqlwatch_logger_agent_job_history.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
+          TopLeft="60,60" />
       </GraphLayout>
     </LayoutInfo>
   </DtsEventHandler>
@@ -41726,13 +41726,13 @@ ORDER BY [sql_instance], [wait_type_id]</property>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
         <NodeLayout
-          Size="358,42"
-          Id="Package\Load Logger Data (Delta)\sqlwatch_logger_check.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
-          TopLeft="60,60" />
-        <NodeLayout
           Size="251,42"
           Id="Package\Load Logger Data (Delta)\sqlwatch_logger_check.EventHandlers[OnError]\ERROR usp_sqlwatch_internal_log"
           TopLeft="60,162" />
+        <NodeLayout
+          Size="358,42"
+          Id="Package\Load Logger Data (Delta)\sqlwatch_logger_check.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
+          TopLeft="60,60" />
       </GraphLayout>
     </LayoutInfo>
   </DtsEventHandler>
@@ -41930,13 +41930,13 @@ ORDER BY [sql_instance], [wait_type_id]</property>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
         <NodeLayout
-          Size="358,42"
-          Id="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
-          TopLeft="60,60" />
-        <NodeLayout
           Size="251,42"
           Id="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database.EventHandlers[OnError]\ERROR usp_sqlwatch_internal_log"
           TopLeft="60,162" />
+        <NodeLayout
+          Size="358,42"
+          Id="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
+          TopLeft="60,60" />
       </GraphLayout>
     </LayoutInfo>
   </DtsEventHandler>
@@ -42134,13 +42134,13 @@ ORDER BY [sql_instance], [wait_type_id]</property>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
         <NodeLayout
-          Size="358,42"
-          Id="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_table.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
-          TopLeft="60,60" />
-        <NodeLayout
           Size="251,42"
           Id="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_table.EventHandlers[OnError]\ERROR usp_sqlwatch_internal_log"
           TopLeft="60,162" />
+        <NodeLayout
+          Size="358,42"
+          Id="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_table.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
+          TopLeft="60,60" />
       </GraphLayout>
     </LayoutInfo>
   </DtsEventHandler>
@@ -42343,13 +42343,13 @@ ORDER BY [sql_instance], [wait_type_id]</property>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
         <NodeLayout
-          Size="358,42"
-          Id="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_volume.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
-          TopLeft="60,60" />
-        <NodeLayout
           Size="251,42"
           Id="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_volume.EventHandlers[OnError]\ERROR usp_sqlwatch_internal_log"
           TopLeft="60,162" />
+        <NodeLayout
+          Size="358,42"
+          Id="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_volume.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
+          TopLeft="60,60" />
       </GraphLayout>
     </LayoutInfo>
   </DtsEventHandler>
@@ -42547,13 +42547,13 @@ ORDER BY [sql_instance], [wait_type_id]</property>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
         <NodeLayout
-          Size="358,42"
-          Id="Package\Load Logger Data (Delta)\sqlwatch_logger_index_histogram.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
-          TopLeft="60,60" />
-        <NodeLayout
           Size="251,42"
           Id="Package\Load Logger Data (Delta)\sqlwatch_logger_index_histogram.EventHandlers[OnError]\ERROR usp_sqlwatch_internal_log"
           TopLeft="60,162" />
+        <NodeLayout
+          Size="358,42"
+          Id="Package\Load Logger Data (Delta)\sqlwatch_logger_index_histogram.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
+          TopLeft="60,60" />
       </GraphLayout>
     </LayoutInfo>
   </DtsEventHandler>
@@ -42751,13 +42751,13 @@ ORDER BY [sql_instance], [wait_type_id]</property>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
         <NodeLayout
-          Size="358,42"
-          Id="Package\Load Logger Data (Delta)\sqlwatch_logger_index_missing_stats.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
-          TopLeft="60,60" />
-        <NodeLayout
           Size="251,42"
           Id="Package\Load Logger Data (Delta)\sqlwatch_logger_index_missing_stats.EventHandlers[OnError]\ERROR usp_sqlwatch_internal_log"
           TopLeft="60,162" />
+        <NodeLayout
+          Size="358,42"
+          Id="Package\Load Logger Data (Delta)\sqlwatch_logger_index_missing_stats.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
+          TopLeft="60,60" />
       </GraphLayout>
     </LayoutInfo>
   </DtsEventHandler>
@@ -42955,13 +42955,13 @@ ORDER BY [sql_instance], [wait_type_id]</property>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
         <NodeLayout
-          Size="358,42"
-          Id="Package\Load Logger Data (Delta)\sqlwatch_logger_index_usage_stats.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
-          TopLeft="60,60" />
-        <NodeLayout
           Size="251,42"
           Id="Package\Load Logger Data (Delta)\sqlwatch_logger_index_usage_stats.EventHandlers[OnError]\ERROR usp_sqlwatch_internal_log"
           TopLeft="60,162" />
+        <NodeLayout
+          Size="358,42"
+          Id="Package\Load Logger Data (Delta)\sqlwatch_logger_index_usage_stats.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
+          TopLeft="60,60" />
       </GraphLayout>
     </LayoutInfo>
   </DtsEventHandler>
@@ -43159,13 +43159,13 @@ ORDER BY [sql_instance], [wait_type_id]</property>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
         <NodeLayout
-          Size="358,42"
-          Id="Package\Load Logger Data (Delta)\sqlwatch_logger_perf_file_stats.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
-          TopLeft="60,60" />
-        <NodeLayout
           Size="251,42"
           Id="Package\Load Logger Data (Delta)\sqlwatch_logger_perf_file_stats.EventHandlers[OnError]\ERROR usp_sqlwatch_internal_log"
           TopLeft="60,162" />
+        <NodeLayout
+          Size="358,42"
+          Id="Package\Load Logger Data (Delta)\sqlwatch_logger_perf_file_stats.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
+          TopLeft="60,60" />
       </GraphLayout>
     </LayoutInfo>
   </DtsEventHandler>
@@ -43363,13 +43363,13 @@ ORDER BY [sql_instance], [wait_type_id]</property>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
         <NodeLayout
-          Size="358,42"
-          Id="Package\Load Logger Data (Delta)\sqlwatch_logger_perf_os_memory_clerks.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
-          TopLeft="60,60" />
-        <NodeLayout
           Size="251,42"
           Id="Package\Load Logger Data (Delta)\sqlwatch_logger_perf_os_memory_clerks.EventHandlers[OnError]\ERROR usp_sqlwatch_internal_log"
           TopLeft="60,162" />
+        <NodeLayout
+          Size="358,42"
+          Id="Package\Load Logger Data (Delta)\sqlwatch_logger_perf_os_memory_clerks.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
+          TopLeft="60,60" />
       </GraphLayout>
     </LayoutInfo>
   </DtsEventHandler>
@@ -43567,13 +43567,13 @@ ORDER BY [sql_instance], [wait_type_id]</property>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
         <NodeLayout
-          Size="358,42"
-          Id="Package\Load Logger Data (Delta)\sqlwatch_logger_perf_os_performance_counters.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
-          TopLeft="60,60" />
-        <NodeLayout
           Size="251,42"
           Id="Package\Load Logger Data (Delta)\sqlwatch_logger_perf_os_performance_counters.EventHandlers[OnError]\ERROR usp_sqlwatch_internal_log"
           TopLeft="60,162" />
+        <NodeLayout
+          Size="358,42"
+          Id="Package\Load Logger Data (Delta)\sqlwatch_logger_perf_os_performance_counters.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
+          TopLeft="60,60" />
       </GraphLayout>
     </LayoutInfo>
   </DtsEventHandler>
@@ -43771,13 +43771,13 @@ ORDER BY [sql_instance], [wait_type_id]</property>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
         <NodeLayout
-          Size="358,42"
-          Id="Package\Load Logger Data (Delta)\sqlwatch_logger_perf_os_process_memory.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
-          TopLeft="60,60" />
-        <NodeLayout
           Size="251,42"
           Id="Package\Load Logger Data (Delta)\sqlwatch_logger_perf_os_process_memory.EventHandlers[OnError]\ERROR usp_sqlwatch_internal_log"
           TopLeft="60,162" />
+        <NodeLayout
+          Size="358,42"
+          Id="Package\Load Logger Data (Delta)\sqlwatch_logger_perf_os_process_memory.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
+          TopLeft="60,60" />
       </GraphLayout>
     </LayoutInfo>
   </DtsEventHandler>
@@ -43975,13 +43975,13 @@ ORDER BY [sql_instance], [wait_type_id]</property>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
         <NodeLayout
-          Size="358,42"
-          Id="Package\Load Logger Data (Delta)\sqlwatch_logger_perf_os_schedulers.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
-          TopLeft="60,60" />
-        <NodeLayout
           Size="251,42"
           Id="Package\Load Logger Data (Delta)\sqlwatch_logger_perf_os_schedulers.EventHandlers[OnError]\ERROR usp_sqlwatch_internal_log"
           TopLeft="60,162" />
+        <NodeLayout
+          Size="358,42"
+          Id="Package\Load Logger Data (Delta)\sqlwatch_logger_perf_os_schedulers.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
+          TopLeft="60,60" />
       </GraphLayout>
     </LayoutInfo>
   </DtsEventHandler>
@@ -44179,13 +44179,13 @@ ORDER BY [sql_instance], [wait_type_id]</property>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
         <NodeLayout
-          Size="358,42"
-          Id="Package\Load Logger Data (Delta)\sqlwatch_logger_perf_os_wait_stats.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
-          TopLeft="60,60" />
-        <NodeLayout
           Size="251,42"
           Id="Package\Load Logger Data (Delta)\sqlwatch_logger_perf_os_wait_stats.EventHandlers[OnError]\ERROR usp_sqlwatch_internal_log"
           TopLeft="60,162" />
+        <NodeLayout
+          Size="358,42"
+          Id="Package\Load Logger Data (Delta)\sqlwatch_logger_perf_os_wait_stats.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
+          TopLeft="60,60" />
       </GraphLayout>
     </LayoutInfo>
   </DtsEventHandler>
@@ -44383,13 +44383,13 @@ ORDER BY [sql_instance], [wait_type_id]</property>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
         <NodeLayout
-          Size="358,42"
-          Id="Package\Load Logger Data (Delta)\sqlwatch_logger_whoisactive.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
-          TopLeft="60,60" />
-        <NodeLayout
           Size="251,42"
           Id="Package\Load Logger Data (Delta)\sqlwatch_logger_whoisactive.EventHandlers[OnError]\ERROR usp_sqlwatch_internal_log"
           TopLeft="60,162" />
+        <NodeLayout
+          Size="358,42"
+          Id="Package\Load Logger Data (Delta)\sqlwatch_logger_whoisactive.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
+          TopLeft="60,60" />
       </GraphLayout>
     </LayoutInfo>
   </DtsEventHandler>
@@ -44587,13 +44587,13 @@ ORDER BY [sql_instance], [wait_type_id]</property>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
         <NodeLayout
-          Size="358,42"
-          Id="Package\Load Logger Data (Delta)\sqlwatch_logger_xes_blockers.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
-          TopLeft="60,60" />
-        <NodeLayout
           Size="251,42"
           Id="Package\Load Logger Data (Delta)\sqlwatch_logger_xes_blockers.EventHandlers[OnError]\ERROR usp_sqlwatch_internal_log"
           TopLeft="60,162" />
+        <NodeLayout
+          Size="358,42"
+          Id="Package\Load Logger Data (Delta)\sqlwatch_logger_xes_blockers.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
+          TopLeft="60,60" />
       </GraphLayout>
     </LayoutInfo>
   </DtsEventHandler>
@@ -44791,13 +44791,13 @@ ORDER BY [sql_instance], [wait_type_id]</property>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
         <NodeLayout
-          Size="358,42"
-          Id="Package\Load Logger Data (Delta)\sqlwatch_logger_xes_iosubsystem.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
-          TopLeft="60,60" />
-        <NodeLayout
           Size="251,42"
           Id="Package\Load Logger Data (Delta)\sqlwatch_logger_xes_iosubsystem.EventHandlers[OnError]\ERROR usp_sqlwatch_internal_log"
           TopLeft="60,162" />
+        <NodeLayout
+          Size="358,42"
+          Id="Package\Load Logger Data (Delta)\sqlwatch_logger_xes_iosubsystem.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
+          TopLeft="60,60" />
       </GraphLayout>
     </LayoutInfo>
   </DtsEventHandler>
@@ -44995,13 +44995,13 @@ ORDER BY [sql_instance], [wait_type_id]</property>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
         <NodeLayout
-          Size="358,42"
-          Id="Package\Load Logger Data (Delta)\sqlwatch_logger_xes_long_queries.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
-          TopLeft="60,60" />
-        <NodeLayout
           Size="251,42"
           Id="Package\Load Logger Data (Delta)\sqlwatch_logger_xes_long_queries.EventHandlers[OnError]\ERROR usp_sqlwatch_internal_log"
           TopLeft="60,162" />
+        <NodeLayout
+          Size="358,42"
+          Id="Package\Load Logger Data (Delta)\sqlwatch_logger_xes_long_queries.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
+          TopLeft="60,60" />
       </GraphLayout>
     </LayoutInfo>
   </DtsEventHandler>
@@ -45199,13 +45199,13 @@ ORDER BY [sql_instance], [wait_type_id]</property>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
         <NodeLayout
-          Size="358,42"
-          Id="Package\Load Logger Data (Delta)\sqlwatch_logger_xes_query_processing.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
-          TopLeft="60,60" />
-        <NodeLayout
           Size="251,42"
           Id="Package\Load Logger Data (Delta)\sqlwatch_logger_xes_query_processing.EventHandlers[OnError]\ERROR usp_sqlwatch_internal_log"
           TopLeft="60,162" />
+        <NodeLayout
+          Size="358,42"
+          Id="Package\Load Logger Data (Delta)\sqlwatch_logger_xes_query_processing.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
+          TopLeft="60,60" />
       </GraphLayout>
     </LayoutInfo>
   </DtsEventHandler>
@@ -45403,13 +45403,13 @@ ORDER BY [sql_instance], [wait_type_id]</property>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
         <NodeLayout
-          Size="358,42"
-          Id="Package\Load Logger Data (Delta)\sqlwatch_logger_xes_waits_stats.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
-          TopLeft="60,60" />
-        <NodeLayout
           Size="251,42"
           Id="Package\Load Logger Data (Delta)\sqlwatch_logger_xes_waits_stats.EventHandlers[OnError]\ERROR usp_sqlwatch_internal_log"
           TopLeft="60,162" />
+        <NodeLayout
+          Size="358,42"
+          Id="Package\Load Logger Data (Delta)\sqlwatch_logger_xes_waits_stats.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
+          TopLeft="60,60" />
       </GraphLayout>
     </LayoutInfo>
   </DtsEventHandler>
@@ -45607,13 +45607,13 @@ ORDER BY [sql_instance], [wait_type_id]</property>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
         <NodeLayout
-          Size="358,42"
-          Id="Package\Load Meta Tables (Full Load)\sqlwatch_logger_snapshot_header.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
-          TopLeft="60,60" />
-        <NodeLayout
           Size="251,42"
           Id="Package\Load Meta Tables (Full Load)\sqlwatch_logger_snapshot_header.EventHandlers[OnError]\ERROR usp_sqlwatch_internal_log"
           TopLeft="60,162" />
+        <NodeLayout
+          Size="358,42"
+          Id="Package\Load Meta Tables (Full Load)\sqlwatch_logger_snapshot_header.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
+          TopLeft="60,60" />
       </GraphLayout>
     </LayoutInfo>
   </DtsEventHandler>
@@ -45893,13 +45893,13 @@ ORDER BY [sql_instance], [wait_type_id]</property>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
         <NodeLayout
-          Size="358,42"
-          Id="Package\Load Meta Tables (Full Load)\sqlwatch_meta_agent_job.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
-          TopLeft="60,60" />
-        <NodeLayout
           Size="251,42"
           Id="Package\Load Meta Tables (Full Load)\sqlwatch_meta_agent_job.EventHandlers[OnError]\ERROR usp_sqlwatch_internal_log"
           TopLeft="60,162" />
+        <NodeLayout
+          Size="358,42"
+          Id="Package\Load Meta Tables (Full Load)\sqlwatch_meta_agent_job.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
+          TopLeft="60,60" />
       </GraphLayout>
     </LayoutInfo>
   </DtsEventHandler>
@@ -46110,13 +46110,13 @@ ORDER BY [sql_instance], [wait_type_id]</property>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
         <NodeLayout
-          Size="358,42"
-          Id="Package\Load Meta Tables (Full Load)\sqlwatch_meta_agent_job_step.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
-          TopLeft="60,60" />
-        <NodeLayout
           Size="251,42"
           Id="Package\Load Meta Tables (Full Load)\sqlwatch_meta_agent_job_step.EventHandlers[OnError]\ERROR usp_sqlwatch_internal_log"
           TopLeft="60,162" />
+        <NodeLayout
+          Size="358,42"
+          Id="Package\Load Meta Tables (Full Load)\sqlwatch_meta_agent_job_step.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
+          TopLeft="60,60" />
       </GraphLayout>
     </LayoutInfo>
   </DtsEventHandler>
@@ -46205,9 +46205,7 @@ ORDER BY [sql_instance], [wait_type_id]</property>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -46241,9 +46239,7 @@ ORDER BY [sql_instance], [wait_type_id]</property>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -46277,9 +46273,7 @@ ORDER BY [sql_instance], [wait_type_id]</property>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -46351,13 +46345,13 @@ ORDER BY [sql_instance], [wait_type_id]</property>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
         <NodeLayout
-          Size="358,42"
-          Id="Package\Load Meta Tables (Full Load)\sqlwatch_meta_check.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
-          TopLeft="60,60" />
-        <NodeLayout
           Size="251,42"
           Id="Package\Load Meta Tables (Full Load)\sqlwatch_meta_check.EventHandlers[OnError]\ERROR usp_sqlwatch_internal_log"
           TopLeft="60,162" />
+        <NodeLayout
+          Size="358,42"
+          Id="Package\Load Meta Tables (Full Load)\sqlwatch_meta_check.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
+          TopLeft="60,60" />
       </GraphLayout>
     </LayoutInfo>
   </DtsEventHandler>
@@ -46660,13 +46654,13 @@ ORDER BY [sql_instance], [wait_type_id]</property>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
         <NodeLayout
-          Size="358,42"
-          Id="Package\Load Meta Tables (Full Load)\sqlwatch_meta_database.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
-          TopLeft="60,60" />
-        <NodeLayout
           Size="251,42"
           Id="Package\Load Meta Tables (Full Load)\sqlwatch_meta_database.EventHandlers[OnError]\ERROR usp_sqlwatch_internal_log"
           TopLeft="60,162" />
+        <NodeLayout
+          Size="358,42"
+          Id="Package\Load Meta Tables (Full Load)\sqlwatch_meta_database.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
+          TopLeft="60,60" />
       </GraphLayout>
     </LayoutInfo>
   </DtsEventHandler>
@@ -46981,13 +46975,13 @@ ORDER BY [sql_instance], [wait_type_id]</property>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
         <NodeLayout
-          Size="358,42"
-          Id="Package\Load Meta Tables (Full Load)\sqlwatch_meta_index.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
-          TopLeft="60,60" />
-        <NodeLayout
           Size="251,42"
           Id="Package\Load Meta Tables (Full Load)\sqlwatch_meta_index.EventHandlers[OnError]\ERROR usp_sqlwatch_internal_log"
           TopLeft="60,162" />
+        <NodeLayout
+          Size="358,42"
+          Id="Package\Load Meta Tables (Full Load)\sqlwatch_meta_index.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
+          TopLeft="60,60" />
       </GraphLayout>
     </LayoutInfo>
   </DtsEventHandler>
@@ -47262,13 +47256,13 @@ ORDER BY [sql_instance], [wait_type_id]</property>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
         <NodeLayout
-          Size="358,42"
-          Id="Package\Load Meta Tables (Full Load)\sqlwatch_meta_index_missing.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
-          TopLeft="60,60" />
-        <NodeLayout
           Size="251,42"
           Id="Package\Load Meta Tables (Full Load)\sqlwatch_meta_index_missing.EventHandlers[OnError]\ERROR usp_sqlwatch_internal_log"
           TopLeft="60,162" />
+        <NodeLayout
+          Size="358,42"
+          Id="Package\Load Meta Tables (Full Load)\sqlwatch_meta_index_missing.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
+          TopLeft="60,60" />
       </GraphLayout>
     </LayoutInfo>
   </DtsEventHandler>
@@ -47531,13 +47525,13 @@ ORDER BY [sql_instance], [wait_type_id]</property>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
         <NodeLayout
-          Size="358,42"
-          Id="Package\Load Meta Tables (Full Load)\sqlwatch_meta_master_file.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
-          TopLeft="60,60" />
-        <NodeLayout
           Size="251,42"
           Id="Package\Load Meta Tables (Full Load)\sqlwatch_meta_master_file.EventHandlers[OnError]\ERROR usp_sqlwatch_internal_log"
           TopLeft="60,162" />
+        <NodeLayout
+          Size="358,42"
+          Id="Package\Load Meta Tables (Full Load)\sqlwatch_meta_master_file.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
+          TopLeft="60,60" />
       </GraphLayout>
     </LayoutInfo>
   </DtsEventHandler>
@@ -47626,9 +47620,7 @@ ORDER BY [sql_instance], [wait_type_id]</property>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -47686,9 +47678,7 @@ ORDER BY [sql_instance], [wait_type_id]</property>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -47722,9 +47712,7 @@ ORDER BY [sql_instance], [wait_type_id]</property>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
       </GraphLayout>
@@ -47760,13 +47748,13 @@ ORDER BY [sql_instance], [wait_type_id]</property>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
         <NodeLayout
-          Size="358,42"
-          Id="Package\Load Meta Tables (Full Load)\sqlwatch_meta_memory_clerk.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
-          TopLeft="60,60" />
-        <NodeLayout
           Size="251,42"
           Id="Package\Load Meta Tables (Full Load)\sqlwatch_meta_memory_clerk.EventHandlers[OnError]\ERROR usp_sqlwatch_internal_log"
           TopLeft="60,162" />
+        <NodeLayout
+          Size="358,42"
+          Id="Package\Load Meta Tables (Full Load)\sqlwatch_meta_memory_clerk.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
+          TopLeft="60,60" />
       </GraphLayout>
     </LayoutInfo>
   </DtsEventHandler>
@@ -47935,9 +47923,7 @@ ORDER BY [sql_instance], [wait_type_id]</property>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -47971,9 +47957,7 @@ ORDER BY [sql_instance], [wait_type_id]</property>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -48007,9 +47991,7 @@ ORDER BY [sql_instance], [wait_type_id]</property>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -48044,7 +48026,7 @@ ORDER BY [sql_instance], [wait_type_id]</property>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
             <mssgm:EdgeLabel
-              BoundingBox="83.4910221354167,42.7559153175592,49.8512890625,9.40234375"
+              BoundingBox="83.4910221354165,42.7559153175592,49.8512890625,9.40234375"
               RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
@@ -48081,13 +48063,13 @@ ORDER BY [sql_instance], [wait_type_id]</property>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
         <NodeLayout
-          Size="358,42"
-          Id="Package\Load Meta Tables (Full Load)\sqlwatch_meta_os_volume.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
-          TopLeft="60,60" />
-        <NodeLayout
           Size="251,42"
           Id="Package\Load Meta Tables (Full Load)\sqlwatch_meta_os_volume.EventHandlers[OnError]\ERROR usp_sqlwatch_internal_log"
           TopLeft="60,162" />
+        <NodeLayout
+          Size="358,42"
+          Id="Package\Load Meta Tables (Full Load)\sqlwatch_meta_os_volume.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
+          TopLeft="60,60" />
       </GraphLayout>
     </LayoutInfo>
   </DtsEventHandler>
@@ -48310,13 +48292,13 @@ ORDER BY [sql_instance], [wait_type_id]</property>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
         <NodeLayout
-          Size="358,42"
-          Id="Package\Load Meta Tables (Full Load)\sqlwatch_meta_performance_counter.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
-          TopLeft="60,60" />
-        <NodeLayout
           Size="251,42"
           Id="Package\Load Meta Tables (Full Load)\sqlwatch_meta_performance_counter.EventHandlers[OnError]\ERROR usp_sqlwatch_internal_log"
           TopLeft="60,162" />
+        <NodeLayout
+          Size="358,42"
+          Id="Package\Load Meta Tables (Full Load)\sqlwatch_meta_performance_counter.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
+          TopLeft="60,60" />
       </GraphLayout>
     </LayoutInfo>
   </DtsEventHandler>
@@ -48533,13 +48515,13 @@ ORDER BY [sql_instance], [wait_type_id]</property>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
         <NodeLayout
-          Size="358,42"
-          Id="Package\Load Meta Tables (Full Load)\sqlwatch_meta_server.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
-          TopLeft="60,60" />
-        <NodeLayout
           Size="251,42"
           Id="Package\Load Meta Tables (Full Load)\sqlwatch_meta_server.EventHandlers[OnError]\ERROR usp_sqlwatch_internal_log"
           TopLeft="60,162" />
+        <NodeLayout
+          Size="358,42"
+          Id="Package\Load Meta Tables (Full Load)\sqlwatch_meta_server.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
+          TopLeft="60,60" />
       </GraphLayout>
     </LayoutInfo>
   </DtsEventHandler>
@@ -48854,13 +48836,13 @@ ORDER BY [sql_instance], [wait_type_id]</property>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
         <NodeLayout
-          Size="358,42"
-          Id="Package\Load Meta Tables (Full Load)\sqlwatch_meta_table.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
-          TopLeft="60,60" />
-        <NodeLayout
           Size="251,42"
           Id="Package\Load Meta Tables (Full Load)\sqlwatch_meta_table.EventHandlers[OnError]\ERROR usp_sqlwatch_internal_log"
           TopLeft="60,162" />
+        <NodeLayout
+          Size="358,42"
+          Id="Package\Load Meta Tables (Full Load)\sqlwatch_meta_table.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
+          TopLeft="60,60" />
       </GraphLayout>
     </LayoutInfo>
   </DtsEventHandler>
@@ -49065,13 +49047,13 @@ ORDER BY [sql_instance], [wait_type_id]</property>
       <GraphLayout
         Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
         <NodeLayout
-          Size="358,42"
-          Id="Package\Load Meta Tables (Full Load)\sqlwatch_meta_wait_stats.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
-          TopLeft="60,60" />
-        <NodeLayout
           Size="251,42"
           Id="Package\Load Meta Tables (Full Load)\sqlwatch_meta_wait_stats.EventHandlers[OnError]\ERROR usp_sqlwatch_internal_log"
           TopLeft="60,162" />
+        <NodeLayout
+          Size="358,42"
+          Id="Package\Load Meta Tables (Full Load)\sqlwatch_meta_wait_stats.EventHandlers[OnError]\update ERROR sqlwatch_meta_repository_import_status"
+          TopLeft="60,60" />
       </GraphLayout>
     </LayoutInfo>
   </DtsEventHandler>
