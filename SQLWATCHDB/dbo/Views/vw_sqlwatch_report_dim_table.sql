@@ -58,7 +58,7 @@
 			and g2.sqlwatch_table_id = vc.sqlwatch_table_id
 			) lg
 
-		where t.is_record_deleted = 0
+		where isnull(t.is_record_deleted,0) = 0
 
 		), cte_table_growth as (
 			select [sql_instance], [sqlwatch_database_id], [sqlwatch_table_id], [table_name], [table_type]
