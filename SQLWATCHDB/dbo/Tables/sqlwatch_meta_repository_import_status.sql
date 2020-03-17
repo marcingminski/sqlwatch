@@ -8,7 +8,8 @@
 	[import_age_minutes] as datediff(minute,[import_end_time],getdate())
 	constraint pk_sqlwatch_logger_repository_import primary key clustered (
 		[sql_instance], [object_name]
-	),
-	constraint fk_sqlwatch_logger_repository_import_status_server foreign key (sql_instance)
-		references dbo.sqlwatch_meta_server (servername) on delete cascade
+	)
+	-- https://github.com/marcingminski/sqlwatch/issues/153
+	--,constraint fk_sqlwatch_logger_repository_import_status_server foreign key (sql_instance)
+	--	references dbo.sqlwatch_meta_server (servername) on delete cascade
 )

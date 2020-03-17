@@ -80,6 +80,9 @@ begin
 							end try
 							begin catch
 								set @has_errors = 1
+								if @@trancount > 0
+									rollback
+
 								exec [dbo].[usp_sqlwatch_internal_log]
 										@proc_id = @@PROCID,
 										@process_stage = 'F445D2BC-2CF3-4F41-9284-A4C3ACA513EB',

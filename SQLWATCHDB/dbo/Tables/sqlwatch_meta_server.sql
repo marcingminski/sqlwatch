@@ -15,6 +15,23 @@
 )
 go
 
+-- https://github.com/marcingminski/sqlwatch/issues/153
+create trigger dbo.trg_sqlwatch_meta_server_delete_import_status
+	on [dbo].[sqlwatch_meta_server]
+	for delete
+	as
+	begin
+		set nocount on;
+		set xact_abort on;
+
+		delete from [dbo].[sqlwatch_meta_repository_import_status]
+		where [sql_instance] in (
+			select [sql_instance]
+			from deleted
+			)
+	end
+go
+
 --https://support.microsoft.com/en-us/help/321843/error-message-1785-occurs-when-you-create-a-foreign-key-constraint-tha
 create trigger dbo.trg_sqlwatch_meta_server_delete_header
 	on [dbo].[sqlwatch_meta_server]
