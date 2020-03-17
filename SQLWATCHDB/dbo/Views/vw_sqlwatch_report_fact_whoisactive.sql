@@ -31,7 +31,14 @@ SELECT [sqlwatch_whoisactive_record_id]
       ,d.[sql_instance]
 	  ,[wait_type] = case when [wait_info] like '%:%' then substring(substring([wait_info],patindex('%)%',[wait_info])+1,len([wait_info])),1,patindex('%:%',substring([wait_info],patindex('%)%',[wait_info]),len([wait_info])))-2) else substring([wait_info],patindex('%)%',[wait_info])+1,len([wait_info])) end
 	  ,[wait_time_ms] = convert(bigint,substring([wait_info],2,patindex('%)%',[wait_info])-4))
-      ,[end_time] = dateadd(ms,convert(bigint,substring([wait_info],2,patindex('%)%',[wait_info])-4)),convert(datetime,ltrim([start_time])))
+      ,[end_time] = case 
+				when convert(bigint,substring([wait_info],2,patindex('%)%',[wait_info])-4)) >= 2147483648 then
+					/* Dateadd can only handle integers, for very long running processes we have to drop resolution and convert to seconds to avoid overlfow. 
+					   https://github.com/marcingminski/sqlwatch/issues/148 */
+					dateadd(s,(convert(bigint,substring([wait_info],2,patindex('%)%',[wait_info])-4))/1000.0),convert(datetime,ltrim([start_time])))
+				else
+					dateadd(ms,convert(bigint,substring([wait_info],2,patindex('%)%',[wait_info])-4)),convert(datetime,ltrim([start_time])))
+				end
       ,[last_collection] = case when ROW_NUMBER() over (partition by [session_id], [start_time] order by d.[snapshot_time] desc) = 1 then 1 else 0 end
       ,[session_id_global] = dense_rank() over (order by [start_time], [session_id])
       ,[lapsed_seconds] = datediff(s,[start_time],d.[snapshot_time])
