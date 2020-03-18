@@ -1,5 +1,4 @@
 ![GitHub release](https://img.shields.io/github/release/marcingminski/sqlwatch.svg)
-![AppVeyor](https://img.shields.io/appveyor/ci/marcingminski/sqlwatch.svg)
 ![GitHub All Releases](https://img.shields.io/github/downloads/marcingminski/sqlwatch/total.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
