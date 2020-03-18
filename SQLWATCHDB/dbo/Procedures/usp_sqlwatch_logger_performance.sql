@@ -1,16 +1,28 @@
 ﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_logger_performance] AS
 
 /*
-	Description
-		Gather performance data
+-------------------------------------------------------------------------------------------------------------------
+ Procedure:
+	[usp_sqlwatch_logger_performance]
 
-	Change Log
-		2018-08		- Marcin Gminski:	Initial Version
-		2019-11-17	- Marcin Gminski:	Exclude idle wait stats.
-		2019-11-24	- Marcin Gminski:	Replace sys.databses with dbo.vw_sqlwatch_sys_databases
+ Description:
+	Collect Performance Metrics
+
+ Parameters
+	
+ Author:
+	Marcin Gminski
+
+ Change Log:
+	1.0		2018-08		- Marcin Gminski:	Initial Version
+	1.1		2019-11-17	- Marcin Gminski:	Exclude idle wait stats.
+	1.2		2019-11-24	- Marcin Gminski:	Replace sys.databses with dbo.vw_sqlwatch_sys_databases
+	1.3		2020-03-18	- Marcin Gminski,	move explicit transaction after header to fix https://github.com/marcingminski/sqlwatch/issues/155
+-------------------------------------------------------------------------------------------------------------------
 */
+
+
 set xact_abort on
-begin tran
 
 set nocount on;
 
@@ -72,6 +84,8 @@ declare @sql nvarchar(4000)
 				) AS y
 		OPTION (RECOMPILE);
 
+
+	begin tran
 		--------------------------------------------------------------------------------------------------------------
 		-- 2. get perfomance counters
 		-- this is where it gets interesting. there are several types of performance counters identified by the cntr_type

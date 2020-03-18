@@ -2,9 +2,27 @@ CREATE PROCEDURE [dbo].[usp_sqlwatch_logger_index_histogram]
 
 as
 
+/*
+-------------------------------------------------------------------------------------------------------------------
+ Procedure:
+	[usp_sqlwatch_logger_index_histogram]
+
+ Description:
+	Collect index histogram.
+
+ Parameters
+	
+ Author:
+	Marcin Gminski
+
+ Change Log:
+	1.0		2018-08		- Marcin Gminski, Initial version
+	1.1		2020-03-18	- Marcin Gminski, move explicit transaction after header to fix https://github.com/marcingminski/sqlwatch/issues/155
+-------------------------------------------------------------------------------------------------------------------
+*/
+
 set xact_abort on
 set nocount on
-begin tran
 
 declare @snapshot_type_id tinyint = 14,
 		@snapshot_time datetime,
@@ -233,6 +251,8 @@ deallocate c_index
 	exec [dbo].[usp_sqlwatch_internal_insert_header] 
 		@snapshot_time_new = @snapshot_time OUTPUT,
 		@snapshot_type_id = @snapshot_type_id
+
+begin tran
 
 	insert into [dbo].[sqlwatch_logger_index_histogram](
 		[sqlwatch_database_id], [sqlwatch_table_id], [sqlwatch_index_id],
