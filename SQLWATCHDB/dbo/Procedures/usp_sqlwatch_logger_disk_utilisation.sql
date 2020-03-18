@@ -1,9 +1,29 @@
 ﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_logger_disk_utilisation]
 AS
+
+/*
+-------------------------------------------------------------------------------------------------------------------
+ Procedure:
+	[usp_sqlwatch_logger_disk_utilisation]
+
+ Description:
+	Collect Disk utilisation.
+
+ Parameters
+	
+ Author:
+	Marcin Gminski
+
+ Change Log:
+	1.0		2018-08		- Marcin Gminski, Initial version
+	1.1		2020-03-18	- Marcin Gminski, move explicit transaction after header to fix https://github.com/marcingminski/sqlwatch/issues/155
+-------------------------------------------------------------------------------------------------------------------
+*/
+
 set nocount on;
 
 set xact_abort on
-begin tran
+
 
 declare @snapshot_type_id tinyint = 2,
 		@snapshot_time datetime2(0),
@@ -145,46 +165,47 @@ else
 --------------------------------------------------------------------------------------------------------------
 -- combine results and insert into the table
 --------------------------------------------------------------------------------------------------------------
-insert into [dbo].[sqlwatch_logger_disk_utilisation_database]
-select 
-	--  su.[database_name]
-	--, [database_create_date] = db.create_date
-	[sqlwatch_database_id] = swd.[sqlwatch_database_id]
-	/*	
-		conversion from sp_spaceused MiB format to bytes so we have consistent units 
-		to test that this gives us an exact number:
-		sp_spaceused returns 7.63 MB for master database.
-		our conversion below gives us 8000634 bytes -> covnert back to MB: 
-			8000634 / 1024 / 1024 = 7.6299 MB
-		Try: http://www.wolframalpha.com/input/?i=8000634+bytes+in+MiB 
-	*/
-	, [database_size_bytes] = convert(bigint,convert(decimal(19,2),replace([database_size],' MB','')) * 1024 * 1024)
-	, [unallocated_space_bytes] = convert(bigint,convert(decimal(19,2),replace([unallocated_space],' MB','')) * 1024.0 * 1024.0)
-	, [reserved_bytes] = convert(bigint,convert(decimal(19,2),replace([reserved],' KB','')) * 1024.0)
-	, [data_bytes] = convert(bigint,convert(decimal(19,2),replace([data],' KB','')) * 1024.0)
-	, [index_size_bytes] = convert(bigint,convert(decimal(19,2),replace([index_size],' KB','')) * 1024.0)
-	, [unused_bytes] = convert(bigint,convert(decimal(19,2),replace([unused],' KB','')) * 1024.0)
-	, ls.[total_log_size_in_bytes]
-	, ls.[used_log_space_in_bytes]
-	, [snapshot_time] = @snapshot_time
-	, [snapshot_type_id] = @snapshot_type_id
-	, @@SERVERNAME
-from @spaceused su
-inner join @logspace ls
-	on su.[database_name] = ls.[database_name] collate database_default
-inner join vw_sqlwatch_sys_databases db
-	on db.[name] = su.[database_name] collate database_default
-/*	join on sqlwatch database list otherwise it will fail
-	for newly created databases not yet added to the list */
-inner join [dbo].[sqlwatch_meta_database] swd
-	on swd.[database_name] = db.[name] collate database_default
-	and swd.[database_create_date] = db.[create_date]
-	and swd.sql_instance = @@SERVERNAME
+begin tran
+	insert into [dbo].[sqlwatch_logger_disk_utilisation_database]
+	select 
+		--  su.[database_name]
+		--, [database_create_date] = db.create_date
+		[sqlwatch_database_id] = swd.[sqlwatch_database_id]
+		/*	
+			conversion from sp_spaceused MiB format to bytes so we have consistent units 
+			to test that this gives us an exact number:
+			sp_spaceused returns 7.63 MB for master database.
+			our conversion below gives us 8000634 bytes -> covnert back to MB: 
+				8000634 / 1024 / 1024 = 7.6299 MB
+			Try: http://www.wolframalpha.com/input/?i=8000634+bytes+in+MiB 
+		*/
+		, [database_size_bytes] = convert(bigint,convert(decimal(19,2),replace([database_size],' MB','')) * 1024 * 1024)
+		, [unallocated_space_bytes] = convert(bigint,convert(decimal(19,2),replace([unallocated_space],' MB','')) * 1024.0 * 1024.0)
+		, [reserved_bytes] = convert(bigint,convert(decimal(19,2),replace([reserved],' KB','')) * 1024.0)
+		, [data_bytes] = convert(bigint,convert(decimal(19,2),replace([data],' KB','')) * 1024.0)
+		, [index_size_bytes] = convert(bigint,convert(decimal(19,2),replace([index_size],' KB','')) * 1024.0)
+		, [unused_bytes] = convert(bigint,convert(decimal(19,2),replace([unused],' KB','')) * 1024.0)
+		, ls.[total_log_size_in_bytes]
+		, ls.[used_log_space_in_bytes]
+		, [snapshot_time] = @snapshot_time
+		, [snapshot_type_id] = @snapshot_type_id
+		, @@SERVERNAME
+	from @spaceused su
+	inner join @logspace ls
+		on su.[database_name] = ls.[database_name] collate database_default
+	inner join vw_sqlwatch_sys_databases db
+		on db.[name] = su.[database_name] collate database_default
+	/*	join on sqlwatch database list otherwise it will fail
+		for newly created databases not yet added to the list */
+	inner join [dbo].[sqlwatch_meta_database] swd
+		on swd.[database_name] = db.[name] collate database_default
+		and swd.[database_create_date] = db.[create_date]
+		and swd.sql_instance = @@SERVERNAME
 
-left join [dbo].[sqlwatch_config_exclude_database] ed
-	on swd.[database_name] like ed.database_name_pattern
-	and ed.snapshot_type_id = @snapshot_type_id
+	left join [dbo].[sqlwatch_config_exclude_database] ed
+		on swd.[database_name] like ed.database_name_pattern
+		and ed.snapshot_type_id = @snapshot_type_id
 
-where ed.snapshot_type_id is null
+	where ed.snapshot_type_id is null
 
 commit tran

@@ -16,18 +16,17 @@ AS
 
  Change Log:
 	1.0		2018-08		- Marcin Gminski, Initial version
-	1.1		2012-12-05	- Marcin Gminski, Ability to exclude database from iteration altogether rather than just data collection.
+	1.1		2019-12-05	- Marcin Gminski, Ability to exclude database from iteration altogether rather than just data collection.
 							In some cases, trying to get index stats from tempdb may deadlock due to schema locks in tempdb.
 							Excluding tempdb from iteration means the code will not even be executed there.
-	1.2		2012-12-09	- Marcin Gminski, Fixed cartersian product #129
-	1.3		2012-12-14	- Marcin Gminski, use usp_sqlwatch_internal_insert_header isntead of direct insert
+	1.2		2019-12-09	- Marcin Gminski, Fixed cartersian product #129
+	1.3		2019-12-14	- Marcin Gminski, use usp_sqlwatch_internal_insert_header isntead of direct insert
+	1.4		2020-03-18	- Marcin Gminski, move explicit transaction after header to fix https://github.com/marcingminski/sqlwatch/issues/155
 -------------------------------------------------------------------------------------------------------------------
 */
 
 set xact_abort on
 set nocount on
-
-begin tran
 
 declare @snapshot_time datetime2(0),
 		@snapshot_type_id tinyint = 14,
@@ -139,6 +138,8 @@ select @date_snapshot_previous = max([snapshot_time])
 
 			Print ''['' + convert(varchar(23),getdate(),121) + ''] Collecting index statistics for database: ?''
 '
+
+begin tran
 
 exec [dbo].[usp_sqlwatch_internal_foreachdb] @command = @sql, @snapshot_type_id = @snapshot_type_id
 

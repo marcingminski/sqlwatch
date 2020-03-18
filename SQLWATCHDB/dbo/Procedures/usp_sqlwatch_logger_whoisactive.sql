@@ -2,8 +2,27 @@
 	@min_session_duration_seconds smallint = 15
 	)
 AS
+
+/*
+-------------------------------------------------------------------------------------------------------------------
+ Procedure:
+	[usp_sqlwatch_logger_whoisactive]
+
+ Description:
+	Collect sp_WhoIsActive output
+
+ Parameters
+	
+ Author:
+	Marcin Gminski
+
+ Change Log:
+	1.0		2018-08		- Marcin Gminski, Initial version
+	1.1		2020-03-18	- Marcin Gminski, move explicit transaction after header to fix https://github.com/marcingminski/sqlwatch/issues/155
+-------------------------------------------------------------------------------------------------------------------
+*/
+
 set xact_abort on
-begin tran
 
 	declare @sp_whoisactive_destination_table varchar(255),
 			@snapshot_time datetime,
@@ -57,6 +76,8 @@ begin tran
 			exec [dbo].[usp_sqlwatch_internal_insert_header] 
 				@snapshot_time_new = @snapshot_time OUTPUT,
 				@snapshot_type_id = @snapshot_type_id
+
+begin tran
 
 			insert into [dbo].[sqlwatch_logger_whoisactive] ([snapshot_time],[start_time],
 					 [session_id],[status],[percent_complete],[host_name]
