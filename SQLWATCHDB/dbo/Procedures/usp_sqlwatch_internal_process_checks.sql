@@ -125,24 +125,28 @@ SET ANSI_WARNINGS OFF
 		set @check_exec_time_ms = convert(real,datediff(MICROSECOND,@check_start_time,@check_end_time) / 1000.0 )
 		if @check_value is null
 			begin
-				set @error_message = 'Unable to evaluate thresholds because Check (Id: ' + convert(varchar(10),@check_id) + ') has returned NULL value:
---- Query -------------------------------------------------
-' + replace(@check_query,'%','%%') + ''
+				set @error_message = 'Unable to evaluate thresholds because Check (Id: ' + convert(varchar(10),@check_id) + ') has returned NULL value'
 				raiserror (@error_message, 16, 1)
 			end
 	end try
 	begin catch
 
+		if @error_message is null or @error_message = '' 
+			begin 
+				set @error_message = replace(@check_query,'%','%%')
+			end
+		else
+			begin
+				set @error_message = @error_message + '
+--- Query -------------------------------------------------
+' + replace(@check_query,'%','%%') + ''
+			end
+
 		if dbo.ufn_sqlwatch_get_config_value(8, null) <> 0
 			begin
 				set @has_errors = 1
-				
-				if @error_message is null or @error_message = '' 
-					begin 
-						set @error_message = @check_query
-					end
-				
-				select @check_query
+
+				select FAILED_QUERY = @check_query, ERROR_MESSAGE = ERROR_MESSAGE()				
 
 				exec [dbo].[usp_sqlwatch_internal_log]
 					@proc_id = @@PROCID,
