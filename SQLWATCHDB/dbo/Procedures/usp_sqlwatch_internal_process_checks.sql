@@ -136,7 +136,14 @@ SET ANSI_WARNINGS OFF
 		if dbo.ufn_sqlwatch_get_config_value(8, null) <> 0
 			begin
 				set @has_errors = 1
+				
+				if @error_message is null or @error_message = '' 
+					begin 
+						set @error_message = @check_query
+					end
+				
 				select @check_query
+
 				exec [dbo].[usp_sqlwatch_internal_log]
 					@proc_id = @@PROCID,
 					@process_stage = '5980A79A-D6BC-4BA0-8B86-A388E8DB621D',
