@@ -10,6 +10,7 @@ AS
 */
 
 SET NOCOUNT ON 
+SET DATEFORMAT ymd --fix for non EN formats
 
 declare @check_name nvarchar(100),
 		@check_description nvarchar(2048),
@@ -135,7 +136,7 @@ SET ANSI_WARNINGS OFF
 		if dbo.ufn_sqlwatch_get_config_value(8, null) <> 0
 			begin
 				set @has_errors = 1
-
+				select @check_query
 				exec [dbo].[usp_sqlwatch_internal_log]
 					@proc_id = @@PROCID,
 					@process_stage = '5980A79A-D6BC-4BA0-8B86-A388E8DB621D',
