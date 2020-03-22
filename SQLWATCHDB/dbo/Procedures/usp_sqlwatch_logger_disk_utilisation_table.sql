@@ -72,4 +72,8 @@ left join ' + quotename(@sqlwatchdb) + '.[dbo].[sqlwatch_logger_disk_utilisation
 
 group by mt.sqlwatch_database_id, mt.sqlwatch_table_id, p.[data_compression]'
 
-exec [dbo].[usp_sqlwatch_internal_foreachdb] @command = @sql, @snapshot_type_id = @snapshot_type_id, @debug = @debug
+exec [dbo].[usp_sqlwatch_internal_foreachdb] 
+		@command = @sql
+	,	@snapshot_type_id = @snapshot_type_id
+	,	@debug = @debug
+	,	@calling_proc_id = @@PROCID

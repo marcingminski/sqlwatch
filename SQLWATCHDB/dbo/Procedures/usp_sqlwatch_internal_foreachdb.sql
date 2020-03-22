@@ -2,7 +2,8 @@
    @command nvarchar(max),
    @snapshot_type_id tinyint = null,
    @exlude_databases varchar(max) = null,
-   @debug bit = 0
+   @debug bit = 0,
+   @calling_proc_id bigint = null
 as
 
 /*
@@ -26,7 +27,8 @@ as
  Change Log:
 	1.0		2019-12		- Marcin Gminski, Initial version
 	1.1		2019-12-10	- Marcin Gminski, database exclusion
-	1.2		2012-12-23	- Marcin Gminski, added error handling and additional messaging
+	1.2		2019-12-23	- Marcin Gminski, added error handling and additional messaging
+	1.3		2020-03-22	- Marcin Gminski, improved logging
 -------------------------------------------------------------------------------------------------------------------
 */
 begin
@@ -35,7 +37,11 @@ begin
 			@db	nvarchar(max),
 			@exclude_from_loop bit,
 			@has_errors bit = 0,
-			@error_message nvarchar(max)
+			@error_message nvarchar(max),
+			@timestart datetime2(7),
+			@timeend datetime2(7),
+			@process_message nvarchar(max),
+			@timetaken bigint
 
 	select *
 	into #t
@@ -76,7 +82,29 @@ begin
 									begin
 										Print @sql
 									end
+								set @timestart = SYSDATETIME()
 								exec sp_executesql @sql
+								set @timeend = SYSDATETIME()
+
+								set @process_message = 'Processed database: [' + @db + '], @snapshot_type_id: ' + isnull(convert(nvarchar(max),@snapshot_type_id),'NULL') + '. Invoked by: [' + isnull(OBJECT_NAME(@calling_proc_id),'UNKNOWN') + '], time taken: '
+
+								if datediff(s,@timestart,@timeend) <= 2147483648
+									begin
+										set @process_message  = @process_message  + convert(varchar(100),datediff(ms,@timestart,@timeend)) + 'ms'
+									end
+								else
+									begin
+										set @process_message  = @process_message  + convert(varchar(100),datediff(s,@timestart,@timeend)) + 's'
+									end
+
+								if dbo.ufn_sqlwatch_get_config_value(7, null) = 1
+									begin
+										exec [dbo].[usp_sqlwatch_internal_log]
+												@proc_id = @@PROCID,
+												@process_stage = '53BFB442-44CD-404F-8C2E-9203A04024D7',
+												@process_message = @process_message,
+												@process_message_type = 'INFO'
+									end
 							end try
 							begin catch
 								set @has_errors = 1
