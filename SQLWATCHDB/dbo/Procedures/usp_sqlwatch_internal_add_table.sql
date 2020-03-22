@@ -11,24 +11,13 @@ create table ##98308FFC2C634BF98B347EECB98E3490 (
 		)
 )
 
---this needs a cursor from dbo.vw_sqlwatch_sys_databases
-exec sp_MSforeachdb '
+
+exec [dbo].[usp_sqlwatch_internal_foreachdb] @command = '
 USE [?]
 insert into ##98308FFC2C634BF98B347EECB98E3490 ([TABLE_CATALOG],[TABLE_SCHEMA],[TABLE_NAME],[TABLE_TYPE])
 SELECT [TABLE_CATALOG],[TABLE_SCHEMA],[TABLE_NAME],[TABLE_TYPE] 
 from INFORMATION_SCHEMA.TABLES
-WHERE''?'' <> ''tempdb'''
-
---update t
---	set sqlwatch_database_id = db.sqlwatch_database_id
---from ##98308FFC2C634BF98B347EECB98E3490 t
-
---inner join [dbo].[sqlwatch_meta_database] db
---	on db.[database_name] = TABLE_CATALOG collate database_default
-
---inner join sys.databases dbs
---	on dbs.name = db.database_name collate database_default
---	and dbs.create_date = db.database_create_date
+WHERE''?'' <> ''tempdb''', @exlude_databases = 'tempdb', @calling_proc_id = @@PROCID
 
 /* when collecting tables we only consider name as a primary key. 
    when table is dropped and recreated with the same name, we are treating it as the same table.

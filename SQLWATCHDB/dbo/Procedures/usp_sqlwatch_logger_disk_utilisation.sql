@@ -17,6 +17,7 @@ AS
  Change Log:
 	1.0		2018-08		- Marcin Gminski, Initial version
 	1.1		2020-03-18	- Marcin Gminski, move explicit transaction after header to fix https://github.com/marcingminski/sqlwatch/issues/155
+	1.2		2020-03-22	- Marcin Gminski, moved off sp_MSforeachdb
 -------------------------------------------------------------------------------------------------------------------
 */
 
@@ -61,14 +62,19 @@ if @product_version_major >= 13
 	to insert into tables */
 	begin
 		insert into @spaceused
-			exec sp_MSforeachdb 'use [?]; exec sp_spaceused @oneresultset = 1;'
+			exec [dbo].[usp_sqlwatch_internal_foreachdb] @command = 'use [?]; exec sp_spaceused @oneresultset = 1;'
+				, @snapshot_type_id = @snapshot_type_id
+				, @calling_proc_id = @@PROCID
 	end
 else
 	begin
 	/*	pre 2016 however is not all that easy. sp_spaceused will return multiple resultsets making it impossible
 		to insert into a table. The below is more or less what sp_spaceused is doing */
 		insert into @spaceused
-		exec sp_MSforeachdb 'USE [?];
+		exec [dbo].[usp_sqlwatch_internal_foreachdb] 
+			@snapshot_type_id = @snapshot_type_id,
+			@calling_proc_id = @@PROCID,
+			@command =  'USE [?];
 		declare  @id	int			
 				,@type	character(2) 
 				,@pages	bigint
@@ -148,7 +154,10 @@ else
 		--https://support.microsoft.com/en-gb/help/4088901/fix-assertion-failure-for-sys-dm-db-log-space-usage-on-database
 		--exclude log collection for database snapshots. Snapshots have no logs anyway.
 		insert into @logspace
-			exec sp_MSforeachdb '
+			exec [dbo].[usp_sqlwatch_internal_foreachdb] 
+				@snapshot_type_id = @snapshot_type_id,
+				@calling_proc_id = @@PROCID,			
+				@command =  '
 				use [?]
 				if exists (select 1 from sys.databases where name = ''?'' 
 							and source_database_id is null)
