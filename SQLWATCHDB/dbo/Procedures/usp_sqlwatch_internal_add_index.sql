@@ -44,7 +44,7 @@ inner join sys.tables t
 	on t.[object_id] = ix.[object_id]
 inner join sys.schemas s 
 	on s.[schema_id] = t.[schema_id]
-where objectproperty( ix.object_id, ''IsMSShipped'' ) = 0 '
+where objectproperty( ix.object_id, ''IsMSShipped'' ) = 0 ', @calling_proc_id = @@PROCID
 
 update t
 	set sqlwatch_database_id = md.sqlwatch_database_id, 

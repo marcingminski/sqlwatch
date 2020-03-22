@@ -141,6 +141,6 @@ select @date_snapshot_previous = max([snapshot_time])
 
 begin tran
 
-exec [dbo].[usp_sqlwatch_internal_foreachdb] @command = @sql, @snapshot_type_id = @snapshot_type_id
+exec [dbo].[usp_sqlwatch_internal_foreachdb] @command = @sql, @snapshot_type_id = @snapshot_type_id, @calling_proc_id = @@PROCID
 
 commit tran

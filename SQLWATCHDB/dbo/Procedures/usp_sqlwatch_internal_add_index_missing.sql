@@ -37,7 +37,7 @@ inner join [?].sys.schemas s
 	on t.schema_id = s.schema_id
 inner join sys.databases db
 	on db.name = ''?''
-	'
+	', @calling_proc_id = @@PROCID
 
 merge [dbo].[sqlwatch_meta_index_missing] as target
 using (
