@@ -29,6 +29,8 @@ begin tran
 		union all
 		--exclude tempdb from table size collector:
 		select 'tempdb',22
+		union all
+		select 'model', 22
 		) as source
 
 	on target.[database_name_pattern]  = source.[database_name_pattern]
