@@ -2,6 +2,7 @@
    @command nvarchar(max),
    @snapshot_type_id tinyint = null,
    @exlude_databases varchar(max) = null,
+   @include_databases varchar(max) = null,
    @debug bit = 0,
    @calling_proc_id bigint = null
 as
@@ -29,6 +30,7 @@ as
 	1.1		2019-12-10	- Marcin Gminski, database exclusion
 	1.2		2019-12-23	- Marcin Gminski, added error handling and additional messaging
 	1.3		2020-03-22	- Marcin Gminski, improved logging
+	1.4		2020-03-23	- Marcin Gminski, added excplicit include 
 -------------------------------------------------------------------------------------------------------------------
 */
 begin
@@ -47,6 +49,10 @@ begin
 	into #t
 	from [dbo].[ufn_sqlwatch_split_string] (@exlude_databases,',')
 
+	select *
+	into #i
+	from [dbo].[ufn_sqlwatch_split_string] (@include_databases,',')
+
 	declare cur_database cursor
 	LOCAL FORWARD_ONLY STATIC READ_ONLY
 	FOR 
@@ -59,6 +65,12 @@ begin
 	left join [dbo].[sqlwatch_config_exclude_database] ex
 		on sdb.[name] like ex.database_name_pattern collate database_default
 		and ex.snapshot_type_id = @snapshot_type_id
+
+	left join #i i
+		on i.value = sdb.name collate database_default
+		 
+	where sdb.name = case when @include_databases is not null then i.value else sdb.name end collate database_default
+
 
 	open cur_database
 	fetch next from cur_database into @db, @exclude_from_loop

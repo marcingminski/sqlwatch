@@ -1,7 +1,8 @@
 ﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_logger_disk_utilisation_table]
-	@debug bit = 0 
+	@debug bit = 0,
+	@include_databases varchar(max) = null,
+	@exlude_databases varchar(max) = null
 as
-
 
 declare @sql nvarchar(max),
 		@sqlwatchdb nvarchar(128) = DB_NAME(),
@@ -20,6 +21,18 @@ declare @sql nvarchar(max),
 
 set @sql = '
 set transaction isolation level read uncommitted
+declare @tablecount bigint,
+		@process_message nvarchar(max)
+
+select @tablecount = count(*) from [?].INFORMATION_SCHEMA.TABLES where TABLE_TYPE = ''BASE TABLE''
+set @process_message = ''Collecting table size for database [?]. Total tables: '' + convert(varchar(10),@tablecount) + ''.''
+
+exec [dbo].[usp_sqlwatch_internal_log]
+	@proc_id = ' + convert(varchar(10),@@PROCID) + ',
+	@process_stage = ''5A046B12-0CF5-4D14-8777-48AAEC8CAA70'',
+	@process_message = @process_message,
+	@process_message_type = ''INFO'';
+
 insert into ' + quotename(@sqlwatchdb) + '.[dbo].[sqlwatch_logger_disk_utilisation_table](
 	  sqlwatch_database_id
 	, sqlwatch_table_id
@@ -77,3 +90,5 @@ exec [dbo].[usp_sqlwatch_internal_foreachdb]
 	,	@snapshot_type_id = @snapshot_type_id
 	,	@debug = @debug
 	,	@calling_proc_id = @@PROCID
+	,	@include_databases = @include_databases
+	,	@exlude_databases = @exlude_databases
