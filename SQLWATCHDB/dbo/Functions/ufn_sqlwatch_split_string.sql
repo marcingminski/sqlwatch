@@ -5,13 +5,15 @@
 )
 RETURNS @output TABLE
 (
-	[value] nvarchar(max)
+	[value] nvarchar(max),
+	[seq] smallint
 )
 as
 begin
 
       declare @string nvarchar(max)
       declare @cnt Int 
+	  declare @rn smallint = 1
 
       if(@input_string is not null) 
 
@@ -22,14 +24,15 @@ begin
                   set @string = substring(@input_string,1,@cnt-1) 
                   set @input_string = substring(@input_string,@cnt+1,len(@input_string)-@cnt) 
 
-                  insert into @output values (@string) 
+                  insert into @output values (@string,@rn) 
                   set @cnt = charindex(@delimiter,@input_string) 
+				  set @rn = @rn + 1
             end 
 
 
             set @string = @input_string 
 
-            insert into @output values (@string) 
+            insert into @output values (@string,@rn) 
       end
       return
 end

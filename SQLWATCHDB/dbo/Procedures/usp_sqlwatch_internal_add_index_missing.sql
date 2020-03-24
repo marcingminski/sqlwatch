@@ -1,4 +1,6 @@
 ﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_internal_add_index_missing]
+	@databases varchar(max) = '-tempdb,-master,-msdb,-%ReportServer%',
+	@ignore_global_exclusion bit = 0
 as
 
 declare @database_name sysname,
@@ -20,7 +22,7 @@ create clustered index idx_tmp_t on #t ([database_name], [create_date], [table_n
 
 
 insert into #t
-exec [dbo].[usp_sqlwatch_internal_foreachdb] @exlude_databases = 'tempdb', @command = 'use [?]
+exec [dbo].[usp_sqlwatch_internal_foreachdb] @databases = @databases, @command = 'use [?]
 select
 	[database_name] = ''?'',
 	[create_date] = db.create_date,
@@ -37,7 +39,7 @@ inner join [?].sys.schemas s
 	on t.schema_id = s.schema_id
 inner join sys.databases db
 	on db.name = ''?''
-	', @calling_proc_id = @@PROCID
+	', @calling_proc_id = @@PROCID, @ignore_global_exclusion = @ignore_global_exclusion
 
 merge [dbo].[sqlwatch_meta_index_missing] as target
 using (

@@ -1,10 +1,10 @@
 ﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_internal_foreachdb]
    @command nvarchar(max),
    @snapshot_type_id tinyint = null,
-   @exlude_databases varchar(max) = null,
-   @include_databases varchar(max) = null,
+   @databases varchar(max) = 'ALL',
    @debug bit = 0,
-   @calling_proc_id bigint = null
+   @calling_proc_id bigint = null,
+   @ignore_global_exclusion bit = 0
 as
 
 /*
@@ -45,103 +45,118 @@ begin
 			@process_message nvarchar(max),
 			@timetaken bigint
 
-	select *
-	into #t
-	from [dbo].[ufn_sqlwatch_split_string] (@exlude_databases,',')
+	set @process_message = 'Invoked by: [' + isnull(OBJECT_NAME(@calling_proc_id),'UNKNOWN') + '], @databases=' + @databases
+	exec [dbo].[usp_sqlwatch_internal_log]
+			@proc_id = @@PROCID,
+			@process_stage = '5D318A4A-1F8A-4D44-B8B9-FFE2ECF62975',
+			@process_message = @process_message,
+			@process_message_type = 'INFO'
 
-	select *
-	into #i
-	from [dbo].[ufn_sqlwatch_split_string] (@include_databases,',')
+
+	declare @excludedbs table ([name] sysname)
+	declare @includedbs table ([name] sysname)
+
+	insert into @excludedbs
+	select [value]
+	from [dbo].[ufn_sqlwatch_split_string] (@databases,',') s
+	where s.[value] like '-%' collate database_default
+
+	insert into @includedbs
+	select [value]
+	from [dbo].[ufn_sqlwatch_split_string] (@databases,',') s
+	where s.[value] not like '-%' collate database_default			
 
 	declare cur_database cursor
 	LOCAL FORWARD_ONLY STATIC READ_ONLY
 	FOR 
-	select 
-			sdb.[name]
-		,	exclude_from_loop = case when ex.snapshot_type_id is not null then 1 else 0 end
+	select distinct sdb.name
 	from dbo.vw_sqlwatch_sys_databases sdb
 
-	--exclude database from looping through it:
-	left join [dbo].[sqlwatch_config_exclude_database] ex
-		on sdb.[name] like ex.database_name_pattern collate database_default
-		and ex.snapshot_type_id = @snapshot_type_id
-
-	left join #i i
-		on i.value = sdb.name collate database_default
-		 
-	where sdb.name = case when @include_databases is not null then i.value else sdb.name end collate database_default
-
-
 	open cur_database
-	fetch next from cur_database into @db, @exclude_from_loop
+	fetch next from cur_database into @db
 
 	while @@FETCH_STATUS = 0
 		begin
-			if @exclude_from_loop = 0
+			Print 'Processing database: ' + quotename(@db)
+			-- check if database is excluded in [dbo].[sqlwatch_config_exclude_database]
+			if not exists (
+				select * from [dbo].[sqlwatch_config_exclude_database]
+				where @db like [database_name_pattern]
+				and snapshot_type_id = @snapshot_type_id
+				and @ignore_global_exclusion = 0
+				)
 				begin
-					set @sql = ''
-					set @db = @db
-
-					if not exists (
-						select * from #t
-						where @db like [value] collate database_default
-						)
+					-- check if database is excluded in @databases i.e. '-tempdb'
+					if @databases = 'ALL'
+						or (@databases <> 'ALL' and not exists (select * from @excludedbs where @db like right([name],len([name])-1)))
+						or (@databases <> 'ALL' and not exists (select * from @excludedbs ))
 						begin
-							set @sql = replace(@command,'?',@db)
-							Print 'Processing database: ' + quotename(@db)
-							begin try
-								if @debug = 1
-									begin
-										Print @sql
-									end
-								set @timestart = SYSDATETIME()
-								exec sp_executesql @sql
-								set @timeend = SYSDATETIME()
+							-- check if database is explicitly included in @databases i.e. 'master,msdb'
+							if @databases = 'ALL'
+								or (@databases <> 'ALL' and exists (select * from @includedbs where @db like [name]))
+								or (@databases <> 'ALL' and not exists (select * from @includedbs))
+								begin
+									set @sql = ''
+									set @sql = replace(@command,'?',@db)
+									Print 'Executing command for database: ' + quotename(@db)
+									begin try
+										if @debug = 1
+											begin
+												Print @sql
+											end
+										set @timestart = SYSDATETIME()
+										exec sp_executesql @sql
+										set @timeend = SYSDATETIME()
 
-								set @process_message = 'Processed database: [' + @db + '], @snapshot_type_id: ' + isnull(convert(nvarchar(max),@snapshot_type_id),'NULL') + '. Invoked by: [' + isnull(OBJECT_NAME(@calling_proc_id),'UNKNOWN') + '], time taken: '
+										set @process_message = 'Processed database: [' + @db + '], @snapshot_type_id: ' + isnull(convert(nvarchar(max),@snapshot_type_id),'NULL') + '. Invoked by: [' + isnull(OBJECT_NAME(@calling_proc_id),'UNKNOWN') + '], time taken: '
 
-								if datediff(s,@timestart,@timeend) <= 2147483648
-									begin
-										set @process_message  = @process_message  + convert(varchar(100),datediff(ms,@timestart,@timeend)) + 'ms'
-									end
-								else
-									begin
-										set @process_message  = @process_message  + convert(varchar(100),datediff(s,@timestart,@timeend)) + 's'
-									end
+										if datediff(s,@timestart,@timeend) <= 2147483648
+											begin
+												set @process_message  = @process_message  + convert(varchar(100),datediff(ms,@timestart,@timeend)) + 'ms'
+											end
+										else
+											begin
+												set @process_message  = @process_message  + convert(varchar(100),datediff(s,@timestart,@timeend)) + 's'
+											end
 
-								if dbo.ufn_sqlwatch_get_config_value(7, null) = 1
-									begin
+										if dbo.ufn_sqlwatch_get_config_value(7, null) = 1
+											begin
+												exec [dbo].[usp_sqlwatch_internal_log]
+														@proc_id = @@PROCID,
+														@process_stage = '53BFB442-44CD-404F-8C2E-9203A04024D7',
+														@process_message = @process_message,
+														@process_message_type = 'INFO'
+											end
+									end try
+									begin catch
+										set @has_errors = 1
+										if @@trancount > 0
+											rollback
+
 										exec [dbo].[usp_sqlwatch_internal_log]
 												@proc_id = @@PROCID,
-												@process_stage = '53BFB442-44CD-404F-8C2E-9203A04024D7',
-												@process_message = @process_message,
-												@process_message_type = 'INFO'
-									end
-							end try
-							begin catch
-								set @has_errors = 1
-								if @@trancount > 0
-									rollback
-
-								exec [dbo].[usp_sqlwatch_internal_log]
-										@proc_id = @@PROCID,
-										@process_stage = 'F445D2BC-2CF3-4F41-9284-A4C3ACA513EB',
-										@process_message = @sql,
-										@process_message_type = 'ERROR'
-								GoTo NextDatabase
-							end catch
-						end
-					else
-						begin
-							Print 'Database (' + @db + ') excluded from collection due to local exclusion'
-						end
+												@process_stage = 'F445D2BC-2CF3-4F41-9284-A4C3ACA513EB',
+												@process_message = @sql,
+												@process_message_type = 'ERROR'
+										GoTo NextDatabase
+									end catch
+								end
+							else
+								begin
+									Print 'A7F70FE7-D836-4B2D-A1CC-9E25D5F65180 Database (' + @db + ') not included in @databases (' + @databases + ')'
+								end
+							end
+						else
+							begin
+								Print 'A6DFE8E3-607E-4E95-8C36-C2E23228B9A3 Database (' + @db + ') excluded from collection in @databases (' + @databases + ')'
+							end
 				end
 			else
 				begin
-					Print 'Database (' + @db + ') excluded from collection (snapshot_type_id: ' + isnull(convert(varchar(10), @snapshot_type_id),'NULL') + ') due to global exclusion.'
+					Print '2F9BBB27-3606-4166-B699-F794140711C7 Database (' + @db + ') excluded from collection (snapshot_type_id: ' + isnull(convert(varchar(10), @snapshot_type_id),'NULL') + ') due to global exclusion.'
 				end
 			NextDatabase:
-			fetch next from cur_database into @db, @exclude_from_loop
+			fetch next from cur_database into @db
 		end
 
 		if @has_errors <> 0

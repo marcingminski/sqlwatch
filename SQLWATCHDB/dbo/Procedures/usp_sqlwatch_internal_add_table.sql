@@ -17,7 +17,7 @@ USE [?]
 insert into ##98308FFC2C634BF98B347EECB98E3490 ([TABLE_CATALOG],[TABLE_SCHEMA],[TABLE_NAME],[TABLE_TYPE])
 SELECT [TABLE_CATALOG],[TABLE_SCHEMA],[TABLE_NAME],[TABLE_TYPE] 
 from INFORMATION_SCHEMA.TABLES
-WHERE''?'' <> ''tempdb''', @exlude_databases = 'tempdb', @calling_proc_id = @@PROCID
+WHERE''?'' <> ''tempdb''', @databases = '-tempdb', @calling_proc_id = @@PROCID
 
 /* when collecting tables we only consider name as a primary key. 
    when table is dropped and recreated with the same name, we are treating it as the same table.

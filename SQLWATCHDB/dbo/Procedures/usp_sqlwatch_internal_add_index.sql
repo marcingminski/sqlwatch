@@ -36,7 +36,7 @@ create unique clustered index icx_tmp_DB61B2CD92324E4B89019FFA7BEF1010
 	on ##DB61B2CD92324E4B89019FFA7BEF1010 ([table_name],[database_name],index_id)
 
 insert into ##DB61B2CD92324E4B89019FFA7BEF1010 (index_name, index_id, index_type_desc, [table_name], [database_name])
-exec [dbo].[usp_sqlwatch_internal_foreachdb] @exlude_databases = 'tempdb', @command = 'use [?]
+exec [dbo].[usp_sqlwatch_internal_foreachdb] @databases = '-tempdb', @command = 'use [?]
 insert into ##DB61B2CD92324E4B89019FFA7BEF1010 (index_name, index_id, index_type_desc, [table_name], [database_name])
 select isnull(ix.name,object_name(ix.object_id)), ix.index_id, ix.type_desc, s.name + ''.'' + t.name, ''?''
 from sys.indexes ix

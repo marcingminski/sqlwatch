@@ -1,4 +1,6 @@
 ﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_logger_index_usage_stats]
+	@databases varchar(max) = '-tempdb',
+	@ignore_global_exclusion bit = 0
 AS
 
 /*
@@ -10,6 +12,10 @@ AS
 	Collect index statistics.
 
  Parameters
+	@databases		: list of databases to include exclude in Ola Hallengren format:
+						include specific dbs: 'DB1,DB2,DB3, %DB%' 
+						exclude specific dbs: '-DB1,-DB2'
+	@ignore_global_exclusion		: whether to ignore exclusions in the config table [dbo].[sqlwatch_config_exclude_database]
 	
  Author:
 	Marcin Gminski
@@ -141,6 +147,10 @@ select @date_snapshot_previous = max([snapshot_time])
 
 begin tran
 
-exec [dbo].[usp_sqlwatch_internal_foreachdb] @command = @sql, @snapshot_type_id = @snapshot_type_id, @calling_proc_id = @@PROCID
+exec [dbo].[usp_sqlwatch_internal_foreachdb] 
+	@command = @sql,
+	@snapshot_type_id = @snapshot_type_id,
+	@calling_proc_id = @@PROCID,
+	@databases = @databases
 
 commit tran

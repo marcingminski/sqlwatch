@@ -1,4 +1,6 @@
 ﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_logger_disk_utilisation]
+	@databases varchar(max) = 'ALL',
+	@ignore_global_exclusion bit = 0
 AS
 
 /*
@@ -65,6 +67,7 @@ if @product_version_major >= 13
 			exec [dbo].[usp_sqlwatch_internal_foreachdb] @command = 'use [?]; exec sp_spaceused @oneresultset = 1;'
 				, @snapshot_type_id = @snapshot_type_id
 				, @calling_proc_id = @@PROCID
+				, @databases = @databases
 	end
 else
 	begin
@@ -74,6 +77,7 @@ else
 		exec [dbo].[usp_sqlwatch_internal_foreachdb] 
 			@snapshot_type_id = @snapshot_type_id,
 			@calling_proc_id = @@PROCID,
+			@databases = @databases,
 			@command =  'USE [?];
 		declare  @id	int			
 				,@type	character(2) 
@@ -156,7 +160,8 @@ else
 		insert into @logspace
 			exec [dbo].[usp_sqlwatch_internal_foreachdb] 
 				@snapshot_type_id = @snapshot_type_id,
-				@calling_proc_id = @@PROCID,			
+				@calling_proc_id = @@PROCID,		
+				@databases = @databases,
 				@command =  '
 				use [?]
 				if exists (select 1 from sys.databases where name = ''?'' 

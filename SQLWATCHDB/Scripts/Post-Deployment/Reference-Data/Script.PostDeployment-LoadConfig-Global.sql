@@ -52,6 +52,11 @@ values
 		Quite often however system_health session is quite large and it can take couple of minutes ot parse xml
 		It is recommended to use SQLWATCH sessions	*/
 	(9	,'Fail back to system_health session'				,0)  
+
+	/*	collecting table sizing in databases with large amount of tables can take a long time. Some users report
+		~10 minutes collection time for databses with 64k (64000) tables. This parameter will limit the total number
+		of tables we collect. */
+	--,(10	,'Table utilisation collector table limit'			,1000) --I don't think this has any value now the collecor has been tweaked
 ;
 
 merge dbo.sqlwatch_config as target
