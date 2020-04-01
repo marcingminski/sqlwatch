@@ -54,7 +54,7 @@ select
 	row_count = convert(real,avg(p.rows)),
 	total_pages = convert(real,sum(a.total_pages)),
 	used_pages = convert(real,sum(a.used_pages)),
-	p.[data_compression]
+	data_compression = max(p.[data_compression])
 from sys.tables t
 inner join sys.indexes i on t.object_id = i.object_id
 inner join sys.partitions p on i.object_id = p.object_id AND i.index_id = p.index_id
@@ -62,7 +62,7 @@ inner join sys.allocation_units a on p.partition_id = a.container_id
 inner join sys.schemas s on t.schema_id = s.schema_id
 inner join sys.databases sdb on sdb.name = ''?''
 
-group by s.name, t.name, p.[data_compression], sdb.name, sdb.create_date;
+group by s.name, t.name, sdb.name, sdb.create_date;
 
 insert into ' + quotename(@sqlwatchdb) + '.[dbo].[sqlwatch_logger_disk_utilisation_table](
 	  sqlwatch_database_id
