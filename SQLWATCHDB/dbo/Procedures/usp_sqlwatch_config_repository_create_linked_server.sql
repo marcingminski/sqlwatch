@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_user_repository_create_linked_server]
+﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_config_repository_create_linked_server]
 	@sql_instance varchar(32) = null,
 	@linked_server nvarchar(128) = null,
 	@rmtuser nvarchar(128) = null,

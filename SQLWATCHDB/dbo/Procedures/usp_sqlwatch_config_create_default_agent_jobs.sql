@@ -1,4 +1,4 @@
-CREATE PROCEDURE [dbo].[usp_sqlwatch_config_set_default_agent_jobs]
+CREATE PROCEDURE [dbo].[usp_sqlwatch_config_create_default_agent_jobs]
 	@remove_existing bit = 0,
 	@print_WTS_command bit = 0,
 	@job_owner sysname = null

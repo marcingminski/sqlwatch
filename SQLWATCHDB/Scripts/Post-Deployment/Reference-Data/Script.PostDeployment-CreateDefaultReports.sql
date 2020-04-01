@@ -16,7 +16,7 @@ set identity_insert [dbo].[sqlwatch_config_report] on;
 disable trigger dbo.trg_sqlwatch_config_report_updated_U on [dbo].[sqlwatch_config_report];
 
 --Indexes with high fragmentation
-exec [dbo].[usp_sqlwatch_user_add_report] 
+exec [dbo].[usp_sqlwatch_config_add_report] 
 	 @report_id = -1
 	,@report_title = 'Indexes with high fragmentation'
 	,@report_description = 'Lisf ot indexes where the fragmentation is above 30% and page count greater than 1000. 
@@ -38,7 +38,7 @@ and page_count > 1000'
 	,@report_action_id  = -1
 
 --Agent Jobs failed in the last 5 minutes
-exec [dbo].[usp_sqlwatch_user_add_report] 
+exec [dbo].[usp_sqlwatch_config_add_report] 
 	 @report_id = -2
 	,@report_title = 'Agent Job failures'
 	,@report_description = 'List of SQL Server Agent Jobs that are enabled and have failed recently.'
@@ -78,7 +78,7 @@ for xml path(''''), type).value(''.'', ''nvarchar(MAX)'')'
 	,@report_action_id  = -1
 
 		--Blocked Processes in the last 5 minutes
-exec [dbo].[usp_sqlwatch_user_add_report] 
+exec [dbo].[usp_sqlwatch_config_add_report] 
 		@report_id = -3
 	,@report_title = 'Blocked Processes'
 	,@report_description = 'List of blocking chains captured in the last minute.'
@@ -119,7 +119,7 @@ for xml path(''''), type).value(''.'', ''nvarchar(MAX)'')'
 
 
 		--Disk utilisation report
-exec [dbo].[usp_sqlwatch_user_add_report] 
+exec [dbo].[usp_sqlwatch_config_add_report] 
 	 @report_id = -4
 	,@report_title = 'Disk Utilisation Report'
 	,@report_description = ''
@@ -134,7 +134,7 @@ where sql_instance = @@SERVERNAME'
 	,@report_action_id  = -1;
 
 
-exec [dbo].[usp_sqlwatch_user_add_report] 
+exec [dbo].[usp_sqlwatch_config_add_report] 
 	 @report_id = -5
 	,@report_title = 'Backup Report'
 	,@report_description = ''
@@ -159,7 +159,7 @@ order by [Database]'
 	,@report_action_id  = -1;
 
 
-exec [dbo].[usp_sqlwatch_user_add_report] 
+exec [dbo].[usp_sqlwatch_config_add_report] 
 	 @report_id = -6
 	,@report_title = 'Out of Date Log Backup Report'
 	,@report_description = 'Report showing databases with out of date log backups.
@@ -187,7 +187,7 @@ and [Last LOG Backup] <> ''--'''
 	,@report_action_id  = -1;
 
 
-exec [dbo].[usp_sqlwatch_user_add_report] 
+exec [dbo].[usp_sqlwatch_config_add_report] 
 	 @report_id = -7
 	,@report_title = 'Out of Date Data Backup Report'
 	,@report_description = 'Report showing databases with out of date data backups.
@@ -214,7 +214,7 @@ and [Last Backup Date] <> ''--'''
 
 
 
-exec [dbo].[usp_sqlwatch_user_add_report] 
+exec [dbo].[usp_sqlwatch_config_add_report] 
 	 @report_id = -8
 	,@report_title = 'Missing Data Backup Report'
 	,@report_description = 'Report showing databases with no data backups.
@@ -237,7 +237,7 @@ This report can only be triggered from check as it contains check related variab
 
 
 
-exec [dbo].[usp_sqlwatch_user_add_report] 
+exec [dbo].[usp_sqlwatch_config_add_report] 
 	 @report_id = -9
 	,@report_title = 'Missing Log Backup Report'
 	,@report_description = 'Report showing databases with missing log backups.
@@ -261,7 +261,7 @@ This report can only be triggered from check as it contains check related variab
 	,@report_action_id  = -1;
 
 
-exec [dbo].[usp_sqlwatch_user_add_report] 
+exec [dbo].[usp_sqlwatch_config_add_report] 
 	 @report_id = -10
 	,@report_title = 'Long Open Transactions'
 	,@report_description = 'Report showing open transactions and assosiated requests.
@@ -322,7 +322,7 @@ for xml path(''''), type).value(''.'', ''nvarchar(MAX)'')'
 	,@report_action_id  = -1;
 
 
-exec [dbo].[usp_sqlwatch_user_add_report] 
+exec [dbo].[usp_sqlwatch_config_add_report] 
 	 @report_id = -11
 	,@report_title = 'SQLWATCH_Performance_Counters'
 	,@report_description = 'Extract for Azure Log Monitor'
@@ -338,7 +338,7 @@ and snapshot_time <= ''{REPORT_CURRENT_RUN_DATE_UTC}'''
 	,@report_batch_id = 'AzureLogMonitor-1'
 
 
-exec [dbo].[usp_sqlwatch_user_add_report] 
+exec [dbo].[usp_sqlwatch_config_add_report] 
 	 @report_id = -12
 	,@report_title = 'SQLWATCH_OS_Volume'
 	,@report_description = 'Extract for Azure Log Monitor'
@@ -348,7 +348,7 @@ exec [dbo].[usp_sqlwatch_user_add_report]
 	,@report_batch_id = 'AzureLogMonitor-1'
 
 
-exec [dbo].[usp_sqlwatch_user_add_report] 
+exec [dbo].[usp_sqlwatch_config_add_report] 
 	 @report_id = -13
 	,@report_title = 'SQLWATCH_Checks'
 	,@report_description = 'Extract for Azure Log Monitor'
@@ -365,7 +365,7 @@ and snapshot_time <= ''{REPORT_CURRENT_RUN_DATE_UTC}'''
 
 
 
-exec [dbo].[usp_sqlwatch_user_add_report] 
+exec [dbo].[usp_sqlwatch_config_add_report] 
 	 @report_id = -14
 	,@report_title = 'SQLWATCH_File_Stats'
 	,@report_description = 'Extract for Azure Log Monitor'
@@ -382,7 +382,7 @@ and snapshot_time <= ''{REPORT_CURRENT_RUN_DATE_UTC}'''
 
 
 
-exec [dbo].[usp_sqlwatch_user_add_report] 
+exec [dbo].[usp_sqlwatch_config_add_report] 
 	 @report_id = -15
 	,@report_title = 'SQLWATCH_Wait_Stats'
 	,@report_description = 'Extract for Azure Log Monitor'
@@ -397,7 +397,7 @@ and snapshot_time <= ''{REPORT_CURRENT_RUN_DATE_UTC}'''
 
 
 
-exec [dbo].[usp_sqlwatch_user_add_report] 
+exec [dbo].[usp_sqlwatch_config_add_report] 
 	 @report_id = -16
 	,@report_title = 'SQLWATCH_Instance'
 	,@report_description = 'Extract for Azure Log Monitor'
@@ -408,7 +408,7 @@ exec [dbo].[usp_sqlwatch_user_add_report]
 
 
 
-exec [dbo].[usp_sqlwatch_user_add_report] 
+exec [dbo].[usp_sqlwatch_config_add_report] 
 	 @report_id = -17
 	,@report_title = 'SQLWATCH_Agent_History'
 	,@report_description = 'Extract for Azure Log Monitor'

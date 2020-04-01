@@ -14,7 +14,7 @@ disable trigger dbo.trg_sqlwatch_config_check_action_updated_date_U on [dbo].[sq
 disable trigger dbo.trg_sqlwatch_config_check_id_I on [dbo].[sqlwatch_config_check];
 set identity_insert [dbo].[sqlwatch_config_check] on;
 
-exec [dbo].[usp_sqlwatch_user_add_check]
+exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -1
 	,@check_name = 'Failed Agent Job' 
 	,@check_description = 'One or more SQL Server Agent Jobs have failed.
@@ -40,7 +40,7 @@ and step_id <> 0'
 	,@ignore_flapping = 1
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_user_add_check]
+exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -2
 	,@check_name = 'Blocked Process'
 	,@check_description = 'One or more blocking chains have been detected.
@@ -62,7 +62,7 @@ where snapshot_time >= ''{LAST_CHECK_DATE}'''
 	,@action_template_id = -2
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_user_add_check]
+exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -3
 	,@check_name = 'CPU Utilistaion'
 	,@check_description = 'The average CPU utilistaion is high.
@@ -90,7 +90,7 @@ and snapshot_time > ''{LAST_CHECK_DATE}'''
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_user_add_check]
+exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -4
 	,@check_name = 'SQL Server Uptime'
 	,@check_description = 'SQL Server Uptime Minutes is lower than expected. The server could have been restared in the last 60 minutes.'
@@ -108,7 +108,7 @@ exec [dbo].[usp_sqlwatch_user_add_check]
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_user_add_check]
+exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -5
 	,@check_name = 'Action queue pending items'
 	,@check_description = 'There is a large number of items awaiting action. This could indicate a problem with the action mechanism. Note that in this context, the succesful action means that the item was succesfuly executed, for example sp_send_dbmail and not that the email was delivered.'
@@ -126,7 +126,7 @@ exec [dbo].[usp_sqlwatch_user_add_check]
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_user_add_check]
+exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -6
 	,@check_name = 'Action queue failed items'
 	,@check_description = 'There is one or more failed items in the action queue.'
@@ -144,7 +144,7 @@ exec [dbo].[usp_sqlwatch_user_add_check]
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_user_add_check]
+exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -7
 	,@check_name = 'Disk Free %'
 	,@check_description = 'The "Free Space %" value is lower than expected. One or more disks have less than expected free space. This does not mean that the disk will be full soon as it may not grow much. Please check the "days until full" value or the actual growth.
@@ -166,7 +166,7 @@ and free_space_percentage is not null'
 	,@action_template_id = -2
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_user_add_check]
+exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -8
 	,@check_name = 'Days left until disk full'
 	,@check_description = 'The "days until full" value is lower than expected. One or more disks will be full in few days. If there is a report assosiated with this check, details of the storage utilistaion should be included below.'
@@ -187,7 +187,7 @@ and days_until_full is not null'
 	,@action_template_id = -2
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_user_add_check]
+exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -9
 	,@check_name = 'Check execution time'
 	,@check_description = 'There are checks that take over 1 second to execute on average. Make sure checks tare lightweight and do not use up lots of resources and time. Checks are executed in series, in a single threaded cursor and not parralel. This means that 10 checks taking 1 second each will in total take 10 seconds to run. Each check should not take more than few miliseconds to run.
@@ -208,7 +208,7 @@ where sql_instance = @@SERVERNAME'
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_user_add_check]
+exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -10
 	,@check_name = 'Failed Checks'
 	,@check_description = 'There is one or more failed checks.
@@ -230,7 +230,7 @@ and last_check_status = ''CHECK ERROR'''
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_user_add_check]
+exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -11
 	,@check_name = 'Queued actions not processed'
 	,@check_description = 'There is one or more actions that have not been processed for more than 1 hour. This could indicate problems with the action processing mechanism.'
@@ -251,7 +251,7 @@ and time_queued < dateadd(hour,-1,SYSDATETIME())'
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_user_add_check]
+exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -12
 	,@check_name = 'Databases with Auto Close Enabled'
 	,@check_description = 'There is one or more databases with Auto Close Enabled.
@@ -283,7 +283,7 @@ and mtb.sql_instance = @@SERVERNAME'
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_user_add_check]
+exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -13
 	,@check_name = 'Databases with Auto Shrink Enabled'
 	,@check_description = 'There is one or more databases with Auto Shrink Enabled.
@@ -320,7 +320,7 @@ and mtb.sql_instance = @@SERVERNAME'
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_user_add_check]
+exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -14
 	,@check_name = 'Databases not ONLINE'
 	,@check_description = 'There is one or more databases with status other than ONLINE.
@@ -349,7 +349,7 @@ and mtb.sql_instance = @@SERVERNAME'
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_user_add_check]
+exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -15
 	,@check_name = 'Databases not MULTI_USER'
 	,@check_description = 'There is one or more databases with user access other than MULTI_USER. This means that database may not be accessible to multiple concurrent users or access is restricted.
@@ -378,7 +378,7 @@ and mtb.sql_instance = @@SERVERNAME'
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_user_add_check]
+exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -16
 	,@check_name = 'Database page_verify not CHECKSUM'
 	,@check_description = 'There is one or more databases with page_verify other than CHECKSUM.
@@ -409,7 +409,7 @@ and mtb.sql_instance = @@SERVERNAME'
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_user_add_check]
+exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -17
 	,@check_name = 'Oldest LOG backup (minutes)'
 	,@check_description = 'There is one or more databases that has no recent log backup. Databases that are in either FULL or BULK_LOGGED recovery must have frequent Transaction Log backups. The recovery point will be to the last Transaction Log backup and therefore these must happen often to minimise data loss.
@@ -434,7 +434,7 @@ and d.name not in (''tempdb'')'
 	,@action_template_id = -2
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_user_add_check]
+exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -18
 	,@check_name = 'Oldest DATA backup (days)'
 	,@check_description = 'There is one or more databases that has no recent data backup.'
@@ -457,7 +457,7 @@ where d.name not in (''tempdb'')'
 	,@action_template_id = -2
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_user_add_check]
+exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -19
 	,@check_name = 'Databases with no DATA backup'
 	,@check_description = 'There is one or more databases that has no data backup.'
@@ -481,7 +481,7 @@ and bs.backup_finish_date is null'
 	,@action_template_id = -2
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_user_add_check]
+exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -20
 	,@check_name = 'Databases with no LOG backup'
 	,@check_description = 'There is one or more databases that are in FULL or BULK_LOGGED recovery model that have not Log backups. It is critical to maintain Log backups for databases in these recovery modes in order to keep the log small, othwerise it will be constantly growing. Without a valid log backup the point in time recovery will not be possible.
@@ -507,7 +507,7 @@ and bs.backup_finish_date is null'
 	,@action_template_id = -2
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_user_add_check]
+exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -21
 	,@check_name = 'Long Running Open Transactions'
 	,@check_description = 'There is one or more long explicitly open transaction. This means that someone is running long queries with explicit BEGIN TRANSACTION. Whilst this may not necessarily be a problem, long open transactions can cause blocking and ultimately lead to an outage. This is especially important in OLTP systems, if you are running Data Warehouse you can probbaly ignore this alert or adjust threshold accordingly.'
@@ -534,7 +534,7 @@ left join sys.dm_exec_requests r
 
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_user_add_check]
+exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -22
 	,@check_name = 'Full Scan Rate'
 	,@check_description = 'Monitors the number of full scans on tables or indexes. Ignore unless high CPU coincides with high scan rates. High scan rates may be caused by missing indexes, very small tables, or requests for too many records. A sudden increase in this value may indicate a statistics threshold has been reached, resulting in an index no longer being used.
@@ -558,7 +558,7 @@ and snapshot_time > ''{LAST_CHECK_DATE}'''
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_user_add_check]
+exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -23
 	,@check_name = 'SQL Compilations Rate'
 	,@check_description = 'Number of times that Transact-SQL compilations occurred, per second (including recompiles). The lower this value is the better. High values often indicate excessive adhoc querying and should be as low as possible. If excessive adhoc querying is happening, try rewriting the queries as procedures or invoke the queries using sp_executeSQL. When rewriting isn’t possible, consider using a plan guide or setting the database to parameterization forced mode.
@@ -582,7 +582,7 @@ and snapshot_time > ''{LAST_CHECK_DATE}'''
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_user_add_check]
+exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -24
 	,@check_name = 'SQL Re-Compilations Rate'
 	,@check_description = 'Number of times, per second, that Transact-SQL objects attempted to be executed but had to be recompiled before completion. This number should be at or near zero, since recompiles can cause deadlocks and exclusive compile locks. This counter''s value should follow in proportion to "Batch Requests/sec" and "SQL Compilations/ sec". This needs to be nil in your system as much as possible.
@@ -606,7 +606,7 @@ and snapshot_time > ''{LAST_CHECK_DATE}'''
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_user_add_check]
+exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -25
 	,@check_name = 'Page Split Rate'
 	,@check_description = 'Monitors the number of page splits per second which occur due to overflowing index pages and should be as low as possible. To avoid page splits, review table and index design to reduce non-sequential inserts or implement fillfactor and pad_index to leave more empty space per page. NOTE: A high value for this counter is not bad in situations where many new pages are being created, since it includes new page allocations.
@@ -630,7 +630,7 @@ and snapshot_time > ''{LAST_CHECK_DATE}'''
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_user_add_check]
+exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -26
 	,@check_name = 'Free list stalls/sec'
 	,@check_description = 'Monitors the number of requests per second where data requests stall because no buffers are available. Any value above 2 means SQL Server needs more memory.number of requests per second where data requests stall because no buffers are available. Any value above 2 means SQL Server needs more memory.
@@ -658,7 +658,7 @@ and snapshot_time > ''{LAST_CHECK_DATE}'''
 
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_user_add_check]
+exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -27
 	,@check_name = 'Lazy writes/sec'
 	,@check_description = 'Monitors the number of times per second that the Lazy Writer process moves dirty pages from the buffer to disk as it frees up buffer space. Lower is better with zero being ideal. When greater than 20, this counter indicates a need for more memory.
@@ -685,7 +685,7 @@ and snapshot_time > ''{LAST_CHECK_DATE}'''
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_user_add_check]
+exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -28
 	,@check_name = 'Page reads/sec'
 	,@check_description = 'Number of physical database page reads issued per second. Normal OLTP workloads support 80 – 90 per second, but higher values may be a yellow flag for poor indexing or insufficient memory.
@@ -712,7 +712,7 @@ and snapshot_time > ''{LAST_CHECK_DATE}'''
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_user_add_check]
+exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -29
 	,@check_name = 'Page Lookups Rate'
 	,@check_description = 'The number of requests to find a page in the buffer pool. When the ratio of batch requests to page lookups crests 100, you may have inefficient execution plans or too many adhoc queries.	
@@ -736,7 +736,7 @@ and snapshot_time > ''{LAST_CHECK_DATE}'''
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_user_add_check]
+exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -30
 	,@check_name = 'Page writes/sec'
 	,@check_description = 'Number of database pages physically written to disk per second. Normal OLTP workloads support 80 – 90 per second. Values over 90 should be crossed checked with "lazy writer/sec" and "checkpoint" counters. If the other counters are also high, then it may indicate insufficient memory.
@@ -763,7 +763,7 @@ and snapshot_time > ''{LAST_CHECK_DATE}'''
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_user_add_check]
+exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -31
 	,@check_name = 'Average Wait Time (ms)'
 	,@check_description = 'The average wait time, in milliseconds, for each lock request that had to wait. An average wait time longer than 500ms may indicate excessive blocking. This value should generally correlate to "Lock Waits/sec" and move up or down with it accordingly.
@@ -790,7 +790,7 @@ and snapshot_time > ''{LAST_CHECK_DATE}'''
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_user_add_check]
+exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -32
 	,@check_name = 'Lock Requests/sec'
 	,@check_description = 'The number of new locks and locks converted per second. This metric''s value should generally correspond to "Batch Requests/sec". Values > 1000 may indicate queries are accessing very large numbers of rows and may benefit from tuning.
@@ -818,7 +818,7 @@ and snapshot_time > ''{LAST_CHECK_DATE}'''
 
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_user_add_check]
+exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -33
 	,@check_name = 'Lock Timeouts/sec'
 	,@check_description = 'Shows the number of lock requests per second that timed out, including internal requests for NOWAIT locks. A value greater than zero might indicate that user queries are not completing. The lower this value is, the better.
@@ -845,7 +845,7 @@ and snapshot_time > ''{LAST_CHECK_DATE}'''
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_user_add_check]
+exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -34
 	,@check_name = 'Lock Waits/sec'
 	,@check_description = 'How many times users waited to acquire a lock over the past second. Values greater than zero indicate at least some blocking is occurring, while a value of zero can quickly eliminate blocking as a potential root-cause problem. As with "Lock Wait Time", lock waits are not recorded by Perf- Mon until after the lock event completes.
@@ -872,7 +872,7 @@ and snapshot_time > ''{LAST_CHECK_DATE}'''
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_user_add_check]
+exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -35
 	,@check_name = 'Readahead pages/sec'
 	,@check_description = 'Number of data pages read per second in anticipation of their use. If this value is makes up even a sizeable minority of total Page Reads/sec (say, greater than 20% of total page reads), you may have too many physical reads occurring.
@@ -900,7 +900,7 @@ and snapshot_time > ''{LAST_CHECK_DATE}'''
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_user_add_check]
+exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -36
 	,@check_name = 'Number of Deadlocks/sec'
 	,@check_description = 'Number of lock requests, per second, which resulted in a deadlock. Since only a COMMIT, ROLLBACK, or deadlock can terminate a transaction (excluding failures or errors), this is an important value to track. Excessive deadlocking indicates a table or index design error or bad application design.
@@ -927,7 +927,7 @@ and snapshot_time > ''{LAST_CHECK_DATE}'''
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_user_add_check]
+exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -37
 	,@check_name = 'Memory Grants Outstanding'
 	,@check_description = 'Total number of processes per second that have successfully acquired a workspace memory grant.
@@ -955,7 +955,7 @@ and snapshot_time > ''{LAST_CHECK_DATE}'''
 
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_user_add_check]
+exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -38
 	,@check_name = 'Memory Grants Pending'
 	,@check_description = 'Total number of processes per second waiting for a workspace memory grant. Numbers higher than 0 indicate a lack of memory.
@@ -982,7 +982,7 @@ and snapshot_time > ''{LAST_CHECK_DATE}'''
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_user_add_check]
+exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -39
 	,@check_name = 'Buffer cache hit ratio'
 	,@check_description = 'Long a stalwart counter used by SQL Server DBAs, this counter is no longer very useful. It monitors the percentage of data requests answer from the buffer cache since the last reboot. However, other counters are much better for showing current memory pressure that this one because it blows the curve. For example, PLE (page life expectancy) might suddenly drop from 2000 to 70, while buffer cache hit ration moves only from 98.2 to 98.1. Only be concerned by this counter if it''s value is regularly below 90 (for OLTP) or 80 (for very large OLAP).
@@ -1009,7 +1009,7 @@ and snapshot_time > ''{LAST_CHECK_DATE}'''
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_user_add_check]
+exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -40
 	,@check_name = 'Page life expectancy'
 	,@check_description = 'Tells, on average, how many seconds SQL Server expects a data page to stay in cache. The target on an OLTP system should be at least 300 (5 min). When under 300, this may indicate poor index design (leading to increased disk I/O and less effective use of memory) or, simply, a potential shortage of memory.
@@ -1037,7 +1037,7 @@ and snapshot_time > ''{LAST_CHECK_DATE}'''
 
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_user_add_check]
+exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -41
 	,@check_name = 'Logins/sec'
 	,@check_description = 'The number of user logins per second. Any value over 2 may indicate insufficient connection pooling.
@@ -1064,7 +1064,7 @@ and snapshot_time > ''{LAST_CHECK_DATE}'''
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_user_add_check]
+exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -42
 	,@check_name = 'Errors/sec'
 	,@check_description = 'Number of errors per second which takes a database offline or kills a user connection, respectively. Since these are severe errors, they should occur very infrequently.
@@ -1092,7 +1092,7 @@ and snapshot_time > ''{LAST_CHECK_DATE}'''
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_user_add_check]
+exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -43
 	,@check_name = 'Log Growths'
 	,@check_description = 'Total number of times the transaction log for the database has been expanded. Each time the transaction log grows, all user activity must halt until the log growth completes. Therefore, you want log growths to occur during predefined maintenance windows rather than during general working hours.
@@ -1125,7 +1125,7 @@ and snapshot_time > ''{LAST_CHECK_DATE}'''
 
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_user_add_check]
+exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -44
 	,@check_name = 'Snapshot age'
 	,@check_description = 'This could indicate that the data is not being collected.
@@ -1149,7 +1149,7 @@ where snapshot_type_id in (1,6,7,8,9,10,18)'
 
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_user_add_check]
+exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -45
 	,@check_name = 'Central Repository Import Errors'
 	,@check_description = 'Applies to central repository only. Checks for any objects in the [dbo].[sqlwatch_meta_repository_import_status] table that have import status of ERROR'
@@ -1170,7 +1170,7 @@ exec [dbo].[usp_sqlwatch_user_add_check]
 
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_user_add_check]
+exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -46
 	,@check_name = 'Central Repository Import Age'
 	,@check_description = 'Applies to central repository only. Checks for import age of objects in the [dbo].[sqlwatch_meta_repository_import_status]'
@@ -1190,7 +1190,7 @@ exec [dbo].[usp_sqlwatch_user_add_check]
 
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_user_add_check]
+exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -47
 	,@check_name = 'SQLWATCH Errors'
 	,@check_description = 'Logger Log table is a central place for SQLWATCH to log execution messages. Any errors in this table could indicate serious problems with any SQLWATCH component.'

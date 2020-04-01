@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_user_add_check] (
+﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_config_add_check] (
 	@sql_instance varchar(32) = @@SERVERNAME,
 	@check_id smallint = null,
 	@check_name nvarchar(50),

@@ -2303,4 +2303,116 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="[cntr_value_calculated_avg]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="5f96a48d-35e6-4e56-a35d-1ce7a7795a23" ChangeDateTime="04/01/2020 22:40:59">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_config_set_index_compression]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_config_set_compression_index]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="c5f1326e-c4d6-4f9d-87fe-b6d189bec867" ChangeDateTime="04/01/2020 22:41:45">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_config_set_compression_index]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_config_set_compression_sqlwatch_indexes]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="4d5b5f2b-f305-4e6a-aa3f-5372200ad826" ChangeDateTime="04/01/2020 22:42:20">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_config_set_table_compression]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_config_set_compression_sqlwatch_tables]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="d1e242ee-2489-4205-b59d-2471bca5fa29" ChangeDateTime="04/01/2020 22:44:05">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_config_set_compression_sqlwatch_indexes]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_config_enable_compression_indexes]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="a3336fa2-6008-4dcd-9235-660c58c751b2" ChangeDateTime="04/01/2020 22:44:38">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_config_set_compression_sqlwatch_tables]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_config_enable_compression_sqlwatch_tables]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="83086f95-07e3-48e5-b1f4-f08a0ffb679f" ChangeDateTime="04/01/2020 22:44:59">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_config_enable_compression_indexes]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_config_enable_compression_sqlwatch_indexes]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="8aa61f20-602b-45cb-a141-88bf2d2343d0" ChangeDateTime="04/01/2020 22:45:55">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_config_set_blocked_proc_threshold]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_config_set_sqlserver_blocked_proc_threshold]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="687c473d-193d-4cd4-8578-d55392b846e4" ChangeDateTime="04/01/2020 22:46:32">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_config_set_default_agent_jobs]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_config_create_default_agent_jobs]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="3bd9e3cb-c461-41b3-8352-48549c10eb9a" ChangeDateTime="04/01/2020 22:47:01">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_config_set_repository_agent_jobs]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_config_create_repository_agent_jobs]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="f221d398-99ef-4d1a-b1ed-9ad108ec7c1f" ChangeDateTime="04/01/2020 22:51:32">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_user_repository_add_remote_instance]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_config_repository_add_remote_instance]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="ccf481cf-5971-4045-a600-5782fc422429" ChangeDateTime="04/01/2020 22:52:00">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_user_repository_create_linked_server]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_config_repository_create_linked_server]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="61e1933c-7ccd-436e-92f4-f14833947015" ChangeDateTime="04/01/2020 22:52:38">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_config_create_repository_agent_jobs]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_config_repository_create_agent_jobs]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="1c9912c1-bb25-48fa-a6d6-9252a5f9b3c7" ChangeDateTime="04/01/2020 22:55:37">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_config_set_sqlserver_blocked_proc_threshold]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_config_sqlserver_set_blocked_proc_threshold]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="aa005a19-2c46-47c0-91c5-350b2fc95ed6" ChangeDateTime="04/01/2020 22:57:56">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_user_add_action]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_config_add_action]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="00348692-5f11-4eb2-ab58-e3d92f8f2c41" ChangeDateTime="04/01/2020 22:58:28">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_user_add_check]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_config_add_check]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="e62212d4-dd22-41bd-a29b-b674d95f35c7" ChangeDateTime="04/01/2020 22:58:51">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_user_add_report]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_config_add_report]" />
+  </Operation>
 </Operations>

@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_user_repository_add_remote_instance]
+﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_config_repository_add_remote_instance]
 	@sql_instance varchar(32),
 	@hostname nvarchar(32) = null,
 	@sql_port int = null,
@@ -41,7 +41,7 @@ If you are using linked server for data collection, please make sure these are a
 
 if @linked_server_name is not null
 	begin
-		exec [dbo].[usp_sqlwatch_user_repository_create_linked_server]
+		exec [dbo].[usp_sqlwatch_config_repository_create_linked_server]
 			@sql_instance  = @sql_instance,
 			@linked_server = @linked_server_name,
 			@rmtuser = @rmtuser,

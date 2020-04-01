@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_user_add_action] (
+﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_config_add_action] (
 	@action_id smallint = null,
 	@action_description nvarchar(max),
 	@action_exec_type nvarchar(50),

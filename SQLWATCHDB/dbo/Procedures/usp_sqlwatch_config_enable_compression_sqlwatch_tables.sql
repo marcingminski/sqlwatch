@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_config_set_table_compression]
+﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_config_enable_compression_sqlwatch_tables]
 as
 
 declare @sql varchar(max)

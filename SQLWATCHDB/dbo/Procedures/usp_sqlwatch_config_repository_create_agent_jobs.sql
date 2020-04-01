@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_config_set_repository_agent_jobs]
+﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_config_repository_create_agent_jobs]
 	@threads tinyint = 1,
 	@remove_existing bit = 0,
 	@print_WTS_command bit = 0

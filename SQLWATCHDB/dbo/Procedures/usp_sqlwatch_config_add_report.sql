@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_user_add_report] (
+﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_config_add_report] (
 	@sql_instance varchar(32) = @@SERVERNAME,
 	@report_id smallint = null,
 	@report_title varchar(255) ,
