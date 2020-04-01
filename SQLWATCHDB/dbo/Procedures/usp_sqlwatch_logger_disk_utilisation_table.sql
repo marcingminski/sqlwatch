@@ -54,7 +54,9 @@ select
 	row_count = convert(real,avg(p.rows)),
 	total_pages = convert(real,sum(a.total_pages)),
 	used_pages = convert(real,sum(a.used_pages)),
-	data_compression = max(p.[data_compression])
+	/* only take table compression into account and not index compression.
+	   we have index analysis elsewhere */
+	[data_compression] = max(case when i.index_id = 0 then p.[data_compression] else 0 end)
 from sys.tables t
 inner join sys.indexes i on t.object_id = i.object_id
 inner join sys.partitions p on i.object_id = p.object_id AND i.index_id = p.index_id
