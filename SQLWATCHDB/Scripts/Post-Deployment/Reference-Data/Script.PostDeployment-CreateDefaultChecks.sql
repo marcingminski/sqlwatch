@@ -23,7 +23,7 @@ If there is a report assosiated with this check, details of the failures should 
 	this may cause some rare overlap but better to capture failed job twice than miss it */
 	,@check_query = 'select @output=count(*)
 from msdb.dbo.sysjobhistory 
-where msdb.dbo.agent_datetime(run_date, run_time) >= dateadd(second,-1,''{LAST_CHECK_DATE}'') 
+where DATEADD(second, DATEDIFF(second, GETDATE(), GETUTCDATE()), msdb.dbo.agent_datetime(run_date, run_time)) >= dateadd(second,-1,''{LAST_CHECK_DATE}'') 
 and run_status = 0
 and step_id <> 0'
 	,@check_frequency_minutes = NULL
