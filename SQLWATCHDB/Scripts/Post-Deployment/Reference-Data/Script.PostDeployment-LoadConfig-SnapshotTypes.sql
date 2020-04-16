@@ -64,7 +64,9 @@ using (
 	union
 	/* Table Size */
 	select [snapshot_type_id] = 22, [snapshot_type_desc] = 'Disk Utilisation Table', [snapshot_retention_days] = 30
-
+	union
+	/* Errorlog */
+	select [snapshot_type_id] = 25, [snapshot_type_desc] = 'ERRORLOG', [snapshot_retention_days] = 30
 
 ) as source
 on (source.[snapshot_type_id] = target.[snapshot_type_id])

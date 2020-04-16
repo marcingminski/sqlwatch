@@ -2415,4 +2415,18 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[usp_sqlwatch_config_add_report]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="ae220024-c77c-45b3-97d2-ae01f4c94781" ChangeDateTime="04/16/2020 20:10:46">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_config_errorlog_attributes]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[sqlwatch_meta_errorlog_attributes]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="f536592d-d25d-46f8-97f0-0ed0d5372e6d" ChangeDateTime="04/16/2020 20:36:58">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_meta_errorlog_attributes]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[sqlwatch_meta_errorlog_attribute]" />
+  </Operation>
 </Operations>
