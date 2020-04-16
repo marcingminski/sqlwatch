@@ -1,6 +1,27 @@
 ﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_repository_remote_table_import]
 as
 
+/*
+-------------------------------------------------------------------------------------------------------------------
+ Procedure:
+	[usp_sqlwatch_repository_remote_table_import]
+
+ Description:
+	Central Repository procedure. Imports tables from remote SQLWATCH via linked server.
+
+ Parameters
+	N/A
+
+ Author:
+	Marcin Gminski
+
+ Change Log:
+	1.0		2020-xx-xx	- Marcin Gminski, Initial version
+	1.1		2020-04-16	- Marcin Gminski, fixed error when running procedure manually not via agnt
+-------------------------------------------------------------------------------------------------------------------
+*/
+
+
 set nocount on;
 set xact_abort on; 
 
@@ -40,6 +61,17 @@ select	@thread_name = j.name,
 		on master.dbo.fn_varbintohexstr(convert(varbinary(16), job_id)) COLLATE Latin1_General_CI_AI =
 		substring(replace(program_name, 'SQLAgent - TSQL JobStep (Job ', ''), 1, 34)
 		where p.spid = @@SPID
+
+if @thread_name is null
+	begin
+		set @thread_name = 'AD-HOC'
+	end
+
+if @thread_spid is null
+	begin
+		set @thread_spid = @@SPID
+	end
+
 
 set @message = 'Starting remote data import. Thread ' + @thread_name
 exec [dbo].[usp_sqlwatch_internal_log]
