@@ -224,7 +224,16 @@ set @rowcount_loaded_out = @@ROWCOUNT
 			end
 
 			set @rmtq_timestart = sysutcdatetime()
-			exec sp_executesql @sql, N'@rowcount_imported_out bigint OUTPUT, @rowcount_loaded_out bigint OUTPUT', @rowcount_imported_out = @rowcount_imported output, @rowcount_loaded_out = @rowcount_loaded output;
+			begin try
+				exec sp_executesql @sql, N'@rowcount_imported_out bigint OUTPUT, @rowcount_loaded_out bigint OUTPUT', @rowcount_imported_out = @rowcount_imported output, @rowcount_loaded_out = @rowcount_loaded output;
+			end try
+			begin catch
+				exec [dbo].[usp_sqlwatch_internal_log]
+					@proc_id = @@PROCID,
+					@process_stage = '9B115374-36F7-484F-810F-8B9EB2307342',
+					@process_message = @sql,
+					@process_message_type = 'ERROR'
+			end catch
 			set @rmtq_timeend = sysutcdatetime()
 					
 			set @message = 'Retrieving data from remote instance (' + @sql_instance + '). '
