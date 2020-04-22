@@ -19,6 +19,7 @@ AS
  Change Log:
 	1.0		2018-08		- Marcin Gminski, Initial version
 	1.1		2020-03-18	- Marcin Gminski, move explicit transaction after header to fix https://github.com/marcingminski/sqlwatch/issues/155
+	1.2		2020-04-22	- Marcin Gminski, changed getutcdate() to getdate() in the where as [start_time] is a local time
 -------------------------------------------------------------------------------------------------------------------
 */
 
@@ -93,7 +94,7 @@ begin tran
 					,[writes],[physical_reads],[login_time], @snapshot_type_id, @@SERVERNAME
 			from [##SQLWATCH_7A2124DA-B485-4C43-AE04-65D61E6A157C]
 			-- exclude anything that has been running for less that the desired duration in seconds (default 15)
-			where [start_time] < dateadd(s,@min_session_duration_seconds,getutcdate())
+			where [start_time] < dateadd(s,@min_session_duration_seconds,getdate())
 			-- unless its being blocked or is a blocker
 			or [blocking_session_id] is not null or [blocked_session_count] > 0
 		end

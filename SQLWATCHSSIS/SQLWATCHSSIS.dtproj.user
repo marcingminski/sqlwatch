@@ -4,7 +4,7 @@
     <Configuration>
       <Name>Development</Name>
       <Options>
-        <ServerName>192.168.168.172</ServerName>
+        <ServerName>sqlwatch-repo-1</ServerName>
         <PathOnServer>/SSISDB/SQLWATCH/SQLWATCHSSIS</PathOnServer>
         <UserIDs />
         <UserPasswords />
