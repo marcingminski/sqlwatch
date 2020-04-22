@@ -189,15 +189,32 @@ set @rowcount_loaded_out = @@ROWCOUNT
 					/*	get current max snapshot_time to calcualte delta from remote	*/
 					set @sql = 'select @snapshot_time_start_out = max(snapshot_time) from ' + @object_name + ' where sql_instance = ''' + @sql_instance + ''''
 					
-					exec sp_executesql @sql , N'@snapshot_time_start_out datetime2(0) OUTPUT', @snapshot_time_start_out = @snapshot_time_start output;
-
+					begin try
+						exec sp_executesql @sql , N'@snapshot_time_start_out datetime2(0) OUTPUT', @snapshot_time_start_out = @snapshot_time_start output;
+					end try
+					begin catch
+						exec [dbo].[usp_sqlwatch_internal_log]
+							@proc_id = @@PROCID,
+							@process_stage = '985164F4-C2E8-49F9-A582-E4CDF5385406',
+							@process_message = @sql,
+							@process_message_type = 'ERROR'
+					end catch
 					/*	get current max snapshot_time from the header so we are not trying to insert any data that is not yet in the header */
 					set @sql = 'select @snapshot_time_end_out = max(snapshot_time) 
 from dbo.sqlwatch_logger_snapshot_header
 where sql_instance = ''' + @sql_instance + '''
 and snapshot_type_id = ' + convert(varchar(10),@snapshot_type_id)
 
-					exec sp_executesql @sql, N'@snapshot_time_end_out datetime2(0) OUTPUT', @snapshot_time_end_out = @snapshot_time_end output;
+					begin try
+						exec sp_executesql @sql, N'@snapshot_time_end_out datetime2(0) OUTPUT', @snapshot_time_end_out = @snapshot_time_end output;
+					end try
+					begin catch
+						exec [dbo].[usp_sqlwatch_internal_log]
+							@proc_id = @@PROCID,
+							@process_stage = 'CCEC28A0-4F4A-4BA2-B17A-CF59434F77ED',
+							@process_message = @sql,
+							@process_message_type = 'ERROR'
+					end catch
 				
 					/*	build the remote command limited to dates from the above calcualations	*/
 					set @sql = 'select ' + @all_columns_from_source + ' from ' + @object_name + '
