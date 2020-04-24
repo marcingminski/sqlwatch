@@ -28,6 +28,7 @@ AS
 	1.2		2019-12-09	- Marcin Gminski, Fixed cartersian product #129
 	1.3		2019-12-14	- Marcin Gminski, use usp_sqlwatch_internal_insert_header isntead of direct insert
 	1.4		2020-03-18	- Marcin Gminski, move explicit transaction after header to fix https://github.com/marcingminski/sqlwatch/issues/155
+	1.5		2020-04-24	- Marcin Gminski, fixed transaction count error on failure.
 -------------------------------------------------------------------------------------------------------------------
 */
 
@@ -144,12 +145,8 @@ select @date_snapshot_previous = max([snapshot_time])
 			Print ''['' + convert(varchar(23),getdate(),121) + ''] Collecting index statistics for database: ?''
 '
 
-begin tran
-
 exec [dbo].[usp_sqlwatch_internal_foreachdb] 
 	@command = @sql,
 	@snapshot_type_id = @snapshot_type_id,
 	@calling_proc_id = @@PROCID,
 	@databases = @databases
-
-commit tran
