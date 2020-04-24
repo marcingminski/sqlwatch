@@ -115,16 +115,8 @@ select @date_snapshot_previous = max([snapshot_time])
 			inner join [?].sys.schemas s 
 				on s.[schema_id] = t.[schema_id]
 
-			inner join [dbo].[sqlwatch_meta_index] mi
-				on mi.sql_instance = @@SERVERNAME
-				and mi.sqlwatch_database_id = mi.sqlwatch_database_id
-				and mi.sqlwatch_table_id = mi.sqlwatch_table_id
-				and mi.index_id = ixus.index_id
-				and mi.index_name = case when mi.index_type_desc = ''HEAP'' then t.[name] else ix.[name] end collate database_default
-
 			inner join [dbo].[sqlwatch_meta_database] mdb
-				on mdb.sqlwatch_database_id = mi.sqlwatch_database_id
-				and mdb.database_name = dbs.name collate database_default
+				on mdb.database_name = dbs.name collate database_default
 				and mdb.database_create_date = dbs.create_date
 
 			/* https://github.com/marcingminski/sqlwatch/issues/110 */
@@ -132,6 +124,13 @@ select @date_snapshot_previous = max([snapshot_time])
 				on mt.sql_instance = mdb.sql_instance
 				and mt.sqlwatch_database_id = mdb.sqlwatch_database_id
 				and mt.table_name = s.name + ''.'' + t.name collate database_default
+
+			inner join [dbo].[sqlwatch_meta_index] mi
+				on mi.sql_instance = @@SERVERNAME
+				and mi.sqlwatch_database_id = mdb.sqlwatch_database_id
+				and mi.sqlwatch_table_id = mt.sqlwatch_table_id
+				and mi.index_id = ixus.index_id
+				and mi.index_name = case when mi.index_type_desc = ''HEAP'' then t.[name] else ix.[name] end collate database_default
 
 			left join [dbo].[sqlwatch_logger_index_usage_stats] usprev
 				on usprev.sql_instance = mi.sql_instance
