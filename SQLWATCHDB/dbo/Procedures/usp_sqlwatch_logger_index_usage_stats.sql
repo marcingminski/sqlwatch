@@ -28,7 +28,6 @@ AS
 	1.2		2019-12-09	- Marcin Gminski, Fixed cartersian product #129
 	1.3		2019-12-14	- Marcin Gminski, use usp_sqlwatch_internal_insert_header isntead of direct insert
 	1.4		2020-03-18	- Marcin Gminski, move explicit transaction after header to fix https://github.com/marcingminski/sqlwatch/issues/155
-	1.5		2020-04-24	- Marcin Gminski, fixed transaction count error on failure.
 -------------------------------------------------------------------------------------------------------------------
 */
 
@@ -116,16 +115,8 @@ select @date_snapshot_previous = max([snapshot_time])
 			inner join [?].sys.schemas s 
 				on s.[schema_id] = t.[schema_id]
 
-			inner join [dbo].[sqlwatch_meta_index] mi
-				on mi.sql_instance = @@SERVERNAME
-				and mi.sqlwatch_database_id = mi.sqlwatch_database_id
-				and mi.sqlwatch_table_id = mi.sqlwatch_table_id
-				and mi.index_id = ixus.index_id
-				and mi.index_name = case when mi.index_type_desc = ''HEAP'' then t.[name] else ix.[name] end collate database_default
-
 			inner join [dbo].[sqlwatch_meta_database] mdb
-				on mdb.sqlwatch_database_id = mi.sqlwatch_database_id
-				and mdb.database_name = dbs.name collate database_default
+				on mdb.database_name = dbs.name collate database_default
 				and mdb.database_create_date = dbs.create_date
 
 			/* https://github.com/marcingminski/sqlwatch/issues/110 */
@@ -133,6 +124,13 @@ select @date_snapshot_previous = max([snapshot_time])
 				on mt.sql_instance = mdb.sql_instance
 				and mt.sqlwatch_database_id = mdb.sqlwatch_database_id
 				and mt.table_name = s.name + ''.'' + t.name collate database_default
+
+			inner join [dbo].[sqlwatch_meta_index] mi
+				on mi.sql_instance = @@SERVERNAME
+				and mi.sqlwatch_database_id = mdb.sqlwatch_database_id
+				and mi.sqlwatch_table_id = mt.sqlwatch_table_id
+				and mi.index_id = ixus.index_id
+				and mi.index_name = case when mi.index_type_desc = ''HEAP'' then t.[name] else ix.[name] end collate database_default
 
 			left join [dbo].[sqlwatch_logger_index_usage_stats] usprev
 				on usprev.sql_instance = mi.sql_instance
@@ -146,9 +144,12 @@ select @date_snapshot_previous = max([snapshot_time])
 			Print ''['' + convert(varchar(23),getdate(),121) + ''] Collecting index statistics for database: ?''
 '
 
+begin tran
 
 exec [dbo].[usp_sqlwatch_internal_foreachdb] 
 	@command = @sql,
 	@snapshot_type_id = @snapshot_type_id,
 	@calling_proc_id = @@PROCID,
 	@databases = @databases
+
+commit tran
