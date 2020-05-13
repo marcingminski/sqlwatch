@@ -97,7 +97,8 @@ insert into ##sqlwatch_jobs
 			('SQLWATCH-REPORT-AZMONITOR',		4,			1,				4,					10,						0,						1,							20180101,			99991231,			21,					235959,				1),
 			('SQLWATCH-LOGGER-WHOISACTIVE',		4,			1,				2,					15,						0,						0,							20180101,			99991231,			0,					235959,				@enabled),
 
-			('SQLWATCH-INTERNAL-CHECKS',		4,			1,				4,					1,						0,						1,							20180101,			99991231,			43,					235959,				1)
+			('SQLWATCH-INTERNAL-CHECKS',		4,			1,				4,					1,						0,						1,							20180101,			99991231,			43,					235959,				1),
+			('SQLWATCH-LOGGER-CONFIG',		4,			1,				1,					1,						0,						1,							20180101,			99991231,			0,					235959,				1)
 
 			--('SQLWATCH-USER-REPORTS',			4,		1,			1,				0,				0,					1,					20180101,	99991231, 80000,		235959,		1)
 
@@ -210,7 +211,10 @@ Get-WMIObject Win32_Volume | ?{$_.DriveType -eq 3} | %{
 			('dbo.usp_sqlwatch_internal_add_master_file',			4,	'SQLWATCH-INTERNAL-CONFIG','TSQL', 'exec dbo.usp_sqlwatch_internal_add_master_file'),
 			('dbo.usp_sqlwatch_internal_add_wait_type',				5,	'SQLWATCH-INTERNAL-CONFIG','TSQL', 'exec dbo.usp_sqlwatch_internal_add_wait_type'),
 			('dbo.usp_sqlwatch_internal_add_memory_clerk',			6,	'SQLWATCH-INTERNAL-CONFIG','TSQL', 'exec dbo.usp_sqlwatch_internal_add_memory_clerk'),
-			('dbo.usp_sqlwatch_internal_add_table',					7,	'SQLWATCH-INTERNAL-CONFIG','TSQL', 'exec dbo.usp_sqlwatch_internal_add_table')
+			('dbo.usp_sqlwatch_internal_add_table',					7,	'SQLWATCH-INTERNAL-CONFIG','TSQL', 'exec dbo.usp_sqlwatch_internal_add_table'),
+			
+			('dbo.usp_sqlwatch_internal_add_system_configuration',	1,	'SQLWATCH-LOGGER-CONFIG','TSQL', 'exec dbo.usp_sqlwatch_internal_add_system_configuration'),
+			('dbo.usp_sqlwatch_logger_system_configuration',	    2,	'SQLWATCH-LOGGER-CONFIG','TSQL', 'exec dbo.usp_sqlwatch_logger_system_configuration')
 
 
 	exec [dbo].[usp_sqlwatch_internal_create_agent_job]
