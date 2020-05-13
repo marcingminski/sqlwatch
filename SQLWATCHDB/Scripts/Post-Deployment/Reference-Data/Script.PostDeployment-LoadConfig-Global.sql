@@ -21,7 +21,7 @@ declare @config table (
 insert into @config (config_id, config_name, config_value)
 values
 	/*	How many days to keep in the app_log table	*/
-	(1	,'Application Log (app_log) retention days'			,30),
+	(1	,'Application Log (app_log) retention days'			,7),
 
 	/*	Delete objects that have not been seen by x days	*/
 	(2	,'Last Seen Items (date_last_seen) retention days'	,30),
