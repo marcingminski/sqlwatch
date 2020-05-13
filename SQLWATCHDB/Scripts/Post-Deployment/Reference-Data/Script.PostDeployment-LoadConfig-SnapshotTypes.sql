@@ -67,6 +67,9 @@ using (
 	union
 	/* Errorlog */
 	select [snapshot_type_id] = 25, [snapshot_type_desc] = 'ERRORLOG', [snapshot_retention_days] = 30
+	UNION
+	/* System Configuration */
+	select [snapshot_type_id] = 26, [snapshot_type_desc] = 'System Configuration', [snapshot_retention_days] = 365 
 
 ) as source
 on (source.[snapshot_type_id] = target.[snapshot_type_id])

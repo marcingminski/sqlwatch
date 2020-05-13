@@ -283,6 +283,12 @@
     <Build Include="dbo\Tables\sqlwatch_meta_errorlog_keyword.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_logger_errorlog.sql" />
     <Build Include="dbo\Views\vw_sqlwatch_logger_errorlog.sql" />
+    <Build Include="dbo\Tables\sqlwatch_logger_system_configuration.sql" />
+    <Build Include="dbo\Tables\sqlwatch_meta_system_configuration.sql" />
+    <Build Include="dbo\Tables\sqlwatch_logger_system_configuration_scd.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_add_system_configuration.sql" />
+    <Build Include="dbo\Views\vw_sqlwatch_sys_configurations.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_logger_system_configuration.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
