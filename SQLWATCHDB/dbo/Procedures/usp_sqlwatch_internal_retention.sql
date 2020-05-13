@@ -29,6 +29,7 @@ as
 											replaced input parameters with global config
 	1.5		2020-02-18	- Marcin Gminski,	fixed an issue where retention would not be correctly applied due to null variables,
 											code cleanse
+	1.6		2020-05-13  - Marcin Gminski,	batch up app_log retention
 -------------------------------------------------------------------------------------------------------------------
 */
 set nocount on;
@@ -104,10 +105,16 @@ while @row_count > 0
 	Print 'Deleted ' + convert(varchar(max),@@ROWCOUNT) + ' records from [dbo].[sqlwatch_meta_action_queue]'
 
 	/* Application log retention */
-	delete
-	from dbo.sqlwatch_app_log
-	where event_time < dateadd(day,-@application_log_retention_days, SYSDATETIME())
-	Print 'Deleted ' + convert(varchar(max),@@ROWCOUNT) + ' records from [dbo].[sqlwatch_app_log]'
+set @row_count = 1
+while @row_count > 0
+	begin
+		delete top (@batch_size)
+		from dbo.sqlwatch_app_log
+		where event_time < dateadd(day,-@application_log_retention_days, SYSDATETIME())
+
+		set @row_count = @@ROWCOUNT
+		Print 'Deleted ' + convert(varchar(max),@@ROWCOUNT) + ' records from [dbo].[sqlwatch_app_log]'
+	end
 
 	/*	Trend tables retention.
 		These are detached from the header so we can keep more history and in a slightly different format to utilise less storage.
