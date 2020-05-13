@@ -42,7 +42,7 @@ values
 	(6	,'Logger Retention batch size'						,500),
 
 	/*	Should we log info messages or only warnings and errors?	*/
-	(7	,'Logger Log Info messages'							,1),
+	(7	,'Logger Log Info messages'							,0),
 
 	/*	when check returns null we can log error and fail the job, 
 		or log warning and not fail the job.	*/
