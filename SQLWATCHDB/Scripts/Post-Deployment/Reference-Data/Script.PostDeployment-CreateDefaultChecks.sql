@@ -1210,6 +1210,27 @@ and [event_time] > ''{LAST_CHECK_DATE}'''
 	,@action_template_id = -3
 
 
+--------------------------------------------------------------------------------------
+exec [dbo].[usp_sqlwatch_config_add_check]
+	 @check_id = -48
+	,@check_name = 'dbachecks failed'
+	,@check_description = 'This checks looks up any dbachceks that have a result of failed.'
+	,@check_query = 'select @output=count(*)
+from [dbo].[dbachecksResults]
+where Result = ''Failed'' AND [Date] >= ''{LAST_CHECK_DATE}'''
+	,@check_frequency_minutes = 60
+	,@check_threshold_warning = null
+	,@check_threshold_critical = '>0'
+	,@check_enabled = 1
+	,@check_action_id = -1
+
+	,@action_every_failure = 1
+	,@action_recovery = 1
+	,@action_repeat_period_minutes = null 
+	,@action_hourly_limit = 6
+	,@action_template_id = -3
+
+
 set identity_insert [dbo].[sqlwatch_config_check] off;
 enable trigger dbo.trg_sqlwatch_config_check_U on [dbo].[sqlwatch_config_check];
 enable trigger dbo.trg_sqlwatch_config_check_action_updated_date_U on [dbo].[sqlwatch_config_check_action];
