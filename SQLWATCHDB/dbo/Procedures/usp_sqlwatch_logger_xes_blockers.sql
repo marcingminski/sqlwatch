@@ -23,7 +23,8 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 		declare @snapshot_time datetime,
 				@snapshot_type_id tinyint = 9,
 				@filename varchar(8000),
-				@session_name nvarchar(256)
+				@session_name nvarchar(256),
+				@utc_offset_minute int = [dbo].[ufn_sqlwatch_get_server_utc_offset]('MINUTE')
 
 		select @session_name = case 
 			/* always get SQLWATCH xes if exists */
@@ -106,7 +107,9 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 						(
 							select 
 							 [report_xml] = cast(bp_report_xml_node.query('.') as xml)
-							,[report_end_time] = bp_node.value('(./@timestamp)[1]', 'datetime')
+							 --https://github.com/marcingminski/sqlwatch/issues/169
+							 --timestamp is UTC, adjust for local time:
+							,[report_end_time] = dateadd(minute,@utc_offset_minute,bp_node.value('(./@timestamp)[1]', 'datetime'))
 							,[monitor_loop] = bp_report_xml_node.value('(//@monitorLoop)[1]', 'nvarchar(100)')
 							,[blocked_spid] = bp_report_xml_node.value('(./blocked-process/process/@spid)[1]', 'int')
 							,[blocked_ecid] = bp_report_xml_node.value('(./blocked-process/process/@ecid)[1]', 'int')
