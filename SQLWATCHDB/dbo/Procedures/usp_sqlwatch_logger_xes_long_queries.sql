@@ -6,7 +6,8 @@ set xact_abort on
 declare @snapshot_type_id tinyint = 7,
 		@snapshot_time datetime2(0),
 		@target_data_char nvarchar(max),
-		@target_data_xml xml
+		@target_data_xml xml,
+		@utc_offset_minute int = [dbo].[ufn_sqlwatch_get_server_utc_offset]('MINUTE')
 
 if (select collect from [dbo].[sqlwatch_config_snapshot_type]
 	where snapshot_type_id = @snapshot_type_id) = 0
@@ -55,7 +56,7 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 				 [activity_id] = xed.event_data.value('(action[@name="attach_activity_id"]/value )[1]', 'varchar(255)')
 				,[activity_id_xfer] = xed.event_data.value('(action[@name="attach_activity_id_xfer"]/value )[1]', 'varchar(255)')
 				--,[event_time_start]=dateadd(ms,-xed.event_data.value('(data[@name="duration"]/value)[1]', 'bigint')/1000,xed.event_data.value('(@timestamp)[1]', 'datetime2'))
-				,[event_time]=xed.event_data.value('(@timestamp)[1]', 'datetime')
+				,[event_time]=dateadd(minute,@utc_offset_minute,xed.event_data.value('(@timestamp)[1]', 'datetime'))
 				,[event_name]=xed.event_data.value('(@name)[1]', 'varchar(255)')
 				,[session_id]=isnull(xed.event_data.value('(action[@name="session_id"]/value)[1]', 'bigint'),0)
 				,[database_name]=xed.event_data.value('(action[@name="database_name"]/value)[1]', 'varchar(255)')

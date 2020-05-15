@@ -9,7 +9,8 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 				@snapshot_type_id tinyint = 6,
 				@target_data_char nvarchar(max),
 				@target_data_xml xml,
-				@session_name nvarchar(256)
+				@session_name nvarchar(256),
+				@utc_offset_minute int = [dbo].[ufn_sqlwatch_get_server_utc_offset]('MINUTE')
 
 		/*	it has been reported that some users are getting xml conversion errors on SQL Server 2012 in this step of the scritp.
 			-- Steps 2,3, and 5 fail with "Executed as user: <redacted>. XML parsing: line 35, character 54, illegal name character [SQLSTATE 42000] (Error 9421).  
@@ -57,7 +58,7 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 		begin tran
 			;with cte_xes_waits as (
 				select
-					[event_time] = xed.event_data.value('(@timestamp)[1]', 'datetime'),
+					[event_time] = dateadd(minute,@utc_offset_minute,xed.event_data.value('(@timestamp)[1]', 'datetime')),
 					[wait_type] = xed.event_data.value('(data[@name="wait_type"]/text)[1]', 'varchar(255)'),
 					[event_name]=xed.event_data.value('(@name)[1]', 'varchar(255)'),
 					[duration] = xed.event_data.value('(data[@name="duration"]/value)[1]', 'bigint'),
