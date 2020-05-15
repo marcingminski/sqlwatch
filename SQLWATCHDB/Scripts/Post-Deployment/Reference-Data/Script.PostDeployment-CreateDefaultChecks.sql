@@ -1214,7 +1214,7 @@ and [event_time] > ''{LAST_CHECK_DATE}'''
 exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -48
 	,@check_name = 'dbachecks failed'
-	,@check_description = 'This checks looks up any dbachceks that have a result of failed.'
+	,@check_description = 'This check looks up any dbachceks that have a result of failed. Please check the dbachecks dashboard or tables for details.'
 	,@check_query = 'select @output=count(*)
 from [dbo].[dbachecksResults]
 where Result = ''Failed'' AND [Date] >= ''{LAST_CHECK_DATE}'''
