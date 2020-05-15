@@ -289,6 +289,7 @@
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_add_system_configuration.sql" />
     <Build Include="dbo\Views\vw_sqlwatch_sys_configurations.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_logger_system_configuration.sql" />
+    <Build Include="dbo\Functions\ufn_sqlwatch_get_server_utc_offset.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
