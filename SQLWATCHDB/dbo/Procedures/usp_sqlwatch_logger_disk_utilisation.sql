@@ -20,6 +20,9 @@ AS
 	1.0		2018-08		- Marcin Gminski, Initial version
 	1.1		2020-03-18	- Marcin Gminski, move explicit transaction after header to fix https://github.com/marcingminski/sqlwatch/issues/155
 	1.2		2020-03-22	- Marcin Gminski, moved off sp_MSforeachdb
+	1.3		2020-05-16  - Marcin Gminski, https://github.com/marcingminski/sqlwatch/issues/165. 
+			NOTES: The [dbo].[usp_sqlwatch_internal_foreachdb] could simply execute a SQL that inserts directly into 
+			the destination table [dbo].[sqlwatch_logger_disk_utilisation_database]. There is room for improevemnt here.
 -------------------------------------------------------------------------------------------------------------------
 */
 
@@ -58,6 +61,35 @@ declare @spaceused table (
 		[index_size] varchar(18),
 		[unused] varchar(18)
 )
+
+--https://github.com/marcingminski/sqlwatch/issues/165
+declare @spaceused_extent table (
+	[database_name] nvarchar(128),
+	unallocated_extent_page_count bigint,
+	allocated_extent_page_count bigint,
+	version_store_reserved_page_count bigint,
+	user_object_reserved_page_count bigint,
+	internal_object_reserved_page_count bigint,
+	mixed_extent_page_count bigint,
+	unique clustered ([database_name]) 
+)
+
+insert into @spaceused_extent
+exec [dbo].[usp_sqlwatch_internal_foreachdb] 
+	@snapshot_type_id = @snapshot_type_id,
+	@calling_proc_id = @@PROCID,
+	@databases = @databases,
+	@command =  'USE [?];
+select 
+	 DB_NAME()
+	,sum(a.unallocated_extent_page_count) 
+    ,sum(a.allocated_extent_page_count) 
+    ,sum(a.version_store_reserved_page_count) 
+    ,sum(a.user_object_reserved_page_count) 
+    ,sum(a.internal_object_reserved_page_count) 
+    ,sum(a.mixed_extent_page_count)
+from sys.dm_db_file_space_usage a'
+
 
 if @product_version_major >= 13
 /*	since SQL 2016 Microsoft have improved sp_spaceused which now returns one recordset making it easier
@@ -204,6 +236,14 @@ begin tran
 		, [snapshot_time] = @snapshot_time
 		, [snapshot_type_id] = @snapshot_type_id
 		, @@SERVERNAME
+
+		, [unallocated_extent_page_count] = suex.[unallocated_extent_page_count]
+		, [allocated_extent_page_count] = suex.[allocated_extent_page_count]
+		, [version_store_reserved_page_count] = suex.[version_store_reserved_page_count]
+		, [user_object_reserved_page_count] = suex.[user_object_reserved_page_count]
+		, [internal_object_reserved_page_count] = suex.[internal_object_reserved_page_count]
+		, [mixed_extent_page_count] = suex.[mixed_extent_page_count]
+
 	from @spaceused su
 	inner join @logspace ls
 		on su.[database_name] = ls.[database_name] collate database_default
@@ -215,6 +255,9 @@ begin tran
 		on swd.[database_name] = db.[name] collate database_default
 		and swd.[database_create_date] = db.[create_date]
 		and swd.sql_instance = @@SERVERNAME
+
+	left join @spaceused_extent suex
+		on su.[database_name] = suex.[database_name] collate database_default
 
 	left join [dbo].[sqlwatch_config_exclude_database] ed
 		on swd.[database_name] like ed.database_name_pattern

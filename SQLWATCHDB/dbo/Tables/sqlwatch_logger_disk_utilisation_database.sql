@@ -12,6 +12,15 @@
 	[snapshot_time] datetime2(0),
 	[snapshot_type_id] tinyint,
 	[sql_instance] varchar(32) not null constraint df_sqlwatch_logger_disk_utilisation_database_sql_instance default (@@SERVERNAME),
+	
+	--https://github.com/marcingminski/sqlwatch/issues/165
+	[unallocated_extent_page_count] bigint null,
+	[allocated_extent_page_count] bigint null,
+	[version_store_reserved_page_count] bigint null,
+	[user_object_reserved_page_count] bigint null,
+	[internal_object_reserved_page_count] bigint null,
+	[mixed_extent_page_count] bigint null,
+
 	constraint PK_logger_disk_util_database
 		primary key clustered ([snapshot_time],[snapshot_type_id],[sql_instance], [sqlwatch_database_id]),
 	constraint FK_logger_disk_util_database_database

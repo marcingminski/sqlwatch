@@ -8,12 +8,12 @@
   DTS:DelayValidation="True"
   DTS:DTSID="{9FCCC4DC-9956-405A-BFAA-796B0C13C95D}"
   DTS:ExecutableType="SSIS.Package.3"
-  DTS:LastModifiedProductVersion="15.0.1301.433"
+  DTS:LastModifiedProductVersion="15.0.2000.93"
   DTS:LocaleID="2057"
   DTS:ObjectName="import_remote_data"
   DTS:PackageType="5"
-  DTS:VersionBuild="1139"
-  DTS:VersionGUID="{5DF72DE5-38D2-4ED4-938C-2F0861A8A9F3}">
+  DTS:VersionBuild="1140"
+  DTS:VersionGUID="{6D1AAEF3-43A4-43B9-923E-9DA572DAFD00}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">6</DTS:Property>
   <DTS:ConnectionManagers>
@@ -71,7 +71,7 @@
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAACg0ZUX9H1LuroSF28YDdwBAAAAAASAAACgAAAAEAAAADTvwWHRbPJGwaAu4A5sCRwYAAAALYASMeMcgVh4jTghqEA747UKsu+u96JHFAAAAMgaNdK5CHY27vC7EutuEGu+dZPk</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAACTAX0GOXnCCzSrPtPvyX7AAAAAASAAACgAAAAEAAAAHH3Yw2i2zRF1te7RS3l7boYAAAAxZQtEhCpL0lGlPM7zVohjFB7cH+oH+dIFAAAAB1iSm1jUo+t/epVeMP5/GVJ0/qQ</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -98,7 +98,7 @@
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAADLqvQ5auT/EDhaXfaTDv/QAAAAAASAAACgAAAAEAAAAAuuMBi/yggINRUjnYELe/EYAAAAXq4QB4t6kHRog4Yf73luR+XMzVSLUfNzFAAAAF8vYkyjvDbxmLosWY8IElOn1+GI</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAABwDc3zmyxRFj4jnqlCi5odAAAAAASAAACgAAAAEAAAAKhTPBERkYUP3W796fJ+hkQYAAAAmKSfOPhYT3Fvd8bd4nr6KDMdZiS+U6aTFAAAACeYcbGPop84vb4WmsdHc87XuadV</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -121,7 +121,7 @@
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAD2dLswym1bFhbNNLEWL9LFAAAAAASAAACgAAAAEAAAABsVjGrucvJx8W2g0kasu14YAAAAfqvPjWKQ7azXdlyHuPJ7sOPotfzwhatGFAAAAHiW9vEIUT4Ziofj9x73FxH8DgAx</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAC4bExWbNZyL23RKfREG690AAAAAASAAACgAAAAEAAAANRs5CrnOxXI67z1jWovLr4YAAAArGK5p45jWmZ8phtvzss/pq5LY7bYw66fFAAAAOkxfUr5eufc8CfUFz/GMivIb+6k</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -145,7 +145,7 @@
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAAOXgQ2eG8UvRNuNni8kw6GAAAAAASAAACgAAAAEAAAAMdUT8QMy7iymvu2VRfzGo4YAAAAdWcUgx8rc41PMw8bOFHYoWngxPYCNh2uFAAAAEVa2oLOS3p0C+lYh/6vXVm0wRbV</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAD7K9w92H8E4spAOrs8mjgVAAAAAASAAACgAAAAEAAAAPpfUOXrP+9669NaLcV4C5oYAAAAPf9uPuL1qKKfpDQvDLbSiaTqcZIeS2RoFAAAAGdnzqWUxMWX6NK5ZHG30e9OhKTy</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -171,7 +171,7 @@
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAADYuqjMVxB2RQabolPEByWqAAAAAASAAACgAAAAEAAAAG+GqxIX7Mh6ueD0jNw7YDkYAAAAxtuJJgxUFgSViPl/CNKUlv94L8SdTvpTFAAAAEdIJ+vSTcUZSivvVM0QHqxNI8hN</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAABfH5CQr9B0X1G85rPCvP5GAAAAAASAAACgAAAAEAAAACvwmnW8UwBiWsHPD1klxHYYAAAAn+OLOkEeuYE3NA+h8kPpCT94JxvaPVFhFAAAABdp7mTDsPdYcZ7YzzkU3YaxHyMP</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -196,7 +196,7 @@
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAByZ6lfEixhZifOkc66hcYEAAAAAASAAACgAAAAEAAAAPGIcGHcurXAFhHmhKucRmcYAAAA9Hsd0uFfWLwiZPIKpdW+Z5NpfKtDDrIbFAAAAByoI+2mrcooUKxlsHWwCkUdnKVD</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAADJ5xUwvPFhi5fspIft9b6oAAAAAASAAACgAAAAEAAAAHweNdXiO7WVzx99CMzBOhUYAAAAw9ITG0SNndqk16MkQwMFvuyyfeplkMhMFAAAAKG8vy/PT2pL1wn3+8KbkZajD7/k</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -235,7 +235,7 @@
         <DTS:Property
           DTS:DataType="8"
           DTS:Name="ParameterValue"
-          Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAADmIDW2T6O/X/0vu7xFZfxtAAAAAASAAACgAAAAEAAAAMprhn5dLFdQA75F01FYqr4YAAAA7FFx5xs3paXYHrr0y5h0DdsJYQR5AgMcFAAAANQdDJyrBS+SqiGKbvoSJEDeVf+8</DTS:Property>
+          Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAABjz1PXOqEDlRuqxw97KaJ8AAAAAASAAACgAAAAEAAAAKsjDHZ9jXlltnVO8gmalEoYAAAAxJSwKR5+DIpYKqogyR0EgMG4DVb++6oyFAAAAIHyHYta25s/px2x5d9b4MNYE/pt</DTS:Property>
       </DTS:Property>
     </DTS:PackageParameter>
     <DTS:PackageParameter
@@ -282,7 +282,7 @@
         <DTS:Property
           DTS:DataType="8"
           DTS:Name="ParameterValue"
-          Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAC3kD0yt/c1KeGjxQ6jpWLBAAAAAASAAACgAAAAEAAAAN1LCs4JsxpTbTbfSOPQ7cQYAAAAk3NFFGdfwqvYLML3Avtw6uAVGI0yj4VAFAAAAJuIOb4nMt1YawzE41xaoMkblJpy</DTS:Property>
+          Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAAKuPMImXCEF5l8ddzztQcNAAAAAASAAACgAAAAEAAAAEzhWf6yzmA5RvkZC0aqauoYAAAAWgX9ytY9FelUbTInmX+QLMFcXqIK8GSjFAAAAMCX07ueJAQS1q/AFM2Qh/AvjO+H</DTS:Property>
       </DTS:Property>
     </DTS:PackageParameter>
     <DTS:PackageParameter
@@ -2761,6 +2761,42 @@ select * from dbo.sqlwatch_logger_disk_utilisation_database where snapshot_time 
                           cachedName="log_size_used_bytes"
                           externalMetadataColumnId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\Destination.Inputs[OLE DB Destination Input].ExternalColumns[log_size_used_bytes]"
                           lineageId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source.Outputs[OLE DB Source Output].Columns[log_size_used_bytes]" />
+                        <inputColumn
+                          refId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\Destination.Inputs[OLE DB Destination Input].Columns[unallocated_extent_page_count]"
+                          cachedDataType="i8"
+                          cachedName="unallocated_extent_page_count"
+                          externalMetadataColumnId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\Destination.Inputs[OLE DB Destination Input].ExternalColumns[unallocated_extent_page_count]"
+                          lineageId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source.Outputs[OLE DB Source Output].Columns[unallocated_extent_page_count]" />
+                        <inputColumn
+                          refId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\Destination.Inputs[OLE DB Destination Input].Columns[allocated_extent_page_count]"
+                          cachedDataType="i8"
+                          cachedName="allocated_extent_page_count"
+                          externalMetadataColumnId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\Destination.Inputs[OLE DB Destination Input].ExternalColumns[allocated_extent_page_count]"
+                          lineageId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source.Outputs[OLE DB Source Output].Columns[allocated_extent_page_count]" />
+                        <inputColumn
+                          refId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\Destination.Inputs[OLE DB Destination Input].Columns[version_store_reserved_page_count]"
+                          cachedDataType="i8"
+                          cachedName="version_store_reserved_page_count"
+                          externalMetadataColumnId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\Destination.Inputs[OLE DB Destination Input].ExternalColumns[version_store_reserved_page_count]"
+                          lineageId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source.Outputs[OLE DB Source Output].Columns[version_store_reserved_page_count]" />
+                        <inputColumn
+                          refId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\Destination.Inputs[OLE DB Destination Input].Columns[user_object_reserved_page_count]"
+                          cachedDataType="i8"
+                          cachedName="user_object_reserved_page_count"
+                          externalMetadataColumnId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\Destination.Inputs[OLE DB Destination Input].ExternalColumns[user_object_reserved_page_count]"
+                          lineageId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source.Outputs[OLE DB Source Output].Columns[user_object_reserved_page_count]" />
+                        <inputColumn
+                          refId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\Destination.Inputs[OLE DB Destination Input].Columns[internal_object_reserved_page_count]"
+                          cachedDataType="i8"
+                          cachedName="internal_object_reserved_page_count"
+                          externalMetadataColumnId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\Destination.Inputs[OLE DB Destination Input].ExternalColumns[internal_object_reserved_page_count]"
+                          lineageId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source.Outputs[OLE DB Source Output].Columns[internal_object_reserved_page_count]" />
+                        <inputColumn
+                          refId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\Destination.Inputs[OLE DB Destination Input].Columns[mixed_extent_page_count]"
+                          cachedDataType="i8"
+                          cachedName="mixed_extent_page_count"
+                          externalMetadataColumnId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\Destination.Inputs[OLE DB Destination Input].ExternalColumns[mixed_extent_page_count]"
+                          lineageId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source.Outputs[OLE DB Source Output].Columns[mixed_extent_page_count]" />
                       </inputColumns>
                       <externalMetadataColumns
                         isUsed="True">
@@ -2814,6 +2850,30 @@ select * from dbo.sqlwatch_logger_disk_utilisation_database where snapshot_time 
                           refId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\Destination.Inputs[OLE DB Destination Input].ExternalColumns[log_size_used_bytes]"
                           dataType="i8"
                           name="log_size_used_bytes" />
+                        <externalMetadataColumn
+                          refId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\Destination.Inputs[OLE DB Destination Input].ExternalColumns[unallocated_extent_page_count]"
+                          dataType="i8"
+                          name="unallocated_extent_page_count" />
+                        <externalMetadataColumn
+                          refId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\Destination.Inputs[OLE DB Destination Input].ExternalColumns[allocated_extent_page_count]"
+                          dataType="i8"
+                          name="allocated_extent_page_count" />
+                        <externalMetadataColumn
+                          refId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\Destination.Inputs[OLE DB Destination Input].ExternalColumns[version_store_reserved_page_count]"
+                          dataType="i8"
+                          name="version_store_reserved_page_count" />
+                        <externalMetadataColumn
+                          refId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\Destination.Inputs[OLE DB Destination Input].ExternalColumns[user_object_reserved_page_count]"
+                          dataType="i8"
+                          name="user_object_reserved_page_count" />
+                        <externalMetadataColumn
+                          refId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\Destination.Inputs[OLE DB Destination Input].ExternalColumns[internal_object_reserved_page_count]"
+                          dataType="i8"
+                          name="internal_object_reserved_page_count" />
+                        <externalMetadataColumn
+                          refId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\Destination.Inputs[OLE DB Destination Input].ExternalColumns[mixed_extent_page_count]"
+                          dataType="i8"
+                          name="mixed_extent_page_count" />
                       </externalMetadataColumns>
                     </input>
                   </inputs>
@@ -3016,6 +3076,60 @@ and snapshot_time &lt;= convert(datetime,?)</property>
                           lineageId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source.Outputs[OLE DB Source Output].Columns[log_size_used_bytes]"
                           name="log_size_used_bytes"
                           truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source.Outputs[OLE DB Source Output].Columns[unallocated_extent_page_count]"
+                          dataType="i8"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source.Outputs[OLE DB Source Output].ExternalColumns[unallocated_extent_page_count]"
+                          lineageId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source.Outputs[OLE DB Source Output].Columns[unallocated_extent_page_count]"
+                          name="unallocated_extent_page_count"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source.Outputs[OLE DB Source Output].Columns[allocated_extent_page_count]"
+                          dataType="i8"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source.Outputs[OLE DB Source Output].ExternalColumns[allocated_extent_page_count]"
+                          lineageId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source.Outputs[OLE DB Source Output].Columns[allocated_extent_page_count]"
+                          name="allocated_extent_page_count"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source.Outputs[OLE DB Source Output].Columns[version_store_reserved_page_count]"
+                          dataType="i8"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source.Outputs[OLE DB Source Output].ExternalColumns[version_store_reserved_page_count]"
+                          lineageId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source.Outputs[OLE DB Source Output].Columns[version_store_reserved_page_count]"
+                          name="version_store_reserved_page_count"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source.Outputs[OLE DB Source Output].Columns[user_object_reserved_page_count]"
+                          dataType="i8"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source.Outputs[OLE DB Source Output].ExternalColumns[user_object_reserved_page_count]"
+                          lineageId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source.Outputs[OLE DB Source Output].Columns[user_object_reserved_page_count]"
+                          name="user_object_reserved_page_count"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source.Outputs[OLE DB Source Output].Columns[internal_object_reserved_page_count]"
+                          dataType="i8"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source.Outputs[OLE DB Source Output].ExternalColumns[internal_object_reserved_page_count]"
+                          lineageId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source.Outputs[OLE DB Source Output].Columns[internal_object_reserved_page_count]"
+                          name="internal_object_reserved_page_count"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source.Outputs[OLE DB Source Output].Columns[mixed_extent_page_count]"
+                          dataType="i8"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source.Outputs[OLE DB Source Output].ExternalColumns[mixed_extent_page_count]"
+                          lineageId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source.Outputs[OLE DB Source Output].Columns[mixed_extent_page_count]"
+                          name="mixed_extent_page_count"
+                          truncationRowDisposition="FailComponent" />
                       </outputColumns>
                       <externalMetadataColumns
                         isUsed="True">
@@ -3069,6 +3183,30 @@ and snapshot_time &lt;= convert(datetime,?)</property>
                           refId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source.Outputs[OLE DB Source Output].ExternalColumns[log_size_used_bytes]"
                           dataType="i8"
                           name="log_size_used_bytes" />
+                        <externalMetadataColumn
+                          refId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source.Outputs[OLE DB Source Output].ExternalColumns[unallocated_extent_page_count]"
+                          dataType="i8"
+                          name="unallocated_extent_page_count" />
+                        <externalMetadataColumn
+                          refId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source.Outputs[OLE DB Source Output].ExternalColumns[allocated_extent_page_count]"
+                          dataType="i8"
+                          name="allocated_extent_page_count" />
+                        <externalMetadataColumn
+                          refId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source.Outputs[OLE DB Source Output].ExternalColumns[version_store_reserved_page_count]"
+                          dataType="i8"
+                          name="version_store_reserved_page_count" />
+                        <externalMetadataColumn
+                          refId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source.Outputs[OLE DB Source Output].ExternalColumns[user_object_reserved_page_count]"
+                          dataType="i8"
+                          name="user_object_reserved_page_count" />
+                        <externalMetadataColumn
+                          refId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source.Outputs[OLE DB Source Output].ExternalColumns[internal_object_reserved_page_count]"
+                          dataType="i8"
+                          name="internal_object_reserved_page_count" />
+                        <externalMetadataColumn
+                          refId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source.Outputs[OLE DB Source Output].ExternalColumns[mixed_extent_page_count]"
+                          dataType="i8"
+                          name="mixed_extent_page_count" />
                       </externalMetadataColumns>
                     </output>
                     <output
@@ -3138,6 +3276,36 @@ and snapshot_time &lt;= convert(datetime,?)</property>
                           dataType="ui1"
                           lineageId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source.Outputs[OLE DB Source Error Output].Columns[snapshot_type_id]"
                           name="snapshot_type_id" />
+                        <outputColumn
+                          refId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source.Outputs[OLE DB Source Error Output].Columns[unallocated_extent_page_count]"
+                          dataType="i8"
+                          lineageId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source.Outputs[OLE DB Source Error Output].Columns[unallocated_extent_page_count]"
+                          name="unallocated_extent_page_count" />
+                        <outputColumn
+                          refId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source.Outputs[OLE DB Source Error Output].Columns[allocated_extent_page_count]"
+                          dataType="i8"
+                          lineageId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source.Outputs[OLE DB Source Error Output].Columns[allocated_extent_page_count]"
+                          name="allocated_extent_page_count" />
+                        <outputColumn
+                          refId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source.Outputs[OLE DB Source Error Output].Columns[version_store_reserved_page_count]"
+                          dataType="i8"
+                          lineageId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source.Outputs[OLE DB Source Error Output].Columns[version_store_reserved_page_count]"
+                          name="version_store_reserved_page_count" />
+                        <outputColumn
+                          refId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source.Outputs[OLE DB Source Error Output].Columns[user_object_reserved_page_count]"
+                          dataType="i8"
+                          lineageId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source.Outputs[OLE DB Source Error Output].Columns[user_object_reserved_page_count]"
+                          name="user_object_reserved_page_count" />
+                        <outputColumn
+                          refId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source.Outputs[OLE DB Source Error Output].Columns[internal_object_reserved_page_count]"
+                          dataType="i8"
+                          lineageId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source.Outputs[OLE DB Source Error Output].Columns[internal_object_reserved_page_count]"
+                          name="internal_object_reserved_page_count" />
+                        <outputColumn
+                          refId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source.Outputs[OLE DB Source Error Output].Columns[mixed_extent_page_count]"
+                          dataType="i8"
+                          lineageId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source.Outputs[OLE DB Source Error Output].Columns[mixed_extent_page_count]"
+                          name="mixed_extent_page_count" />
                         <outputColumn
                           refId="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
                           dataType="i4"
@@ -40208,7 +40376,7 @@ ORDER BY [sql_instance], [wait_type_id]</property>
       DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
       DTS:LocaleID="-1"
       DTS:ObjectName="set error"
-      DTS:ThreadHint="0">
+      DTS:ThreadHint="1">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -40232,7 +40400,7 @@ ORDER BY [sql_instance], [wait_type_id]</property>
       DTS:ExecutableType="Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
       DTS:LocaleID="-1"
       DTS:ObjectName="set success"
-      DTS:ThreadHint="1">
+      DTS:ThreadHint="0">
       <DTS:Variables />
       <DTS:ObjectData>
         <SQLTask:SqlTaskData
@@ -41756,7 +41924,7 @@ ORDER BY [sql_instance], [wait_type_id]</property>
     design-time-name="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database">
     <LayoutInfo>
       <GraphLayout
-        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
           Size="134,42"
           Id="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\Destination"
@@ -41784,9 +41952,7 @@ ORDER BY [sql_instance], [wait_type_id]</property>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
       </GraphLayout>

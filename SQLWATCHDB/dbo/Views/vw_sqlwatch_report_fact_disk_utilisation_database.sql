@@ -12,6 +12,14 @@ SELECT d.[sqlwatch_database_id]
       ,d.[log_size_used_bytes]
       ,h.report_time
       ,d.[sql_instance]
+
+	  ,d.[unallocated_extent_page_count] 
+	  ,d.[allocated_extent_page_count] 
+	  ,d.[version_store_reserved_page_count] 
+	  ,d.[user_object_reserved_page_count] 
+	  ,d.[internal_object_reserved_page_count] 
+	  ,d.[mixed_extent_page_count] 
+
  --for backward compatibility with existing pbi, this column will become report_time as we could be aggregating many snapshots in a report_period
 , d.snapshot_time
 , d.snapshot_type_id
