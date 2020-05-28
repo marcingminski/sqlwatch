@@ -107,6 +107,8 @@ select pc.[performance_counter_id]
   and t.[interval_minutes_60] > isnull(@snapshot_time,'1970-01-01')
   --and apc.snapshot_time is null
 
+  and pc.sql_instance = @@SERVERNAME
+
   group by  pc.[performance_counter_id]
       ,pc.[instance_name]
       ,pc.[sql_instance]
