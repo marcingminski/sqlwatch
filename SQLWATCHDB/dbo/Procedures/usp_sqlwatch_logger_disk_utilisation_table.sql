@@ -57,11 +57,11 @@ select
 	/* only take table compression into account and not index compression.
 	   we have index analysis elsewhere */
 	[data_compression] = max(case when i.index_id = 0 then p.[data_compression] else 0 end)
-from sys.tables t
-inner join sys.indexes i on t.object_id = i.object_id
-inner join sys.partitions p on i.object_id = p.object_id AND i.index_id = p.index_id
-inner join sys.allocation_units a on p.partition_id = a.container_id
-inner join sys.schemas s on t.schema_id = s.schema_id
+from [?].sys.tables t
+inner join [?].sys.indexes i on t.object_id = i.object_id
+inner join [?].sys.partitions p on i.object_id = p.object_id AND i.index_id = p.index_id
+inner join [?].sys.allocation_units a on p.partition_id = a.container_id
+inner join [?].sys.schemas s on t.schema_id = s.schema_id
 inner join sys.databases sdb on sdb.name = ''?''
 
 group by s.name, t.name, sdb.name, sdb.create_date;
