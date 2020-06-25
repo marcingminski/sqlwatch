@@ -1,46 +1,4 @@
 {
-  "__inputs": [
-    {
-      "name": "DS_SQLWATCH",
-      "label": "SQLWATCH",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "mssql",
-      "pluginName": "Microsoft SQL Server"
-    }
-  ],
-  "__requires": [
-    {
-      "type": "grafana",
-      "id": "grafana",
-      "name": "Grafana",
-      "version": "7.0.3"
-    },
-    {
-      "type": "panel",
-      "id": "graph",
-      "name": "Graph",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "logs",
-      "name": "Logs",
-      "version": ""
-    },
-    {
-      "type": "datasource",
-      "id": "mssql",
-      "name": "Microsoft SQL Server",
-      "version": "1.0.0"
-    },
-    {
-      "type": "panel",
-      "id": "stat",
-      "name": "Stat",
-      "version": ""
-    }
-  ],
   "annotations": {
     "list": [
       {
@@ -57,17 +15,30 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": null,
-  "iteration": 1593036956422,
-  "links": [],
+  "id": 3,
+  "iteration": 1593104046466,
+  "links": [
+    {
+      "$$hashKey": "object:475",
+      "asDropdown": false,
+      "icon": "external link",
+      "includeVars": true,
+      "keepTime": true,
+      "tags": [
+        "SQLWATCH"
+      ],
+      "title": "Dashboards",
+      "type": "dashboards"
+    }
+  ],
   "panels": [
     {
       "aliasColors": {},
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_SQLWATCH}",
-      "description": "",
+      "datasource": "SQLWATCH",
+      "description": "\n**Batch Requests/sec**:   \nNumber of batch requests received per second, and is a good general indicator for the activity level of the SQL Server. This counter is highly dependent on the hardware and quality of code running on the server. The more powerful the hardware, the higher this number can be, even on poorly coded applications. A value of 1000 batch requests/sec is easily attainable though a typical 100Mbs NIC can only handle about 3000 batch requests/sec.Many other counter thresholds depend upon batch requests/sec while, in some cases, a low (or high) number does not point to poor processing power. You should frequently use this counter in combination with other counters, such as processor utilization or user connections.In version 2000, \"Transactions/ sec\" was the counter most often used to measure overall activity, while versions 2005 and later use \"Batch Requests/sec\". Versions 2005 prior to SP2, measure this counter differently and may lead to some misunderstandings. Read the footnote for more details.\n\n**SQL Compilations/sec**:   \nNumber of times that Transact-SQL compilations occurred, per second (including recompiles). The lower this value is the better. High values often indicate excessive adhoc querying and should be as low as possible. If excessive adhoc querying is happening, try rewriting the queries as procedures or invoke the queries using sp_executeSQL. When rewriting isn’t possible, consider using a plan guide or setting the database to parameterization forced mode.\n\n**SQL Re-Compilations/sec**:   \nNumber of times, per second, that Transact-SQL objects attempted to be executed but had to be recompiled before completion. This number should be at or near zero, since recompiles can cause deadlocks and exclusive compile locks. This counter’s value should follow in proportion to \"Batch Requests/sec\" and \"SQL Compilations/ sec\". This needs to be nil in your system as much as possible.\n\n**Logins/sec**: *You want < 2*   \nThe number of user logins per second. Any value over 2 may indicate insufficient connection pooling.\n\n**User Connections**:   \nThe number of users currently connected to the SQL Server. This counter should roughly track with \"Batch Requests/Sec\". They should generally rise and fall together. For example, blocking problems could be revealed by rising user connections, lock waits and lock wait time coupled with declining batch requests/sec.\n\n**Transactions/sec**:   \nNumber of transactions started for the database per second.",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -91,7 +62,7 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 9,
+        "h": 6,
         "w": 9,
         "x": 0,
         "y": 0
@@ -127,7 +98,7 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(report_time)\n  AND counter_name IN ('Batch Requests/sec','Logins/sec','Transactions/sec','User Connections')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(report_time)\n  AND counter_name IN ('Batch Requests/sec','Logins/sec','Transactions/sec','User Connections','SQL Compilations/sec','SQL Re-Compilations/sec')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
           "refId": "A"
         }
       ],
@@ -176,7 +147,7 @@
       }
     },
     {
-      "datasource": "${DS_SQLWATCH}",
+      "datasource": "SQLWATCH",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -234,7 +205,7 @@
       "type": "stat"
     },
     {
-      "datasource": "${DS_SQLWATCH}",
+      "datasource": "SQLWATCH",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -292,7 +263,7 @@
       "type": "stat"
     },
     {
-      "datasource": "${DS_SQLWATCH}",
+      "datasource": "SQLWATCH",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -357,7 +328,7 @@
       "type": "stat"
     },
     {
-      "datasource": "${DS_SQLWATCH}",
+      "datasource": "SQLWATCH",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -422,7 +393,7 @@
       "type": "stat"
     },
     {
-      "datasource": "${DS_SQLWATCH}",
+      "datasource": "SQLWATCH",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -461,11 +432,11 @@
       "options": {
         "colorMode": "value",
         "graphMode": "area",
-        "justifyMode": "auto",
+        "justifyMode": "center",
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
-            "lastNotNull"
+            "last"
           ],
           "fields": "/^Page life expectancy$/",
           "values": false
@@ -491,7 +462,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_SQLWATCH}",
+      "datasource": "SQLWATCH",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -516,7 +487,7 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 6,
+        "h": 5,
         "w": 9,
         "x": 9,
         "y": 3
@@ -607,7 +578,7 @@
       }
     },
     {
-      "datasource": "${DS_SQLWATCH}",
+      "datasource": "SQLWATCH",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -652,7 +623,7 @@
         ]
       },
       "gridPos": {
-        "h": 35,
+        "h": 26,
         "w": 6,
         "x": 18,
         "y": 3
@@ -684,7 +655,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_SQLWATCH}",
+      "datasource": "SQLWATCH",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -709,10 +680,10 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 6,
+        "h": 5,
         "w": 9,
         "x": 0,
-        "y": 9
+        "y": 6
       },
       "hiddenSeries": false,
       "id": 2,
@@ -771,8 +742,8 @@
         {
           "$$hashKey": "object:198",
           "decimals": null,
-          "format": "short",
-          "label": "%",
+          "format": "percent",
+          "label": "",
           "logBase": 1,
           "max": "100",
           "min": "0",
@@ -798,7 +769,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_SQLWATCH}",
+      "datasource": "SQLWATCH",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -823,10 +794,10 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 6,
+        "h": 5,
         "w": 9,
         "x": 9,
-        "y": 9
+        "y": 8
       },
       "hiddenSeries": false,
       "id": 14,
@@ -859,13 +830,13 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,[Bytes Written] = MAX([num_of_bytes_written_delta])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_file_stats]\n  WHERE 1 = 1\n  AND $__timeFilter(report_time)\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY $__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,[Bytes Written] = SUM([num_of_bytes_written_delta])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_file_stats]\n  WHERE 1 = 1\n  AND $__timeFilter(report_time)\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY $__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
           "refId": "A"
         },
         {
           "alias": "",
           "format": "time_series",
-          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,[Bytes Read] = MAX([num_of_bytes_read_delta])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_file_stats]\n  WHERE 1 = 1\n  AND $__timeFilter(report_time)\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY $__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,[Bytes Read] = SUM([num_of_bytes_read_delta])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_file_stats]\n  WHERE 1 = 1\n  AND $__timeFilter(report_time)\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY $__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
           "refId": "B"
         }
       ],
@@ -918,8 +889,8 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_SQLWATCH}",
-      "description": "",
+      "datasource": "SQLWATCH",
+      "description": "**SQL Compilations/sec**:  \n*You want it to be < 10% (of the number of Batch Requests/Sec)*  \nNumber of times that Transact-SQL compilations\noccurred, per second (including recompiles).\nThe lower this value is the better. High values\noften indicate excessive ad-hoc querying and\nshould be as low as possible. If excessive ad-hoc\nquerying is happening, try rewriting the queries\nas procedures or invoke the queries using sp_executeSQL. When rewriting isn’t possible, consider\nusing a plan guide or setting the database to\nparameterization forced mode.\n\n **SQL Re-Compilations/sec**:  \n*You want it to be < 10% (of the number of SQL Compilations/sec)*  \nNumber of times, per second, that Transact-SQL\nobjects attempted to be executed but had to\nbe recompiled before completion. This number\nshould be at or near zero, since recompiles can\ncause deadlocks and exclusive compile locks.\nThis counter’s value should follow in proportion\nto “Batch Requests/sec” and “SQL Compilations/\nsec”. This needs to be nil in your system as much\nas possible.",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -943,10 +914,10 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 6,
+        "h": 5,
         "w": 9,
         "x": 0,
-        "y": 15
+        "y": 11
       },
       "hiddenSeries": false,
       "id": 6,
@@ -979,11 +950,30 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(report_time)\n  AND counter_name IN ('SQL Compilations/sec','SQL Re-Compilations/sec')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(report_time)\n  AND counter_name IN ('SQL Compilations/sec','SQL Re-Compilations/sec','Batch Requests/sec')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
           "refId": "A"
         }
       ],
-      "thresholds": [],
+      "thresholds": [
+        {
+          "$$hashKey": "object:283",
+          "colorMode": "warning",
+          "fill": true,
+          "line": false,
+          "op": "gt",
+          "value": 10,
+          "yaxis": "left"
+        },
+        {
+          "$$hashKey": "object:289",
+          "colorMode": "critical",
+          "fill": true,
+          "line": false,
+          "op": "gt",
+          "value": 20,
+          "yaxis": "left"
+        }
+      ],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
@@ -993,6 +983,55 @@
         "sort": 0,
         "value_type": "individual"
       },
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "SQL Compilation Rate",
+            "binary": {
+              "left": "SQL Compilations/sec",
+              "operator": "/",
+              "reducer": "sum",
+              "right": "Batch Requests/sec"
+            },
+            "mode": "binary",
+            "reduce": {
+              "include": [],
+              "reducer": "sum"
+            },
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "SQL Re-Compilation Rate",
+            "binary": {
+              "left": "SQL Re-Compilations/sec",
+              "operator": "/",
+              "reducer": "sum",
+              "right": "SQL Compilations/sec"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Time",
+                "SQL Compilation Rate",
+                "SQL Re-Compilation Rate"
+              ]
+            }
+          }
+        }
+      ],
       "type": "graph",
       "xaxis": {
         "buckets": null,
@@ -1005,10 +1044,10 @@
         {
           "$$hashKey": "object:198",
           "decimals": null,
-          "format": "short",
-          "label": "%",
+          "format": "percent",
+          "label": "",
           "logBase": 1,
-          "max": "100",
+          "max": null,
           "min": "0",
           "show": true
         },
@@ -1032,8 +1071,8 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_SQLWATCH}",
-      "description": "",
+      "datasource": "SQLWATCH",
+      "description": "In OLTP systems the ideal latency is below **8ms** but anything below **20ms** can be acceptable. The latency between **20ms** and **50ms** could lead to performance problems. Latency above **50ms** is likely inadequate if you want a fast database. \n\nIn the Data Warehouse workload, latencies around **500ms** and more are normal. This is becuase in the Data Warehouse we are often reading a lot of data at once and saturate the storage IO whereas in OLTP systems we are making a lot of small writes and reads and therefore storage must be very responsive.",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -1057,10 +1096,10 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 8,
+        "h": 6,
         "w": 9,
         "x": 9,
-        "y": 15
+        "y": 13
       },
       "hiddenSeries": false,
       "id": 15,
@@ -1093,11 +1132,32 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,[Latency] = AVG([io_latency_read])+AVG([io_latency_write])\n      ,metric=left([file_physical_name],1)\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_file_stats]\n  WHERE 1 = 1\n  AND $__timeFilter(report_time)\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY $__timeGroup([report_time], $aggregation) , left([file_physical_name],1)\nORDER BY\n  time ASC\n  \n  ",
+          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,[Latency] = MAX([io_latency_read])+MAX([io_latency_write])\n      ,metric=left([file_physical_name],1)\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_file_stats]\n  WHERE 1 = 1\n  AND $__timeFilter(report_time)\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY $__timeGroup([report_time], $aggregation) , left([file_physical_name],1)\nORDER BY\n  time ASC\n  \n  ",
           "refId": "A"
         }
       ],
-      "thresholds": [],
+      "thresholds": [
+        {
+          "$$hashKey": "object:158",
+          "colorMode": "warning",
+          "fill": true,
+          "fillColor": "#FA6400",
+          "line": false,
+          "lineColor": "rgba(31, 96, 196, 0.6)",
+          "op": "gt",
+          "value": 20,
+          "yaxis": "left"
+        },
+        {
+          "$$hashKey": "object:164",
+          "colorMode": "critical",
+          "fill": true,
+          "line": false,
+          "op": "gt",
+          "value": 50,
+          "yaxis": "left"
+        }
+      ],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
@@ -1146,8 +1206,8 @@
       "bars": true,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_SQLWATCH}",
-      "description": "",
+      "datasource": "SQLWATCH",
+      "description": "How much time SQL Server spends waiting on a different resource. Please see https://www.sqlskills.com/help/waits/ for details. ",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -1171,10 +1231,10 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 8,
+        "h": 7,
         "w": 9,
         "x": 0,
-        "y": 21
+        "y": 16
       },
       "hiddenSeries": false,
       "id": 7,
@@ -1207,7 +1267,7 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,metric = [wait_category]\n      ,[value] = AVG([wait_time_ms_delta])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_wait_stats]\n  WHERE 1=1\n  AND $__timeFilter(report_time)\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [wait_category]\n      ,$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,metric = [wait_category]\n      ,[value] = SUM([wait_time_ms_delta])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_wait_stats]\n  WHERE 1=1\n  AND $__timeFilter(report_time)\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [wait_category]\n      ,$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
           "refId": "A"
         }
       ],
@@ -1234,7 +1294,7 @@
           "$$hashKey": "object:198",
           "decimals": null,
           "format": "ms",
-          "label": "ms",
+          "label": "",
           "logBase": 1,
           "max": null,
           "min": null,
@@ -1260,8 +1320,8 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_SQLWATCH}",
-      "description": "",
+      "datasource": "SQLWATCH",
+      "description": "As recorded by the Extended Events default System Health Session",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -1285,10 +1345,10 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 6,
+        "h": 5,
         "w": 9,
         "x": 9,
-        "y": 23
+        "y": 19
       },
       "hiddenSeries": false,
       "id": 16,
@@ -1321,7 +1381,7 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,[Latency] = AVG([total_long_ios])\n      ,metric=[longest_pending_request_file]\n  FROM [dbo].[vw_sqlwatch_report_fact_xes_iosubsystem]\n  WHERE 1 = 1\n  AND $__timeFilter(report_time)\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY $__timeGroup([report_time], $aggregation) ,[longest_pending_request_file]\nORDER BY\n  time ASC\n  \n  ",
+          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,[Latency] = SUM([total_long_ios])\n      ,metric=ISNULL([longest_pending_request_file],'')\n  FROM [dbo].[vw_sqlwatch_report_fact_xes_iosubsystem]\n  WHERE 1 = 1\n  AND $__timeFilter(report_time)\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY $__timeGroup([report_time], $aggregation) ,[longest_pending_request_file]\nORDER BY\n  time ASC\n  \n  ",
           "refId": "A"
         }
       ],
@@ -1374,7 +1434,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_SQLWATCH}",
+      "datasource": "SQLWATCH",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -1402,7 +1462,7 @@
         "h": 6,
         "w": 9,
         "x": 0,
-        "y": 29
+        "y": 23
       },
       "hiddenSeries": false,
       "id": 8,
@@ -1462,7 +1522,7 @@
           "$$hashKey": "object:198",
           "decimals": null,
           "format": "deckbytes",
-          "label": "KB",
+          "label": "",
           "logBase": 1,
           "max": null,
           "min": null,
@@ -1488,7 +1548,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_SQLWATCH}",
+      "datasource": "SQLWATCH",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -1513,10 +1573,10 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 6,
+        "h": 5,
         "w": 9,
         "x": 9,
-        "y": 29
+        "y": 24
       },
       "hiddenSeries": false,
       "id": 17,
@@ -1598,16 +1658,22 @@
       }
     }
   ],
-  "refresh": "5m",
+  "refresh": false,
   "schemaVersion": 25,
   "style": "dark",
-  "tags": [],
+  "tags": [
+    "SQLWATCH"
+  ],
   "templating": {
     "list": [
       {
         "allValue": null,
-        "current": {},
-        "datasource": "${DS_SQLWATCH}",
+        "current": {
+          "selected": false,
+          "text": "SQLWATCH-TEST-1",
+          "value": "SQLWATCH-TEST-1"
+        },
+        "datasource": "SQLWATCH",
         "definition": "SELECT [servername] FROM [dbo].[sqlwatch_meta_server]",
         "hide": 0,
         "includeAll": false,
@@ -1631,7 +1697,7 @@
         "auto_count": 30,
         "auto_min": "10s",
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "auto",
           "value": "$__auto_interval_aggregation"
         },
@@ -1733,5 +1799,5 @@
   "timezone": "browser",
   "title": "Overview",
   "uid": "2JffWEWMz",
-  "version": 43
+  "version": 73
 }
