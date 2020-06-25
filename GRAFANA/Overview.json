@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 3,
-  "iteration": 1593104046466,
+  "iteration": 1593115391791,
   "links": [
     {
       "$$hashKey": "object:475",
@@ -1667,6 +1667,25 @@
   "templating": {
     "list": [
       {
+        "current": {
+          "selected": false,
+          "text": "SQLWATCH",
+          "value": "SQLWATCH"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "Data Source",
+        "multi": false,
+        "name": "DataSource",
+        "options": [],
+        "query": "mssql",
+        "queryValue": "",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
         "allValue": null,
         "current": {
           "selected": false,
@@ -1799,5 +1818,5 @@
   "timezone": "browser",
   "title": "Overview",
   "uid": "2JffWEWMz",
-  "version": 73
+  "version": 76
 }

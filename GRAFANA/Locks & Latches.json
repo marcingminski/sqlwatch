@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 5,
-  "iteration": 1593107416285,
+  "iteration": 1593115416910,
   "links": [
     {
       "$$hashKey": "object:92",
@@ -1897,6 +1897,24 @@
   "templating": {
     "list": [
       {
+        "current": {
+          "selected": false,
+          "text": "SQLWATCH",
+          "value": "SQLWATCH"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "Data Source",
+        "multi": false,
+        "name": "DataSource",
+        "options": [],
+        "query": "mssql",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
         "allValue": null,
         "current": {
           "selected": false,
@@ -2029,5 +2047,5 @@
   "timezone": "browser",
   "title": "Locks & Latches",
   "uid": "lG8GRQZMz",
-  "version": 11
+  "version": 12
 }

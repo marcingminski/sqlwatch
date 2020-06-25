@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 4,
-  "iteration": 1593103938723,
+  "iteration": 1593115410749,
   "links": [
     {
       "$$hashKey": "object:92",
@@ -150,7 +150,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "SQLWATCH",
-      "description": "",
+      "description": "**Page Reads/sec**:   *You want < 90*   \nNumber of physical database page reads issued per second. Normal OLTP workloads support 80 – 90 per second, but higher values may be a yellow flag for poor indexing or insufficient memory.\n\n**Page Writes/sec**:   *You want < 90*   \nNumber of database pages physically written to disk per second. Normal OLTP workloads support 80 – 90 per second. Values over 90 should be crossed checked with “lazy writer/sec” and “checkpoint” counters. If the other counters are also high, then it may indicate insufficient memory",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -210,15 +210,25 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = SUM([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(report_time)\n  AND counter_name IN ('Page reads/sec','Page writes/sec')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(report_time)\n  AND counter_name IN ('Page reads/sec','Page writes/sec')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
           "refId": "A"
         }
       ],
-      "thresholds": [],
+      "thresholds": [
+        {
+          "$$hashKey": "object:249",
+          "colorMode": "critical",
+          "fill": true,
+          "line": false,
+          "op": "gt",
+          "value": 90,
+          "yaxis": "left"
+        }
+      ],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Page reads vs writes",
+      "title": "Page reads/sec vs Page writes/sec",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -338,7 +348,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Bytes written/sec vs bytes read/sec",
+      "title": "Bytes written/sec vs Bytes read/sec",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -384,7 +394,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "SQLWATCH",
-      "description": "",
+      "description": "**Readahead/sec**: \nNumber of data pages read per second in anticipation of their use",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -567,7 +577,7 @@
           "$$hashKey": "object:899",
           "colorMode": "warning",
           "fill": true,
-          "line": true,
+          "line": false,
           "op": "gt",
           "value": 20,
           "yaxis": "left"
@@ -732,7 +742,7 @@
     },
     {
       "aliasColors": {},
-      "bars": true,
+      "bars": false,
       "dashLength": 10,
       "dashes": false,
       "datasource": "SQLWATCH",
@@ -776,7 +786,7 @@
         "total": false,
         "values": false
       },
-      "lines": false,
+      "lines": true,
       "linewidth": 1,
       "nullPointMode": "null as zero",
       "options": {
@@ -805,7 +815,7 @@
           "$$hashKey": "object:699",
           "colorMode": "warning",
           "fill": true,
-          "line": true,
+          "line": false,
           "op": "gt",
           "value": 0.15,
           "yaxis": "left"
@@ -814,7 +824,7 @@
           "$$hashKey": "object:705",
           "colorMode": "critical",
           "fill": true,
-          "line": true,
+          "line": false,
           "op": "gt",
           "value": 0.2,
           "yaxis": "left"
@@ -957,7 +967,7 @@
           "$$hashKey": "object:899",
           "colorMode": "warning",
           "fill": true,
-          "line": true,
+          "line": false,
           "op": "gt",
           "value": 20,
           "yaxis": "left"
@@ -1338,7 +1348,7 @@
           "$$hashKey": "object:899",
           "colorMode": "warning",
           "fill": true,
-          "line": true,
+          "line": false,
           "op": "gt",
           "value": 20,
           "yaxis": "left"
@@ -1462,7 +1472,7 @@
           "$$hashKey": "object:892",
           "colorMode": "critical",
           "fill": true,
-          "line": true,
+          "line": false,
           "op": "gt",
           "value": 1,
           "yaxis": "left"
@@ -1605,7 +1615,7 @@
           "$$hashKey": "object:899",
           "colorMode": "critical",
           "fill": true,
-          "line": true,
+          "line": false,
           "op": "gt",
           "value": 2,
           "yaxis": "left"
@@ -1843,7 +1853,7 @@
           "$$hashKey": "object:536",
           "colorMode": "warning",
           "fill": true,
-          "line": true,
+          "line": false,
           "op": "lt",
           "value": 300,
           "yaxis": "left"
@@ -1986,7 +1996,7 @@
           "$$hashKey": "object:899",
           "colorMode": "critical",
           "fill": true,
-          "line": true,
+          "line": false,
           "op": "lt",
           "value": 98,
           "yaxis": "left"
@@ -2044,6 +2054,24 @@
   ],
   "templating": {
     "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "SQLWATCH",
+          "value": "SQLWATCH"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "Data Source",
+        "multi": false,
+        "name": "DataSource",
+        "options": [],
+        "query": "mssql",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
       {
         "allValue": null,
         "current": {
@@ -2177,5 +2205,5 @@
   "timezone": "browser",
   "title": "I/O & Memory",
   "uid": "bkHn0UZMz",
-  "version": 35
+  "version": 43
 }
