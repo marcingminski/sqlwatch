@@ -12,6 +12,7 @@ select
 	, h.report_time
 	, [d].status_change
 	, d.snapshot_type_id
+	, c.check_description
 from dbo.sqlwatch_logger_check d
   	inner join dbo.sqlwatch_logger_snapshot_header h
 		on  h.snapshot_time = d.[snapshot_time]
@@ -27,7 +28,7 @@ from dbo.sqlwatch_logger_check d
 		having actual names instead alongisde IDs will make their life easier with small increase in performane penalty */
 
 	outer apply (
-		select check_name
+		select check_name, check_description
 		from [dbo].[sqlwatch_meta_check] mc
 		where mc.sql_instance = d.sql_instance
 		and mc.check_id = d.check_id
