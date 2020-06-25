@@ -30,7 +30,7 @@
     <PageVerify>CHECKSUM</PageVerify>
     <AllowSnapshotIsolation>True</AllowSnapshotIsolation>
     <ReadCommittedSnapshot>True</ReadCommittedSnapshot>
-    <DacVersion>2.0.0.0</DacVersion>
+    <DacVersion>3.0.0.0</DacVersion>
     <DefaultCollation>Latin1_General_CI_AS</DefaultCollation>
     <TargetFrameworkProfile />
   </PropertyGroup>
