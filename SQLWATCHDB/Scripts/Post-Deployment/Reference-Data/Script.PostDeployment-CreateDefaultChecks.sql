@@ -414,13 +414,17 @@ exec [dbo].[usp_sqlwatch_config_add_check]
 	,@check_name = 'Oldest LOG backup (minutes)'
 	,@check_description = 'There is one or more databases that has no recent log backup. Databases that are in either FULL or BULK_LOGGED recovery must have frequent Transaction Log backups. The recovery point will be to the last Transaction Log backup and therefore these must happen often to minimise data loss.
 https://docs.microsoft.com/en-us/sql/relational-databases/backup-restore/recovery-models-sql-server'
-	,@check_query = 'select @output=isnull(min(datediff(minute,backup_finish_date,getdate())),0)
-from sys.databases d
-left join msdb.dbo.backupset bs
-	on bs.database_name = d.name
-	and bs.type = ''L''
-where d.recovery_model_desc <> ''SIMPLE''
-and d.name not in (''tempdb'')'
+	,@check_query = 'select @output=isnull(max(minute(day,last_backup_finish_date,getdate())),999)
+from (	
+	select database_name = d.name,
+	last_backup_finish_date = max(bs.backup_finish_date)
+	from sys.sysdatabases d
+	left join msdb.dbo.backupset bs ON bs.database_name = d.name
+		and bs.type = ''L''
+	where d.name not in (''tempdb'')
+	where d.recovery_model_desc <> ''SIMPLE''
+	group by d.name
+	) t'
 	,@check_frequency_minutes = 5
 	,@check_threshold_warning = '>10' --warn if log backup over 10 minutes old
 	,@check_threshold_critical = '>60' --critical if log backup over 1 hour old
@@ -438,12 +442,16 @@ exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -18
 	,@check_name = 'Oldest DATA backup (days)'
 	,@check_description = 'There is one or more databases that has no recent data backup.'
-	,@check_query = 'select @output=isnull(min(datediff(day,backup_finish_date,getdate())),0)
-from sys.databases d
-left join msdb.dbo.backupset bs
-	on bs.database_name = d.name
-	and bs.type <> ''L''
-where d.name not in (''tempdb'')'
+	,@check_query = 'select @output=isnull(max(datediff(day,last_backup_finish_date,getdate())),999)
+from (	
+	select database_name = d.name,
+	last_backup_finish_date = max(bs.backup_finish_date)
+	from sys.sysdatabases d
+	left join msdb.dbo.backupset bs ON bs.database_name = d.name
+		and bs.type <> ''L''
+	where d.name not in (''tempdb'')
+	group by d.Name
+	) t'
 	,@check_frequency_minutes = 15
 	,@check_threshold_warning = '>1' --warn if data backup over 1 day old
 	,@check_threshold_critical = '>7' --critical if data backup over 1 week old
