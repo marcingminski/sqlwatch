@@ -3,6 +3,8 @@
 )
 as
 
+set nocount on;
+
 if @databases = ''
 	begin
 		set @databases = '-tempdb'
