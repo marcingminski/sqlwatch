@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 6,
-  "iteration": 1593201449404,
+  "iteration": 1593207896879,
   "links": [
     {
       "asDropdown": false,
@@ -297,19 +297,19 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(snapshot_time)\n  AND counter_name IN ('Processor Time %','Batch Requests/sec','Readahead pages/sec','Page reads/sec')\n  AND [sql_instance] = $sql_instance\n  GROUP BY [counter_name]\n      ,$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  ",
+          "rawSql": "SELECT \n      [time] = [report_time] --$__timeGroup([report_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(snapshot_time)\n  AND counter_name IN ('Processor Time %','Batch Requests/sec','Readahead pages/sec','Page reads/sec')\n  AND [sql_instance] = $sql_instance\n  GROUP BY [counter_name], [report_time] --[counter_name],$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  ",
           "refId": "A"
         },
         {
           "alias": "",
           "format": "time_series",
-          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,[Latency] = MAX([io_latency_read])+MAX([io_latency_write])\n      ,metric='Latency'\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_file_stats]\n  WHERE 1 = 1\n  AND $__timeFilter(snapshot_time)\n  AND [sql_instance] IN ($sql_instance)\n  GROUP BY $__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+          "rawSql": "SELECT \n      [time] = [report_time] --$__timeGroup([report_time], $aggregation) \n      ,[Latency] = MAX([io_latency_read]+[io_latency_write])\n      ,metric='Latency'\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_file_stats]\n  WHERE 1 = 1\n  AND $__timeFilter(snapshot_time)\n  AND [sql_instance] IN ($sql_instance)\n  GROUP BY [report_time] --$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
           "refId": "B"
         },
         {
           "alias": "",
           "format": "time_series",
-          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,metric = 'Wait Time'\n      ,[value] = sum([wait_time_ms_delta])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_wait_stats]\n  WHERE 1=1\n  AND $__timeFilter(snapshot_time)\n  AND [sql_instance] IN ($sql_instance)\n  GROUP BY $__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+          "rawSql": "SELECT \n      [time] = [report_time] --$__timeGroup([report_time], $aggregation) \n      ,metric = 'Wait Time'\n      ,[value] = sum([wait_time_ms_delta])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_wait_stats]\n  WHERE 1=1\n  AND $__timeFilter(snapshot_time)\n  AND [sql_instance] IN ($sql_instance)\n  GROUP BY [report_time] --$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
           "refId": "C"
         },
         {
@@ -321,7 +321,7 @@
         {
           "alias": "",
           "format": "time_series",
-          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,[Bytes Transferred] = AVG([bytes_written_per_second]+[bytes_read_per_second])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_file_stats]\n  WHERE 1 = 1\n  AND $__timeFilter(snapshot_time)\n  AND [sql_instance] IN ($sql_instance)\n  GROUP BY $__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  ",
+          "rawSql": "SELECT \n      [time] = [report_time] --$__timeGroup([report_time], $aggregation) \n      ,[Bytes Transferred] = sum([bytes_written_per_second]+[bytes_read_per_second]) --AVG([bytes_written_per_second]+[bytes_read_per_second])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_file_stats]\n  WHERE 1 = 1\n  AND $__timeFilter(snapshot_time)\n  AND [sql_instance] IN ($sql_instance)\n  GROUP BY [report_time] --$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  ",
           "refId": "E"
         }
       ],
@@ -637,7 +637,7 @@
       "pluginVersion": "7.0.3",
       "repeat": null,
       "repeatDirection": "v",
-      "repeatIteration": 1593201449404,
+      "repeatIteration": 1593207896879,
       "repeatPanelId": 4,
       "scopedVars": {
         "sql_instance": {
@@ -651,19 +651,19 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(snapshot_time)\n  AND counter_name IN ('Processor Time %','Batch Requests/sec','Readahead pages/sec','Page reads/sec')\n  AND [sql_instance] = $sql_instance\n  GROUP BY [counter_name]\n      ,$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  ",
+          "rawSql": "SELECT \n      [time] = [report_time] --$__timeGroup([report_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(snapshot_time)\n  AND counter_name IN ('Processor Time %','Batch Requests/sec','Readahead pages/sec','Page reads/sec')\n  AND [sql_instance] = $sql_instance\n  GROUP BY [counter_name], [report_time] --[counter_name],$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  ",
           "refId": "A"
         },
         {
           "alias": "",
           "format": "time_series",
-          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,[Latency] = MAX([io_latency_read])+MAX([io_latency_write])\n      ,metric='Latency'\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_file_stats]\n  WHERE 1 = 1\n  AND $__timeFilter(snapshot_time)\n  AND [sql_instance] IN ($sql_instance)\n  GROUP BY $__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+          "rawSql": "SELECT \n      [time] = [report_time] --$__timeGroup([report_time], $aggregation) \n      ,[Latency] = MAX([io_latency_read]+[io_latency_write])\n      ,metric='Latency'\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_file_stats]\n  WHERE 1 = 1\n  AND $__timeFilter(snapshot_time)\n  AND [sql_instance] IN ($sql_instance)\n  GROUP BY [report_time] --$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
           "refId": "B"
         },
         {
           "alias": "",
           "format": "time_series",
-          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,metric = 'Wait Time'\n      ,[value] = sum([wait_time_ms_delta])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_wait_stats]\n  WHERE 1=1\n  AND $__timeFilter(snapshot_time)\n  AND [sql_instance] IN ($sql_instance)\n  GROUP BY $__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+          "rawSql": "SELECT \n      [time] = [report_time] --$__timeGroup([report_time], $aggregation) \n      ,metric = 'Wait Time'\n      ,[value] = sum([wait_time_ms_delta])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_wait_stats]\n  WHERE 1=1\n  AND $__timeFilter(snapshot_time)\n  AND [sql_instance] IN ($sql_instance)\n  GROUP BY [report_time] --$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
           "refId": "C"
         },
         {
@@ -675,7 +675,7 @@
         {
           "alias": "",
           "format": "time_series",
-          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,[Bytes Transferred] = AVG([bytes_written_per_second]+[bytes_read_per_second])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_file_stats]\n  WHERE 1 = 1\n  AND $__timeFilter(snapshot_time)\n  AND [sql_instance] IN ($sql_instance)\n  GROUP BY $__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  ",
+          "rawSql": "SELECT \n      [time] = [report_time] --$__timeGroup([report_time], $aggregation) \n      ,[Bytes Transferred] = sum([bytes_written_per_second]+[bytes_read_per_second]) --AVG([bytes_written_per_second]+[bytes_read_per_second])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_file_stats]\n  WHERE 1 = 1\n  AND $__timeFilter(snapshot_time)\n  AND [sql_instance] IN ($sql_instance)\n  GROUP BY [report_time] --$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  ",
           "refId": "E"
         }
       ],
@@ -768,8 +768,7 @@
       {
         "allValue": null,
         "current": {
-          "selected": true,
-          "tags": [],
+          "selected": false,
           "text": "SQLWATCH-REPO-1 + SQLWATCH-TEST-1",
           "value": [
             "SQLWATCH-REPO-1",
@@ -903,5 +902,5 @@
   "timezone": "browser",
   "title": "Summary",
   "uid": "rRcXcXWMk",
-  "version": 106
+  "version": 115
 }
