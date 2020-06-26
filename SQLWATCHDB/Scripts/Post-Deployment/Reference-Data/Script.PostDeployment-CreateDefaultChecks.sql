@@ -422,7 +422,7 @@ from (
 	left join msdb.dbo.backupset bs ON bs.database_name = d.name
 		and bs.type = ''L''
 	where d.name not in (''tempdb'')
-	where d.recovery_model_desc <> ''SIMPLE''
+	and d.recovery_model_desc <> ''SIMPLE''
 	group by d.name
 	) t'
 	,@check_frequency_minutes = 5
