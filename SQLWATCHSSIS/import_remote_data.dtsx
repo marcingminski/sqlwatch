@@ -12,8 +12,8 @@
   DTS:LocaleID="2057"
   DTS:ObjectName="import_remote_data"
   DTS:PackageType="5"
-  DTS:VersionBuild="1140"
-  DTS:VersionGUID="{6D1AAEF3-43A4-43B9-923E-9DA572DAFD00}">
+  DTS:VersionBuild="1145"
+  DTS:VersionGUID="{E21AC891-54BE-4024-AB61-E1A2863F7C70}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">6</DTS:Property>
   <DTS:ConnectionManagers>
@@ -71,7 +71,7 @@
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAACTAX0GOXnCCzSrPtPvyX7AAAAAASAAACgAAAAEAAAAHH3Yw2i2zRF1te7RS3l7boYAAAAxZQtEhCpL0lGlPM7zVohjFB7cH+oH+dIFAAAAB1iSm1jUo+t/epVeMP5/GVJ0/qQ</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAA4fW4WvnV50WjLJE02jHxmQAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAAUWrPkXadafNj9cPd2Mm5YAAAAAASAAACgAAAAEAAAANhJccCouLjMHFnyggpzeO0YAAAAeEL1YW739vCEqpUOOxG0VI4H1xfwk8o+FAAAAANExgUOXvOcNvKzGv1F8bNN9FSu</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -98,7 +98,7 @@
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAABwDc3zmyxRFj4jnqlCi5odAAAAAASAAACgAAAAEAAAAKhTPBERkYUP3W796fJ+hkQYAAAAmKSfOPhYT3Fvd8bd4nr6KDMdZiS+U6aTFAAAACeYcbGPop84vb4WmsdHc87XuadV</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAA4fW4WvnV50WjLJE02jHxmQAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAC/9NDUT2HtwOQVIFcopqddAAAAAASAAACgAAAAEAAAADn6i5BhQyxt8BC2r7w8gI4YAAAAI++aroTLNjnnUi3NRP1WpViaorsXi+J+FAAAAOXH2/BL0uIvLuiQT7SZSro0zM7d</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -121,7 +121,7 @@
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAC4bExWbNZyL23RKfREG690AAAAAASAAACgAAAAEAAAANRs5CrnOxXI67z1jWovLr4YAAAArGK5p45jWmZ8phtvzss/pq5LY7bYw66fFAAAAOkxfUr5eufc8CfUFz/GMivIb+6k</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAA4fW4WvnV50WjLJE02jHxmQAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAC1v0WzZL3JZSNvFxKCtaoNAAAAAASAAACgAAAAEAAAACk/1rYeyxy4aVdQxZMggnwYAAAAszwWF8+BskmDJfdctndww942W/p3bkFoFAAAAAMkwEMVlnFkmxxvjBEVA5+W5vzh</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -145,7 +145,7 @@
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAD7K9w92H8E4spAOrs8mjgVAAAAAASAAACgAAAAEAAAAPpfUOXrP+9669NaLcV4C5oYAAAAPf9uPuL1qKKfpDQvDLbSiaTqcZIeS2RoFAAAAGdnzqWUxMWX6NK5ZHG30e9OhKTy</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAA4fW4WvnV50WjLJE02jHxmQAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAAVRV80yj7baKxK2sHW9ogDAAAAAASAAACgAAAAEAAAAGjaRBZPj02M9KLlUAx7qIcYAAAA+p5+sv56o0w85VneKFyNnUype02EQQc0FAAAAD8EDaj6wzgNMWOFeBpNzMz+Zn9i</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -171,7 +171,7 @@
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAABfH5CQr9B0X1G85rPCvP5GAAAAAASAAACgAAAAEAAAACvwmnW8UwBiWsHPD1klxHYYAAAAn+OLOkEeuYE3NA+h8kPpCT94JxvaPVFhFAAAABdp7mTDsPdYcZ7YzzkU3YaxHyMP</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAA4fW4WvnV50WjLJE02jHxmQAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAACQAReX7IbXFjNqZK0apKr3AAAAAASAAACgAAAAEAAAALv/ycf9FV40BnfZUDTJpQYYAAAAWp9ug8ZG9D65aWZWBi8wlO3ZgcqDquQgFAAAAGlda+yDjgTxVrM6KMIf+GoLb8ce</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -196,7 +196,7 @@
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAADJ5xUwvPFhi5fspIft9b6oAAAAAASAAACgAAAAEAAAAHweNdXiO7WVzx99CMzBOhUYAAAAw9ITG0SNndqk16MkQwMFvuyyfeplkMhMFAAAAKG8vy/PT2pL1wn3+8KbkZajD7/k</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAA4fW4WvnV50WjLJE02jHxmQAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAADggacB8KsuxlCqv1YZuhTeAAAAAASAAACgAAAAEAAAAOtdwHYqXy8GP9trEMkLpRwYAAAAYaO3iKrplDfMR48lRJ0YLpgfIVSgfzXmFAAAAMU+txXwy7AlPFqpLS4KbF7V3kkG</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -235,7 +235,7 @@
         <DTS:Property
           DTS:DataType="8"
           DTS:Name="ParameterValue"
-          Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAABjz1PXOqEDlRuqxw97KaJ8AAAAAASAAACgAAAAEAAAAKsjDHZ9jXlltnVO8gmalEoYAAAAxJSwKR5+DIpYKqogyR0EgMG4DVb++6oyFAAAAIHyHYta25s/px2x5d9b4MNYE/pt</DTS:Property>
+          Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAA4fW4WvnV50WjLJE02jHxmQAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAD3G+Gf8TJ9uIew/i/+5Q8SAAAAAASAAACgAAAAEAAAAD3gJk0Sa1BoRB9w93/GyYcYAAAAHeuGElPCWox1zhby888Q/gAFmFO6mctBFAAAAPTNyDD73WXonUtT8VMLS0YO3zki</DTS:Property>
       </DTS:Property>
     </DTS:PackageParameter>
     <DTS:PackageParameter
@@ -282,7 +282,7 @@
         <DTS:Property
           DTS:DataType="8"
           DTS:Name="ParameterValue"
-          Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAATlDbTqjLbEuIyCibSFB1PwAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAAKuPMImXCEF5l8ddzztQcNAAAAAASAAACgAAAAEAAAAEzhWf6yzmA5RvkZC0aqauoYAAAAWgX9ytY9FelUbTInmX+QLMFcXqIK8GSjFAAAAMCX07ueJAQS1q/AFM2Qh/AvjO+H</DTS:Property>
+          Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAA4fW4WvnV50WjLJE02jHxmQAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAAPWeeeBQSI3CgNR4O9mVzjAAAAAASAAACgAAAAEAAAACiMXp6nSgV9czbuzYOn1e8YAAAAvbl/F95nOV0OMLlW2gOFPHqHPUb4h9xPFAAAABmCzElzSHI5W3eCUO6JP6r2PRjH</DTS:Property>
       </DTS:Property>
     </DTS:PackageParameter>
     <DTS:PackageParameter
@@ -584,7 +584,7 @@ select * from dbo.sqlwatch_logger_agent_job_history where snapshot_time &gt; con
                         SQLTask:ParameterName="2"
                         SQLTask:DtsVariableName="System::ErrorDescription"
                         SQLTask:ParameterDirection="Input"
-                        SQLTask:DataType="3"
+                        SQLTask:DataType="129"
                         SQLTask:ParameterSize="-1" />
                     </SQLTask:SqlTaskData>
                   </DTS:ObjectData>
@@ -1488,7 +1488,7 @@ select * from dbo.sqlwatch_logger_check where snapshot_time &gt; convert(datetim
                         SQLTask:ParameterName="2"
                         SQLTask:DtsVariableName="System::ErrorDescription"
                         SQLTask:ParameterDirection="Input"
-                        SQLTask:DataType="3"
+                        SQLTask:DataType="129"
                         SQLTask:ParameterSize="-1" />
                     </SQLTask:SqlTaskData>
                   </DTS:ObjectData>
@@ -2346,7 +2346,7 @@ select * from dbo.sqlwatch_logger_disk_utilisation_database where snapshot_time 
                         SQLTask:ParameterName="2"
                         SQLTask:DtsVariableName="System::ErrorDescription"
                         SQLTask:ParameterDirection="Input"
-                        SQLTask:DataType="3"
+                        SQLTask:DataType="129"
                         SQLTask:ParameterSize="-1" />
                     </SQLTask:SqlTaskData>
                   </DTS:ObjectData>
@@ -3446,7 +3446,7 @@ select * from dbo.sqlwatch_logger_disk_utilisation_table where snapshot_time &gt
                         SQLTask:ParameterName="2"
                         SQLTask:DtsVariableName="System::ErrorDescription"
                         SQLTask:ParameterDirection="Input"
-                        SQLTask:DataType="3"
+                        SQLTask:DataType="129"
                         SQLTask:ParameterSize="-1" />
                     </SQLTask:SqlTaskData>
                   </DTS:ObjectData>
@@ -4378,7 +4378,7 @@ select * from dbo.sqlwatch_logger_disk_utilisation_volume where snapshot_time &g
                         SQLTask:ParameterName="2"
                         SQLTask:DtsVariableName="System::ErrorDescription"
                         SQLTask:ParameterDirection="Input"
-                        SQLTask:DataType="3"
+                        SQLTask:DataType="129"
                         SQLTask:ParameterSize="-1" />
                     </SQLTask:SqlTaskData>
                   </DTS:ObjectData>
@@ -5142,7 +5142,7 @@ select * from dbo.sqlwatch_logger_index_histogram where snapshot_time &gt; conve
                         SQLTask:ParameterName="2"
                         SQLTask:DtsVariableName="System::ErrorDescription"
                         SQLTask:ParameterDirection="Input"
-                        SQLTask:DataType="3"
+                        SQLTask:DataType="129"
                         SQLTask:ParameterSize="-1" />
                     </SQLTask:SqlTaskData>
                   </DTS:ObjectData>
@@ -6102,7 +6102,7 @@ select * from dbo.sqlwatch_logger_index_missing_stats where snapshot_time &gt; c
                         SQLTask:ParameterName="2"
                         SQLTask:DtsVariableName="System::ErrorDescription"
                         SQLTask:ParameterDirection="Input"
-                        SQLTask:DataType="3"
+                        SQLTask:DataType="129"
                         SQLTask:ParameterSize="-1" />
                     </SQLTask:SqlTaskData>
                   </DTS:ObjectData>
@@ -7062,7 +7062,7 @@ select * from dbo.sqlwatch_logger_index_usage_stats where snapshot_time &gt; con
                         SQLTask:ParameterName="2"
                         SQLTask:DtsVariableName="System::ErrorDescription"
                         SQLTask:ParameterDirection="Input"
-                        SQLTask:DataType="3"
+                        SQLTask:DataType="129"
                         SQLTask:ParameterSize="-1" />
                     </SQLTask:SqlTaskData>
                   </DTS:ObjectData>
@@ -8386,7 +8386,7 @@ select * from dbo.sqlwatch_logger_perf_file_stats where snapshot_time &gt; conve
                         SQLTask:ParameterName="2"
                         SQLTask:DtsVariableName="System::ErrorDescription"
                         SQLTask:ParameterDirection="Input"
-                        SQLTask:DataType="3"
+                        SQLTask:DataType="129"
                         SQLTask:ParameterSize="-1" />
                     </SQLTask:SqlTaskData>
                   </DTS:ObjectData>
@@ -9545,7 +9545,7 @@ select * from dbo.sqlwatch_logger_perf_os_memory_clerks where snapshot_time &gt;
                         SQLTask:ParameterName="2"
                         SQLTask:DtsVariableName="System::ErrorDescription"
                         SQLTask:ParameterDirection="Input"
-                        SQLTask:DataType="3"
+                        SQLTask:DataType="129"
                         SQLTask:ParameterSize="-1" />
                     </SQLTask:SqlTaskData>
                   </DTS:ObjectData>
@@ -10309,7 +10309,7 @@ select * from dbo.sqlwatch_logger_perf_os_performance_counters where snapshot_ti
                         SQLTask:ParameterName="2"
                         SQLTask:DtsVariableName="System::ErrorDescription"
                         SQLTask:ParameterDirection="Input"
-                        SQLTask:DataType="3"
+                        SQLTask:DataType="129"
                         SQLTask:ParameterSize="-1" />
                     </SQLTask:SqlTaskData>
                   </DTS:ObjectData>
@@ -11134,7 +11134,7 @@ select * from dbo.sqlwatch_logger_perf_os_process_memory where snapshot_time &gt
                         SQLTask:ParameterName="2"
                         SQLTask:DtsVariableName="System::ErrorDescription"
                         SQLTask:ParameterDirection="Input"
-                        SQLTask:DataType="3"
+                        SQLTask:DataType="129"
                         SQLTask:ParameterSize="-1" />
                     </SQLTask:SqlTaskData>
                   </DTS:ObjectData>
@@ -12150,7 +12150,7 @@ select * from dbo.sqlwatch_logger_perf_os_schedulers where snapshot_time &gt; co
                         SQLTask:ParameterName="2"
                         SQLTask:DtsVariableName="System::ErrorDescription"
                         SQLTask:ParameterDirection="Input"
-                        SQLTask:DataType="3"
+                        SQLTask:DataType="129"
                         SQLTask:ParameterSize="-1" />
                     </SQLTask:SqlTaskData>
                   </DTS:ObjectData>
@@ -13278,7 +13278,7 @@ select * from dbo.sqlwatch_logger_perf_os_wait_stats where snapshot_time &gt; co
                         SQLTask:ParameterName="2"
                         SQLTask:DtsVariableName="System::ErrorDescription"
                         SQLTask:ParameterDirection="Input"
-                        SQLTask:DataType="3"
+                        SQLTask:DataType="129"
                         SQLTask:ParameterSize="-1" />
                     </SQLTask:SqlTaskData>
                   </DTS:ObjectData>
@@ -14238,7 +14238,7 @@ select * from dbo.sqlwatch_logger_whoisactive where snapshot_time &gt; convert(d
                         SQLTask:ParameterName="2"
                         SQLTask:DtsVariableName="System::ErrorDescription"
                         SQLTask:ParameterDirection="Input"
-                        SQLTask:DataType="3"
+                        SQLTask:DataType="129"
                         SQLTask:ParameterSize="-1" />
                     </SQLTask:SqlTaskData>
                   </DTS:ObjectData>
@@ -15697,7 +15697,7 @@ select * from dbo.sqlwatch_logger_xes_blockers where snapshot_time &gt; convert(
                         SQLTask:ParameterName="2"
                         SQLTask:DtsVariableName="System::ErrorDescription"
                         SQLTask:ParameterDirection="Input"
-                        SQLTask:DataType="3"
+                        SQLTask:DataType="129"
                         SQLTask:ParameterSize="-1" />
                     </SQLTask:SqlTaskData>
                   </DTS:ObjectData>
@@ -16850,7 +16850,7 @@ select * from dbo.sqlwatch_logger_xes_iosubsystem where snapshot_time &gt; conve
                         SQLTask:ParameterName="2"
                         SQLTask:DtsVariableName="System::ErrorDescription"
                         SQLTask:ParameterDirection="Input"
-                        SQLTask:DataType="3"
+                        SQLTask:DataType="129"
                         SQLTask:ParameterSize="-1" />
                     </SQLTask:SqlTaskData>
                   </DTS:ObjectData>
@@ -17680,7 +17680,7 @@ select * from dbo.sqlwatch_logger_xes_long_queries where snapshot_time &gt; conv
                         SQLTask:ParameterName="2"
                         SQLTask:DtsVariableName="System::ErrorDescription"
                         SQLTask:ParameterDirection="Input"
-                        SQLTask:DataType="3"
+                        SQLTask:DataType="129"
                         SQLTask:ParameterSize="-1" />
                     </SQLTask:SqlTaskData>
                   </DTS:ObjectData>
@@ -19107,7 +19107,7 @@ select * from dbo.sqlwatch_logger_xes_query_processing where snapshot_time &gt; 
                         SQLTask:ParameterName="2"
                         SQLTask:DtsVariableName="System::ErrorDescription"
                         SQLTask:ParameterDirection="Input"
-                        SQLTask:DataType="3"
+                        SQLTask:DataType="129"
                         SQLTask:ParameterSize="-1" />
                     </SQLTask:SqlTaskData>
                   </DTS:ObjectData>
@@ -19983,7 +19983,7 @@ select * from dbo.sqlwatch_logger_xes_waits_stats where snapshot_time &gt; conve
                         SQLTask:ParameterName="2"
                         SQLTask:DtsVariableName="System::ErrorDescription"
                         SQLTask:ParameterDirection="Input"
-                        SQLTask:DataType="3"
+                        SQLTask:DataType="129"
                         SQLTask:ParameterSize="-1" />
                     </SQLTask:SqlTaskData>
                   </DTS:ObjectData>
@@ -21176,7 +21176,7 @@ and snapshot_time &lt;= convert(datetime,?)</property>
                         SQLTask:ParameterName="2"
                         SQLTask:DtsVariableName="System::ErrorDescription"
                         SQLTask:ParameterDirection="Input"
-                        SQLTask:DataType="3"
+                        SQLTask:DataType="129"
                         SQLTask:ParameterSize="-1" />
                     </SQLTask:SqlTaskData>
                   </DTS:ObjectData>
@@ -22195,7 +22195,7 @@ ORDER BY [snapshot_time], [sql_instance], [snapshot_type_id]</property>
                         SQLTask:ParameterName="2"
                         SQLTask:DtsVariableName="System::ErrorDescription"
                         SQLTask:ParameterDirection="Input"
-                        SQLTask:DataType="3"
+                        SQLTask:DataType="129"
                         SQLTask:ParameterSize="-1" />
                     </SQLTask:SqlTaskData>
                   </DTS:ObjectData>
@@ -23419,7 +23419,7 @@ and [sqlwatch_job_id] = ?</property>
                         SQLTask:ParameterName="2"
                         SQLTask:DtsVariableName="System::ErrorDescription"
                         SQLTask:ParameterDirection="Input"
-                        SQLTask:DataType="3"
+                        SQLTask:DataType="129"
                         SQLTask:ParameterSize="-1" />
                     </SQLTask:SqlTaskData>
                   </DTS:ObjectData>
@@ -24454,7 +24454,7 @@ ORDER BY [sql_instance], [sqlwatch_job_id], [sqlwatch_job_step_id]</property>
                         SQLTask:ParameterName="2"
                         SQLTask:DtsVariableName="System::ErrorDescription"
                         SQLTask:ParameterDirection="Input"
-                        SQLTask:DataType="3"
+                        SQLTask:DataType="129"
                         SQLTask:ParameterSize="-1" />
                     </SQLTask:SqlTaskData>
                   </DTS:ObjectData>
@@ -25838,7 +25838,7 @@ ORDER BY [sql_instance], [check_id]</property>
                         SQLTask:ParameterName="2"
                         SQLTask:DtsVariableName="System::ErrorDescription"
                         SQLTask:ParameterDirection="Input"
-                        SQLTask:DataType="3"
+                        SQLTask:DataType="129"
                         SQLTask:ParameterSize="-1" />
                     </SQLTask:SqlTaskData>
                   </DTS:ObjectData>
@@ -27932,7 +27932,7 @@ and sqlwatch_database_id = ?</property>
                         SQLTask:ParameterName="2"
                         SQLTask:DtsVariableName="System::ErrorDescription"
                         SQLTask:ParameterDirection="Input"
-                        SQLTask:DataType="3"
+                        SQLTask:DataType="129"
                         SQLTask:ParameterSize="-1" />
                     </SQLTask:SqlTaskData>
                   </DTS:ObjectData>
@@ -29827,7 +29827,7 @@ and sqlwatch_index_id = ?</property>
                         SQLTask:ParameterName="2"
                         SQLTask:DtsVariableName="System::ErrorDescription"
                         SQLTask:ParameterDirection="Input"
-                        SQLTask:DataType="3"
+                        SQLTask:DataType="129"
                         SQLTask:ParameterSize="-1" />
                     </SQLTask:SqlTaskData>
                   </DTS:ObjectData>
@@ -31422,7 +31422,7 @@ and [sqlwatch_missing_index_id] = ?</property>
                         SQLTask:ParameterName="2"
                         SQLTask:DtsVariableName="System::ErrorDescription"
                         SQLTask:ParameterDirection="Input"
-                        SQLTask:DataType="3"
+                        SQLTask:DataType="129"
                         SQLTask:ParameterSize="-1" />
                     </SQLTask:SqlTaskData>
                   </DTS:ObjectData>
@@ -32951,7 +32951,7 @@ and sqlwatch_master_file_id = ?</property>
                         SQLTask:ParameterName="2"
                         SQLTask:DtsVariableName="System::ErrorDescription"
                         SQLTask:ParameterDirection="Input"
-                        SQLTask:DataType="3"
+                        SQLTask:DataType="129"
                         SQLTask:ParameterSize="-1" />
                     </SQLTask:SqlTaskData>
                   </DTS:ObjectData>
@@ -33863,7 +33863,7 @@ ORDER BY [sql_instance], [sqlwatch_mem_clerk_id]</property>
                         SQLTask:ParameterName="2"
                         SQLTask:DtsVariableName="System::ErrorDescription"
                         SQLTask:ParameterDirection="Input"
-                        SQLTask:DataType="3"
+                        SQLTask:DataType="129"
                         SQLTask:ParameterSize="-1" />
                     </SQLTask:SqlTaskData>
                   </DTS:ObjectData>
@@ -35612,7 +35612,7 @@ and sqlwatch_volume_id = ?</property>
                         SQLTask:ParameterName="2"
                         SQLTask:DtsVariableName="System::ErrorDescription"
                         SQLTask:ParameterDirection="Input"
-                        SQLTask:DataType="3"
+                        SQLTask:DataType="129"
                         SQLTask:ParameterSize="-1" />
                     </SQLTask:SqlTaskData>
                   </DTS:ObjectData>
@@ -36625,7 +36625,7 @@ ORDER BY [sql_instance], [performance_counter_id]</property>
                         SQLTask:ParameterName="2"
                         SQLTask:DtsVariableName="System::ErrorDescription"
                         SQLTask:ParameterDirection="Input"
-                        SQLTask:DataType="3"
+                        SQLTask:DataType="129"
                         SQLTask:ParameterSize="-1" />
                     </SQLTask:SqlTaskData>
                   </DTS:ObjectData>
@@ -37742,7 +37742,7 @@ ORDER BY [servername]</property>
                         SQLTask:ParameterName="2"
                         SQLTask:DtsVariableName="System::ErrorDescription"
                         SQLTask:ParameterDirection="Input"
-                        SQLTask:DataType="3"
+                        SQLTask:DataType="129"
                         SQLTask:ParameterSize="-1" />
                     </SQLTask:SqlTaskData>
                   </DTS:ObjectData>
@@ -39388,7 +39388,7 @@ and sqlwatch_table_id = ?</property>
                         SQLTask:ParameterName="2"
                         SQLTask:DtsVariableName="System::ErrorDescription"
                         SQLTask:ParameterDirection="Input"
-                        SQLTask:DataType="3"
+                        SQLTask:DataType="129"
                         SQLTask:ParameterSize="-1" />
                     </SQLTask:SqlTaskData>
                   </DTS:ObjectData>
@@ -41516,7 +41516,7 @@ ORDER BY [sql_instance], [wait_type_id]</property>
     design-time-name="Package\Load Logger Data (Delta)\sqlwatch_logger_agent_job_history">
     <LayoutInfo>
       <GraphLayout
-        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
           Size="112,42"
           Id="Package\Load Logger Data (Delta)\sqlwatch_logger_agent_job_history\source"
@@ -41544,9 +41544,7 @@ ORDER BY [sql_instance], [wait_type_id]</property>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
       </GraphLayout>
