@@ -35,7 +35,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "SQLWATCH",
+      "datasource": "$DataSource",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -149,7 +149,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "SQLWATCH",
+      "datasource": "$DataSource",
       "description": "**Page Reads/sec**:   *You want < 90*   \nNumber of physical database page reads issued per second. Normal OLTP workloads support 80 – 90 per second, but higher values may be a yellow flag for poor indexing or insufficient memory.\n\n**Page Writes/sec**:   *You want < 90*   \nNumber of database pages physically written to disk per second. Normal OLTP workloads support 80 – 90 per second. Values over 90 should be crossed checked with “lazy writer/sec” and “checkpoint” counters. If the other counters are also high, then it may indicate insufficient memory",
       "fieldConfig": {
         "defaults": {
@@ -273,7 +273,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "SQLWATCH",
+      "datasource": "$DataSource",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -393,7 +393,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "SQLWATCH",
+      "datasource": "$DataSource",
       "description": "**Readahead/sec**: \nNumber of data pages read per second in anticipation of their use",
       "fieldConfig": {
         "defaults": {
@@ -507,7 +507,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "SQLWATCH",
+      "datasource": "$DataSource",
       "description": "**Lazy Writes/Sec**: *You want< 20*   \nMonitors the number of times per second that the Lazy Writer process moves dirty pages from the buffer to disk as it frees up buffer space. Lower is better with zero being ideal. When greater than 20, this counter indicates a need for more memory.",
       "fieldConfig": {
         "defaults": {
@@ -631,7 +631,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "SQLWATCH",
+      "datasource": "$DataSource",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -745,7 +745,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "SQLWATCH",
+      "datasource": "$DataSource",
       "description": "**Readahead Rate**: *You want < 20%*   \nThe ratio of *Readahead/sec* and *Page Reads/ sec*. \nNumber of data pages read per second in anticipation of their use. If this value is makes up even a sizeable minority of total Page Reads/sec (say, greater than 20% of total page reads), you may have too many physical reads occurring.",
       "fieldConfig": {
         "defaults": {
@@ -897,7 +897,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "SQLWATCH",
+      "datasource": "$DataSource",
       "description": "**Checkpoint Pages/ sec**:   \nMonitors the number of dirty pages, per second, that are flushed to disk when SQL Server invokes the checkpoint process. Checkpoint frequency is influenced by the recovery interval setting in sp_configure. High values for this counter may indicate insufficient memory or that the recovery interval is too high.",
       "fieldConfig": {
         "defaults": {
@@ -1021,7 +1021,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "SQLWATCH",
+      "datasource": "$DataSource",
       "description": "**Memory Grants Outstanding:**\nTotal number of processes per second that have successfully acquired a workspace memory grant.\n\n**Memory Grants Pending**:\nTotal number of processes per second waiting for a workspace memory grant. Numbers higher than 0 indicate a lack of memory.",
       "fieldConfig": {
         "defaults": {
@@ -1145,7 +1145,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "SQLWATCH",
+      "datasource": "$DataSource",
       "description": "**Page Lookups/sec**: The number of requests to find a page in the buffer pool",
       "fieldConfig": {
         "defaults": {
@@ -1278,7 +1278,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "SQLWATCH",
+      "datasource": "$DataSource",
       "description": "**Log Flushes/sec**:   \nTechnically, the number of log pages flushed to the transaction log per second.",
       "fieldConfig": {
         "defaults": {
@@ -1402,7 +1402,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "SQLWATCH",
+      "datasource": "$DataSource",
       "description": "**Page lookups Rate**: *You want < 100*   \nThe ratio of *Page lookups/ sec* and *Batch Requests/ sec*. The number of requests to find a page in the buffer pool. When the ratio of batch requests to page lookups crests 100, you may have inefficient execution plans or too many adhoc queries.",
       "fieldConfig": {
         "defaults": {
@@ -1545,7 +1545,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "SQLWATCH",
+      "datasource": "$DataSource",
       "description": "**Free List Stalls/sec**:   *You want < 2*   \nMonitors the number of requests per second where data requests stall because no buffers are available. Any value above 2 means SQL Server needs more memory",
       "fieldConfig": {
         "defaults": {
@@ -1669,7 +1669,7 @@
       "bars": true,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "SQLWATCH",
+      "datasource": "$DataSource",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -1783,7 +1783,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "SQLWATCH",
+      "datasource": "$DataSource",
       "description": "**Page Life Expectancy**: *You want > 300*   \nTells, on average, how many seconds SQL Server expects a data page to stay in cache. The target on an OLTP system should be at least 300 (5 min). When under 300, this may indicate poor index design (leading to increased disk I/O and less effective use of memory) or, simply, a potential shortage of memory.\n\n**IMPORTANT**\n[https://www.sqlskills.com/blogs/paul/page-life-expectancy-isnt-what-you-think/](https://www.sqlskills.com/blogs/paul/page-life-expectancy-isnt-what-you-think/)\n",
       "fieldConfig": {
         "defaults": {
@@ -1926,7 +1926,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "SQLWATCH",
+      "datasource": "$DataSource",
       "description": "**Buffer cache hit ratio**:   *You want 100%*   \nLong a stalwart counter used by SQL Server DBAs, this counter is no longer very useful. It monitors the percentage of data requests answer from the buffer cache since the last reboot. However, other counters are much better for showing current memory pressure that this one because it blows the curve. For example, PLE (page life expectancy) might suddenly drop from 2000 to 70, while buffer cache hit ration moves only from 98.2 to 98.1. Only be concerned by this counter if it’s value is regularly below 90 (for OLTP) or 80 (for very large OLAP).",
       "fieldConfig": {
         "defaults": {
@@ -2079,7 +2079,7 @@
           "text": "SQLWATCH-TEST-1",
           "value": "SQLWATCH-TEST-1"
         },
-        "datasource": "SQLWATCH",
+        "datasource": "$DataSource",
         "definition": "SELECT [servername] FROM [dbo].[sqlwatch_meta_server]",
         "hide": 0,
         "includeAll": false,

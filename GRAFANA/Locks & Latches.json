@@ -35,7 +35,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "SQLWATCH",
+      "datasource": "$DataSource",
       "description": "**Latch Waits/sec**: \nThe number of latches in the last second that had to wait. Latches are lightweight means of holding a very transient server resource, such as an address in memory.",
       "fieldConfig": {
         "defaults": {
@@ -149,7 +149,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "SQLWATCH",
+      "datasource": "$DataSource",
       "description": "**Page Splits/sec**: \nMonitors the number of page splits per second which occur due to overflowing index pages and should be as low as possible",
       "fieldConfig": {
         "defaults": {
@@ -263,7 +263,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "SQLWATCH",
+      "datasource": "$DataSource",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -377,7 +377,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "SQLWATCH",
+      "datasource": "$DataSource",
       "description": "**Lock Requests/ sec**:   *You want <1000*   \nThe number of new locks and locks converted per second. This metric’s value should generally correspond to \"Batch Requests/sec\". Values > 1000 may indicate queries are accessing very large numbers of rows and may benefit from tuning",
       "fieldConfig": {
         "defaults": {
@@ -501,7 +501,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "SQLWATCH",
+      "datasource": "$DataSource",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -634,7 +634,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "SQLWATCH",
+      "datasource": "$DataSource",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -748,7 +748,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "SQLWATCH",
+      "datasource": "$DataSource",
       "description": "**Lock Timeouts/ sec**:   *You want <1*   \nShows the number of lock requests per second that timed out, including internal requests for NOWAIT locks. A value greater than zero might indicate that user queries are not completing. The lower this value is, the better.",
       "fieldConfig": {
         "defaults": {
@@ -872,7 +872,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "SQLWATCH",
+      "datasource": "$DataSource",
       "description": "**Page Splits Rate**:  *You want < 20 %*\nMonitors the number of page splits per second which occur due to overflowing index pages and should be as low as possible. To avoid page splits, review table and index design to reduce non-sequential inserts or implement fillfactor and pad_index to leave more empty space per page. NOTE: A high value for this counter is not bad in situations where many new pages are being created, since it includes new page allocations.",
       "fieldConfig": {
         "defaults": {
@@ -1015,7 +1015,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "SQLWATCH",
+      "datasource": "$DataSource",
       "description": "**Full Scans/sec**: \nMonitors the number of full scans on tables or indexes. Ignore unless high CPU coincides with high scan rates. High scan rates may be caused by missing indexes, very small tables, or requests for too many records. A sudden increase in this value may indicate a statistics threshold has been reached, resulting in an index no longer being used.",
       "fieldConfig": {
         "defaults": {
@@ -1129,7 +1129,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "SQLWATCH",
+      "datasource": "$DataSource",
       "description": "**Lock Waits/sec**:   *You want 0 *   \nHow many times users waited to acquire a lock over the past second. Values greater than zero indicate at least some blocking is occurring, while a value of zero can quickly eliminate blocking as a potential root-cause problem. As with \"Lock Wait Time\", lock waits are not recorded by PerfMon until after the lock event completes.",
       "fieldConfig": {
         "defaults": {
@@ -1253,7 +1253,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "SQLWATCH",
+      "datasource": "$DataSource",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -1386,7 +1386,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "SQLWATCH",
+      "datasource": "$DataSource",
       "description": "**Index Searches/sec**:    \nMonitors the number of index searches when doing range scans, single index record fetches, and repositioning within an index",
       "fieldConfig": {
         "defaults": {
@@ -1501,7 +1501,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "SQLWATCH",
+      "datasource": "$DataSource",
       "description": "**Avg Wait Time (ms)**:   *You want <500 *   \nThe average wait time, in milliseconds, for each lock request that had to wait. An average wait time longer than 500ms may indicate excessive blocking. This value should generally correlate to \"Lock Waits/sec\" and move up or down with it accordingly.",
       "fieldConfig": {
         "defaults": {
@@ -1625,7 +1625,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "SQLWATCH",
+      "datasource": "$DataSource",
       "description": "**Number of Deadlocks/sec**:   *You want < 1 *   \nNumber of lock requests, per second, which resulted in a deadlock. Since only a COMMIT, ROLLBACK, or deadlock can terminate a transaction (excluding failures or errors), this is an important value to track. Excessive deadlocking indicates a table or index design error or bad application design.",
       "fieldConfig": {
         "defaults": {
@@ -1749,7 +1749,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "SQLWATCH",
+      "datasource": "$DataSource",
       "description": "**Full Scans Rate**:  *You want < 1in 1000*   \nRatio of *Full Scans/sec* and *Index Searches/sec*\nMonitors the number of index searches when doing range scans, single index record fetches, and repositioning within an index. The threshold recommendation is strictly for OLTP workloads.",
       "fieldConfig": {
         "defaults": {
@@ -1921,7 +1921,7 @@
           "text": "SQLWATCH-TEST-1",
           "value": "SQLWATCH-TEST-1"
         },
-        "datasource": "SQLWATCH",
+        "datasource": "$DataSource",
         "definition": "SELECT [servername] FROM [dbo].[sqlwatch_meta_server]",
         "hide": 0,
         "includeAll": false,

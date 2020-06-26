@@ -37,7 +37,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "SQLWATCH",
+      "datasource": "$DataSource",
       "description": "\n**Batch Requests/sec**:   \nNumber of batch requests received per second, and is a good general indicator for the activity level of the SQL Server. This counter is highly dependent on the hardware and quality of code running on the server. The more powerful the hardware, the higher this number can be, even on poorly coded applications. A value of 1000 batch requests/sec is easily attainable though a typical 100Mbs NIC can only handle about 3000 batch requests/sec.Many other counter thresholds depend upon batch requests/sec while, in some cases, a low (or high) number does not point to poor processing power. You should frequently use this counter in combination with other counters, such as processor utilization or user connections.In version 2000, \"Transactions/ sec\" was the counter most often used to measure overall activity, while versions 2005 and later use \"Batch Requests/sec\". Versions 2005 prior to SP2, measure this counter differently and may lead to some misunderstandings. Read the footnote for more details.\n\n**SQL Compilations/sec**:   \nNumber of times that Transact-SQL compilations occurred, per second (including recompiles). The lower this value is the better. High values often indicate excessive adhoc querying and should be as low as possible. If excessive adhoc querying is happening, try rewriting the queries as procedures or invoke the queries using sp_executeSQL. When rewriting isn’t possible, consider using a plan guide or setting the database to parameterization forced mode.\n\n**SQL Re-Compilations/sec**:   \nNumber of times, per second, that Transact-SQL objects attempted to be executed but had to be recompiled before completion. This number should be at or near zero, since recompiles can cause deadlocks and exclusive compile locks. This counter’s value should follow in proportion to \"Batch Requests/sec\" and \"SQL Compilations/ sec\". This needs to be nil in your system as much as possible.\n\n**Logins/sec**: *You want < 2*   \nThe number of user logins per second. Any value over 2 may indicate insufficient connection pooling.\n\n**User Connections**:   \nThe number of users currently connected to the SQL Server. This counter should roughly track with \"Batch Requests/Sec\". They should generally rise and fall together. For example, blocking problems could be revealed by rising user connections, lock waits and lock wait time coupled with declining batch requests/sec.\n\n**Transactions/sec**:   \nNumber of transactions started for the database per second.",
       "fieldConfig": {
         "defaults": {
@@ -147,7 +147,7 @@
       }
     },
     {
-      "datasource": "SQLWATCH",
+      "datasource": "$DataSource",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -205,7 +205,7 @@
       "type": "stat"
     },
     {
-      "datasource": "SQLWATCH",
+      "datasource": "$DataSource",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -263,7 +263,7 @@
       "type": "stat"
     },
     {
-      "datasource": "SQLWATCH",
+      "datasource": "$DataSource",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -328,7 +328,7 @@
       "type": "stat"
     },
     {
-      "datasource": "SQLWATCH",
+      "datasource": "$DataSource",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -393,7 +393,7 @@
       "type": "stat"
     },
     {
-      "datasource": "SQLWATCH",
+      "datasource": "$DataSource",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -462,7 +462,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "SQLWATCH",
+      "datasource": "$DataSource",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -578,7 +578,7 @@
       }
     },
     {
-      "datasource": "SQLWATCH",
+      "datasource": "$DataSource",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -655,7 +655,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "SQLWATCH",
+      "datasource": "$DataSource",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -769,7 +769,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "SQLWATCH",
+      "datasource": "$DataSource",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -889,7 +889,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "SQLWATCH",
+      "datasource": "$DataSource",
       "description": "**SQL Compilations/sec**:  \n*You want it to be < 10% (of the number of Batch Requests/Sec)*  \nNumber of times that Transact-SQL compilations\noccurred, per second (including recompiles).\nThe lower this value is the better. High values\noften indicate excessive ad-hoc querying and\nshould be as low as possible. If excessive ad-hoc\nquerying is happening, try rewriting the queries\nas procedures or invoke the queries using sp_executeSQL. When rewriting isn’t possible, consider\nusing a plan guide or setting the database to\nparameterization forced mode.\n\n **SQL Re-Compilations/sec**:  \n*You want it to be < 10% (of the number of SQL Compilations/sec)*  \nNumber of times, per second, that Transact-SQL\nobjects attempted to be executed but had to\nbe recompiled before completion. This number\nshould be at or near zero, since recompiles can\ncause deadlocks and exclusive compile locks.\nThis counter’s value should follow in proportion\nto “Batch Requests/sec” and “SQL Compilations/\nsec”. This needs to be nil in your system as much\nas possible.",
       "fieldConfig": {
         "defaults": {
@@ -1071,7 +1071,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "SQLWATCH",
+      "datasource": "$DataSource",
       "description": "In OLTP systems the ideal latency is below **8ms** but anything below **20ms** can be acceptable. The latency between **20ms** and **50ms** could lead to performance problems. Latency above **50ms** is likely inadequate if you want a fast database. \n\nIn the Data Warehouse workload, latencies around **500ms** and more are normal. This is becuase in the Data Warehouse we are often reading a lot of data at once and saturate the storage IO whereas in OLTP systems we are making a lot of small writes and reads and therefore storage must be very responsive.",
       "fieldConfig": {
         "defaults": {
@@ -1206,7 +1206,7 @@
       "bars": true,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "SQLWATCH",
+      "datasource": "$DataSource",
       "description": "How much time SQL Server spends waiting on a different resource. Please see https://www.sqlskills.com/help/waits/ for details. ",
       "fieldConfig": {
         "defaults": {
@@ -1320,7 +1320,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "SQLWATCH",
+      "datasource": "$DataSource",
       "description": "As recorded by the Extended Events default System Health Session",
       "fieldConfig": {
         "defaults": {
@@ -1434,7 +1434,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "SQLWATCH",
+      "datasource": "$DataSource",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -1548,7 +1548,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "SQLWATCH",
+      "datasource": "$DataSource",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -1692,7 +1692,7 @@
           "text": "SQLWATCH-TEST-1",
           "value": "SQLWATCH-TEST-1"
         },
-        "datasource": "SQLWATCH",
+        "datasource": "$DataSource",
         "definition": "SELECT [servername] FROM [dbo].[sqlwatch_meta_server]",
         "hide": 0,
         "includeAll": false,
