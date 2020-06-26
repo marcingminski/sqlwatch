@@ -96,7 +96,7 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(report_time)\n  AND counter_name IN ('Latch Waits/sec')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(snapshot_time)\n  AND counter_name IN ('Latch Waits/sec')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
           "refId": "A"
         }
       ],
@@ -210,7 +210,7 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(report_time)\n  AND counter_name IN ('Page Splits/sec')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(snapshot_time)\n  AND counter_name IN ('Page Splits/sec')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
           "refId": "A"
         }
       ],
@@ -324,7 +324,7 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(report_time)\n  AND counter_name IN ('Page Deallocations/sec','Pages Allocated/sec')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(snapshot_time)\n  AND counter_name IN ('Page Deallocations/sec','Pages Allocated/sec')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
           "refId": "A"
         }
       ],
@@ -438,7 +438,7 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(report_time)\n  AND counter_name IN ('Lock Requests/sec')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(snapshot_time)\n  AND counter_name IN ('Lock Requests/sec')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
           "refId": "A"
         }
       ],
@@ -562,7 +562,7 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = SUM([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(report_time)\n  AND counter_name IN ('Page latch waits')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = SUM([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(snapshot_time)\n  AND counter_name IN ('Page latch waits')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
           "refId": "A"
         }
       ],
@@ -695,7 +695,7 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(report_time)\n  AND counter_name IN ('Page Compression Attempts/sec','Pages Compressed/sec')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(snapshot_time)\n  AND counter_name IN ('Page Compression Attempts/sec','Pages Compressed/sec')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
           "refId": "A"
         }
       ],
@@ -809,7 +809,7 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(report_time)\n  AND counter_name IN ('Lock Timeouts/sec')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(snapshot_time)\n  AND counter_name IN ('Lock Timeouts/sec')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
           "refId": "A"
         }
       ],
@@ -933,7 +933,7 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(report_time)\n  AND counter_name IN ('Page Splits/sec','Batch Requests/Sec')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(snapshot_time)\n  AND counter_name IN ('Page Splits/sec','Batch Requests/Sec')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
           "refId": "A"
         }
       ],
@@ -1076,7 +1076,7 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(report_time)\n  AND counter_name IN ('Full Scans/sec')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(snapshot_time)\n  AND counter_name IN ('Full Scans/sec')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
           "refId": "A"
         }
       ],
@@ -1190,7 +1190,7 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(report_time)\n  AND counter_name IN ('Lock Waits/sec')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(snapshot_time)\n  AND counter_name IN ('Lock Waits/sec')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
           "refId": "A"
         }
       ],
@@ -1314,7 +1314,7 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = SUM([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(report_time)\n  AND counter_name IN ('Page IO latch waits')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = SUM([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(snapshot_time)\n  AND counter_name IN ('Page IO latch waits')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
           "refId": "A"
         }
       ],
@@ -1447,7 +1447,7 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(report_time)\n  AND counter_name IN ('Index Searches/sec')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(snapshot_time)\n  AND counter_name IN ('Index Searches/sec')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
           "refId": "A"
         }
       ],
@@ -1562,7 +1562,7 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(report_time)\n  AND counter_name IN ('Average Wait Time (ms)')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(snapshot_time)\n  AND counter_name IN ('Average Wait Time (ms)')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
           "refId": "A"
         }
       ],
@@ -1686,7 +1686,7 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(report_time)\n  AND counter_name IN ('Number of Deadlocks/sec')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(snapshot_time)\n  AND counter_name IN ('Number of Deadlocks/sec')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
           "refId": "A"
         }
       ],
@@ -1810,7 +1810,7 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(report_time)\n  AND counter_name IN ('Full Scans/sec','Index Searches/sec')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+          "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(snapshot_time)\n  AND counter_name IN ('Full Scans/sec','Index Searches/sec')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
           "refId": "A"
         }
       ],
