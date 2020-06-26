@@ -31,6 +31,7 @@ as
 	1.2		2019-12-23	- Marcin Gminski, added error handling and additional messaging
 	1.3		2020-03-22	- Marcin Gminski, improved logging
 	1.4		2020-03-23	- Marcin Gminski, added excplicit include 
+	1.5		2020-06-26	- Marcin Gminski, print exec time
 -------------------------------------------------------------------------------------------------------------------
 */
 begin
@@ -118,6 +119,8 @@ begin
 											begin
 												set @process_message  = @process_message  + convert(varchar(100),datediff(s,@timestart,@timeend)) + 's'
 											end
+
+										Print @process_message
 
 										if dbo.ufn_sqlwatch_get_config_value(7, null) = 1
 											begin
