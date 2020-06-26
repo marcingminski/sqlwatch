@@ -1,4 +1,6 @@
-﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_internal_add_index]
+﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_internal_add_index] (
+	@databases varchar(max) = '-tempdb'
+)
 as
 /*
 -------------------------------------------------------------------------------------------------------------------
@@ -22,6 +24,11 @@ as
 -------------------------------------------------------------------------------------------------------------------
 */
 set nocount on;
+
+if @databases = ''
+	begin
+		set @databases = '-tempdb'
+	end
 
 create table ##DB61B2CD92324E4B89019FFA7BEF1010 (
 	index_name nvarchar(128), 
@@ -49,7 +56,7 @@ SELECT name, create_date
 FROM [dbo].[vw_sqlwatch_sys_databases]
 
 insert into ##DB61B2CD92324E4B89019FFA7BEF1010 (index_name, index_id, index_type_desc, [table_name], [database_name])
-exec [dbo].[usp_sqlwatch_internal_foreachdb] @databases = '-tempdb', @command = 'use [?]
+exec [dbo].[usp_sqlwatch_internal_foreachdb] @databases = @databases, @command = 'use [?]
 insert into ##DB61B2CD92324E4B89019FFA7BEF1010 (index_name, index_id, index_type_desc, [table_name], [database_name])
 select isnull(ix.name,object_name(ix.object_id)), ix.index_id, ix.type_desc, s.name + ''.'' + t.name, ''?''
 from sys.indexes ix
