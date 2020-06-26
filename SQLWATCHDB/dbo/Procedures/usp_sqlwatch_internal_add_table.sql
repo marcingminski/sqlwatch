@@ -1,5 +1,12 @@
-﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_internal_add_table]
+﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_internal_add_table] (
+	@databases varchar(max) = '-tempdb'
+)
 as
+
+if @databases = ''
+	begin
+		set @databases = '-tempdb'
+	end
 
 create table ##98308FFC2C634BF98B347EECB98E3490 (
 	[TABLE_CATALOG] [nvarchar](128) NOT NULL,
@@ -26,7 +33,7 @@ USE [?]
 insert into ##98308FFC2C634BF98B347EECB98E3490 ([TABLE_CATALOG],[table_name],[TABLE_TYPE])
 SELECT [TABLE_CATALOG],[table_name] = [TABLE_SCHEMA] + ''.'' + [TABLE_NAME],[TABLE_TYPE] 
 from INFORMATION_SCHEMA.TABLES
-WHERE''?'' <> ''tempdb''', @databases = '-tempdb', @calling_proc_id = @@PROCID
+WHERE''?'' <> ''tempdb''', @databases = @databases, @calling_proc_id = @@PROCID
 
 /* when collecting tables we only consider name as a primary key. 
    when table is dropped and recreated with the same name, we are treating it as the same table.
