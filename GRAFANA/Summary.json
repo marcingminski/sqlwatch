@@ -1,0 +1,907 @@
+{
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": "-- Grafana --",
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "type": "dashboard"
+        }
+      ]
+    },
+    "editable": true,
+    "gnetId": null,
+    "graphTooltip": 0,
+    "id": 6,
+    "iteration": 1593201171623,
+    "links": [
+      {
+        "asDropdown": false,
+        "icon": "external link",
+        "includeVars": true,
+        "keepTime": true,
+        "tags": [
+          "SQLWATCH"
+        ],
+        "title": "Dashboards",
+        "type": "dashboards"
+      }
+    ],
+    "panels": [
+      {
+        "datasource": "$DataSource",
+        "description": "**Blue** - No thresholds   \n**Green/Amber/Red** - OK/Warning/Bad Based on the threshold",
+        "fieldConfig": {
+          "defaults": {
+            "custom": {},
+            "decimals": 0,
+            "mappings": [],
+            "min": 0,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "blue",
+                  "value": null
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Failed Checks"
+              },
+              "properties": [
+                {
+                  "id": "thresholds",
+                  "value": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "color": "green",
+                        "value": null
+                      },
+                      {
+                        "color": "red",
+                        "value": 1
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Processor Time %"
+              },
+              "properties": [
+                {
+                  "id": "thresholds",
+                  "value": {
+                    "mode": "percentage",
+                    "steps": [
+                      {
+                        "color": "green",
+                        "value": null
+                      },
+                      {
+                        "color": "orange",
+                        "value": 50
+                      },
+                      {
+                        "color": "red",
+                        "value": 80
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "unit",
+                  "value": "percent"
+                },
+                {
+                  "id": "min",
+                  "value": 0
+                },
+                {
+                  "id": "max",
+                  "value": 100
+                },
+                {
+                  "id": "displayName",
+                  "value": "CPU"
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Latency"
+              },
+              "properties": [
+                {
+                  "id": "unit",
+                  "value": "ms"
+                },
+                {
+                  "id": "thresholds",
+                  "value": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "color": "green",
+                        "value": null
+                      },
+                      {
+                        "color": "green",
+                        "value": 0
+                      },
+                      {
+                        "color": "#EAB839",
+                        "value": 20
+                      },
+                      {
+                        "color": "red",
+                        "value": 50
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "displayName",
+                  "value": "Latency"
+                },
+                {
+                  "id": "max",
+                  "value": 100
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Readahead Rate"
+              },
+              "properties": [
+                {
+                  "id": "unit",
+                  "value": "percentunit"
+                },
+                {
+                  "id": "thresholds",
+                  "value": {
+                    "mode": "percentage",
+                    "steps": [
+                      {
+                        "color": "green",
+                        "value": null
+                      },
+                      {
+                        "color": "#EAB839",
+                        "value": 0.15
+                      },
+                      {
+                        "color": "red",
+                        "value": 0.2
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "min",
+                  "value": 0
+                },
+                {
+                  "id": "max",
+                  "value": 1
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Wait Time"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "Wait Time"
+                },
+                {
+                  "id": "unit",
+                  "value": "ms"
+                },
+                {
+                  "id": "max",
+                  "value": 60000
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Bytes Transferred"
+              },
+              "properties": [
+                {
+                  "id": "unit",
+                  "value": "decbytes"
+                },
+                {
+                  "id": "max",
+                  "value": 100000000
+                },
+                {
+                  "id": "displayName",
+                  "value": "Bytes /sec"
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Batch Requests/sec"
+              },
+              "properties": [
+                {
+                  "id": "max",
+                  "value": 100
+                },
+                {
+                  "id": "displayName",
+                  "value": "Batch Requests /sec"
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 4,
+          "w": 24,
+          "x": 0,
+          "y": 0
+        },
+        "id": 4,
+        "maxPerRow": 6,
+        "options": {
+          "colorMode": "background",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          }
+        },
+        "pluginVersion": "7.0.3",
+        "repeat": "sql_instance",
+        "repeatDirection": "v",
+        "scopedVars": {
+          "sql_instance": {
+            "selected": true,
+            "text": "SQLWATCH-REPO-1",
+            "value": "SQLWATCH-REPO-1"
+          }
+        },
+        "targets": [
+          {
+            "alias": "",
+            "format": "time_series",
+            "hide": false,
+            "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(snapshot_time)\n  AND counter_name IN ('Processor Time %','Batch Requests/sec','Readahead pages/sec','Page reads/sec')\n  AND [sql_instance] = $sql_instance\n  GROUP BY [counter_name]\n      ,$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  ",
+            "refId": "A"
+          },
+          {
+            "alias": "",
+            "format": "time_series",
+            "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,[Latency] = MAX([io_latency_read])+MAX([io_latency_write])\n      ,metric='Latency'\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_file_stats]\n  WHERE 1 = 1\n  AND $__timeFilter(snapshot_time)\n  AND [sql_instance] IN ($sql_instance)\n  GROUP BY $__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+            "refId": "B"
+          },
+          {
+            "alias": "",
+            "format": "time_series",
+            "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,metric = 'Wait Time'\n      ,[value] = sum([wait_time_ms_delta])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_wait_stats]\n  WHERE 1=1\n  AND $__timeFilter(snapshot_time)\n  AND [sql_instance] IN ($sql_instance)\n  GROUP BY $__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+            "refId": "C"
+          },
+          {
+            "alias": "",
+            "format": "time_series",
+            "rawSql": "SELECT \r\n        [time] = GETDATE()\r\n        ,[metric] = 'Failed Checks'\r\n        ,[value] = COUNT(*)\r\n  FROM [dbo].[vw_sqlwatch_report_dim_check]\r\n  WHERE [sql_instance] IN ($sql_instance)\r\n  AND [last_check_status] <> 'OK'",
+            "refId": "D"
+          },
+          {
+            "alias": "",
+            "format": "time_series",
+            "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,[Bytes Transferred] = AVG([bytes_written_per_second]+[bytes_read_per_second])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_file_stats]\n  WHERE 1 = 1\n  AND $__timeFilter(snapshot_time)\n  AND [sql_instance] IN ($sql_instance)\n  GROUP BY $__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  ",
+            "refId": "E"
+          }
+        ],
+        "timeFrom": null,
+        "timeShift": null,
+        "title": "$sql_instance",
+        "transformations": [
+          {
+            "id": "calculateField",
+            "options": {
+              "alias": "Readahead Rate",
+              "binary": {
+                "left": "Readahead pages/sec",
+                "operator": "+",
+                "reducer": "sum",
+                "right": "Page reads/sec"
+              },
+              "mode": "binary",
+              "reduce": {
+                "reducer": "sum"
+              },
+              "replaceFields": false
+            }
+          },
+          {
+            "id": "filterFieldsByName",
+            "options": {
+              "include": {
+                "names": [
+                  "Time",
+                  "Batch Requests/sec",
+                  "Processor Time %",
+                  "Latency",
+                  "Wait Time",
+                  "Bytes Transferred",
+                  "Readahead Rate",
+                  "Failed Checks"
+                ]
+              }
+            }
+          },
+          {
+            "id": "organize",
+            "options": {
+              "excludeByName": {},
+              "indexByName": {
+                "Batch Requests/sec": 5,
+                "Bytes Transferred": 6,
+                "Failed Checks": 7,
+                "Latency": 3,
+                "Processor Time %": 1,
+                "Readahead Rate": 2,
+                "Time": 0,
+                "Wait Time": 4
+              },
+              "renameByName": {}
+            }
+          }
+        ],
+        "type": "stat"
+      },
+      {
+        "datasource": "$DataSource",
+        "description": "**Blue** - No thresholds   \n**Green/Amber/Red** - OK/Warning/Bad Based on the threshold",
+        "fieldConfig": {
+          "defaults": {
+            "custom": {},
+            "decimals": 0,
+            "mappings": [],
+            "min": 0,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "blue",
+                  "value": null
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Failed Checks"
+              },
+              "properties": [
+                {
+                  "id": "thresholds",
+                  "value": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "color": "green",
+                        "value": null
+                      },
+                      {
+                        "color": "red",
+                        "value": 1
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Processor Time %"
+              },
+              "properties": [
+                {
+                  "id": "thresholds",
+                  "value": {
+                    "mode": "percentage",
+                    "steps": [
+                      {
+                        "color": "green",
+                        "value": null
+                      },
+                      {
+                        "color": "orange",
+                        "value": 50
+                      },
+                      {
+                        "color": "red",
+                        "value": 80
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "unit",
+                  "value": "percent"
+                },
+                {
+                  "id": "min",
+                  "value": 0
+                },
+                {
+                  "id": "max",
+                  "value": 100
+                },
+                {
+                  "id": "displayName",
+                  "value": "CPU"
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Latency"
+              },
+              "properties": [
+                {
+                  "id": "unit",
+                  "value": "ms"
+                },
+                {
+                  "id": "thresholds",
+                  "value": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "color": "green",
+                        "value": null
+                      },
+                      {
+                        "color": "green",
+                        "value": 0
+                      },
+                      {
+                        "color": "#EAB839",
+                        "value": 20
+                      },
+                      {
+                        "color": "red",
+                        "value": 50
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "displayName",
+                  "value": "Latency"
+                },
+                {
+                  "id": "max",
+                  "value": 100
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Readahead Rate"
+              },
+              "properties": [
+                {
+                  "id": "unit",
+                  "value": "percentunit"
+                },
+                {
+                  "id": "thresholds",
+                  "value": {
+                    "mode": "percentage",
+                    "steps": [
+                      {
+                        "color": "green",
+                        "value": null
+                      },
+                      {
+                        "color": "#EAB839",
+                        "value": 0.15
+                      },
+                      {
+                        "color": "red",
+                        "value": 0.2
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "min",
+                  "value": 0
+                },
+                {
+                  "id": "max",
+                  "value": 1
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Wait Time"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "Wait Time"
+                },
+                {
+                  "id": "unit",
+                  "value": "ms"
+                },
+                {
+                  "id": "max",
+                  "value": 60000
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Bytes Transferred"
+              },
+              "properties": [
+                {
+                  "id": "unit",
+                  "value": "decbytes"
+                },
+                {
+                  "id": "max",
+                  "value": 100000000
+                },
+                {
+                  "id": "displayName",
+                  "value": "Bytes /sec"
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Batch Requests/sec"
+              },
+              "properties": [
+                {
+                  "id": "max",
+                  "value": 100
+                },
+                {
+                  "id": "displayName",
+                  "value": "Batch Requests /sec"
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 4,
+          "w": 24,
+          "x": 0,
+          "y": 4
+        },
+        "id": 5,
+        "maxPerRow": 6,
+        "options": {
+          "colorMode": "background",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          }
+        },
+        "pluginVersion": "7.0.3",
+        "repeat": null,
+        "repeatDirection": "v",
+        "repeatIteration": 1593201171623,
+        "repeatPanelId": 4,
+        "scopedVars": {
+          "sql_instance": {
+            "selected": true,
+            "text": "SQLWATCH-TEST-1",
+            "value": "SQLWATCH-TEST-1"
+          }
+        },
+        "targets": [
+          {
+            "alias": "",
+            "format": "time_series",
+            "hide": false,
+            "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(snapshot_time)\n  AND counter_name IN ('Processor Time %','Batch Requests/sec','Readahead pages/sec','Page reads/sec')\n  AND [sql_instance] = $sql_instance\n  GROUP BY [counter_name]\n      ,$__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  ",
+            "refId": "A"
+          },
+          {
+            "alias": "",
+            "format": "time_series",
+            "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,[Latency] = MAX([io_latency_read])+MAX([io_latency_write])\n      ,metric='Latency'\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_file_stats]\n  WHERE 1 = 1\n  AND $__timeFilter(snapshot_time)\n  AND [sql_instance] IN ($sql_instance)\n  GROUP BY $__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+            "refId": "B"
+          },
+          {
+            "alias": "",
+            "format": "time_series",
+            "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,metric = 'Wait Time'\n      ,[value] = sum([wait_time_ms_delta])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_wait_stats]\n  WHERE 1=1\n  AND $__timeFilter(snapshot_time)\n  AND [sql_instance] IN ($sql_instance)\n  GROUP BY $__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+            "refId": "C"
+          },
+          {
+            "alias": "",
+            "format": "time_series",
+            "rawSql": "SELECT \r\n        [time] = GETDATE()\r\n        ,[metric] = 'Failed Checks'\r\n        ,[value] = COUNT(*)\r\n  FROM [dbo].[vw_sqlwatch_report_dim_check]\r\n  WHERE [sql_instance] IN ($sql_instance)\r\n  AND [last_check_status] <> 'OK'",
+            "refId": "D"
+          },
+          {
+            "alias": "",
+            "format": "time_series",
+            "rawSql": "SELECT \n      [time] = $__timeGroup([report_time], $aggregation) \n      ,[Bytes Transferred] = AVG([bytes_written_per_second]+[bytes_read_per_second])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_file_stats]\n  WHERE 1 = 1\n  AND $__timeFilter(snapshot_time)\n  AND [sql_instance] IN ($sql_instance)\n  GROUP BY $__timeGroup([report_time], $aggregation) \nORDER BY\n  time ASC\n  ",
+            "refId": "E"
+          }
+        ],
+        "timeFrom": null,
+        "timeShift": null,
+        "title": "$sql_instance",
+        "transformations": [
+          {
+            "id": "calculateField",
+            "options": {
+              "alias": "Readahead Rate",
+              "binary": {
+                "left": "Readahead pages/sec",
+                "operator": "+",
+                "reducer": "sum",
+                "right": "Page reads/sec"
+              },
+              "mode": "binary",
+              "reduce": {
+                "reducer": "sum"
+              },
+              "replaceFields": false
+            }
+          },
+          {
+            "id": "filterFieldsByName",
+            "options": {
+              "include": {
+                "names": [
+                  "Time",
+                  "Batch Requests/sec",
+                  "Processor Time %",
+                  "Latency",
+                  "Wait Time",
+                  "Bytes Transferred",
+                  "Readahead Rate",
+                  "Failed Checks"
+                ]
+              }
+            }
+          },
+          {
+            "id": "organize",
+            "options": {
+              "excludeByName": {},
+              "indexByName": {
+                "Batch Requests/sec": 5,
+                "Bytes Transferred": 6,
+                "Failed Checks": 7,
+                "Latency": 3,
+                "Processor Time %": 1,
+                "Readahead Rate": 2,
+                "Time": 0,
+                "Wait Time": 4
+              },
+              "renameByName": {}
+            }
+          }
+        ],
+        "type": "stat"
+      }
+    ],
+    "refresh": "1m",
+    "schemaVersion": 25,
+    "style": "dark",
+    "tags": [
+      "SQLWATCH"
+    ],
+    "templating": {
+      "list": [
+        {
+          "current": {
+            "selected": false,
+            "text": "SQLWATCH-REPO-1",
+            "value": "SQLWATCH-REPO-1"
+          },
+          "hide": 0,
+          "includeAll": false,
+          "label": "Data Source",
+          "multi": false,
+          "name": "DataSource",
+          "options": [],
+          "query": "mssql",
+          "queryValue": "",
+          "refresh": 1,
+          "regex": "",
+          "skipUrlSync": false,
+          "type": "datasource"
+        },
+        {
+          "allValue": null,
+          "current": {
+            "selected": true,
+            "tags": [],
+            "text": "SQLWATCH-REPO-1 + SQLWATCH-TEST-1",
+            "value": [
+              "SQLWATCH-REPO-1",
+              "SQLWATCH-TEST-1"
+            ]
+          },
+          "datasource": "$DataSource",
+          "definition": "SELECT [servername] FROM [dbo].[sqlwatch_meta_server]",
+          "hide": 0,
+          "includeAll": false,
+          "label": "SQL Instance",
+          "multi": true,
+          "name": "sql_instance",
+          "options": [],
+          "query": "SELECT [servername] FROM [dbo].[sqlwatch_meta_server]",
+          "refresh": 1,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 1,
+          "tagValuesQuery": "",
+          "tags": [],
+          "tagsQuery": "",
+          "type": "query",
+          "useTags": false
+        },
+        {
+          "auto": true,
+          "auto_count": 30,
+          "auto_min": "10s",
+          "current": {
+            "selected": false,
+            "text": "auto",
+            "value": "$__auto_interval_aggregation"
+          },
+          "hide": 0,
+          "label": "Aggregation",
+          "name": "aggregation",
+          "options": [
+            {
+              "selected": true,
+              "text": "auto",
+              "value": "$__auto_interval_aggregation"
+            },
+            {
+              "selected": false,
+              "text": "1m",
+              "value": "1m"
+            },
+            {
+              "selected": false,
+              "text": "5m",
+              "value": "5m"
+            },
+            {
+              "selected": false,
+              "text": "10m",
+              "value": "10m"
+            },
+            {
+              "selected": false,
+              "text": "15m",
+              "value": "15m"
+            },
+            {
+              "selected": false,
+              "text": "30m",
+              "value": "30m"
+            },
+            {
+              "selected": false,
+              "text": "1h",
+              "value": "1h"
+            },
+            {
+              "selected": false,
+              "text": "6h",
+              "value": "6h"
+            },
+            {
+              "selected": false,
+              "text": "12h",
+              "value": "12h"
+            },
+            {
+              "selected": false,
+              "text": "1d",
+              "value": "1d"
+            },
+            {
+              "selected": false,
+              "text": "7d",
+              "value": "7d"
+            },
+            {
+              "selected": false,
+              "text": "14d",
+              "value": "14d"
+            },
+            {
+              "selected": false,
+              "text": "30d",
+              "value": "30d"
+            }
+          ],
+          "query": "1m,5m,10m,15m,30m,1h,6h,12h,1d,7d,14d,30d",
+          "queryValue": "",
+          "refresh": 2,
+          "skipUrlSync": false,
+          "type": "interval"
+        }
+      ]
+    },
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "timepicker": {
+      "hidden": false,
+      "refresh_intervals": [
+        "10s",
+        "30s",
+        "1m",
+        "5m",
+        "15m",
+        "30m",
+        "1h",
+        "2h",
+        "1d"
+      ]
+    },
+    "timezone": "browser",
+    "title": "Summary",
+    "uid": "rRcXcXWMk",
+    "version": 105
+  }
