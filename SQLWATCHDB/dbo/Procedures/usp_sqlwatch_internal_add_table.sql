@@ -13,7 +13,7 @@ if @databases = ''
 create table ##98308FFC2C634BF98B347EECB98E3490 (
 	[TABLE_CATALOG] [nvarchar](128) NOT NULL,
 	[TABLE_TYPE] [varchar](10) NULL,
-	[table_name] nvarchar(128) NOT NULL
+	[table_name] nvarchar(512) NOT NULL
 	constraint PK_TMP_98308FFC2C634BF98B347EECB98E3490 primary key clustered (
 		[TABLE_CATALOG], [table_name]
 		)

@@ -3,7 +3,7 @@ declare @sql_instance nvarchar(25) = 'dummy'
 
 drop table if exists ##9E9ADFD64D9844F8BF7F446D6B386108 
 create table ##9E9ADFD64D9844F8BF7F446D6B386108 (
-	table_name nvarchar(255),
+	table_name nvarchar(512),
 	snapshot_time datetime
 )
 

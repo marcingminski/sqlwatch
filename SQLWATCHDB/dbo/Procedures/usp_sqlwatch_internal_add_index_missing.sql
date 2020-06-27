@@ -10,7 +10,7 @@ declare @database_name sysname,
 create table #t (
 		[database_name] nvarchar(128), 
 		[create_date] datetime,
-		[table_name] nvarchar(256),
+		[table_name] nvarchar(512),
 		[equality_columns]  nvarchar(max),
 		[inequality_columns] nvarchar(max),
 		[included_columns] nvarchar(max),

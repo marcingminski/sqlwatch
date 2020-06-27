@@ -7,18 +7,18 @@ declare @sql varchar(max)
 
 declare @table_catalog nvarchar(128),
 		@table_schema nvarchar(128),
-		@table_name nvarchar(128),
+		@table_name nvarchar(512),
 		@table_type nvarchar(128)
 
 
 create table #last_snapshot (
 	sql_instance nvarchar(25),
-	table_name nvarchar(255),
+	table_name nvarchar(512),
 	snapshot_time datetime2(0)
 )
 
 create table #snapshot_id_table (
-	table_name varchar(128),
+	table_name varchar(512),
 	snapshot_type_id tinyint,
 	snapshot_time datetime2(0),
 	header_snapshot_time datetime2(0),

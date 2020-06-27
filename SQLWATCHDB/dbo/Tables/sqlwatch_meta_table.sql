@@ -3,7 +3,7 @@
 	[sql_instance] varchar(32) not null,
 	[sqlwatch_database_id] smallint not null,
 	[sqlwatch_table_id] int identity(1,1) not null,
-	[table_name] nvarchar(128),
+	[table_name] nvarchar(512), --table lenght is 128 in SQL2008 and 256 in newer versions but as we also keep schema name here we need to account for that too.
 	[table_type] nvarchar(128),
 	[date_created] datetime not null constraint df_sqlwatch_meta_table_date_created default (getutcdate()),
 	[date_last_seen] datetime null constraint df_sqlwatch_meta_table_last_seen default (getutcdate()),

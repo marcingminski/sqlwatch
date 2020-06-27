@@ -34,7 +34,7 @@ create table ##DB61B2CD92324E4B89019FFA7BEF1010 (
 	index_name nvarchar(128), 
 	index_id int,
 	index_type_desc nvarchar(128),
-	[table_name] nvarchar(128),
+	[table_name] nvarchar(512),
 	[database_name] nvarchar(128),
 	sqlwatch_database_id smallint null,
 	sqlwatch_table_id int null

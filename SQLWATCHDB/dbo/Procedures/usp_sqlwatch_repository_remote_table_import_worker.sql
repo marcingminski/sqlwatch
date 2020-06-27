@@ -15,7 +15,7 @@ declare @sql nvarchar(max),
 
 		@join_keys nvarchar(max),
 		@has_identity bit = 0,
-		@table_name nvarchar(128),
+		@table_name nvarchar(512),
 		@table_schema nvarchar(128),
 		@all_columns nvarchar(max),
 		@all_columns_from_source nvarchar(max),
