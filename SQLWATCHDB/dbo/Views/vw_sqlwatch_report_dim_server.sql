@@ -9,6 +9,7 @@ SELECT [physical_name]
       ,d.[utc_offset_minutes]
 	  ,c.environment
 	  ,d.sql_version 
+      ,c.[sql_instance_user_alias]
   FROM [dbo].[sqlwatch_meta_server] d
   inner join dbo.sqlwatch_config_sql_instance c
 	on d.servername = c.sql_instance

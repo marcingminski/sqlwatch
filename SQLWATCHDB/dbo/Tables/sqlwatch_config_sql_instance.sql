@@ -7,6 +7,7 @@
 	[environment] sysname not null constraint df_sqlwatch_config_sql_instance_env default ('DEFAULT'),
 	[repo_collector_is_active] bit not null constraint df_sqlwatch_config_sql_instance default (1),
 	[linked_server_name] nvarchar(255),
+	[sql_instance_user_alias] nvarchar(128) null,
 	constraint pk_config_sql_instance primary key clustered (
 		[sql_instance]
 	),
