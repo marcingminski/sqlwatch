@@ -179,7 +179,7 @@ while ($output -ne $null) {
 			('Get-WMIObject Win32_Volume',		2,					'SQLWATCH-LOGGER-DISK-UTILISATION',	'PowerShell', N'
 #https://msdn.microsoft.com/en-us/library/aa394515(v=vs.85).aspx
 #driveType 3 = Local disk
-Get-WMIObject Win32_Volume | ?{$_.DriveType -eq 3} | %{
+Get-WMIObject Win32_Volume | ?{$_.DriveType -eq 3 -And $_.Name -notlike "\\?\Volume*" } | %{
     $VolumeName = $_.Name
     $FreeSpace = $_.Freespace
     $Capacity = $_.Capacity
