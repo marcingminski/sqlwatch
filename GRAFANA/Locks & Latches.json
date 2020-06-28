@@ -16,10 +16,9 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 5,
-  "iteration": 1593115416910,
+  "iteration": 1593354435819,
   "links": [
     {
-      "$$hashKey": "object:92",
       "icon": "external link",
       "includeVars": true,
       "keepTime": true,
@@ -120,7 +119,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:198",
           "decimals": null,
           "format": "short",
           "label": "",
@@ -130,7 +128,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:199",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -150,7 +147,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$DataSource",
-      "description": "**Page Splits/sec**: \nMonitors the number of page splits per second which occur due to overflowing index pages and should be as low as possible",
+      "description": "**Page Splits/sec**:  *You want < 20 per 100 Batch Requests/Sec*   \nMonitors the number of page splits per second which occur due to overflowing index pages and should be as low as possible. To avoid page splits, review table and index design to reduce non-sequential inserts or implement fill factor and pad_index to leave more empty space per page. NOTE: A high value for this counter is not bad in situations where many new pages are being created since it includes new page allocations.",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -234,7 +231,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:198",
           "decimals": null,
           "format": "short",
           "label": "",
@@ -244,7 +240,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:199",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -348,7 +343,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:198",
           "decimals": null,
           "format": "short",
           "label": "",
@@ -358,7 +352,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:199",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -378,7 +371,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$DataSource",
-      "description": "**Lock Requests/ sec**:   *You want <1000*   \nThe number of new locks and locks converted per second. This metric’s value should generally correspond to \"Batch Requests/sec\". Values > 1000 may indicate queries are accessing very large numbers of rows and may benefit from tuning",
+      "description": "**Lock Requests/ sec**:   *You want <1000*   \nThe number of new locks and locks converted per second. This metric’s value should generally correspond to \"Batch Requests/sec\". Values > 1000 may indicate queries are accessing very large numbers of rows and may benefit from tuning.",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -444,7 +437,6 @@
       ],
       "thresholds": [
         {
-          "$$hashKey": "object:309",
           "colorMode": "critical",
           "fill": true,
           "line": false,
@@ -472,7 +464,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:198",
           "decimals": null,
           "format": "short",
           "label": "",
@@ -482,7 +473,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:199",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -605,7 +595,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:198",
           "decimals": null,
           "format": "short",
           "label": "",
@@ -615,7 +604,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:199",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -719,7 +707,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:198",
           "decimals": null,
           "format": "short",
           "label": "",
@@ -729,7 +716,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:199",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -815,7 +801,6 @@
       ],
       "thresholds": [
         {
-          "$$hashKey": "object:246",
           "colorMode": "critical",
           "fill": true,
           "line": false,
@@ -843,7 +828,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:198",
           "decimals": null,
           "format": "short",
           "label": "",
@@ -853,7 +837,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:199",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -873,7 +856,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$DataSource",
-      "description": "**Page Splits Rate**:  *You want < 20 %*\nMonitors the number of page splits per second which occur due to overflowing index pages and should be as low as possible. To avoid page splits, review table and index design to reduce non-sequential inserts or implement fillfactor and pad_index to leave more empty space per page. NOTE: A high value for this counter is not bad in situations where many new pages are being created, since it includes new page allocations.",
+      "description": "**Page Splits Rate**:  *You want < 20 %*\nMonitors the number of page splits per second which occur due to overflowing index pages and should be as low as possible. To avoid page splits, review table and index design to reduce non-sequential inserts or implement fill factor and pad_index to leave more empty space per page. NOTE: A high value for this counter is not bad in situations where many new pages are being created since it includes new page allocations.",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -939,7 +922,6 @@
       ],
       "thresholds": [
         {
-          "$$hashKey": "object:109",
           "colorMode": "critical",
           "fill": true,
           "line": false,
@@ -986,7 +968,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:198",
           "decimals": null,
           "format": "percentunit",
           "label": "",
@@ -996,7 +977,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:199",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1016,7 +996,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$DataSource",
-      "description": "**Full Scans/sec**: \nMonitors the number of full scans on tables or indexes. Ignore unless high CPU coincides with high scan rates. High scan rates may be caused by missing indexes, very small tables, or requests for too many records. A sudden increase in this value may indicate a statistics threshold has been reached, resulting in an index no longer being used.",
+      "description": "**Full Scans/sec**: *You want 1 Full Scan/sec per 1000 Index Searches/sec*   \nMonitors the number of full scans on tables or indexes. Ignore unless high CPU coincides with high scan rates. High scan rates may be caused by missing indexes, very small tables, or requests for too many records. A sudden increase in this value may indicate a statistics threshold has been reached, resulting in an index no longer being used.",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -1100,7 +1080,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:198",
           "decimals": null,
           "format": "short",
           "label": "",
@@ -1110,7 +1089,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:199",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1196,7 +1174,6 @@
       ],
       "thresholds": [
         {
-          "$$hashKey": "object:246",
           "colorMode": "critical",
           "fill": true,
           "line": false,
@@ -1224,7 +1201,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:198",
           "decimals": null,
           "format": "short",
           "label": "",
@@ -1234,7 +1210,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:199",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1357,7 +1332,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:198",
           "decimals": null,
           "format": "short",
           "label": "",
@@ -1367,7 +1341,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:199",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1387,7 +1360,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$DataSource",
-      "description": "**Index Searches/sec**:    \nMonitors the number of index searches when doing range scans, single index record fetches, and repositioning within an index",
+      "description": "**Index Searches/sec**: *You want 1 Full Scan/sec per 1000 Index Searches/sec*   \nMonitors the number of index searches when doing range scans, single index record fetches and repositioning within an index. The threshold recommendation is strictly for OLTP workloads.",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -1472,7 +1445,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:198",
           "decimals": null,
           "format": "short",
           "label": "",
@@ -1482,7 +1454,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:199",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1502,7 +1473,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$DataSource",
-      "description": "**Avg Wait Time (ms)**:   *You want <500 *   \nThe average wait time, in milliseconds, for each lock request that had to wait. An average wait time longer than 500ms may indicate excessive blocking. This value should generally correlate to \"Lock Waits/sec\" and move up or down with it accordingly.",
+      "description": "**Avg Wait Time (ms)**:   *You want <500 *   \nThe average wait time, in milliseconds, for each lock request that had to wait. Average wait time longer than 500ms may indicate excessive blocking. This value should generally correlate to \"Lock Waits/sec\" and move up or down with it accordingly.",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -1568,7 +1539,6 @@
       ],
       "thresholds": [
         {
-          "$$hashKey": "object:246",
           "colorMode": "critical",
           "fill": true,
           "line": false,
@@ -1596,7 +1566,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:198",
           "decimals": null,
           "format": "ms",
           "label": "",
@@ -1606,7 +1575,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:199",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1626,7 +1594,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$DataSource",
-      "description": "**Number of Deadlocks/sec**:   *You want < 1 *   \nNumber of lock requests, per second, which resulted in a deadlock. Since only a COMMIT, ROLLBACK, or deadlock can terminate a transaction (excluding failures or errors), this is an important value to track. Excessive deadlocking indicates a table or index design error or bad application design.",
+      "description": "**Number of Deadlocks/sec**:   *You want < 1 *   \nThe number of lock requests, per second, which resulted in a deadlock. Since only a COMMIT, ROLLBACK, or deadlock can terminate a transaction (excluding failures or errors), this is an important value to track. Excessive deadlocking indicates a table or index design error or bad application design.",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -1692,7 +1660,6 @@
       ],
       "thresholds": [
         {
-          "$$hashKey": "object:246",
           "colorMode": "critical",
           "fill": true,
           "line": false,
@@ -1720,7 +1687,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:198",
           "decimals": null,
           "format": "short",
           "label": "",
@@ -1730,7 +1696,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:199",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1750,7 +1715,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$DataSource",
-      "description": "**Full Scans Rate**:  *You want < 1in 1000*   \nRatio of *Full Scans/sec* and *Index Searches/sec*\nMonitors the number of index searches when doing range scans, single index record fetches, and repositioning within an index. The threshold recommendation is strictly for OLTP workloads.",
+      "description": "**Full Scans Rate**:  *You want < 1 in 1000*   \nRatio of *Full Scans/sec* and *Index Searches/sec*\nMonitors the number of index searches when doing range scans, single index record fetches, and repositioning within an index. The threshold recommendation is strictly for OLTP workloads.",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -1816,7 +1781,6 @@
       ],
       "thresholds": [
         {
-          "$$hashKey": "object:285",
           "colorMode": "critical",
           "fill": true,
           "line": false,
@@ -1863,7 +1827,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:198",
           "decimals": null,
           "format": "short",
           "label": "",
@@ -1873,7 +1836,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:199",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1899,8 +1861,8 @@
       {
         "current": {
           "selected": false,
-          "text": "SQLWATCH",
-          "value": "SQLWATCH"
+          "text": "SQLWATCH-REPO-1",
+          "value": "SQLWATCH-REPO-1"
         },
         "hide": 0,
         "includeAll": false,
@@ -1918,8 +1880,8 @@
         "allValue": null,
         "current": {
           "selected": false,
-          "text": "SQLWATCH-TEST-1",
-          "value": "SQLWATCH-TEST-1"
+          "text": "SQLWATCH-REPO-1",
+          "value": "SQLWATCH-REPO-1"
         },
         "datasource": "$DataSource",
         "definition": "SELECT [servername] FROM [dbo].[sqlwatch_meta_server]",
@@ -2028,7 +1990,7 @@
     ]
   },
   "time": {
-    "from": "now-1h",
+    "from": "now-15m",
     "to": "now"
   },
   "timepicker": {
@@ -2047,5 +2009,5 @@
   "timezone": "browser",
   "title": "Locks & Latches",
   "uid": "lG8GRQZMz",
-  "version": 12
+  "version": 17
 }

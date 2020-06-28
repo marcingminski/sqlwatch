@@ -16,10 +16,9 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 4,
-  "iteration": 1593115410749,
+  "iteration": 1593354002353,
   "links": [
     {
-      "$$hashKey": "object:92",
       "icon": "external link",
       "includeVars": true,
       "keepTime": true,
@@ -120,7 +119,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:198",
           "decimals": null,
           "format": "deckbytes",
           "label": "",
@@ -130,7 +128,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:199",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -150,7 +147,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$DataSource",
-      "description": "**Page Reads/sec**:   *You want < 90*   \nNumber of physical database page reads issued per second. Normal OLTP workloads support 80 – 90 per second, but higher values may be a yellow flag for poor indexing or insufficient memory.\n\n**Page Writes/sec**:   *You want < 90*   \nNumber of database pages physically written to disk per second. Normal OLTP workloads support 80 – 90 per second. Values over 90 should be crossed checked with “lazy writer/sec” and “checkpoint” counters. If the other counters are also high, then it may indicate insufficient memory",
+      "description": "**Page Reads/sec**:   *You want < 90*   \nThe number of physical database page reads issued per second. Normal OLTP workloads support 80 – 90 per second, but higher values may be a yellow flag for poor indexing or insufficient memory.\n\n**Page Writes/sec**:   *You want < 90*   \nThe number of database pages physically written to disk per second. Normal OLTP workloads support 80 – 90 per second. Values over 90 should be crossed checked with \"lazy writer/sec\" and \"checkpoint\" counters. If the other counters are also high, then it may indicate insufficient memory.",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -216,7 +213,6 @@
       ],
       "thresholds": [
         {
-          "$$hashKey": "object:249",
           "colorMode": "critical",
           "fill": true,
           "line": false,
@@ -244,7 +240,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:198",
           "decimals": null,
           "format": "short",
           "label": "",
@@ -254,7 +249,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:199",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -364,7 +358,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:198",
           "decimals": null,
           "format": "short",
           "label": "",
@@ -374,7 +367,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:199",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -394,7 +386,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$DataSource",
-      "description": "**Readahead/sec**: \nNumber of data pages read per second in anticipation of their use",
+      "description": "**Readahead/sec**:  *You want < 20% of Page Reads/ sec*   \nThe number of data pages read per second in anticipation of their use. If this value is made up even a sizeable minority of total Page Reads/sec (say, greater than 20% of total page reads), you may have too many physical reads occurring.",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -478,7 +470,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:198",
           "decimals": null,
           "format": "short",
           "label": "",
@@ -488,7 +479,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:199",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -574,7 +564,6 @@
       ],
       "thresholds": [
         {
-          "$$hashKey": "object:899",
           "colorMode": "warning",
           "fill": true,
           "line": false,
@@ -602,7 +591,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:198",
           "decimals": null,
           "format": "short",
           "label": "",
@@ -612,7 +600,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:199",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -716,7 +703,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:198",
           "decimals": null,
           "format": "deckbytes",
           "label": "",
@@ -726,7 +712,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:199",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -812,7 +797,6 @@
       ],
       "thresholds": [
         {
-          "$$hashKey": "object:699",
           "colorMode": "warning",
           "fill": true,
           "line": false,
@@ -821,7 +805,6 @@
           "yaxis": "left"
         },
         {
-          "$$hashKey": "object:705",
           "colorMode": "critical",
           "fill": true,
           "line": false,
@@ -868,7 +851,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:198",
           "decimals": null,
           "format": "percentunit",
           "label": "",
@@ -878,7 +860,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:199",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -964,7 +945,6 @@
       ],
       "thresholds": [
         {
-          "$$hashKey": "object:899",
           "colorMode": "warning",
           "fill": true,
           "line": false,
@@ -992,7 +972,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:198",
           "decimals": null,
           "format": "short",
           "label": "",
@@ -1002,7 +981,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:199",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1022,7 +1000,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$DataSource",
-      "description": "**Memory Grants Outstanding:**\nTotal number of processes per second that have successfully acquired a workspace memory grant.\n\n**Memory Grants Pending**:\nTotal number of processes per second waiting for a workspace memory grant. Numbers higher than 0 indicate a lack of memory.",
+      "description": "**Memory Grants Outstanding:**   \nThe total number of processes per second that have successfully acquired a workspace memory grant.\n\n**Memory Grants Pending**: *You want 0*   \nThe total number of processes per second waiting for a workspace memory grant. Numbers higher than 0 indicate a lack of memory.",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -1088,7 +1066,6 @@
       ],
       "thresholds": [
         {
-          "$$hashKey": "object:4313",
           "colorMode": "critical",
           "fill": true,
           "line": false,
@@ -1116,7 +1093,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:198",
           "decimals": null,
           "format": "short",
           "label": "",
@@ -1126,7 +1102,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:199",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1146,7 +1121,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$DataSource",
-      "description": "**Page Lookups/sec**: The number of requests to find a page in the buffer pool",
+      "description": "**Page Lookups/sec**:  *You want (Page lookups/ sec) / (Batch Requests/ sec) < 100*  \nThe number of requests to find a page in the buffer pool. When the ratio of batch requests to page lookups crests 100, you may have inefficient execution plans or too many ad-hoc queries.",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -1249,7 +1224,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:198",
           "decimals": null,
           "format": "short",
           "label": "",
@@ -1259,7 +1233,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:199",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1345,7 +1318,6 @@
       ],
       "thresholds": [
         {
-          "$$hashKey": "object:899",
           "colorMode": "warning",
           "fill": true,
           "line": false,
@@ -1373,7 +1345,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:198",
           "decimals": null,
           "format": "short",
           "label": "",
@@ -1383,7 +1354,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:199",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1469,7 +1439,6 @@
       ],
       "thresholds": [
         {
-          "$$hashKey": "object:892",
           "colorMode": "critical",
           "fill": true,
           "line": false,
@@ -1516,7 +1485,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:198",
           "decimals": null,
           "format": "short",
           "label": "",
@@ -1526,7 +1494,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:199",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1546,7 +1513,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$DataSource",
-      "description": "**Free List Stalls/sec**:   *You want < 2*   \nMonitors the number of requests per second where data requests stall because no buffers are available. Any value above 2 means SQL Server needs more memory",
+      "description": "**Free List Stalls/sec**:   *You want < 2*   \nMonitors the number of requests per second where data requests stall because no buffers are available. Any value above 2 means SQL Server needs more memory.",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -1612,7 +1579,6 @@
       ],
       "thresholds": [
         {
-          "$$hashKey": "object:899",
           "colorMode": "critical",
           "fill": true,
           "line": false,
@@ -1640,7 +1606,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:198",
           "decimals": null,
           "format": "short",
           "label": "",
@@ -1650,7 +1615,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:199",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1754,7 +1718,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:198",
           "decimals": null,
           "format": "deckbytes",
           "label": "",
@@ -1764,7 +1727,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:199",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1784,7 +1746,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$DataSource",
-      "description": "**Page Life Expectancy**: *You want > 300*   \nTells, on average, how many seconds SQL Server expects a data page to stay in cache. The target on an OLTP system should be at least 300 (5 min). When under 300, this may indicate poor index design (leading to increased disk I/O and less effective use of memory) or, simply, a potential shortage of memory.\n\n**IMPORTANT**\n[https://www.sqlskills.com/blogs/paul/page-life-expectancy-isnt-what-you-think/](https://www.sqlskills.com/blogs/paul/page-life-expectancy-isnt-what-you-think/)\n",
+      "description": "**Page Life Expectancy**: *You want > 300*   \nTells, on average, how many seconds SQL Server expects a data page to stay in cache. The target on an OLTP system should be at least 300 (5 min). When under 300, this may indicate poor index design (leading to increased disk I/O and less effective use of memory) or, simply, a potential shortage of memory.\n\n**IMPORTANT**\n[https://www.sqlskills.com/blogs/paul/page-life-expectancy-isnt-what-you-think/](https://www.sqlskills.com/blogs/paul/page-life-expectancy-isnt-what-you-think/)",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -1850,7 +1812,6 @@
       ],
       "thresholds": [
         {
-          "$$hashKey": "object:536",
           "colorMode": "warning",
           "fill": true,
           "line": false,
@@ -1897,7 +1858,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:198",
           "decimals": null,
           "format": "s",
           "label": "",
@@ -1907,7 +1867,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:199",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1927,7 +1886,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$DataSource",
-      "description": "**Buffer cache hit ratio**:   *You want 100%*   \nLong a stalwart counter used by SQL Server DBAs, this counter is no longer very useful. It monitors the percentage of data requests answer from the buffer cache since the last reboot. However, other counters are much better for showing current memory pressure that this one because it blows the curve. For example, PLE (page life expectancy) might suddenly drop from 2000 to 70, while buffer cache hit ration moves only from 98.2 to 98.1. Only be concerned by this counter if it’s value is regularly below 90 (for OLTP) or 80 (for very large OLAP).",
+      "description": "**Buffer cache hit ratio**:   *You want 100%*   \nLong a stalwart counter used by SQL Server DBAs, this counter is no longer very useful. It monitors the percentage of data requests answer from the buffer cache since the last reboot. However, other counters are much better for showing current memory pressure that this one because it blows the curve. For example, PLE (page life expectancy) might suddenly drop from 2000 to 70, while buffer cache hit ration moves only from 98.2 to 98.1. Only be concerned by this counter if its value is regularly below 90 (for OLTP) or 80 (for very large OLAP).",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -1993,7 +1952,6 @@
       ],
       "thresholds": [
         {
-          "$$hashKey": "object:899",
           "colorMode": "critical",
           "fill": true,
           "line": false,
@@ -2021,7 +1979,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:198",
           "decimals": null,
           "format": "percent",
           "label": "",
@@ -2031,7 +1988,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:199",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -2057,8 +2013,8 @@
       {
         "current": {
           "selected": false,
-          "text": "SQLWATCH",
-          "value": "SQLWATCH"
+          "text": "SQLWATCH-REPO-1",
+          "value": "SQLWATCH-REPO-1"
         },
         "hide": 0,
         "includeAll": false,
@@ -2076,8 +2032,8 @@
         "allValue": null,
         "current": {
           "selected": false,
-          "text": "SQLWATCH-TEST-1",
-          "value": "SQLWATCH-TEST-1"
+          "text": "SQLWATCH-REPO-1",
+          "value": "SQLWATCH-REPO-1"
         },
         "datasource": "$DataSource",
         "definition": "SELECT [servername] FROM [dbo].[sqlwatch_meta_server]",
@@ -2186,7 +2142,7 @@
     ]
   },
   "time": {
-    "from": "now-1h",
+    "from": "now-15m",
     "to": "now"
   },
   "timepicker": {
@@ -2205,5 +2161,5 @@
   "timezone": "browser",
   "title": "I/O & Memory",
   "uid": "bkHn0UZMz",
-  "version": 43
+  "version": 46
 }

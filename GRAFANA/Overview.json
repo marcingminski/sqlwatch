@@ -16,10 +16,9 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 3,
-  "iteration": 1593115391791,
+  "iteration": 1593353297557,
   "links": [
     {
-      "$$hashKey": "object:475",
       "asDropdown": false,
       "icon": "external link",
       "includeVars": true,
@@ -38,7 +37,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$DataSource",
-      "description": "\n**Batch Requests/sec**:   \nNumber of batch requests received per second, and is a good general indicator for the activity level of the SQL Server. This counter is highly dependent on the hardware and quality of code running on the server. The more powerful the hardware, the higher this number can be, even on poorly coded applications. A value of 1000 batch requests/sec is easily attainable though a typical 100Mbs NIC can only handle about 3000 batch requests/sec.Many other counter thresholds depend upon batch requests/sec while, in some cases, a low (or high) number does not point to poor processing power. You should frequently use this counter in combination with other counters, such as processor utilization or user connections.In version 2000, \"Transactions/ sec\" was the counter most often used to measure overall activity, while versions 2005 and later use \"Batch Requests/sec\". Versions 2005 prior to SP2, measure this counter differently and may lead to some misunderstandings. Read the footnote for more details.\n\n**SQL Compilations/sec**:   \nNumber of times that Transact-SQL compilations occurred, per second (including recompiles). The lower this value is the better. High values often indicate excessive adhoc querying and should be as low as possible. If excessive adhoc querying is happening, try rewriting the queries as procedures or invoke the queries using sp_executeSQL. When rewriting isn’t possible, consider using a plan guide or setting the database to parameterization forced mode.\n\n**SQL Re-Compilations/sec**:   \nNumber of times, per second, that Transact-SQL objects attempted to be executed but had to be recompiled before completion. This number should be at or near zero, since recompiles can cause deadlocks and exclusive compile locks. This counter’s value should follow in proportion to \"Batch Requests/sec\" and \"SQL Compilations/ sec\". This needs to be nil in your system as much as possible.\n\n**Logins/sec**: *You want < 2*   \nThe number of user logins per second. Any value over 2 may indicate insufficient connection pooling.\n\n**User Connections**:   \nThe number of users currently connected to the SQL Server. This counter should roughly track with \"Batch Requests/Sec\". They should generally rise and fall together. For example, blocking problems could be revealed by rising user connections, lock waits and lock wait time coupled with declining batch requests/sec.\n\n**Transactions/sec**:   \nNumber of transactions started for the database per second.",
+      "description": "**Batch Requests/sec**:   \nThe number of batch requests received per second and is a good general indicator for the activity level of the SQL Server. This counter is highly dependent on the hardware and quality of code running on the server. The more powerful the hardware, the higher this number can be, even on poorly coded applications. A value of 1000 batch requests/sec is easily attainable, though a typical 100Mbs NIC can only handle about 3000 batch requests/sec. Many other counter thresholds depend upon batch requests/sec while, in some cases, a low (or high) number does not point to poor processing power. You should frequently use this counter in combination with other counters, such as processor utilization or user connections. In version 2000, \"Transactions/ sec\" was the counter most often used to measure overall activity, while versions 2005 and later use \"Batch Requests/sec\". Versions 2005 before SP2, measure this counter differently and may lead to some misunderstandings. Read the footnote for more details.\n\n**SQL Compilations/sec**:   \nNumber of times that Transact-SQL compilations occurred, per second (including recompiles). The lower this value is the better. High values often indicate excessive ad-hoc querying and should be as low as possible. If excessive ad-hoc querying is happening, try rewriting the queries as procedures or invoke the queries using sp_executeSQL. When rewriting isn’t possible, consider using a plan guide or setting the database to parameterization forced mode.\n\n**SQL Re-Compilations/sec**:   \nThe number of times, per second, that Transact-SQL objects attempted to be executed but had to be recompiled before completion. This number should be at or near zero since recompiles can cause deadlocks and exclusive compile locks. This counter’s value should follow in proportion to \"Batch Requests/sec\" and \"SQL Compilations/ sec\". This needs to be nil in your system as much as possible.\n\n**Logins/sec**: *You want < 2*   \nThe number of user logins per second. Any value over 2 may indicate insufficient connection pooling.\n\n**User Connections**:   \nThe number of users currently connected to the SQL Server. This counter should roughly track with \"Batch Requests/Sec\". They should generally rise and fall together. For example, blocking problems could be revealed by rising user connections, lock waits and lock wait time coupled with declining batch requests/sec.\n\n**Transactions/sec**:   \nNumber of transactions started for the database per second.",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -122,7 +121,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:198",
           "decimals": null,
           "format": "short",
           "label": "",
@@ -132,7 +130,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:199",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -553,7 +550,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:198",
           "decimals": null,
           "format": "short",
           "label": "",
@@ -563,7 +559,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:199",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -740,7 +735,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:198",
           "decimals": null,
           "format": "percent",
           "label": "",
@@ -750,7 +744,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:199",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -860,7 +853,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:198",
           "decimals": null,
           "format": "decbytes",
           "label": "",
@@ -870,7 +862,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:199",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -890,7 +881,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$DataSource",
-      "description": "**SQL Compilations/sec**:  \n*You want it to be < 10% (of the number of Batch Requests/Sec)*  \nNumber of times that Transact-SQL compilations\noccurred, per second (including recompiles).\nThe lower this value is the better. High values\noften indicate excessive ad-hoc querying and\nshould be as low as possible. If excessive ad-hoc\nquerying is happening, try rewriting the queries\nas procedures or invoke the queries using sp_executeSQL. When rewriting isn’t possible, consider\nusing a plan guide or setting the database to\nparameterization forced mode.\n\n **SQL Re-Compilations/sec**:  \n*You want it to be < 10% (of the number of SQL Compilations/sec)*  \nNumber of times, per second, that Transact-SQL\nobjects attempted to be executed but had to\nbe recompiled before completion. This number\nshould be at or near zero, since recompiles can\ncause deadlocks and exclusive compile locks.\nThis counter’s value should follow in proportion\nto “Batch Requests/sec” and “SQL Compilations/\nsec”. This needs to be nil in your system as much\nas possible.",
+      "description": "**SQL Compilations/sec**:  \n*You want it to be < 10% (of the number of Batch Requests/Sec)*  \nNumber of times that Transact-SQL compilations occurred, per second (including recompiles). The lower this value is the better. High values often indicate excessive ad-hoc querying and should be as low as possible. If excessive ad-hoc querying is happening, try rewriting the queries as procedures or invoke the queries using sp_executeSQL. When rewriting isn’t possible, consider using a plan guide or setting the database to parameterization forced mode.\n\n **SQL Re-Compilations/sec**:  \n*You want it to be < 10% (of the number of SQL Compilations/sec)*  \nThe number of times, per second, that Transact-SQL objects attempted to be executed but had to be recompiled before completion. This number should be at or near zero since recompiles can cause deadlocks and exclusive compile locks. This counter’s value should follow in proportion to \"Batch Requests/sec\" and \"SQL Compilations/ sec\". This needs to be nil in your system as much as possible.",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -956,7 +947,6 @@
       ],
       "thresholds": [
         {
-          "$$hashKey": "object:283",
           "colorMode": "warning",
           "fill": true,
           "line": false,
@@ -965,7 +955,6 @@
           "yaxis": "left"
         },
         {
-          "$$hashKey": "object:289",
           "colorMode": "critical",
           "fill": true,
           "line": false,
@@ -1042,7 +1031,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:198",
           "decimals": null,
           "format": "percent",
           "label": "",
@@ -1052,7 +1040,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:199",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1138,7 +1125,6 @@
       ],
       "thresholds": [
         {
-          "$$hashKey": "object:158",
           "colorMode": "warning",
           "fill": true,
           "fillColor": "#FA6400",
@@ -1149,7 +1135,6 @@
           "yaxis": "left"
         },
         {
-          "$$hashKey": "object:164",
           "colorMode": "critical",
           "fill": true,
           "line": false,
@@ -1177,7 +1162,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:198",
           "decimals": null,
           "format": "ms",
           "label": "",
@@ -1187,7 +1171,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:199",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1291,7 +1274,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:198",
           "decimals": null,
           "format": "ms",
           "label": "",
@@ -1301,7 +1283,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:199",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1405,7 +1386,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:198",
           "decimals": null,
           "format": "short",
           "label": "",
@@ -1415,7 +1395,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:199",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1519,7 +1498,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:198",
           "decimals": null,
           "format": "deckbytes",
           "label": "",
@@ -1529,7 +1507,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:199",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1633,7 +1610,6 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:198",
           "decimals": null,
           "format": "short",
           "label": "",
@@ -1643,7 +1619,6 @@
           "show": true
         },
         {
-          "$$hashKey": "object:199",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1669,8 +1644,8 @@
       {
         "current": {
           "selected": false,
-          "text": "SQLWATCH",
-          "value": "SQLWATCH"
+          "text": "SQLWATCH-REPO-1",
+          "value": "SQLWATCH-REPO-1"
         },
         "hide": 0,
         "includeAll": false,
@@ -1689,8 +1664,8 @@
         "allValue": null,
         "current": {
           "selected": false,
-          "text": "SQLWATCH-TEST-1",
-          "value": "SQLWATCH-TEST-1"
+          "text": "SQLWATCH-REPO-1",
+          "value": "SQLWATCH-REPO-1"
         },
         "datasource": "$DataSource",
         "definition": "SELECT [servername] FROM [dbo].[sqlwatch_meta_server]",
@@ -1799,7 +1774,7 @@
     ]
   },
   "time": {
-    "from": "now-1h",
+    "from": "now-15m",
     "to": "now"
   },
   "timepicker": {
@@ -1818,5 +1793,5 @@
   "timezone": "browser",
   "title": "Overview",
   "uid": "2JffWEWMz",
-  "version": 76
+  "version": 83
 }
