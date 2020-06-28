@@ -250,7 +250,6 @@
     <Build Include="dbo\Tables\sqlwatch_app_version.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_get_version.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_repository_get_remote_data.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_repository_get_next_server.sql" />
     <Build Include="dbo\Tables\sqlwatch_meta_repository_import_queue.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_repository_remote_table_enqueue.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_repository_remote_table_dequeue.sql" />

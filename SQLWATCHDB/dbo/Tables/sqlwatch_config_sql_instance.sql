@@ -22,6 +22,20 @@
 )
 go
 
+create trigger dbo.trg_sqlwatch_config_sql_instance_sanitise
+	on [dbo].[sqlwatch_config_sql_instance]
+	for insert, update
+	as
+	begin
+		set nocount on;
+		update t
+			set t.[sql_instance] = rtrim(ltrim(replace(replace(replace(s.[sql_instance],char(10),''),char(13),''),'"','')))
+		from inserted s 
+		inner join [dbo].[sqlwatch_config_sql_instance] t
+			on s.[sql_instance] = t.[sql_instance]
+	end
+go
+
 create trigger dbo.trg_sqlwatch_config_sql_instance_remove_meta
 	on [dbo].[sqlwatch_config_sql_instance]
 	for delete
