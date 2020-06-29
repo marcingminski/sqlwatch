@@ -10,4 +10,4 @@
 Different styles work for different people. I am not religious about formatting and genereally happy with anything as long as it's sensible. Formatting tools allow easy customatisation. However, it would be good to be consistent across the project despite some questionable rules, such as the lowercase syntax. I realise this is unpopular in T-SQL world but it has been inherited with the original code base so too late to change it now.
 
 # Branching strategy
-Instead, SQLWATCH branches correspond with the version: `3.x`. The current branch will be one currently being worked on, i.e. the "development" branch. I will be making frequent releaes based on the PRs rather than waiting for another big release like in versions 2.x. 
+SQLWATCH branches correspond with the version: `3.x`. The current branch will be one currently being worked on, i.e. the "development" branch. I will be making frequent releaes based on the PRs rather than waiting for another big release like in versions 2.x. 
