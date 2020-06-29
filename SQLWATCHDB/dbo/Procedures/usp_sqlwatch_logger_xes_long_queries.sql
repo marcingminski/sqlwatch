@@ -1,7 +1,7 @@
 ﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_logger_xes_long_queries]
 AS
 
-set xact_abort on
+set nocount on
 
 declare @snapshot_type_id tinyint = 7,
 		@snapshot_time datetime2(0),
@@ -17,45 +17,23 @@ if (select collect from [dbo].[sqlwatch_config_snapshot_type]
 
 if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 	begin
-		/*	it has been reported that some users are getting xml conversion errors on SQL Server 2012 in this step of the scritp.
-			-- Steps 2,3, and 5 fail with "Executed as user: <redacted>. XML parsing: line 35, character 54, illegal name character [SQLSTATE 42000] (Error 9421).  
-			-- The step failed.
 
-		    The content of the target_data is xml but stored as string, there is not much I can about it apart from catching the error and logging into table
-			to be able to debug what part of the code/query is causing the problem	*/
-		select @target_data_char = target_data
-		from sys.dm_xe_session_targets xet
-		inner join sys.dm_xe_sessions xes
-			on xes.address = xet.event_session_address
-		where xes.name = 'SQLWATCH_long_queries'
-			and xet.target_name = 'ring_buffer'
+		declare @event_data table (event_data xml)
 
+		insert into @event_data
+		select cast(event_data as xml)
+		from sys.fn_xe_file_target_read_file ('SQLWATCH_waits*.xel', null, null, null) t
 
-		begin try
-			select @target_data_xml = convert(xml,@target_data_char)
-		end try
-		begin catch
-			exec [dbo].[usp_sqlwatch_internal_log]
-				@proc_id = @@PROCID,
-				@process_stage = '46A3944F-B725-44EA-9475-13A0D9648137',
-				@process_message = @target_data_char,
-				@process_message_type = 'ERROR'
+		set xact_abort on
+		begin transaction
 
-				return
-		end catch
-
-		--------------------------------------------------------------------------------------------------------------------------------
-		-- long queries
-		--------------------------------------------------------------------------------------------------------------------------------
 		exec [dbo].[usp_sqlwatch_internal_insert_header] 
 			@snapshot_time_new = @snapshot_time OUTPUT,
 			@snapshot_type_id = @snapshot_type_id
 
-		begin tran
 			SELECT 
 				 [activity_id] = xed.event_data.value('(action[@name="attach_activity_id"]/value )[1]', 'varchar(255)')
 				,[activity_id_xfer] = xed.event_data.value('(action[@name="attach_activity_id_xfer"]/value )[1]', 'varchar(255)')
-				--,[event_time_start]=dateadd(ms,-xed.event_data.value('(data[@name="duration"]/value)[1]', 'bigint')/1000,xed.event_data.value('(@timestamp)[1]', 'datetime2'))
 				,[event_time]=dateadd(minute,@utc_offset_minute,xed.event_data.value('(@timestamp)[1]', 'datetime'))
 				,[event_name]=xed.event_data.value('(@name)[1]', 'varchar(255)')
 				,[session_id]=isnull(xed.event_data.value('(action[@name="session_id"]/value)[1]', 'bigint'),0)
@@ -77,12 +55,9 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 				,[wait_type]=xed.event_data.value('(data[@name="wait_type"]/text )[1]', 'varchar(255)')
 				,[snapshot_time] = @snapshot_time
 				,[snapshot_type_id] = @snapshot_type_id
-				--,[blocking_report]=convert(xml,nullif(convert(varchar(max),xed.event_data.query('(data[@name="blocked_process"]/value/blocked-process-report )[1]')),''))
-				--,[deadlock_report]=convert(xml,nullif(convert(varchar(max),xed.event_data.query('(data[@name="xml_report"]/value/deadlock )[1]')),''))
 			into #t_queries
-			FROM ( select targetdata = @target_data_xml ) t
-				CROSS APPLY targetdata.nodes('//RingBufferTarget/event') AS xed (event_data)
-			--where xed.event_data.value('(@name)[1]', 'varchar(255)') not in ( 'wait_info', 'wait_info_external')
+			from @event_data t
+				cross apply t.event_data.nodes('event') as xed (event_data)
 	
 			insert into dbo.[sqlwatch_logger_xes_long_queries]([activity_id], [activity_sequence], [activity_id_xfer], [activity_sequence_xfer], [event_time], event_name, session_id, database_name, cpu_time, physical_reads, logical_reads, writes, spills, offset, offset_end, statement, username, 
 				sql_text, object_name, client_hostname, client_app_name, duration_ms, wait_type, snapshot_time, snapshot_type_id)

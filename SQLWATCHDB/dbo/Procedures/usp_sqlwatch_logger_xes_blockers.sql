@@ -1,19 +1,7 @@
 ﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_logger_xes_blockers]
 AS
-set xact_abort on
 
-/*
-	Description
-		Collects blocking chains from extended event session.
-		SQLWATCH comes with its own XE sessions however, if they are disabled this procedure will try to get the information from the default system_health session.
-
-	Change Log:
-		1.0 - Initial - Marcin Gminski
-		1.1 - 2019-11 - Marcin Gminski
-			  XE session will record blocking chain every time it triggers. 
-			  This change will make it to only keep the most recent row and update blocking_duration rather add a new row
-
-*/
+set nocount on
 
 if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 	begin
@@ -26,28 +14,19 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 				@session_name nvarchar(256),
 				@utc_offset_minute int = [dbo].[ufn_sqlwatch_get_server_utc_offset]('MINUTE')
 
-		select @session_name = case 
-			/* always get SQLWATCH xes if exists */
-			when exists (select name from sys.dm_xe_sessions where name = 'SQLWATCH_blockers') then 'SQLWATCH_blockers'
-			/* if no SQLWATCH session, conditionally fail back to system_health */
-			when dbo.ufn_sqlwatch_get_config_value(9, null) = 1 then 'system_health'
-			else ''
-		end
+		declare @event_data table (event_data xml)
 
-		select cast(target_data as xml) AS target_data
-		into #xes
-		from sys.dm_xe_session_targets xet
-		inner join sys.dm_xe_sessions xes
-			on xes.address = xet.event_session_address
-		/* this will dynamically set session so the user has a choice to either use system_health session ot SQLWATCH_*. 
-			if SQLWATCH session is switched off we will use system_health otherwise use SQLWATCH_* */
-		where xes.name = @session_name and xet.target_name = 'ring_buffer'
-	
+		insert into @event_data
+		select cast(event_data as xml)
+		from sys.fn_xe_file_target_read_file ('SQLWATCH_blockers*.xel', null, null, null) t
+
+		set xact_abort on
+		begin transaction
+
 		exec [dbo].[usp_sqlwatch_internal_insert_header] 
 			@snapshot_time_new = @snapshot_time OUTPUT,
 			@snapshot_type_id = @snapshot_type_id
 
-		begin tran
 			merge [dbo].[sqlwatch_logger_xes_blockers] as target
 			using 
 				(
@@ -99,9 +78,9 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 																									, bps.[blocking_client app name]
 																									, bps.[blocking_client hostname] 
 																							order by bps.[blocking_duration_ms] desc)
-					from #xes xet
-					cross apply ( select cast(xet.target_data as xml) ) AS target_data ([xml])
-					cross apply target_data.[xml].nodes('/RingBufferTarget/event[@name="blocked_process_report"]') AS bp_nodes(bp_node)
+					from @event_data xet
+					cross apply ( select xet.event_data ) AS target_data ([xml])
+					cross apply target_data.[xml].nodes('/event[@name="blocked_process_report"]') AS bp_nodes(bp_node)
 					cross apply bp_node.nodes('./data[@name="blocked_process"]/value/blocked-process-report') AS bp_report_xml_nodes(bp_report_xml_node)
 					cross apply
 						(
@@ -191,9 +170,9 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 						, blocking_end_time = source.blocking_end_time
 						, blocking_duration_ms = source.blocking_duration_ms
 						, report_xml = source.report_xml
-						, snapshot_time = @snapshot_time
+						, snapshot_time = @snapshot_time;
 
-			option (maxdop 1);
+			--option (maxdop 1);
 		commit tran
 	end
 else
