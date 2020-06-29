@@ -50,7 +50,7 @@ SELECT v.sql_instance, m.sqlwatch_configuration_id, v.value, v.value_in_use, @sn
 -- Set valid_until for changed or deleted:
 UPDATE curr
    SET curr.valid_until = @snapshot_time
-  FROM [dbo].[sqlwatch_logger_system_configuration_scd] curr
+  FROM [dbo].[sqlwatch_meta_system_configuration_scd] curr
   LEFT JOIN (SELECT v.sql_instance, m.sqlwatch_configuration_id, v.value, v.value_in_use
                FROM dbo.vw_sqlwatch_sys_configurations v
               INNER JOIN dbo.[sqlwatch_meta_system_configuration] m
@@ -61,13 +61,13 @@ UPDATE curr
  WHERE n.sql_instance IS NULL OR curr.value <> n.value OR curr.value_in_use <> n.value_in_use
 
 -- Add the new ones or the changed:
-INSERT INTO [dbo].[sqlwatch_logger_system_configuration_scd] (sql_instance, sqlwatch_configuration_id, value, value_in_use, valid_from, valid_until)
+INSERT INTO [dbo].[sqlwatch_meta_system_configuration_scd] (sql_instance, sqlwatch_configuration_id, value, value_in_use, valid_from, valid_until)
 SELECT v.sql_instance, m.sqlwatch_configuration_id, v.value, v.value_in_use, @snapshot_time, NULL
   FROM dbo.vw_sqlwatch_sys_configurations v
  INNER JOIN dbo.[sqlwatch_meta_system_configuration] m
     ON v.configuration_id = m.configuration_id
    AND v.sql_instance = m.sql_instance
- LEFT JOIN [dbo].[sqlwatch_logger_system_configuration_scd] curr
+ LEFT JOIN [dbo].[sqlwatch_meta_system_configuration_scd] curr
    ON curr.sql_instance = v.sql_instance
   AND curr.sqlwatch_configuration_id = m.sqlwatch_configuration_id
 WHERE curr.sql_instance IS NULL OR curr.value <> v.value OR curr.value_in_use <> v.value_in_use

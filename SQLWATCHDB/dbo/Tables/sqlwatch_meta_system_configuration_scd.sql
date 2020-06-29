@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[sqlwatch_logger_system_configuration_scd]
+﻿CREATE TABLE [dbo].[sqlwatch_meta_system_configuration_scd]
 (
 	sql_instance varchar(32) not null default @@SERVERNAME,
 	sqlwatch_configuration_id smallint not null,

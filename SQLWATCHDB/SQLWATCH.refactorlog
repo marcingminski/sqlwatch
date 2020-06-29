@@ -2429,4 +2429,11 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[sqlwatch_meta_errorlog_attribute]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="3c59785a-a4dd-4374-b6d7-70609e4cf77a" ChangeDateTime="06/29/2020 16:49:18">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_logger_system_configuration_scd]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[sqlwatch_meta_system_configuration_scd]" />
+  </Operation>
 </Operations>

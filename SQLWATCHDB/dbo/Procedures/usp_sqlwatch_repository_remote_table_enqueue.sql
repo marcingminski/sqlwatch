@@ -24,6 +24,7 @@ if not exists (select * from [dbo].[sqlwatch_meta_repository_import_queue])
 					when 'sqlwatch_meta_master_file' then 'sqlwatch_meta_database'
 					when 'sqlwatch_meta_index_missing' then 'sqlwatch_meta_table'
 					when 'sqlwatch_meta_index' then 'sqlwatch_meta_table'
+					when 'sqlwatch_meta_system_configuration_scd' then 'sqlwatch_logger_system_configuration'
 					else 
 						case 
 							when t.TABLE_NAME like 'sqlwatch_meta%' then 'sqlwatch_meta_server'
