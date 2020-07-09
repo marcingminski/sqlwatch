@@ -90,7 +90,7 @@ inner join [dbo].[sqlwatch_meta_check] mc
 	and mc.sql_instance = @@SERVERNAME
 
 where [check_enabled] = 1
-and datediff(minute,isnull(mc.last_check_date,'1970-01-01'),getdate()) >= isnull(mc.[check_frequency_minutes],0)
+and datediff(minute,isnull(mc.last_check_date,'1970-01-01'),getutcdate()) >= isnull(mc.[check_frequency_minutes],0)
 order by cc.[check_id]
 
 open cur_rules   
