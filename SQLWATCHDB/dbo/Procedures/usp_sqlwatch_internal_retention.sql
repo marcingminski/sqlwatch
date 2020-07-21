@@ -46,6 +46,7 @@ select @batch_size = [dbo].[ufn_sqlwatch_get_config_value](6, null)
 select @action_queue_retention_days_failed = [dbo].[ufn_sqlwatch_get_config_value](3, null)
 select @action_queue_retention_days_success = [dbo].[ufn_sqlwatch_get_config_value](4, null)
 select @application_log_retention_days = [dbo].[ufn_sqlwatch_get_config_value](1, null)
+select @row_count = 1 -- initalitzaion, otherwise loop will not be entered
 
 declare @cutoff_dates as table (
 	snapshot_time datetime2(0),
