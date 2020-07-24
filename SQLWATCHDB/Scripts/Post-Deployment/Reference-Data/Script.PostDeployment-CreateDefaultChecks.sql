@@ -414,7 +414,7 @@ exec [dbo].[usp_sqlwatch_config_add_check]
 	,@check_name = 'Oldest LOG backup (minutes)'
 	,@check_description = 'There is one or more databases that has no recent log backup. Databases that are in either FULL or BULK_LOGGED recovery must have frequent Transaction Log backups. The recovery point will be to the last Transaction Log backup and therefore these must happen often to minimise data loss.
 https://docs.microsoft.com/en-us/sql/relational-databases/backup-restore/recovery-models-sql-server'
-	,@check_query = 'select @output=isnull(max(minute(day,last_backup_finish_date,getdate())),999)
+	,@check_query = 'select @output=isnull(max(datediff(minute,last_backup_finish_date,getdate())),999)
 from (	
 	select database_name = d.name,
 	last_backup_finish_date = max(bs.backup_finish_date)
