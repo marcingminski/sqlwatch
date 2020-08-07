@@ -277,7 +277,7 @@ namespace SqlWatchImport
 				
 				// this sql has to be moved to a stored procedure and populate table
 				// during deployment to save a bit of time with every execution
-				sql = "select * from [dbo].[sqlwatch_stage_repository_tables_to_import] order by dependency_level";
+				string sql = "select * from [dbo].[sqlwatch_stage_repository_tables_to_import] order by dependency_level";
 
 				using (SqlDataAdapter adapter = new SqlDataAdapter(sql, connection))
 				{
