@@ -44,7 +44,7 @@ where name like 'sqlwatch_meta%' or	name like 'sqlwatch_logger%'
 	inner join sys.schemas s
 		on t.schema_id = s.schema_id
 	inner join @include_tables it
-		on it.name = t.name
+		on it.table_name = t.name
 	where type_desc = 'USER_TABLE'
 	and is_ms_shipped = 0
 	and t.name not in (
@@ -71,7 +71,7 @@ where name like 'sqlwatch_meta%' or	name like 'sqlwatch_logger%'
 		and t.object_id <> bt.object_id
 		and bt.lvl < 20 -- this shoult correspond to the value in the SqlWatchImporter.exe
 	inner join @include_tables it
-		on it.name = t.name
+		on it.table_name  = t.name
 	where t.type_desc = 'USER_TABLE'
 		and t.name not in (
 			select table_name 
