@@ -4,6 +4,10 @@
     <Configuration>
       <Name>Development</Name>
       <Options>
+        <AssessmentRuleSuppressionSetting />
+        <UseWinAuth>false</UseWinAuth>
+        <WinAuthUserName />
+        <WinAuthDomain />
         <ServerName>192.168.168.172</ServerName>
         <PathOnServer>/SSISDB/SQLWATCH/SQLWATCHSSIS</PathOnServer>
         <UserIDs />

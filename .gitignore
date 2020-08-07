@@ -14,3 +14,17 @@
 /SQLWATCHSSIS/import.dtsx
 /SQLWATCHDB/.vs/SQLWATCHDB/v16
 SQLWATCHSSIS/SQLWATCHSSIS.dtproj.user
+/SQLWATCHDB/bin/Release
+/SQLWATCHDB/obj/Release
+/Sqlwatch-importer/bin/Debug
+/Sqlwatch-importer/bin/Release
+/Sqlwatch-importer/obj/Debug
+/Sqlwatch-importer/obj/Release
+/SQLWATCHDB/packages/CommandLineParser.2.8.0
+/SqlWatch.Monitor/.vs/SqlWatch.Monitor/v16
+/SqlWatch.Monitor/Project.SqlDatabase/bin
+/SqlWatch.Monitor/Project.SqlDatabase/obj
+/SqlWatch.Monitor/Project.SqlDatabase/packages/CommandLineParser.2.8.0
+/SqlWatch.Monitor/Project.SqlWatch.Database/bin/Debug
+/SqlWatch.Monitor/Project.SqlWatch.Database/obj/Debug
+/SqlWatch.Monitor/Project.SqlWatch.IntegrationServices/bin/Development
