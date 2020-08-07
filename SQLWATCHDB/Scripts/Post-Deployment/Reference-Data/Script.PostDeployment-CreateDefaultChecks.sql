@@ -68,15 +68,16 @@ exec [dbo].[usp_sqlwatch_config_add_check]
 	,@check_description = 'The average CPU utilistaion is high.
 https://docs.microsoft.com/en-us/previous-versions/technet-magazine/cc137784(v=msdn.10)
 It is difficult to define what good utilistaion is withoyut knowing the workload and the infrastructure. In the Cloud, where CPUs are expesinve we will aim at high utilistaion for BAU workload to save money and with the potential of spinning new instances to handle ad-hoc spikes. On-prem utilisation, where adding new nodes is not so easy we must account for spikes and therefore BAU utilisation should be low.'
-	,@check_query = 'select @output=avg(pc.cntr_value_calculated)
-from [dbo].[sqlwatch_logger_perf_os_performance_counters] pc
+	,@check_query = 'select @output=avg(q.cntr_value_calculated)
+from (select pc.snapshot_time, sum(pc.cntr_value_calculated) cntr_value_calculated from  [dbo].[sqlwatch_logger_perf_os_performance_counters] pc
 inner join [dbo].[sqlwatch_meta_performance_counter] mpc
 	on pc.sql_instance = mpc.sql_instance
 	and pc.performance_counter_id = mpc.performance_counter_id
 where mpc.sql_instance = @@SERVERNAME
   and object_name = ''win32_perfformatteddata_perfos_processor''
   and counter_name = ''Processor Time %''
-and snapshot_time > ''{LAST_CHECK_DATE}'''
+  and snapshot_time > ''{LAST_CHECK_DATE}'' 
+group by pc.snapshot_time ) q'
 	,@check_frequency_minutes = 5
 	,@check_threshold_warning = '>60'
 	,@check_threshold_critical = '>80'
