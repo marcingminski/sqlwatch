@@ -22,6 +22,24 @@
 )
 go
 
+create trigger dbo.trg_sqlwatch_config_sql_instance_central_repository
+	on [dbo].[sqlwatch_config_sql_instance]
+	after insert, delete
+	as
+	begin
+		set nocount on;
+		--more than one record in the sql_instance table assumes we're running central repository:
+		if (select count(*) from [dbo].[sqlwatch_config_sql_instance]) > 1
+			begin
+				--build the list of tables to import not already built:
+				if (select count(*) from [dbo].[sqlwatch_stage_repository_tables_to_import]) = 0
+					begin
+						exec [dbo].[usp_sqlwatch_repository_populate_tables_to_import]
+					end
+			end
+	end
+go
+
 create trigger dbo.trg_sqlwatch_config_sql_instance_sanitise
 	on [dbo].[sqlwatch_config_sql_instance]
 	for insert, update

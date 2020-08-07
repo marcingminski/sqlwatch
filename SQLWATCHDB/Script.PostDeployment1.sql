@@ -80,16 +80,6 @@ exec [dbo].[usp_sqlwatch_internal_add_database]
 -------------------------------------------------------------------------------------
 exec [dbo].[usp_sqlwatch_internal_start_xes]
 
---------------------------------------------------------------------------------------
---setup jobs
---we have to switch database to msdb but we also need to know which db jobs should run in so have to capture current database:
-
-
-if (select case when @@VERSION like '%Express Edition%' then 1 else 0 end) = 0
-	begin
-		exec dbo.[usp_sqlwatch_config_create_default_agent_jobs]
-	end
-
 -------------------------------------------------------------------------------------
 -- Make Constraints Trusted Again
 -------------------------------------------------------------------------------------
@@ -100,6 +90,18 @@ if (select case when @@VERSION like '%Express Edition%' then 1 else 0 end) = 0
 -------------------------------------------------------------------------------------
 :r .\Scripts\Post-Deployment\Data-Fixes\Script.PostDeployment-DataFix-MigrateReportTime.sql
 
+--------------------------------------------------------------------------------------
+-- populate central repository tables to import
+-- this will have no meaning on the remote instance but it will mean less steps
+-- when turning it into a central repository
+--------------------------------------------------------------------------------------
+--more than one record in the sql_instance table assumes we're running central repository:
+if (select count(*) from [dbo].[sqlwatch_config_sql_instance]) > 1
+	begin
+		Print 'Looks like this is a central repository so we''re going to populate tabels to import'
+		exec [dbo].[usp_sqlwatch_repository_populate_tables_to_import]
+	end
+
 -------------------------------------------------------------------------------------
 -- THIS MUST BE LAST STATEMENT IN THE PROCESS SO WE CAN RUN DATA-MIGRATIONS BASED
 -- ON THE CURRENT VERSION. IF WE UPDATE VERSION BEFORE RUNNING DATA MIGRATION IT WILL
@@ -107,3 +109,12 @@ if (select case when @@VERSION like '%Express Edition%' then 1 else 0 end) = 0
 --------------------------------------------------------------------------------------
 insert into [dbo].[sqlwatch_app_version] ( [install_date], [sqlwatch_version] )
 values (SYSDATETIMEOFFSET(), RTRIM(LTRIM(REPLACE(REPLACE('$(DacVersion)',CHAR(10),''),CHAR(13),''))))
+
+--------------------------------------------------------------------------------------
+--setup jobs
+--we have to switch database to msdb but we also need to know which db jobs should run in so have to capture current database:
+--------------------------------------------------------------------------------------
+if (select case when @@VERSION like '%Express Edition%' then 1 else 0 end) = 0
+	begin
+		exec dbo.[usp_sqlwatch_config_create_default_agent_jobs]
+	end

@@ -291,6 +291,8 @@
     <Build Include="dbo\Functions\ufn_sqlwatch_get_server_utc_offset.sql" />
     <Build Include="dbo\Tables\dbachecksChecks.sql" />
     <Build Include="dbo\Tables\dbachecksResults.sql" />
+    <Build Include="dbo\Tables\sqlwatch_stage_repository_tables_to_import.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_repository_populate_tables_to_import.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
