@@ -83,6 +83,7 @@
     <Folder Include="Scripts\Tools" />
     <Folder Include="Scripts\HotFixes" />
     <Folder Include="Scripts\Data Migrations" />
+    <Folder Include="Scripts\Tools\SSIS Helpers" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\sqlwatch_logger_snapshot_header.sql" />
@@ -293,6 +294,17 @@
     <Build Include="dbo\Tables\dbachecksResults.sql" />
     <Build Include="dbo\Tables\sqlwatch_stage_repository_tables_to_import.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_repository_populate_tables_to_import.sql" />
+    <None Include="Scripts\Data Migrations\fix_trim_perf_counter.sql" />
+    <None Include="Scripts\Data Migrations\migrate_database_name_to_sqlwatch_database_id.sql" />
+    <None Include="Scripts\Data Migrations\migrate_perf_counter_to_perf_counter_id.sql" />
+    <None Include="Scripts\Data Migrations\migrate_wait_type_to_wait_type_id.sql" />
+    <None Include="Scripts\Data Migrations\normalise_file_stats.sql" />
+    <None Include="Scripts\Data Migrations\migrate_snapshot_time_to_utc.sql" />
+    <None Include="Scripts\Data Migrations\fix_performance_counter_column_types.sql" />
+    <None Include="Scripts\Tools\SSIS Helpers\SSIS_generate__merge.sql" />
+    <None Include="Scripts\Tools\SSIS Helpers\SSIS_generate_import_tables.sql" />
+    <None Include="Scripts\Tools\SSIS Helpers\SSIS_generate_statements.sql" />
+    <None Include="Scripts\Tools\SSIS Helpers\SSIS_generate_snapshot_time_variables.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
@@ -326,17 +338,6 @@
     </ArtifactReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="POSTDEPLOY migrate time to utc.sql" />
-    <None Include="PREDEPLOY fix performance counter column types.sql" />
-    <None Include="Generate SQL statements for SSIS.sql" />
-    <None Include="Generate import tables.sql" />
-    <None Include="Generate final merge.sql" />
-    <None Include="fix_trim_perf_counter.sql" />
-    <None Include="migrate_wait_type_to_wait_type_id.sql" />
-    <None Include="migrate_perf_counter_to_perf_counter_id.sql" />
-    <None Include="migrate_database_name_to_sqlwatch_database_id.sql" />
-    <None Include="normalise_file_stats.sql" />
-    <None Include="generate snapshot_time variables for SSIS.sql" />
     <None Include="SQLWATCH.publish.xml" />
   </ItemGroup>
   <Target Name="SetDacVersionToAssemblyVersion" AfterTargets="CoreCompile">
