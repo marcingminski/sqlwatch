@@ -11,7 +11,7 @@ $Checks.ForEach{$TestCases += @{check_name = $_.check_name }}
 
 Describe 'Test checks execution mechanism' {
 
-  It 'Number of times check [<check_name>] has returned ERROR' -TestCases $TestCases {
+  It 'Check [<check_name>] execution does not return ERROR' -TestCases $TestCases {
 
     Param($check_name)
     $sql = "select count(*) from [dbo].[sqlwatch_config_check] cc left join [dbo].[sqlwatch_logger_check] lc on cc.check_id = lc.check_id where cc.check_name = '$($check_name)' and lc.check_status like '%ERROR%'"
@@ -30,7 +30,7 @@ Describe 'Test checks execution mechanism' {
       
   }
 
-  It 'Check [<check_name>] must respect execution frequency' -TestCases $TestCases {
+  It 'Check [<check_name>] respects execution frequency' -TestCases $TestCases {
      
     Param($check_name) 
     $sql = "select check_frequency_minutes from [dbo].[sqlwatch_config_check] where check_name = '$($check_name)' and check_frequency_minutes is not null"
