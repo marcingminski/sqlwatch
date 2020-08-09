@@ -27,7 +27,7 @@ SQL Server Express is not supported as there is no Agent to invoke data collecti
 >>Although Docker and Linux work, the Windows-only WMI basd disk utilisation collector will fail.
 
 # Installation
-The easiset way to install SQLWATCH is to use [dbatools](https://github.com/sqlcollaborative/dbatools):
+The easiest way to install SQLWATCH is to use [dbatools](https://github.com/sqlcollaborative/dbatools):
 
 ```
 Install-DbaSqlWatch -SqlInstance SQLSERVER1,SQLSERVER2,SQLSERVER3 -Database SQLWATCH
@@ -42,3 +42,4 @@ SqlPackage.exe
    /p:RegisterDataTierApplication=True
   ```
   Or by [deploying Data-Tier application in SQL Server Management Studio](https://docs.microsoft.com/en-us/sql/relational-databases/data-tier-applications/deploy-a-data-tier-application?view=sql-server-2017)
+
