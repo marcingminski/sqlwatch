@@ -55,7 +55,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SqlWatchRemote.cs" />
-    <Compile Include="SqlWatchRepo.cs" />
+    <Compile Include="SqlWatchRepository.cs" />
     <Compile Include="Tools.cs" />
   </ItemGroup>
   <ItemGroup>

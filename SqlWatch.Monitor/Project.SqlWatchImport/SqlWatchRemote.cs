@@ -32,7 +32,7 @@ namespace SqlWatchImport
 				SqlPort = null;
             }
 
-			using (SqlConnection conn = SqlWatchRepo.Connection())
+			using (SqlConnection conn = SqlWatchRepository.Connection())
             {
 				string query = @"insert into [dbo].[sqlwatch_config_sql_instance]([sql_instance]
 										,[hostname],[sql_port],[sqlwatch_database_name]
@@ -68,7 +68,7 @@ namespace SqlWatchImport
 		public static bool Update(string SqlInstance, string SqlUser, string SqlPassword)
         {
 			string SqlSecret = Tools.Encrypt(SqlPassword);
-			using (SqlConnection conn = SqlWatchRepo.Connection())
+			using (SqlConnection conn = SqlWatchRepository.Connection())
 			{
 				string query = @"update [dbo].[sqlwatch_config_sql_instance]
 							set sql_secret = @sql_secret, 
@@ -126,7 +126,7 @@ namespace SqlWatchImport
 
 				for (int i = 1; i <= 20; i++)
 				{
-					foreach (DataRow row in SqlWatchRepo.tablesToImport.Select($"dependency_level = {i}"))
+					foreach (DataRow row in SqlWatchRepository.tablesToImport.Select($"dependency_level = {i}"))
 					{
 						string tableName = row["table_name"].ToString();
 
@@ -149,7 +149,7 @@ namespace SqlWatchImport
 								//populate lat snapshot tiem for each type
 								if (tableName == "dbo.sqlwatch_logger_snapshot_header")
 								{
-									await Task.Run(() => { SqlWatchRepo.GetLastSnapshoHeader(SqlInstance); });
+									await Task.Run(() => { SqlWatchRepository.GetLastSnapshoHeader(SqlInstance); });
 								}
 							});
 							tasks.Add(task);
@@ -164,7 +164,7 @@ namespace SqlWatchImport
 								//populate lat snapshot tiem for each type
 								if (tableName == "dbo.sqlwatch_logger_snapshot_header")
 								{
-									await Task.Run(() => { SqlWatchRepo.GetLastSnapshoHeader(SqlInstance); });
+									await Task.Run(() => { SqlWatchRepository.GetLastSnapshoHeader(SqlInstance); });
 								}
 							});
 							tasks.Add(task);
@@ -184,11 +184,11 @@ namespace SqlWatchImport
 		{
 			Stopwatch tt = Stopwatch.StartNew();
 
-			using (SqlConnection repoConnection = SqlWatchRepo.Connection())
+			using (SqlConnection repoConnection = SqlWatchRepository.Connection())
 			{
 				repoConnection.Open();
 
-				string PkColumns = SqlWatchRepo.TablePrimaryKey(TableName);
+				string PkColumns = SqlWatchRepository.TablePrimaryKey(TableName);
 
 				string sql = $"select top 0 * into [#{ TableName }] from { TableName };";
 
@@ -223,7 +223,7 @@ namespace SqlWatchImport
 					string lastSeenInRepo = "";
 					if (Config.respectDateLastSeen == true)
                     {
-						if (SqlWatchRepo.Table.HasColumnLastSeen(TableName) == true)
+						if (SqlWatchRepository.Table.HasColumnLastSeen(TableName) == true)
 						{
 
 							sql = $"select convert(varchar(30),isnull(max(date_last_seen),'1970-01-01'),121) from { TableName }";
@@ -236,7 +236,7 @@ namespace SqlWatchImport
 
 					if (TableName.Contains("sqlwatch_logger"))
                     {
-						sql = $"select * from { TableName } where snapshot_time <= '{ SqlWatchRepo.LastHeaderSnapshotDate(SqlInstance, SqlWatchRepo.TableSnapshotType(TableName)) }'";
+						sql = $"select * from { TableName } where snapshot_time <= '{ SqlWatchRepository.LastHeaderSnapshotDate(SqlInstance, SqlWatchRepository.TableSnapshotType(TableName)) }'";
 						if (lastSeenInRepo != "")
                         {
 							sql += $" and date_last_seen > '{ lastSeenInRepo }'";
@@ -294,22 +294,22 @@ namespace SqlWatchImport
 					}
 
 					sql = "";
-					if (SqlWatchRepo.TableHasIdentity(TableName) == true)
+					if (SqlWatchRepository.TableHasIdentity(TableName) == true)
                     {
 						sql += $"\nset identity_insert { TableName } on;";
                     }
 
-					string allColumns = SqlWatchRepo.TableColumns(TableName);
+					string allColumns = SqlWatchRepository.TableColumns(TableName);
 
 					sql += $@"
 							;merge { TableName } as target
 								using [#{ TableName }] as source
-							on ({ SqlWatchRepo.TableMergeJoins(TableName) })
+							on ({ SqlWatchRepository.TableMergeJoins(TableName) })
 							when not matched
 							then insert ({ allColumns })
 							values (source.{ allColumns.Replace(",", ",source.") })";
 
-					string updateColumns = SqlWatchRepo.TableMergeUpdateColumns(TableName);
+					string updateColumns = SqlWatchRepository.TableMergeUpdateColumns(TableName);
 					if (updateColumns != "")
                     {
 						sql += $@"
@@ -320,7 +320,7 @@ namespace SqlWatchImport
 
 					sql += ";";
 
-					if (SqlWatchRepo.TableHasIdentity(TableName) == true)
+					if (SqlWatchRepository.TableHasIdentity(TableName) == true)
 					{
 						sql += $"\nset identity_insert { TableName } off;";
 					}
@@ -375,7 +375,7 @@ namespace SqlWatchImport
 		{
 			Stopwatch sw = Stopwatch.StartNew();
 
-			using (SqlConnection repoConnection = SqlWatchRepo.Connection())
+			using (SqlConnection repoConnection = SqlWatchRepository.Connection())
 			{
 				await repoConnection.OpenAsync();
 
@@ -399,7 +399,7 @@ namespace SqlWatchImport
 					using (SqlCommand remoteCommand = new SqlCommand($"select * " +
 						$"from { TableName } " +
 						$"where [snapshot_time] > '{ snapshotTime }' " +
-						$"and [snapshot_time] <= '{ SqlWatchRepo.LastHeaderSnapshotDate(SqlInstance, SqlWatchRepo.TableSnapshotType(TableName)) }'", remoteConnection))
+						$"and [snapshot_time] <= '{ SqlWatchRepository.LastHeaderSnapshotDate(SqlInstance, SqlWatchRepository.TableSnapshotType(TableName)) }'", remoteConnection))
                     {
 						remoteCommand.CommandTimeout = Config.DataCopyExecTimeout;
 
@@ -453,19 +453,19 @@ namespace SqlWatchImport
 
 			//SqlInstance = @@SERVERNAME but it may not always be the same as the physical hostname.
 			SqlConnectionStringBuilder conn = new SqlConnectionStringBuilder();
-			conn.DataSource = SqlWatchRepo.RemoteHostname(SqlInstance);
-			conn.InitialCatalog = SqlWatchRepo.RemoteSqlDatabase(SqlInstance);
+			conn.DataSource = SqlWatchRepository.RemoteHostname(SqlInstance);
+			conn.InitialCatalog = SqlWatchRepository.RemoteSqlDatabase(SqlInstance);
 			conn.ConnectTimeout = ConnectTimeout.HasValue ? (int)ConnectTimeout : Config.RemoteInstanceConnectTimeOut;
 			//conn.MultipleActiveResultSets = true;
 			conn.MinPoolSize = 0;
 			conn.Pooling = true;
 			conn.ApplicationName = Config.ApplicationName;
 
-			string RemoteSqlUser = SqlWatchRepo.RemoteSqlUser(SqlInstance);
+			string RemoteSqlUser = SqlWatchRepository.RemoteSqlUser(SqlInstance);
 
 			if (RemoteSqlUser != "")
 			{
-				string SqlSecret = SqlWatchRepo.RemoteSqSecret(SqlInstance);
+				string SqlSecret = SqlWatchRepository.RemoteSqSecret(SqlInstance);
 				string SqlPassword = Tools.Decrypt(SqlSecret);
 				conn.UserID = RemoteSqlUser;
 				conn.Password = SqlPassword;

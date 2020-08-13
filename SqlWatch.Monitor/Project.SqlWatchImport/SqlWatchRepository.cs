@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SqlWatchImport
 {
-	internal class SqlWatchRepo
+	internal class SqlWatchRepository
 	{
 
 		// poor mans caching of sql results. DataTables are not super efficient
@@ -437,7 +437,7 @@ namespace SqlWatchImport
 			{
 				// Checks if table has a given column
 
-				DataRow[] dr = SqlWatchRepo.tablesToImport.Select($"TABLE_NAME= '{ TableName }'");
+				DataRow[] dr = SqlWatchRepository.tablesToImport.Select($"TABLE_NAME= '{ TableName }'");
 				if (dr[0]["has_last_seen"].ToString() == "1")
 				{
 					return true;

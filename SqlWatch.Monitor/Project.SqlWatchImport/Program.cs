@@ -88,7 +88,7 @@ namespace SqlWatchImport
 				bool isOnlineResult = false;
 				Task tIsOnline = Task.Run(async () =>
 				{
-					isOnlineResult = await SqlWatchRepo.IsOnline();
+					isOnlineResult = await SqlWatchRepository.IsOnline();
 				});
 
 				Task.WaitAll(tIsOnline);
@@ -97,18 +97,18 @@ namespace SqlWatchImport
 
 				Task tRemoteTables = Task.Run(() =>
 				{
-					SqlWatchRepo.GetRemoteTables();
+					SqlWatchRepository.GetRemoteTables();
 				});
 
 				Task tSnapshotTypes = Task.Run(async () =>
 				{
-					await SqlWatchRepo.GetTableSnapshoTypes();
+					await SqlWatchRepository.GetTableSnapshoTypes();
 				});
 
 				// populate Servers DataTable, SqlAdapters 
 				Task tRemoteServers = Task.Run(() =>
 				{
-					SqlWatchRepo.GetRemoteServers();
+					SqlWatchRepository.GetRemoteServers();
 				});
 
 				// wait until we have got all the reference data:
@@ -119,7 +119,7 @@ namespace SqlWatchImport
 				List<Task> tasks = new List<Task>();
 
 				// import remote serveres:
-				SqlWatchRepo.RemoteServers().ForEach(delegate (String SqlInstance)
+				SqlWatchRepository.RemoteServers().ForEach(delegate (String SqlInstance)
 				{
 					Task task = Task.Run(async () =>
 					{
