@@ -226,7 +226,7 @@ namespace SqlWatchImport
 						if (SqlWatchRepo.Table.HasColumnLastSeen(TableName) == true)
 						{
 
-							sql = $"select isnull(max(date_last_seen),'1970-01-01') from { TableName }";
+							sql = $"select convert(varchar(30),isnull(max(date_last_seen),'1970-01-01'),121) from { TableName }";
 							using (SqlCommand cmdGetRepoLastSeen = new SqlCommand(sql, repoConnection))
 							{
 								lastSeenInRepo = (await cmdGetRepoLastSeen.ExecuteScalarAsync()).ToString();
