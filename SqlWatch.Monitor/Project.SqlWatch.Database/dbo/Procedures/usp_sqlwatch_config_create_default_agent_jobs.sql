@@ -86,7 +86,7 @@ insert into ##sqlwatch_jobs
 
 			('SQLWATCH-LOGGER-PERFORMANCE',		4,			1,				4,					1,						0,						1,							20180101,			99991231,			12,					235959,				1),
 			('SQLWATCH-LOGGER-DISK-UTILISATION',4,			1,				8,					1,						0,						1,							20180101,			99991231,			437,				235959,				1),
-			('SQLWATCH-LOGGER-INDEXES',			4,			1,				8,					6,						0,						1,							20180101,			99991231,			420,				235959,				1),
+			('SQLWATCH-LOGGER-INDEXES',			4,			1,				1,					24,						0,						1,							20180101,			99991231,			1500,				235959,				1),
 			('SQLWATCH-LOGGER-AGENT-HISTORY',	4,			1,				4,					10,						0,						1,							20180101,			99991231,			0,					235959,				1),
 
 			('SQLWATCH-INTERNAL-RETENTION',		4,			1,				8,					1,						0,						1,							20180101,			99991231,			20,					235959,				1),
