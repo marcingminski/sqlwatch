@@ -15,8 +15,9 @@
 	[is_read_committed_snapshot_on] bit,
 	[recovery_model] tinyint,
 	[page_verify_option] tinyint,
-	[date_updated] datetime null,
-	[is_record_deleted] bit
+	--[date_updated] datetime null,
+	--[is_record_deleted] bit,
+	[is_current] bit,
 
 	/*	primary key */
 	constraint PK_database primary key clustered (
