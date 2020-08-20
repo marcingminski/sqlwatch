@@ -2436,4 +2436,25 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[sqlwatch_meta_system_configuration_scd]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="a624394f-9701-43f2-97d2-7d50676bb8aa" ChangeDateTime="08/20/2020 12:04:53">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_meta_wait_stats].[date_last_seen]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_meta_wait_stats]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[date_updated]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="f5e711b5-fc56-495b-aea6-633b225305fd" ChangeDateTime="08/20/2020 12:08:02">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_meta_performance_counter].[date_last_seen]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_meta_performance_counter]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[date_updated]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="3906bfc2-7e89-472b-8ba6-5d8bc27dba32" ChangeDateTime="08/20/2020 12:10:15">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_meta_memory_clerk].[date_last_seen]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_meta_memory_clerk]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[date_updated]" />
+  </Operation>
 </Operations>

@@ -15,6 +15,7 @@
 	[last_check_value] real null,
 	[last_check_status] varchar(50) null,
 	[last_status_change_date] datetime null,
+	[date_updated] datetime not null constraint df_sqlwatch_meta_check_updated default (getutcdate()),
 
 	/*	primary key */
 	constraint pk_sqlwatch_meta_alert primary key clustered ([sql_instance], [check_id]),
@@ -32,6 +33,27 @@
 	--constraint fk_sqlwatch_meta_alert_check foreign key ([check_id])
 	--	references [dbo].[sqlwatch_config_check] ([check_id]) on delete cascade
 )
+go
+
+create nonclustered index idx_sqlwatch_meta_check_1 on [dbo].[sqlwatch_meta_check] ([date_updated])
+go
+
+create trigger trg_sqlwatch_meta_last_updated
+	on [dbo].[sqlwatch_meta_check]
+	for insert,update
+	as
+	begin
+		set nocount on;
+		set xact_abort on;
+
+		update t
+			set date_updated = getutcdate()
+		from [dbo].[sqlwatch_meta_check] t
+		inner join inserted i
+			on i.[sql_instance] = t.[sql_instance]
+			and i.[check_id] = t.[check_id]
+			and i.sql_instance = @@SERVERNAME
+	end
 go
 
 create trigger trg_sqlwatch_meta_check_delete

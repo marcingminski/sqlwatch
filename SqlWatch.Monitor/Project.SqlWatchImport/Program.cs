@@ -22,29 +22,22 @@ namespace SqlWatchImport
 
 			Stopwatch sw = Stopwatch.StartNew();
 
-
-			if (Config.MinThreads != 0)
-            {
-				ThreadPool.SetMinThreads(Config.MinThreads, Config.MinThreads) ;
-            }
-
-			if (Config.MaxThreads != 0)
-            {
-				ThreadPool.SetMaxThreads(Config.MaxThreads, Config.MaxThreads);
-            }
-
 			Trace.Listeners.Clear();
 
 			Tools.RotateLogFile(Config.LogFile);
 
-			TextWriterTraceListener twtl = new TextWriterTraceListener(Config.LogFile);
-			twtl.Name = "TextLogger";
-			twtl.TraceOutputOptions = TraceOptions.ThreadId | TraceOptions.DateTime;
-
-			if (Config.PrintToConsole == true )
+            TextWriterTraceListener twtl = new TextWriterTraceListener(Config.LogFile)
             {
-				ConsoleTraceListener ctl = new ConsoleTraceListener(false);
-				ctl.TraceOutputOptions = TraceOptions.DateTime;
+                TraceOutputOptions = TraceOptions.ThreadId | TraceOptions.DateTime
+            };
+
+            ConsoleTraceListener ctl = new ConsoleTraceListener(false)
+            {
+                TraceOutputOptions = TraceOptions.DateTime
+            };
+
+            if (Config.PrintToConsole == true )
+            {
 				Trace.Listeners.Add(ctl);
 			}
 
@@ -53,6 +46,7 @@ namespace SqlWatchImport
 				Trace.Listeners.Add(twtl);
 
 			}
+
 			Trace.AutoFlush = true;
 
 			var version = Assembly.GetExecutingAssembly().GetName().Version;
@@ -85,58 +79,91 @@ namespace SqlWatchImport
 
 				Logger.LogVerbose(message);
 
-				bool isOnlineResult = false;
-				Task tIsOnline = Task.Run(async () =>
-				{
-					isOnlineResult = await SqlWatchRepo.IsOnline();
-				});
-
-				Task.WaitAll(tIsOnline);
-
 				Stopwatch sdt = Stopwatch.StartNew();
+				double t0 = 0;
 
-				Task tRemoteTables = Task.Run(() =>
-				{
-					SqlWatchRepo.GetRemoteTables();
-				});
+				using (SqlWatchInstance SqlWatchRepository = new SqlWatchInstance())
+                {
+					SqlWatchRepository.SqlInstance = Config.centralRepoSqlInstance;
+					SqlWatchRepository.SqlDatabase = Config.centralRepoSqlDatabase;
+					SqlWatchRepository.SqlUser = Config.centralRepoSqlUser;
+					SqlWatchRepository.SqlSecret = Config.centralRepoSqlSecret;
 
-				Task tSnapshotTypes = Task.Run(async () =>
-				{
-					await SqlWatchRepo.GetTableSnapshoTypes();
-				});
+					if (SqlWatchRepository.IsOnline().Result)
+                    {
+						t0 = sdt.Elapsed.TotalMilliseconds;
 
-				// populate Servers DataTable, SqlAdapters 
-				Task tRemoteServers = Task.Run(() =>
-				{
-					SqlWatchRepo.GetRemoteServers();
-				});
+						string VersionRepository = SqlWatchRepository.GetVersion().Result;
+						Logger.LogVerbose($"Central Repository SQLWATCH Version: \"{VersionRepository}\"");
 
-				// wait until we have got all the reference data:
-				Task.WaitAll(tRemoteServers, tRemoteTables, tSnapshotTypes);
+						List<Task> RemoteImportTasks = new List<Task>();
+						List<Task> InitializeTasks = new List<Task>();
 
-				double t0= sdt.Elapsed.TotalMilliseconds;
+						List<SqlWatchInstance.RemoteInstance> RemoteInstances = SqlWatchRepository.GetRemoteInstancesAsync().Result;
+						List<SqlWatchInstance.SqlWatchTable> SqlWatchTables = SqlWatchRepository.GetTablesToImportAsync().Result;
 
-				List<Task> tasks = new List<Task>();
+						Logger.LogMessage($"Got { RemoteInstances.Count } { (RemoteInstances.Count == 1 ? "instance" : "instances") } to import");
+						Logger.LogMessage($"Got { SqlWatchTables.Count } { (SqlWatchTables.Count == 1 ? "table" : "tables") } to import from each instance");
 
-				// import remote serveres:
-				SqlWatchRepo.RemoteServers().ForEach(delegate (String SqlInstance)
-				{
-					Task task = Task.Run(async () =>
-					{
-						await SqlWatchRemote.Import(SqlInstance);
-					});
-					tasks.Add(task);
-				});
-				Task.WaitAll(tasks.ToArray());
+						if (Config.MinThreads > 0)
+						{
+							ThreadPool.SetMinThreads(Config.MinThreads, Config.MinThreads);
+						}
+						else if (Config.MinThreads == -1)
+                        {
+							int minThreads = SqlWatchTables.Count * RemoteInstances.Count;
+							ThreadPool.SetMinThreads(minThreads, minThreads);
+							Logger.LogVerbose($"Automatically setting MinThreads to { minThreads }");
+						}
+
+						if (Config.MaxThreads != 0)
+						{
+							ThreadPool.SetMaxThreads(Config.MaxThreads, Config.MaxThreads);
+						}
+
+						Parallel.ForEach(RemoteInstances, RemoteInstance =>
+						{
+							Task RemoteImportTask = Task.Run(async () =>
+							{
+								using (SqlWatchInstance SqlWatchRemote = new SqlWatchInstance())
+								{
+									SqlWatchRemote.SqlInstance = RemoteInstance.SqlInstance;
+									SqlWatchRemote.SqlDatabase = RemoteInstance.SqlDatabase;
+									SqlWatchRemote.SqlUser = RemoteInstance.SqlUser;
+									SqlWatchRemote.SqlSecret = RemoteInstance.SqlSecret;
+									SqlWatchRemote.Hostname = RemoteInstance.Hostname;
+									SqlWatchRemote.ConnectionStringRepository = SqlWatchRepository.ConnectionString;
+
+									string VersionRemote = (SqlWatchRemote.GetVersion()).Result;
+									Logger.LogVerbose($"\"{RemoteInstance.SqlInstance}\" SQLWATCH Version: \"{VersionRemote}\"");
+
+									if (VersionRepository == VersionRemote)
+                                    {
+										await SqlWatchRemote.ImportAsync(SqlWatchTables);
+									}
+									else
+                                    {
+										Logger.LogError($"Version mismatch. The central repository and the remote instance must have the same version of SQLWATCH installed. " +
+											$"The Central Repository is {VersionRepository} and the remote instane is {VersionRemote} ");
+                                    }
+									
+								}
+							});
+							RemoteImportTasks.Add(RemoteImportTask);
+						});
+						Task results = Task.WhenAll(RemoteImportTasks.ToArray());
+
+						try
+						{
+							results.Wait();
+						}
+						catch { }
+					}
+				}
 
                 Logger.LogMessage("Import completed in " + sw.Elapsed.TotalMilliseconds + "ms");
 
-				Logger.LogVerbose($"Total time spent on populating reference DataTables: { t0 }ms");
-				Logger.LogVerbose($"Total time spent on Bulk Copy Full load: { SqlWatchRemote.t1 }ms");
-				Logger.LogVerbose($"Total time spent on Merge: { SqlWatchRemote.t2 }ms");
-				Logger.LogVerbose($"Total time spent on Bulk Copy Delta load: { SqlWatchRemote.t4 }ms");
-				Logger.LogVerbose($"Total time spent on querying Central Repo for the last snapshot: { SqlWatchRemote.t3 }ms");
-				Logger.LogVerbose($"Total time spent on eveyrthing else: { (t0+SqlWatchRemote.t1+SqlWatchRemote.t2+SqlWatchRemote.t4+SqlWatchRemote.t3)-sw.Elapsed.TotalMilliseconds }ms ");
+				Console.ResetColor();
 
 				if (Config.hasErrors == true)
 				{
@@ -155,31 +182,47 @@ namespace SqlWatchImport
                 Parser.Default.ParseArguments<Options>(args)
 					   .WithParsed<Options>(options => 
 					   {
-						   if (options.Add)
+						   using (SqlWatchInstance SqlWatchRepository = new SqlWatchInstance())
 						   {
+							   SqlWatchRepository.SqlInstance = Config.centralRepoSqlInstance;
+							   SqlWatchRepository.SqlDatabase = Config.centralRepoSqlDatabase;
+							   SqlWatchRepository.SqlUser = Config.centralRepoSqlUser;
+							   SqlWatchRepository.SqlSecret = Config.centralRepoSqlSecret;
 
-							   SqlWatchRemote.Add(
-								   options.RemoteSqlWatchInstance,
-								   options.RemoteSqlWatchDatabase,
-								   options.RemoteHostname,
-								   options.RemoteSqlPort,
-								   options.RemoteSqlUser,
-								   options.RemoteSqlPassword
-								   );   
-						   }
+							   if (SqlWatchRepository.IsOnline().Result)
+							   {
 
-						   if (options.Update)
-                           {
-							   SqlWatchRemote.Update(
-								   options.RemoteSqlWatchInstance,
-								   options.RemoteSqlUser,
-								   options.RemoteSqlPassword
-								   );
+								   if (options.Add)
+								   {
+									   SqlWatchRepository.AddRemoteInstance(
+										   options.RemoteSqlWatchInstance,
+										   options.RemoteSqlWatchDatabase,
+										   options.RemoteHostname,
+										   options.RemoteSqlPort,
+										   options.RemoteSqlUser,
+										   options.RemoteSqlPassword
+										);
+
+								   }
+
+								   if (options.Update)
+								   {
+									   SqlWatchRepository.UpdateRemoteInstance(
+										   options.RemoteSqlWatchInstance,
+										   options.RemoteSqlUser,
+										   options.RemoteSqlPassword
+										);
+								   }
+
+
+							   }
 						   }
+			
 					   });
 
-                #endregion
-            }
+				Console.ResetColor();
+				#endregion
+			}
         }
     }
 

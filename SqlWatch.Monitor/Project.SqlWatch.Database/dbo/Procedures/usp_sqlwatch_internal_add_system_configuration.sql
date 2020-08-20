@@ -14,18 +14,17 @@ using (
 on target.configuration_id = source.configuration_id
 and target.[sql_instance] = source.[sql_instance]
 
-when matched then 
+when matched 
+	and (
+			target.[value] <> source.[value] 
+		or	target.[value_in_use] <> source.[value_in_use]
+		)
+	then 
 	update set [value] = source.[value],
-		[value_in_use] = source.[value_in_use],
-		[date_updated] = case when 		
-									target.[value] <> source.[value]
-								or	target.[value_in_use] <> source.[value_in_use]
-								then GETUTCDATE() else [date_updated] end,
-		[date_last_seen] = GETUTCDATE(),
-		[is_record_deleted] = 0
+		[value_in_use] = source.[value_in_use]
 
 when not matched by target then
-	insert ([sql_instance], [configuration_id], [name], [description], [value], [value_in_use], [date_created], [date_last_seen])
-	values (source.[sql_instance], source.[configuration_id], source.[name], source.[description], source.[value], source.[value_in_use], GETUTCDATE(), GETUTCDATE());
+	insert ([sql_instance], [configuration_id], [name], [description], [value], [value_in_use], [date_created])
+	values (source.[sql_instance], source.[configuration_id], source.[name], source.[description], source.[value], source.[value_in_use], GETUTCDATE());
 
 

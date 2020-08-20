@@ -8,12 +8,12 @@
   DTS:DelayValidation="True"
   DTS:DTSID="{9FCCC4DC-9956-405A-BFAA-796B0C13C95D}"
   DTS:ExecutableType="SSIS.Package.3"
-  DTS:LastModifiedProductVersion="15.0.2000.93"
+  DTS:LastModifiedProductVersion="15.0.2000.123"
   DTS:LocaleID="2057"
   DTS:ObjectName="import_remote_data"
   DTS:PackageType="5"
-  DTS:VersionBuild="1148"
-  DTS:VersionGUID="{9C8F842F-A559-4C57-AC19-45EFED7F92C1}">
+  DTS:VersionBuild="1150"
+  DTS:VersionGUID="{6A4E3130-CED9-4F20-BEC2-ED0ECB5BB0AE}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">6</DTS:Property>
   <DTS:ConnectionManagers>
@@ -67,11 +67,11 @@
         DTS:Name="UserName">@[$Package::repository_user_name]</DTS:PropertyExpression>
       <DTS:ObjectData>
         <DTS:ConnectionManager
-          DTS:ConnectionString="Data Source=sqlwatch-repo-1;User ID=sqlwatch_collector;Initial Catalog=SQLWATCH;Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;Packet Size=32767;">
+          DTS:ConnectionString="Data Source=sqlwatch-repo-1;User ID=;Initial Catalog=SQLWATCH;Provider=SQLNCLI11.1;Integrated Security=SSPI;Auto Translate=False;Packet Size=32767;">
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAA4fW4WvnV50WjLJE02jHxmQAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAADV7bvBIh7uKu8LPoT9WG4+AAAAAASAAACgAAAAEAAAAFPqBaMAl9VGT3rK+MY1AcMYAAAARUTiWF2jfui3gl+RG3SSHralFxVk7WPMFAAAAJ1zmvAYz0+dA22RQTnuuqZktU9D</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAdy9ggFOFTkelELMi6XvDcQAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAABClWmUtcqRxx/INeWHyxT/AAAAAASAAACgAAAAEAAAACPanLNgNEgUzoNRQpCjO4cIAAAAYlzcghKRNwYUAAAArv30RQ1+diaU5OiROvTgm7oN++4</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -94,11 +94,11 @@
       <DTS:ObjectData>
         <DTS:ConnectionManager
           DTS:Retain="True"
-          DTS:ConnectionString="Data Source=sqlwatch-repo-1;User ID=sqlwatch_collector;Initial Catalog=SQLWATCH;Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;Packet Size=32767;">
+          DTS:ConnectionString="Data Source=sqlwatch-repo-1;User ID=;Initial Catalog=SQLWATCH;Provider=SQLNCLI11.1;Integrated Security=SSPI;Auto Translate=False;Packet Size=32767;">
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAA4fW4WvnV50WjLJE02jHxmQAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAAXcNzkVdf/whJsZ19yUf73AAAAAASAAACgAAAAEAAAAACBUPIhwJT0EbKIq6R82UsYAAAAFuvXLX6jxrAi3vgBNMDtLJJiXGo/8bc9FAAAAMGa6Lvm9docYCSqRQlbAh1w+8qt</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAdy9ggFOFTkelELMi6XvDcQAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAADwLtnIF14Tii57MZ4AruEjAAAAAASAAACgAAAAEAAAABz3d50XZtmyeIFVXQPqcqgIAAAAWnOJUHnGNiAUAAAAAm3neXidyQk6uJ1OgLKpKls25Pw</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -117,11 +117,11 @@
         DTS:Name="UserName">@[$Package::repository_user_name]</DTS:PropertyExpression>
       <DTS:ObjectData>
         <DTS:ConnectionManager
-          DTS:ConnectionString="Data Source=sqlwatch-repo-1;User ID=sqlwatch_collector;Initial Catalog=tempdb;Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;Packet Size=32767;">
+          DTS:ConnectionString="Data Source=sqlwatch-repo-1;User ID=;Initial Catalog=tempdb;Provider=SQLNCLI11.1;Integrated Security=SSPI;Auto Translate=False;Packet Size=32767;">
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAA4fW4WvnV50WjLJE02jHxmQAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAACv03F7a/H2E4smxsoNWLhZAAAAAASAAACgAAAAEAAAACN2A+wtZ0puZ6rfA29wNpEYAAAA6XKkeknI6DtLGMJOB6ZFQLpZfHeTjGcIFAAAAPbEIVxFBNcagW6+gKi6vKfVHQYD</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAdy9ggFOFTkelELMi6XvDcQAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAACbL2kqns5Mkco5gfMk6VKZAAAAAASAAACgAAAAEAAAAA0xNFE4kttwQQYRm6/QiiUIAAAA1B1F0VJevE8UAAAAy6eFQQcWEqoCBCri8mUStL3unvU</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -141,11 +141,11 @@
       <DTS:ObjectData>
         <DTS:ConnectionManager
           DTS:Retain="True"
-          DTS:ConnectionString="Data Source=sqlwatch-repo-1;User ID=sqlwatch_collector;Initial Catalog=tempdb;Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;Packet Size=32767;">
+          DTS:ConnectionString="Data Source=sqlwatch-repo-1;User ID=;Initial Catalog=tempdb;Provider=SQLNCLI11.1;Integrated Security=SSPI;Auto Translate=False;Packet Size=32767;">
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAA4fW4WvnV50WjLJE02jHxmQAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAAHU+hnyxkQ4S/IXw9rJbnmAAAAAASAAACgAAAAEAAAAPCUXw1p2vE0NXLS+J5W5Z4YAAAAY+Lw81QeD99kSrqHdrcwvfgII5ZyUXUrFAAAANjb2n04QzdKCYQNf8YxoOJGeiXK</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAdy9ggFOFTkelELMi6XvDcQAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAAk8JhtS8tDL2EEjxgXoUwpAAAAAASAAACgAAAAEAAAAJBSGIHj4pbduY1Ac/+b7CgIAAAAc1SPHD6c0VEUAAAAwkhsdBNYITepTFiAUjUxnWAkBQw</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -167,11 +167,11 @@
         DTS:Name="UserName">@[$Package::remote_user_name]</DTS:PropertyExpression>
       <DTS:ObjectData>
         <DTS:ConnectionManager
-          DTS:ConnectionString="Data Source=SQLWATCH-TEST-1;User ID=sqlwatch_collector;Initial Catalog=SQLWATCH;Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;Packet Size=32767;">
+          DTS:ConnectionString="Data Source=SQLWATCH-TEST-1;User ID=;Initial Catalog=SQLWATCH;Provider=SQLNCLI11.1;Integrated Security=SSPI;Auto Translate=False;Packet Size=32767;">
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAA4fW4WvnV50WjLJE02jHxmQAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAA6hiyXHpaARYanEmdAGjVxAAAAAASAAACgAAAAEAAAAAalImZIVq7RNXG4kv6mv7gYAAAAmD3cXxlo8Ojv4JQKZfBELZ5e/nmWivplFAAAAMc3qmb95GRf3par+Pq7LlcMCFEn</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAdy9ggFOFTkelELMi6XvDcQAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAAE6s+6/1RpvKSToKnD3XUiAAAAAASAAACgAAAAEAAAAPsb/a6ZXNuCsDzFMXKn6bYIAAAARWMn1wF+gDAUAAAAFgqqyh3m4Nmp5gjsN4rRuhYHUXY</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -192,11 +192,11 @@
       <DTS:ObjectData>
         <DTS:ConnectionManager
           DTS:Retain="True"
-          DTS:ConnectionString="Data Source=SQLWATCH-TEST-1;User ID=sqlwatch_collector;Initial Catalog=tempdb;Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;Packet Size=32767;">
+          DTS:ConnectionString="Data Source=SQLWATCH-TEST-1;User ID=;Initial Catalog=tempdb;Provider=SQLNCLI11.1;Integrated Security=SSPI;Auto Translate=False;Packet Size=32767;">
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAA4fW4WvnV50WjLJE02jHxmQAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAC6x26PmseFe5Qy/gJ6wrhDAAAAAASAAACgAAAAEAAAAOrgeidV/UD8IaR2bPOOWoMYAAAA436siR0hSglnJjOppJo9oMMWIZAlYFBWFAAAAK5xllh346/DUrchi/dc9xJouJej</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAdy9ggFOFTkelELMi6XvDcQAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAB7X9Ux4doQ/pW+3zX1yePlAAAAAASAAACgAAAAEAAAAK+W3wrtQYktLa/9vYGPvdUIAAAAGx1gezHvWqIUAAAAihpADVuCWULq8so43XIsmt4SqeY</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -235,7 +235,7 @@
         <DTS:Property
           DTS:DataType="8"
           DTS:Name="ParameterValue"
-          Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAA4fW4WvnV50WjLJE02jHxmQAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAABP2EJByyI/is36ebtmQJmOAAAAAASAAACgAAAAEAAAACYF/kPLEB/t9pgz6Ozoh08YAAAAMZAxyjZOuMx6t12aef/YcO8aW+gUtEzyFAAAAEYxgg5WUW5jSgdQwD86sAaH61Vq</DTS:Property>
+          Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAdy9ggFOFTkelELMi6XvDcQAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAACB90CJRAMclcHjzNoliOmIAAAAAASAAACgAAAAEAAAAHbyMPSHxUh9SmQOg0VY2SoIAAAAoCmIFB1tj14UAAAAP5bPTSAAmRFXh2s7IQb9lOCxE6A</DTS:Property>
       </DTS:Property>
     </DTS:PackageParameter>
     <DTS:PackageParameter
@@ -246,7 +246,8 @@
       DTS:ObjectName="remote_user_name">
       <DTS:Property
         DTS:DataType="8"
-        DTS:Name="ParameterValue">sqlwatch_collector</DTS:Property>
+        DTS:Name="ParameterValue"
+        xml:space="preserve"></DTS:Property>
     </DTS:PackageParameter>
     <DTS:PackageParameter
       DTS:CreationName=""
@@ -282,7 +283,7 @@
         <DTS:Property
           DTS:DataType="8"
           DTS:Name="ParameterValue"
-          Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAA4fW4WvnV50WjLJE02jHxmQAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAABQuNNIIUbnYjGIRF8+7VpUAAAAAASAAACgAAAAEAAAAJ0YzPQFdFuGAeLajutg5I0YAAAAxUETuthNKWy9HJwlzruvrvwDED6LX+GlFAAAALnT6Z/3/9++ahXMifY+OJiV5vUe</DTS:Property>
+          Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAdy9ggFOFTkelELMi6XvDcQAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAAAcZqPCoXJlRLLV4/KaNahMAAAAAASAAACgAAAAEAAAAFpliih5wN1np2n4CJnondcIAAAA5hMwAHAdJKUUAAAA14audXtAhNZJF8z92EeWvvMPz7g</DTS:Property>
       </DTS:Property>
     </DTS:PackageParameter>
     <DTS:PackageParameter
@@ -293,7 +294,8 @@
       DTS:ObjectName="repository_user_name">
       <DTS:Property
         DTS:DataType="8"
-        DTS:Name="ParameterValue">sqlwatch_collector</DTS:Property>
+        DTS:Name="ParameterValue"
+        xml:space="preserve"></DTS:Property>
     </DTS:PackageParameter>
   </DTS:PackageParameters>
   <DTS:Variables>
@@ -40561,7 +40563,7 @@ ORDER BY [sql_instance], [wait_type_id]</property>
           Id="Package\Commit transaction on config"
           TopLeft="2062.0238095238,1060.10912055834" />
         <NodeLayout
-          Size="236,42"
+          Size="244,42"
           Id="Package\Get Remote Instance servername"
           TopLeft="1308.5,76.7013857387753" />
         <NodeLayout
@@ -41381,18 +41383,18 @@ ORDER BY [sql_instance], [wait_type_id]</property>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 2]"
-          TopLeft="1430.16666666667,118.701385738775">
+          TopLeft="1432.16666666667,118.701385738775">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,50.6041684625671"
+              EndConnector="0,50.6041684625667"
               Start="0,0"
-              End="0,43.1041684625671">
+              End="0,43.1041684625667">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,43.1041684625671" />
+                    End="0,43.1041684625667" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -41437,18 +41439,18 @@ ORDER BY [sql_instance], [wait_type_id]</property>
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 4]"
-          TopLeft="1211.83333333333,98.4479147732352">
+          TopLeft="1211.83333333333,98.4479147732351">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="96.6666666666663,0"
+              EndConnector="96.666666666667,0"
               Start="0,0"
-              End="89.1666666666663,0">
+              End="89.166666666667,0">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="89.1666666666663,0" />
+                    End="89.166666666667,0" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -41520,7 +41522,7 @@ ORDER BY [sql_instance], [wait_type_id]</property>
     design-time-name="Package\Load Logger Data (Delta)\sqlwatch_logger_agent_job_history">
     <LayoutInfo>
       <GraphLayout
-        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
         <NodeLayout
           Size="112,42"
           Id="Package\Load Logger Data (Delta)\sqlwatch_logger_agent_job_history\source"
@@ -41548,7 +41550,9 @@ ORDER BY [sql_instance], [wait_type_id]</property>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
       </GraphLayout>
@@ -41926,15 +41930,15 @@ ORDER BY [sql_instance], [wait_type_id]</property>
     design-time-name="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database">
     <LayoutInfo>
       <GraphLayout
-        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
-        <NodeLayout
-          Size="134,42"
-          Id="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\Destination"
-          TopLeft="184,260.5" />
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
         <NodeLayout
           Size="112,42"
           Id="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\source"
           TopLeft="189,119.5" />
+        <NodeLayout
+          Size="134,42"
+          Id="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database\Destination"
+          TopLeft="184,260.5" />
         <EdgeLayout
           Id="Package\Load Logger Data (Delta)\sqlwatch_logger_disk_utilisation_database.Paths[OLE DB Source Output]"
           TopLeft="248,161.5">
@@ -41954,7 +41958,9 @@ ORDER BY [sql_instance], [wait_type_id]</property>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
       </GraphLayout>
@@ -46373,7 +46379,9 @@ ORDER BY [sql_instance], [wait_type_id]</property>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -46407,7 +46415,9 @@ ORDER BY [sql_instance], [wait_type_id]</property>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -46441,7 +46451,9 @@ ORDER BY [sql_instance], [wait_type_id]</property>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -47788,7 +47800,9 @@ ORDER BY [sql_instance], [wait_type_id]</property>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -47846,7 +47860,9 @@ ORDER BY [sql_instance], [wait_type_id]</property>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -47880,7 +47896,9 @@ ORDER BY [sql_instance], [wait_type_id]</property>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
       </GraphLayout>
@@ -48091,7 +48109,9 @@ ORDER BY [sql_instance], [wait_type_id]</property>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -48125,7 +48145,9 @@ ORDER BY [sql_instance], [wait_type_id]</property>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -48159,7 +48181,9 @@ ORDER BY [sql_instance], [wait_type_id]</property>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -48555,7 +48579,9 @@ ORDER BY [sql_instance], [wait_type_id]</property>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -48613,7 +48639,9 @@ ORDER BY [sql_instance], [wait_type_id]</property>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -48647,7 +48675,9 @@ ORDER BY [sql_instance], [wait_type_id]</property>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
       </GraphLayout>
@@ -48748,13 +48778,13 @@ ORDER BY [sql_instance], [wait_type_id]</property>
           Id="Package\Load Meta Tables (Full Load)\sqlwatch_meta_table\Merge Join"
           TopLeft="241,218" />
         <NodeLayout
-          Size="124,42"
-          Id="Package\Load Meta Tables (Full Load)\sqlwatch_meta_table\source"
-          TopLeft="59,38.5" />
-        <NodeLayout
           Size="159,42"
           Id="Package\Load Meta Tables (Full Load)\sqlwatch_meta_table\Conditional Split"
           TopLeft="454,194.5" />
+        <NodeLayout
+          Size="124,42"
+          Id="Package\Load Meta Tables (Full Load)\sqlwatch_meta_table\source"
+          TopLeft="59,38.5" />
         <EdgeLayout
           Id="Package\Load Meta Tables (Full Load)\sqlwatch_meta_table.Paths[Update Existing]"
           TopLeft="495.75,236.5">
@@ -48858,7 +48888,9 @@ ORDER BY [sql_instance], [wait_type_id]</property>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -48892,7 +48924,9 @@ ORDER BY [sql_instance], [wait_type_id]</property>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -48926,7 +48960,9 @@ ORDER BY [sql_instance], [wait_type_id]</property>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -49081,7 +49117,9 @@ ORDER BY [sql_instance], [wait_type_id]</property>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -49139,7 +49177,9 @@ ORDER BY [sql_instance], [wait_type_id]</property>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
@@ -49173,7 +49213,9 @@ ORDER BY [sql_instance], [wait_type_id]</property>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <EdgeLabelCollection />
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
       </GraphLayout>

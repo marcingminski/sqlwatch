@@ -86,8 +86,15 @@ where name like 'sqlwatch_meta%' or	name like 'sqlwatch_logger%'
 	from cte_base_tables d
 	group by d.schema_Name, d.name
 )
-insert into dbo.sqlwatch_stage_repository_tables_to_import
-select *
+insert into dbo.sqlwatch_stage_repository_tables_to_import(
+	[table_name],[dependency_level],[has_last_seen],[has_last_updated],
+	[has_identity],[primary_key],[joins],[updatecolumns],[allcolumns] 
+	)
+
+select d.[table_name],d.[dependency_level],
+	c.[has_last_seen],
+	[has_last_updated],
+	[has_identity],[primary_key],[joins],[updatecolumns],[allcolumns] 
 from cte_dependency d
 
 --check if the table contains date_last_seen column
@@ -96,6 +103,13 @@ outer apply (
 	from INFORMATION_SCHEMA.COLUMNS
 	where TABLE_SCHEMA + '.' + TABLE_NAME = d.table_name
 ) c
+
+-- check if the table has date_updated column
+outer apply (
+	select has_last_updated = max(case when COLUMN_NAME = 'date_updated' then 1 else 0 end)
+	from INFORMATION_SCHEMA.COLUMNS
+	where TABLE_SCHEMA + '.' + TABLE_NAME = d.table_name
+) u
 
 -- build concatenated string of primary keys
 outer apply (
@@ -179,6 +193,7 @@ select allcolumns = isnull(stuff ((
 		and COLUMN_NAME not in (
 				select name 
 				from sys.computed_columns
+				where object_id = OBJECT_ID(d.TABLE_NAME)
 		)
 		order by ORDINAL_POSITION
 		for xml path('')),1,1,''),'')

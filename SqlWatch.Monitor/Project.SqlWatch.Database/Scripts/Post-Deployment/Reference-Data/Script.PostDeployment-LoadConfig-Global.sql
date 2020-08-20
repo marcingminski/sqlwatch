@@ -46,7 +46,7 @@ values
 
 	/*	when check returns null we can log error and fail the job, 
 		or log warning and not fail the job.	*/
-	(8	,'Error on NULL check value'						,1), 
+	(8	,'Error on NULL check value'						,0), 
 
 	/*	when SQLWATCH xes are disabled we will try get data from system_health session if enabled.
 		Quite often however system_health session is quite large and it can take couple of minutes ot parse xml
