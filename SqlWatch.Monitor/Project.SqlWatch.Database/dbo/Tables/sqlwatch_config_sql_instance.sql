@@ -58,9 +58,11 @@ go
 
 create trigger dbo.trg_sqlwatch_config_sql_instance_remove_meta
 	on [dbo].[sqlwatch_config_sql_instance]
-	for delete
+	instead of delete
 	as
 	begin
+		set nocount on
+
 		declare @deleted_instance table (
 			sql_instance varchar(32)
 			)
@@ -68,9 +70,22 @@ create trigger dbo.trg_sqlwatch_config_sql_instance_remove_meta
 		insert into @deleted_instance
 		select sql_instance from deleted
 
-		set nocount on
+		-- first, disable the remote collection:
+		update c
+			set repo_collector_is_active = 0
+		from [dbo].[sqlwatch_config_sql_instance] c
+		inner join @deleted_instance d
+			on c.sql_instance = d.sql_instance
+
+		-- delete each server, leverage cascade deletes:
 		delete from dbo.sqlwatch_meta_server
 		where servername in (
+			select sql_instance from @deleted_instance
+			)
+
+		-- finally, delete from the config table:
+		delete from [dbo].[sqlwatch_config_sql_instance]
+		where sql_instance in (
 			select sql_instance from @deleted_instance
 			)
 	end
