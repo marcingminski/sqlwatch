@@ -205,13 +205,13 @@ Get-WMIObject Win32_Volume | ?{$_.DriveType -eq 3 -And $_.Name -notlike "\\?\Vol
 			('dbo.usp_sqlwatch_logger_index_usage_stats',	4,		'SQLWATCH-LOGGER-INDEXES',		'TSQL', 'exec dbo.usp_sqlwatch_logger_index_usage_stats'),
 			('dbo.usp_sqlwatch_logger_index_histogram',		5,		'SQLWATCH-LOGGER-INDEXES',		'TSQL', 'exec dbo.usp_sqlwatch_logger_index_histogram'),
 			
-			('dbo.usp_sqlwatch_internal_add_database',		1,			'SQLWATCH-INTERNAL-CONFIG','TSQL', 'exec dbo.usp_sqlwatch_internal_add_database'),
-			('dbo.usp_sqlwatch_internal_add_job',			2,			'SQLWATCH-INTERNAL-CONFIG','TSQL', 'exec dbo.usp_sqlwatch_internal_add_job'),
-			('dbo.usp_sqlwatch_internal_add_performance_counter',	3,	'SQLWATCH-INTERNAL-CONFIG','TSQL', 'exec dbo.usp_sqlwatch_internal_add_performance_counter'),
-			('dbo.usp_sqlwatch_internal_add_master_file',			4,	'SQLWATCH-INTERNAL-CONFIG','TSQL', 'exec dbo.usp_sqlwatch_internal_add_master_file'),
-			('dbo.usp_sqlwatch_internal_add_wait_type',				5,	'SQLWATCH-INTERNAL-CONFIG','TSQL', 'exec dbo.usp_sqlwatch_internal_add_wait_type'),
+			('dbo.usp_sqlwatch_internal_add_database',				1,	'SQLWATCH-INTERNAL-CONFIG','TSQL', 'exec dbo.usp_sqlwatch_internal_add_database'),
+			('dbo.usp_sqlwatch_internal_add_master_file',			2,	'SQLWATCH-INTERNAL-CONFIG','TSQL', 'exec dbo.usp_sqlwatch_internal_add_master_file'),
+			('dbo.usp_sqlwatch_internal_add_table',					3,	'SQLWATCH-INTERNAL-CONFIG','TSQL', 'exec dbo.usp_sqlwatch_internal_add_table'),
+			('dbo.usp_sqlwatch_internal_add_job',					4,	'SQLWATCH-INTERNAL-CONFIG','TSQL', 'exec dbo.usp_sqlwatch_internal_add_job'),
+			('dbo.usp_sqlwatch_internal_add_performance_counter',	5,	'SQLWATCH-INTERNAL-CONFIG','TSQL', 'exec dbo.usp_sqlwatch_internal_add_performance_counter'),
 			('dbo.usp_sqlwatch_internal_add_memory_clerk',			6,	'SQLWATCH-INTERNAL-CONFIG','TSQL', 'exec dbo.usp_sqlwatch_internal_add_memory_clerk'),
-			('dbo.usp_sqlwatch_internal_add_table',					7,	'SQLWATCH-INTERNAL-CONFIG','TSQL', 'exec dbo.usp_sqlwatch_internal_add_table'),
+			('dbo.usp_sqlwatch_internal_add_wait_type',				7,	'SQLWATCH-INTERNAL-CONFIG','TSQL', 'exec dbo.usp_sqlwatch_internal_add_wait_type'),
 			
 			('dbo.usp_sqlwatch_internal_add_system_configuration',	1,	'SQLWATCH-LOGGER-SYSCONFIG','TSQL', 'exec dbo.usp_sqlwatch_internal_add_system_configuration'),
 			('dbo.usp_sqlwatch_logger_system_configuration',	    2,	'SQLWATCH-LOGGER-SYSCONFIG','TSQL', 'exec dbo.usp_sqlwatch_logger_system_configuration')
