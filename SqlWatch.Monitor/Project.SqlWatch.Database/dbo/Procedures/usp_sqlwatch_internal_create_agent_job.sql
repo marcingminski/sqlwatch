@@ -72,8 +72,10 @@ else
 					This was only done so the check job does not return NULL error when perf counters 
 					tables are empty after the deployment. However, often they fail due to a number of
 					reasons on the client server - agent disabled, or broker running behind, accounts not up to date
-					this should not stop the deployment. */ 
-					1=2 
+					this should not stop the deployment. 
+					
+					The only exception is the SQLWATCH-INTERNAL-CONFIG job as if this is not run, the data collection cannot happen */ 
+					job_name = 'SQLWATCH-INTERNAL-CONFIG'
 					and /* job has not run yet */ h.run_status is null 
 					and /* only if its the first deployment */ v.deployment_count = 0 
 					and job_enabled = 1 
