@@ -2457,4 +2457,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="[date_updated]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="e4ad08c0-9530-47ed-a718-70b266df0d1b" ChangeDateTime="08/20/2020 16:28:08">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_meta_table].[date_created]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_meta_table]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[date_first_seen]" />
+  </Operation>
 </Operations>

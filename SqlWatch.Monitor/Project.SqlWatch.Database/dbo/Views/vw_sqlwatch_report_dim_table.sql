@@ -2,7 +2,7 @@
 	AS 
 
 	with cte_table as (
-		select t.[sql_instance], t.[sqlwatch_database_id], t.[sqlwatch_table_id], [table_name], [table_type], [date_created], t.[date_last_seen], t.[is_record_deleted]
+		select t.[sql_instance], t.[sqlwatch_database_id], t.[sqlwatch_table_id], [table_name], [table_type], [date_created]=[date_first_seen], t.[date_last_seen], [is_record_deleted]=null
 		, used_pages_growth = lg.used_pages  - fg.used_pages
 		, row_count_growth = lg.[row_count] - fg.[row_count]
 		, total_growth_days = datediff(day,fg.snapshot_time,lg.snapshot_time)
@@ -58,7 +58,7 @@
 			and g2.sqlwatch_table_id = vc.sqlwatch_table_id
 			) lg
 
-		where isnull(t.is_record_deleted,0) = 0
+		--where isnull(t.is_record_deleted,0) = 0
 
 		), cte_table_growth as (
 			select [sql_instance], [sqlwatch_database_id], [sqlwatch_table_id], [table_name], [table_type]
@@ -75,7 +75,7 @@
 			, [sqlwatch_table_id]
 			, [table_name]
 			, [table_type]
-			, [date_created]
+			, [date_first_seen] = [date_created]
 			, [date_last_seen]
 			, [is_record_deleted]
 			, used_pages_current 

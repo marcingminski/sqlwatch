@@ -34,7 +34,7 @@ exec [dbo].[usp_sqlwatch_internal_foreachdb] @command = '
 USE [?]
 insert into ##98308FFC2C634BF98B347EECB98E3490 ([TABLE_CATALOG],[table_name],[TABLE_TYPE])
 SELECT [TABLE_CATALOG],[table_name] = [TABLE_SCHEMA] + ''.'' + [TABLE_NAME],[TABLE_TYPE] 
-from INFORMATION_SCHEMA.TABLES
+from INFORMATION_SCHEMA.TABLES with (nolock)
 WHERE''?'' <> ''tempdb''', @databases = @databases, @calling_proc_id = @@PROCID
 
 /* when collecting tables we only consider name as a primary key. 
@@ -62,18 +62,29 @@ using (
  and	target.[sqlwatch_database_id] = source.[sqlwatch_database_id]
 
  		
-when not matched by source and target.sql_instance = @@SERVERNAME then
-	update set [is_record_deleted] = 1
+/* we dont need is record deleted field as its not always possible to tell.
+   we're using date last seen to handle this status */
+--when not matched by source and target.sql_instance = @@SERVERNAME then
+--	update set [is_record_deleted] = 1
 
- when matched and target.sql_instance = @@SERVERNAME 
-	then update set [date_last_seen] = GETUTCDATE(),
-		[is_record_deleted] = 0
+ when matched 
+	and target.sql_instance = @@SERVERNAME 
+	-- The SqlWatchImport relies on date_last_seen to speed up imports
+	-- and the field is only used for the retention purposes.
+	-- We will only update it if its passsed 24h.
+	-- New tables will be picked up immediately.
 
-								/* a new database could have been added since last db collection.
-								   in which case we have not got id yet, it will be picked up with the next cycle */
+	-- On instances with large number of databases and tables,
+	-- this procedures should only run once a day.
+	and datediff(hour,[date_last_seen],GETUTCDATE()) >= 24
+	then update set [date_last_seen] = GETUTCDATE()
+		--,[is_record_deleted] = 0
+
+/* a new database and/or table could have been added since last collection.
+	in which case we have not got id yet, it will be picked up with the next cycle */
  when not matched by target and source.[sqlwatch_database_id] is not null then
-	insert ([sql_instance],[sqlwatch_database_id],[table_name],[table_type],[date_created])
-	values (@@SERVERNAME,source.[sqlwatch_database_id],source.[table_name],source.[table_type],GETUTCDATE());
+	insert ([sql_instance],[sqlwatch_database_id],[table_name],[table_type],[date_first_seen],[date_last_seen])
+	values (@@SERVERNAME,source.[sqlwatch_database_id],source.[table_name],source.[table_type],GETUTCDATE(),GETUTCDATE());
 
  --when matched and [date_deleted] is not null and target.sql_instance = @@SERVERNAME then
 	--update set [date_deleted] = null;
