@@ -13,20 +13,19 @@ namespace SqlWatchImport
 		public static string centralRepoSqlSecret = ConfigurationManager.AppSettings["CentralRepositorySqlSecret"];
 		public static string EnvironmentToProcess = ConfigurationManager.AppSettings["EnvironmentToProcess"];
 
-		public static int DataCopyExecTimeout = int.Parse(ConfigurationManager.AppSettings["DataCopyExecTimeout"]);
 		public static int CentralRepositoryConnectTimeOut = 60;
 		public static int RemoteInstanceConnectTimeOut = 60;
 
 		public static string UserKey = ConfigurationManager.AppSettings["UserKey"];
 
 		//application config
-		public static bool snapshotHeaderFullLoad = bool.Parse(ConfigurationManager.AppSettings["SnapshotHeaderFullLoad"]);
-		public static bool LoggerTablesFullLoad = bool.Parse(ConfigurationManager.AppSettings["LoggerTablesFullLoad"]);
-		public static bool respectDateLastSeen = bool.Parse(ConfigurationManager.AppSettings["RespectDateLastSeen"]);
+		public static bool fullLoad = bool.Parse(ConfigurationManager.AppSettings["FullLoad"]);
 
-		
+		public static int BulkCopyTimeout = int.Parse(ConfigurationManager.AppSettings["SqlBulkCopy.BulkCopyTimeout"]);
+		public static bool SqlBkEnableStreaming = bool.Parse(ConfigurationManager.AppSettings["SqlBulkCopy.EnableStreaming"]);
+		public static int SqlBkBatchSize = int.Parse(ConfigurationManager.AppSettings["SqlBulkCopy.BatchSize"]);
 
-		public static bool StreamData = bool.Parse(ConfigurationManager.AppSettings["StreamData"]);
+		public static bool dumpOnError = bool.Parse(ConfigurationManager.AppSettings["DumpDataOnError"]);
 
 		//public static string loggingLevel = ConfigurationManager.AppSettings["LoggingLevel"];
 		public static int maxLogSizeMB = int.Parse(ConfigurationManager.AppSettings["MaxLogSizeMB"]);

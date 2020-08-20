@@ -7,7 +7,7 @@
 	snapshot_time datetime2(0),
 	snapshot_type_id tinyint default(26),
 	constraint pk_sqlwatch_logger_system_configuration primary key clustered (
-		sqlwatch_configuration_id, snapshot_time, snapshot_type_id
+		sql_instance, sqlwatch_configuration_id, snapshot_time, snapshot_type_id
 		),
 	constraint fk_sqlwatch_logger_system_configuration_keyword foreign key (sql_instance, sqlwatch_configuration_id) 
 		references dbo.sqlwatch_meta_system_configuration (sql_instance, sqlwatch_configuration_id)on delete cascade,

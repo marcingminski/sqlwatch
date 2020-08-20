@@ -7,12 +7,40 @@
 	[local_tcp_port] varchar(50),
 	[utc_offset_minutes] int not null constraint df_sqlwatch_meta_server_offset default (DATEDIFF(mi, GETUTCDATE(), GETDATE())),
 	[sql_version] nvarchar(2048),
+	[date_updated] datetime not null constraint df_sqlwatch_meta_server_updated default (getutcdate()),
+	-- to enable compatibility with the SqlWatchImporter
+	-- this is the only table that has servername instead of sql_instance to better reflect the column origin
+	-- but it causes trouble down the line
+	[sql_instance] as [servername],
 	constraint pk_sqlwatch_meta_server primary key clustered (
 		[servername]
 		),
 	constraint fk_sqlwatch_meta_config_sql_instance foreign key ([servername])
 		references dbo.sqlwatch_config_sql_instance ([sql_instance]) on delete cascade
 )
+go
+
+create nonclustered index idx_sqlwatch_meta_server_1 on [dbo].[sqlwatch_meta_server] ([date_updated])
+go
+
+create nonclustered index idx_sqlwatch_meta_server_2 on [dbo].[sqlwatch_meta_server] ([sql_instance])
+go
+
+create trigger trg_sqlwatch_meta_server_last_updated
+	on [dbo].[sqlwatch_meta_server]
+	for insert,update
+	as
+	begin
+		set nocount on;
+		set xact_abort on;
+
+		update t
+			set date_updated = getutcdate()
+		from [dbo].[sqlwatch_meta_server] t
+		inner join inserted i
+			on i.[servername] = t.[servername]
+			and i.[servername] = @@SERVERNAME
+	end
 go
 
 -- https://github.com/marcingminski/sqlwatch/issues/153

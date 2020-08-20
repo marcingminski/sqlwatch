@@ -54,3 +54,4 @@ SQLWATCHSSIS/SQLWATCHSSIS.dtproj.user
 # format (NuGet v4 and .NET Core).
 project.lock.json
 project.assets.json
+/SqlWatch.Monitor/Project.SqlWatch.IntegrationServices/obj/Development
