@@ -20,7 +20,7 @@ using (
 		on mdb.sql_instance = @@SERVERNAME
 		and mdb.database_name = convert(nvarchar(128),db.name) collate database_default
 		and mdb.database_create_date = db.create_date
-	)as source
+	) as source
  on (
 		source.file_id = target.file_id
 	and source.[file_name] = target.[file_name] collate database_default
@@ -28,17 +28,17 @@ using (
 	and	source.sql_instance = target.sql_instance
  )
 
- when not matched by source and target.sql_instance = @@SERVERNAME then
-	update set [is_record_deleted] = 1
+--when not matched by source and target.sql_instance = @@SERVERNAME then
+--	update set [is_record_deleted] = 1
 
-when matched then
+when matched and datediff(hour,[date_last_seen],getutcdate()) >= 24 then
 	update
-		set [date_last_seen] = getutcdate(),
-			[is_record_deleted] = 0
+		set [date_last_seen] = getutcdate()
+			--[is_record_deleted] = 0
 
 when not matched by target then
-	insert ( [sqlwatch_database_id], [file_id], [file_type], [file_physical_name], [sql_instance], [file_name], [logical_disk] )
-	values ( source.[sqlwatch_database_id], source.[file_id], source.[type], source.[physical_name], source.[sql_instance], source.[file_name], source.[logical_disk] );
+	insert ( [sqlwatch_database_id], [file_id], [file_type], [file_physical_name], [sql_instance], [file_name], [logical_disk],[date_last_seen] )
+	values ( source.[sqlwatch_database_id], source.[file_id], source.[type], source.[physical_name], source.[sql_instance], source.[file_name], source.[logical_disk], getutcdate() );
 
 --when not matched by source and target.sql_instance = @@SERVERNAME then 
 --	update set deleted_when = GETUTCDATE();

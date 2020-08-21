@@ -31,7 +31,7 @@ exec master.dbo.xp_sqlagent_enum_jobs 1, @job_owner, @job_id
 if exists (select top 1 * FROM @xp_results where running = 1)
 	begin
 		--job is running, quit
-		raiserror('Job ''%s'' is already running.',16, 1, @job_name)
+		raiserror('Job ''%s'' is already running.',10, 1, @job_name)
         return
 	end
 
@@ -58,6 +58,6 @@ if (select top 1 run_status
 	end
 else
 	begin
-		raiserror('Job ''%s'' has not finished successfuly or the state is not known.',16, 1, @job_name)
+		raiserror('Job ''%s'' has not finished successfuly or the state is not known.',10, 1, @job_name)
 	end
 
