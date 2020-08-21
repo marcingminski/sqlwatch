@@ -412,20 +412,34 @@ and mtb.sql_instance = @@SERVERNAME'
 --------------------------------------------------------------------------------------
 exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -17
-	,@check_name = 'Oldest LOG backup (minutes)'
+	,@check_name = 'Latest LOG backup age (minutes)'
 	,@check_description = 'There is one or more databases that has no recent log backup. Databases that are in either FULL or BULK_LOGGED recovery must have frequent Transaction Log backups. The recovery point will be to the last Transaction Log backup and therefore these must happen often to minimise data loss.
 https://docs.microsoft.com/en-us/sql/relational-databases/backup-restore/recovery-models-sql-server'
-	,@check_query = 'select @output=isnull(max(datediff(minute,last_backup_finish_date,getdate())),999)
-from (	
-	select database_name = d.name,
-	last_backup_finish_date = max(bs.backup_finish_date)
-	from sys.sysdatabases d
-	left join msdb.dbo.backupset bs ON bs.database_name = d.name
-		and bs.type = ''L''
-	where d.name not in (''tempdb'')
-	and d.recovery_model_desc <> ''SIMPLE''
-	group by d.name
-	) t'
+	,@check_query = 'select @output=case when (
+	--if we have no databases in FULL recovery, 
+	--we have to return a success result
+	select count(*) 
+	from sys.databases (nolock)
+	where recovery_model_desc <> ''SIMPLE''
+	) = 0 
+	
+	then 0 
+	
+	else (
+	select min(isnull(last_backup_age_minutes,999))
+	from (	
+		select database_name = d.name,
+		last_backup_age_minutes = datediff(minute,max(bs.backup_finish_date),getdate())
+		from sys.databases d  (nolock)
+		left join msdb.dbo.backupset bs  (nolock) 
+			on bs.database_name = d.name
+			and bs.type = ''L''
+		where d.name not in (''tempdb'')
+		and d.recovery_model_desc <> ''SIMPLE''
+		group by d.name
+		) t
+		)
+	end'
 	,@check_frequency_minutes = 5
 	,@check_threshold_warning = '>10' --warn if log backup over 10 minutes old
 	,@check_threshold_critical = '>60' --critical if log backup over 1 hour old
@@ -441,12 +455,12 @@ from (
 --------------------------------------------------------------------------------------
 exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -18
-	,@check_name = 'Oldest DATA backup (days)'
+	,@check_name = 'Latest DATA backup age (days)'
 	,@check_description = 'There is one or more databases that has no recent data backup.'
-	,@check_query = 'select @output=isnull(max(datediff(day,last_backup_finish_date,getdate())),999)
+	,@check_query = 'select @output=isnull(max(last_backup_age),999)
 from (	
 	select database_name = d.name,
-	last_backup_finish_date = max(bs.backup_finish_date)
+	last_backup_age = datediff(day,max(bs.backup_finish_date),getdate())
 	from sys.sysdatabases d
 	left join msdb.dbo.backupset bs ON bs.database_name = d.name
 		and bs.type <> ''L''
