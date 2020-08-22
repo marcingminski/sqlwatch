@@ -60,6 +60,10 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 				and x.activity_sequence = right(tx.[activity_id],charindex('-',reverse(tx.[activity_id]))-1)
 			where x.activity_id is null
 			and tx.event_name = 'wait_info'
+			and wait_type not in (
+				select wait_type 
+				from dbo.sqlwatch_config_exclude_wait_stats
+				)
 			--option (maxdop 1);
 
 		commit tran
