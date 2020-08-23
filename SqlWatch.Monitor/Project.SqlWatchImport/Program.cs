@@ -144,7 +144,7 @@ namespace SqlWatchImport
 									else
                                     {
 										Logger.LogError($"Version mismatch. The central repository and the remote instance must have the same version of SQLWATCH installed. " +
-											$"The Central Repository is {VersionRepository} and the remote instane is {VersionRemote} ");
+											$"The Central Repository is {VersionRepository} and the remote instance \"{RemoteInstance.SqlInstance}\" is {VersionRemote} ");
                                     }
 									
 								}
