@@ -123,6 +123,7 @@ namespace SqlWatchImport
 
 						Parallel.ForEach(RemoteInstances, RemoteInstance =>
 						{
+
 							Task RemoteImportTask = Task.Run(async () =>
 							{
 								using (SqlWatchInstance SqlWatchRemote = new SqlWatchInstance())
@@ -151,13 +152,18 @@ namespace SqlWatchImport
 							});
 							RemoteImportTasks.Add(RemoteImportTask);
 						});
+
+						//Task.WaitAll(RemoteImportTasks.ToArray());
 						Task results = Task.WhenAll(RemoteImportTasks.ToArray());
 
 						try
 						{
 							results.Wait();
 						}
-						catch { }
+						catch (Exception e)
+						{
+							Logger.LogError(e.ToString());
+						}
 					}
 				}
 
