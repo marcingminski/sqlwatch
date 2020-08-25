@@ -51,7 +51,7 @@ namespace SqlWatchImport
 
 			var version = Assembly.GetExecutingAssembly().GetName().Version;
 			var buildDate = new DateTime(2000, 1, 1).AddDays(version.Build).AddSeconds(version.Revision * 2);
-			var displayableVersion = $"{version} ({buildDate})";
+			var displayableVersion = $"{version} ({buildDate:yyyy-MM-dd HH:mm:ss})";
 
 			#endregion
 
