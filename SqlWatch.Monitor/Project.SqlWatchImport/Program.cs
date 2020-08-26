@@ -51,7 +51,7 @@ namespace SqlWatchImport
 
 			var version = Assembly.GetExecutingAssembly().GetName().Version;
 			var buildDate = new DateTime(2000, 1, 1).AddDays(version.Build).AddSeconds(version.Revision * 2);
-			var displayableVersion = $"{version} ({buildDate})";
+			var displayableVersion = $"{version} ({buildDate:yyyy-MM-dd HH:mm:ss})";
 
 			#endregion
 
@@ -123,6 +123,7 @@ namespace SqlWatchImport
 
 						Parallel.ForEach(RemoteInstances, RemoteInstance =>
 						{
+
 							Task RemoteImportTask = Task.Run(async () =>
 							{
 								using (SqlWatchInstance SqlWatchRemote = new SqlWatchInstance())
@@ -144,20 +145,25 @@ namespace SqlWatchImport
 									else
                                     {
 										Logger.LogError($"Version mismatch. The central repository and the remote instance must have the same version of SQLWATCH installed. " +
-											$"The Central Repository is {VersionRepository} and the remote instane is {VersionRemote} ");
+											$"The Central Repository is {VersionRepository} and the remote instance \"{RemoteInstance.SqlInstance}\" is {VersionRemote} ");
                                     }
 									
 								}
 							});
 							RemoteImportTasks.Add(RemoteImportTask);
 						});
+
+						//Task.WaitAll(RemoteImportTasks.ToArray());
 						Task results = Task.WhenAll(RemoteImportTasks.ToArray());
 
 						try
 						{
 							results.Wait();
 						}
-						catch { }
+						catch (Exception e)
+						{
+							Logger.LogError(e.ToString());
+						}
 					}
 				}
 

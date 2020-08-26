@@ -21,13 +21,13 @@ using (
 	select [snapshot_type_id] = 3, [snapshot_type_desc] = 'Missing indexes', [snapshot_retention_days] = 32
 	union 
 	/* XES Waits */
-	select [snapshot_type_id] = 6, [snapshot_type_desc] = 'XES Waits', [snapshot_retention_days] = 8
+	select [snapshot_type_id] = 6, [snapshot_type_desc] = 'XES Waits', [snapshot_retention_days] = 32
 	union
 	/* XES SQLWATCH Long queries */
 	select [snapshot_type_id] = 7, [snapshot_type_desc] = 'XES Long Queries', [snapshot_retention_days] = 8
 	union
-	/* XES SQLWATCH Waits */
-	select [snapshot_type_id] = 8, [snapshot_type_desc] = 'XES Waits', [snapshot_retention_days] = 32  --is this used
+	/* Query data for XES Waits. Its own snapshot so we can have separate retention */
+	select [snapshot_type_id] = 8, [snapshot_type_desc] = 'XES Wait Queries (NOT USED)', [snapshot_retention_days] = 8
 	union
 	/* XES SQLWATCH Blockers */
 	select [snapshot_type_id] = 9, [snapshot_type_desc] = 'XES Blockers', [snapshot_retention_days] = 32

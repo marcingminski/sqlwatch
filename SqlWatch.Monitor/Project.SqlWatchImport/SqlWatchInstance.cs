@@ -282,12 +282,12 @@ namespace SqlWatchImport
 
 			string SqlInstance = this.SqlInstance;
 
+			Logger.LogMessage($"Importing: \"{ SqlInstance }\"");
+
 			if (await IsOnline() == false)
             {
 				return false;
             }
-
-			Logger.LogMessage($"Importing: \"{ SqlInstance }\"");
 
 			await Task.Run(() =>
 			{

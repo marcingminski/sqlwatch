@@ -16,7 +16,7 @@ from [dbo].[sqlwatch_logger_perf_os_wait_stats] d
 		and h.snapshot_type_id = d.snapshot_type_id
 		and h.sql_instance = d.sql_instance
 	
-	inner join dbo.vw_sqlwatch_meta_wait_stats_category m
+	left join dbo.vw_sqlwatch_meta_wait_stats_category m
 		on m.sql_instance = d.sql_instance
 		and m.wait_type_id = d.wait_type_id
 	

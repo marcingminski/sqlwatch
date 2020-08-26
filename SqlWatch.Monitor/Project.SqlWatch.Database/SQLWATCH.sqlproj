@@ -183,7 +183,7 @@
     <Build Include="dbo\Views\vw_sqlwatch_report_dim_os_volume.sql" />
     <Build Include="dbo\Views\vw_sqlwatch_report_dim_index_missing.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_config_enable_compression_sqlwatch_indexes.sql" />
-    <Build Include="dbo\Tables\sqlwatch_meta_sql_text.sql" />
+    <Build Include="dbo\Tables\sqlwatch_meta_sql_query.sql" />
     <Build Include="dbo\Views\vw_sqlwatch_report_fact_xes_waits_stats.sql" />
     <Build Include="dbo\Tables\sqlwatch_config_wait_stats.sql" />
     <Build Include="dbo\Tables\sqlwatch_stage_perf_os_wait_stats.sql" />
@@ -305,6 +305,10 @@
     <None Include="Scripts\Tools\SSIS Helpers\SSIS_generate_import_tables.sql" />
     <None Include="Scripts\Tools\SSIS Helpers\SSIS_generate_statements.sql" />
     <None Include="Scripts\Tools\SSIS Helpers\SSIS_generate_snapshot_time_variables.sql" />
+    <Build Include="dbo\Tables\sqlwatch_logger_xes_wait_event.sql" />
+    <Build Include="dbo\Tables\sqlwatch_logger_xes_wait_stat_event_query.sql" />
+    <Build Include="dbo\Tables\sqlwatch_meta_sql_statement.sql" />
+    <Build Include="dbo\Functions\ufn_sqlwatch_parse_client_app_name.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
@@ -339,6 +343,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="SQLWATCH.publish.xml" />
+    <None Include="Scripts\Pre-Deployment\DropXES.sql" />
   </ItemGroup>
   <Target Name="SetDacVersionToAssemblyVersion" AfterTargets="CoreCompile">
     <GetAssemblyIdentity AssemblyFiles="$(IntermediateTargetFullFileName)">
