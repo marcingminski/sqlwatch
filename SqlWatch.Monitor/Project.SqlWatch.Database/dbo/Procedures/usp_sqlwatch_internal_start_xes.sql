@@ -1,5 +1,5 @@
 ﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_internal_start_xes]
-	@force_start bit = 0
+	@force_start bit = 1
 AS
 
 
