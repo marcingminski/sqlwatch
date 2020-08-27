@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_logger_performance] AS
+CREATE PROCEDURE [dbo].[usp_sqlwatch_logger_performance] AS
 
 /*
 -------------------------------------------------------------------------------------------------------------------
