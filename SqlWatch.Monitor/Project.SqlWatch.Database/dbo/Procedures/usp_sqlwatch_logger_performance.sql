@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_logger_performance] AS
+CREATE PROCEDURE [dbo].[usp_sqlwatch_logger_performance] AS
 
 /*
 -------------------------------------------------------------------------------------------------------------------
@@ -138,7 +138,7 @@ declare @sql nvarchar(4000)
 				[object_name] = 'win32_perfformatteddata_perfos_processor'
 			,[counter_name] = 'Processor Time %'
 			,[instance_name] = 'sql'
-			,[cntr_value] = 1
+			,[cntr_value] = @percent_processor_time
 			,[cntr_type] = 65792
 			,[base_counter_name] = null
 		union all
@@ -146,7 +146,7 @@ declare @sql nvarchar(4000)
 				[object_name] = 'win32_perfformatteddata_perfos_processor'
 			,[counter_name] = 'Idle Time %'
 			,[instance_name] = '_total'
-			,[cntr_value] = 1
+			,[cntr_value] = @percent_idle_time
 			,[cntr_type] = 65792
 			,[base_counter_name] = null
 		union all
@@ -154,7 +154,7 @@ declare @sql nvarchar(4000)
 				[object_name] = 'win32_perfformatteddata_perfos_processor'
 			,[counter_name] = 'Processor Time %'
 			,[instance_name] = 'system'
-			,[cntr_value] = (100-1-1)
+			,[cntr_value] = (100-@percent_idle_time-@percent_processor_time)
 			,[cntr_type] = 65792
 			,[base_counter_name] = null
 		option (maxdop 1)
