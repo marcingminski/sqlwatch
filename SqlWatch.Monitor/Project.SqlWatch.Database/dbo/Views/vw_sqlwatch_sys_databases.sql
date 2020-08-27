@@ -2,7 +2,7 @@
 as
 
 select 
-	  sql_instance = @@SERVERNAME
+	  sql_instance = dbo.ufn_sqlwatch_get_servername()
 	, [d].[name]
 	, [d].[database_id]
 	, [d].[create_date]
