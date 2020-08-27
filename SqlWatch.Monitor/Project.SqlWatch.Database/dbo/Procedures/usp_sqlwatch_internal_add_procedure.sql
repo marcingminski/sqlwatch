@@ -19,14 +19,14 @@ begin
 		inner join dbo.vw_sqlwatch_sys_databases d
 			on d.database_id = ps.database_id
 		inner join dbo.sqlwatch_meta_database sd
-			on sd.database_name = d.name
+			on sd.database_name = d.name collate database_default
 			and sd.database_create_date = d.create_date
 		where ps.type = 'P'
 
 	) as source
 	on target.sql_instance = source.sql_instance
 	and target.sqlwatch_database_id = source.sqlwatch_database_id
-	and target.[procedure_name] = source.[procedure_name]
+	and target.[procedure_name] = source.[procedure_name] collate database_default
 
 	when matched and datediff(hour,[date_last_seen],getutcdate()) > 24 then
 		update set [date_last_seen] = getutcdate()

@@ -27,7 +27,7 @@ begin
 		, cached_time
 	into #t
 	from [dbo].[sqlwatch_logger_perf_procedure_stats]
-	where sql_instance = [dbo].[ufn_sqlwatch_get_servername]()
+	where sql_instance = [dbo].[ufn_sqlwatch_get_servername]() 
 	and snapshot_type_id = @snapshot_type_id
 	and snapshot_time = @date_snapshot_previous;
 	
@@ -123,7 +123,7 @@ begin
 		on d.database_id = ps.database_id
 	
 	inner join dbo.sqlwatch_meta_database sd
-		on sd.database_name = d.name
+		on sd.database_name = d.name collate database_default
 		and sd.database_create_date = d.create_date
 		and sd.sql_instance = d.sql_instance
 
