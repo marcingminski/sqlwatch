@@ -23,5 +23,8 @@
 		without also importing config tables. RI is handled via trigger in [dbo].[sqlwatch_config_action] */
 	--constraint fk_sqlwatch_logger_check_action_action foreign key ([sql_instance], [action_id])	
 	--	references [dbo].[sqlwatch_config_check_action] ([check_id], [action_id]) on delete cascade
+
+	constraint fk_sqlwatch_logger_check_action_header foreign key ( [snapshot_time], [sql_instance], [snapshot_type_id] )
+		references [dbo].[sqlwatch_logger_snapshot_header] ( [snapshot_time], [sql_instance], [snapshot_type_id] ) on delete cascade,
 )	
 go

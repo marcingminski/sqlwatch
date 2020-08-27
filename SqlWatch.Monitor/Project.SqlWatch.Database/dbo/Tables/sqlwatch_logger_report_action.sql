@@ -14,4 +14,7 @@
 
 	--constraint fk_sqlwatch_logger_report_action_report foreign key ([report_id])
 	--	references [dbo].[sqlwatch_config_report] ([report_id]) on delete cascade
+
+	constraint fk_sqlwatch_logger_report_action_header foreign key ( [snapshot_time], [sql_instance], [snapshot_type_id] )
+		references [dbo].[sqlwatch_logger_snapshot_header] ( [snapshot_time], [sql_instance], [snapshot_type_id] ) on delete cascade,
 )
