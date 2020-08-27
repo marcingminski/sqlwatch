@@ -12,7 +12,11 @@ begin
 			@sql_instance varchar(32),
 			@lockresult int
 
-	/*	We have to make sure we only access the header table in a single thread in order to "allocate" snapshot times.
+	/*	AS OF 2020-08-27 this needs revisiting. I cannot think of a scenario where multiple threads can insert the same snapshot_time, per primary key.
+												Each collector handles its own snapshot_type_id so no two collectors will every try to access the same snapshot_type_id.
+												Repository import does a BULK INSERT...I actually wonder if this was some hack to address some other issue.
+	
+		We have to make sure we only access the header table in a single thread in order to "allocate" snapshot times.
 		They are datetime2(0) which means accureate to 1 second. If we have multithreaded procesing (repository) we may
 		be having many threads trying to insert the same @snapshot_time.
 		The database is in RCSI which makes blocking difficult but in this case we actually want blocking and queueing.  */
