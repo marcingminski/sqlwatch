@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[sqlwatch_config_check]
 (
-	[check_id] smallint identity (1,1) not null,
-	[check_name] nvarchar(50) not null,
+	[check_id] bigint identity (1,1) not null,
+	[check_name] nvarchar(255) not null,
 	[check_description] nvarchar(2048) null,
 	[check_query] nvarchar(max) not null, --the sql query to execute to check for value, the return should be a one row one value which will be compared against thresholds. 
 	[check_frequency_minutes] smallint null, --how often to run this check, by default the ALERT agent job runs every 2 minutes but we may not want to run all checks every 2 minutes.
@@ -11,6 +11,8 @@
 	[date_created] datetime not null constraint df_sqlwatch_config_check_date_created default (getdate()),
 	[date_updated] datetime null,
 	[ignore_flapping] bit not null constraint df_sqlwatch_config_check_flapping default (0),
+	[check_template_id] smallint,
+	[user_modified] bit,
 
 	/* primary key */
 	constraint pk_sqlwatch_config_check primary key clustered ([check_id])
@@ -20,13 +22,13 @@ go
 /*	do not use negative IDs for user checks as they may be overwritten with the next release.
 	with that being said, if user updates default check we populate updated date and never
 	touch it again */
-create trigger dbo.trg_sqlwatch_config_check_id_I
+create trigger dbo.trg_sqlwatch_config_check_negative_id
 	on [dbo].[sqlwatch_config_check]
-	for insert
+	after insert
 	as
 	begin
 		set nocount on;
-		if exists (select * from inserted where check_id < 0)
+		if (select count(*) from inserted where check_id < 0) > 0
 			begin
 				raiserror('Negative IDs are for checks shipped with SQLWATCH and may be overwritten in the future.',16,1)
 				if @@TRANCOUNT > 0
@@ -42,7 +44,7 @@ go
 	This trigger will only fire when new checks are added or modified */
 create trigger dbo.trg_sqlwatch_config_check_meta_IU
 	on [dbo].[sqlwatch_config_check]
-	for insert, update
+	after insert, update
 	as
 	begin
 		set nocount on;
@@ -74,7 +76,7 @@ go
 
 create trigger dbo.trg_sqlwatch_config_check_meta_D
 	on [dbo].[sqlwatch_config_check]
-	for delete
+	after delete
 	as
 	begin
 		set nocount on;
@@ -88,7 +90,7 @@ go
 
 create trigger dbo.trg_sqlwatch_config_check_U
 	on [dbo].[sqlwatch_config_check]
-	for update
+	after update
 	as
 	begin
 		set nocount on;

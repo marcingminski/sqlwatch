@@ -101,7 +101,7 @@ insert into ##sqlwatch_jobs
 			('SQLWATCH-LOGGER-SYSCONFIG',		4,			1,				1,					1,						0,						1,							20180101,			99991231,			0,					235959,				1)
 
 			--('SQLWATCH-USER-REPORTS',			4,		1,			1,				0,				0,					1,					20180101,	99991231, 80000,		235959,		1)
-
+			,('SQLWATCH-LOGGER-PROCS',			4,			1,				4,					10,						0,						0,							20180101,			99991231,			30,					235959,				1)
 
 /* step definition */
 
@@ -212,10 +212,14 @@ Get-WMIObject Win32_Volume | ?{$_.DriveType -eq 3 -And $_.Name -notlike "\\?\Vol
 			('dbo.usp_sqlwatch_internal_add_performance_counter',	5,	'SQLWATCH-INTERNAL-CONFIG','TSQL', 'exec dbo.usp_sqlwatch_internal_add_performance_counter'),
 			('dbo.usp_sqlwatch_internal_add_memory_clerk',			6,	'SQLWATCH-INTERNAL-CONFIG','TSQL', 'exec dbo.usp_sqlwatch_internal_add_memory_clerk'),
 			('dbo.usp_sqlwatch_internal_add_wait_type',				7,	'SQLWATCH-INTERNAL-CONFIG','TSQL', 'exec dbo.usp_sqlwatch_internal_add_wait_type'),
+			('dbo.usp_sqlwatch_internal_expand_checks',				8,	'SQLWATCH-INTERNAL-CONFIG','TSQL', 'exec dbo.usp_sqlwatch_internal_expand_checks'),
+
+			
 			
 			('dbo.usp_sqlwatch_internal_add_system_configuration',	1,	'SQLWATCH-LOGGER-SYSCONFIG','TSQL', 'exec dbo.usp_sqlwatch_internal_add_system_configuration'),
 			('dbo.usp_sqlwatch_logger_system_configuration',	    2,	'SQLWATCH-LOGGER-SYSCONFIG','TSQL', 'exec dbo.usp_sqlwatch_logger_system_configuration')
 
+			,('dbo.usp_sqlwatch_logger_procedure_stats',		1,		'SQLWATCH-LOGGER-PROCS',		'TSQL', 'exec dbo.usp_sqlwatch_logger_procedure_stats')
 
 	exec [dbo].[usp_sqlwatch_internal_create_agent_job]
 		@print_WTS_command = @print_WTS_command, @job_owner = @job_owner

@@ -9,37 +9,400 @@ Post-Deployment Script Template
                SELECT * FROM [$(TableName)]					
 --------------------------------------------------------------------------------------
 */
-disable trigger dbo.trg_sqlwatch_config_check_U on [dbo].[sqlwatch_config_check];
-disable trigger dbo.trg_sqlwatch_config_check_action_updated_date_U on [dbo].[sqlwatch_config_check_action];
-disable trigger dbo.trg_sqlwatch_config_check_id_I on [dbo].[sqlwatch_config_check];
+
+/* Add check templates first */
+declare @check_template table (
+
+	[check_name] [nvarchar](255) NOT NULL,
+	[check_description] [nvarchar](2048) NULL,
+	[check_query] [nvarchar](max) NOT NULL,
+	[check_frequency_minutes] [smallint] NULL,
+	[check_threshold_warning] [varchar](100) NULL,
+	[check_threshold_critical] [varchar](100) NOT NULL,
+	[check_enabled] [bit] NOT NULL,
+	[ignore_flapping] [bit] NOT NULL,
+	[expand_by] [varchar](50) NULL
+)
+
+insert into @check_template
+	values 
+	
+	--Database {DATABASE} has AUTO_CLOSE Enabled
+	(
+		--[check_name]
+		'Database {DATABASE} AUTO_CLOSE'
+	
+		--[check_description]
+		,'When AUTO_CLOSE is set ON, this option can cause performance degradation on frequently accessed databases because of the increased overhead of opening and closing the database after each connection. AUTO_CLOSE also flushes the procedure cache after each connection.
+	https://docs.microsoft.com/en-us/sql/relational-databases/policy-based-management/set-the-auto-close-database-option-to-off
+	You can use the below query to see databases with AUTO_CLOSE:
+	<code>select * 
+	from sys.databases
+	where is_auto_close_on = 1</code>'
+
+		--[check_query]
+		,'select @output = is_auto_close_on
+	from [dbo].[sqlwatch_meta_database]
+	where database_name = ''{DATABASE}''
+	and sql_instance = @@SERVERNAME'
+	
+		, 1440 --[check_frequency_minutes]
+		, null --[check_threshold_warning]
+		,'>0' --[check_threshold_critical]
+		,1 --[check_enabled]
+		,1 --[ignore_flapping]
+		,'Database' --[expand_by]
+		),
+
+	--Database page_verify not CHECKSUM
+	(
+		--[check_name]
+		'Database {DATABASE} PAGE_VERIFY'
+	
+		--[check_description]
+		,'When CHECKSUM is enabled for the PAGE_VERIFY database option, the SQL Server Database Engine calculates a checksum over the contents of the whole page, and stores the value in the page header when a page is written to disk. When the page is read from disk, the checksum is recomputed and compared to the checksum value that is stored in the page header. This helps provide a high level of data-file integrity.
+https://docs.microsoft.com/en-us/sql/relational-databases/policy-based-management/set-the-page-verify-database-option-to-checksum
+<code>page_verify options:
+0 = NONE
+1 = TORN_PAGE_DETECTION
+2 = CHECKSUM
+</code>'
+
+		--[check_query]
+		,'select @output = page_verify_option
+from [dbo].[sqlwatch_meta_database] 
+where database_name = ''{DATABASE}''
+and sql_instance = @@SERVERNAME'
+	
+		, 1440 --[check_frequency_minutes]
+		, null --[check_threshold_warning]
+		,'<>2' --[check_threshold_critical]
+		,1 --[check_enabled]
+		,1 --[ignore_flapping]
+		,'Database' --[expand_by]
+		),
+
+
+	--Databases with Auto Shrink Enabled
+	(
+		--[check_name]
+		'Database {DATABASE} AUTO_SHRINK'
+	
+		--[check_description]
+		,'When you enable this option for a database, this database becomes eligible for shrinking by a background task. This background task evaluates all databases which satisfy the criteria for Shrinking and shrink the data or log files. You have to carefully evaluate setting this option for the databases in a SQL Server instance. Frequent grow and shrink operations can lead to various performance problems and physical fragmentation.
+1. If multiple databases undergo frequent shrink and grow operations, then this will easily lead to file system level fragmentation.
+2. After AUTO_SHRINK successfully shrinks the data or log file, a subsequent DML or DDL operation can slow down significantly if space is required and the files need to grow.
+3. The AUTO_SHRINK background task can take up resources when there are a lot of databases that need shrinking.</p>
+4. The AUTO_SHRINK background task will need to acquire locks and other synchronization which can conflict with other regular application activity.
+
+https://docs.microsoft.com/en-us/sql/relational-databases/policy-based-management/set-the-auto-shrink-database-option-to-off
+https://support.microsoft.com/en-us/help/2160663/recommendations-and-guidelines-for-setting-the-auto-shrink-database-op
+
+You can use the below query to see databases with AUTO_SHRINK:
+<code>select * 
+from sys.databases
+where is_auto_shrink_on = 1</code>'
+
+		--[check_query]
+		,'select @output = is_auto_shrink_on
+from [dbo].[sqlwatch_meta_database] 
+where sql_instance = @@SERVERNAME
+and database_name = ''{DATABASE}'''
+	
+		, 1440 --[check_frequency_minutes]
+		, null --[check_threshold_warning]
+		,'>0' --[check_threshold_critical]
+		,1 --[check_enabled]
+		,1 --[ignore_flapping]
+		,'Database' --[expand_by]
+		),
+
+	--Databases not ONLINE
+	(
+		--[check_name]
+		'Database {DATABASE} STATE'
+	
+		--[check_description]
+		,'Database State options:
+<code>
+0 = ONLINE
+1 = RESTORING
+2 = RECOVERING 1
+3 = RECOVERY_PENDING 1
+4 = SUSPECT
+5 = EMERGENCY 1
+6 = OFFLINE 1
+7 = COPYING 2
+10 = OFFLINE_SECONDARY 2
+</code>'
+
+		--[check_query]
+		,'select @output = state
+from [dbo].[sqlwatch_meta_database]
+where sql_instance = @@SERVERNAME
+and database_name = ''{DATABASE}'''
+	
+		, 60 --[check_frequency_minutes]
+		, null --[check_threshold_warning]
+		,'>0' --[check_threshold_critical]
+		,1 --[check_enabled]
+		,1 --[ignore_flapping]
+		,'Database' --[expand_by]
+		),
+
+
+	--Databases not MULTI_USER
+	(
+		--[check_name]
+		'Database {DATABASE} USER ACCESS'
+	
+		--[check_description]
+		,'Database that is not in MULTI_USER mode, may not be accessible to multiple concurrent users or access is restricted.
+user_access setting:
+<code>
+0 = MULTI_USER
+1 = SINGLE_USER
+2 = RESTRICTED_USER
+</code>'
+
+		--[check_query]
+		,'select @output = user_access
+from [dbo].[sqlwatch_meta_database]
+where sql_instance = @@SERVERNAME
+and database_name = ''{DATABASE}'''
+	
+		, 60 --[check_frequency_minutes]
+		, null --[check_threshold_warning]
+		,'>0' --[check_threshold_critical]
+		,1 --[check_enabled]
+		,1 --[ignore_flapping]
+		,'Database' --[expand_by]
+		),
+
+	--Failed Agent Jobs
+	(
+		--[check_name]
+		'Job {JOB} failure count'
+	
+		--[check_description]
+		,'The number of times tha job {JOB} has failed since the last check.
+Becuase we are checking for failure every few minutes, a frequent jobs may fail multiple times.
+It would not be enough to just check the last outcome, we have to check the history.'
+
+		--[check_query]
+		,'select @output = count(*)
+from msdb.dbo.sysjobhistory sh
+inner join msdb.dbo.sysjobs sj
+	on sj.job_id = sh.job_id
+where DATEADD(second, DATEDIFF(second, GETDATE(), GETUTCDATE()), msdb.dbo.agent_datetime(sh.run_date, sh.run_time)) >= dateadd(second,-1,''{LAST_CHECK_DATE}'') 
+and sh.run_status = 0
+and sh.step_id <> 0
+and sj.name = ''{JOB}''
+'
+	
+		, 10 --[check_frequency_minutes]
+		, null --[check_threshold_warning]
+		,'>0' --[check_threshold_critical]
+		,1 --[check_enabled]
+		,1 --[ignore_flapping]
+		,'Job' --[expand_by]
+		),
+
+	--Disk Free %
+	(
+		--[check_name]
+		'Disk {DISK} free space %'
+	
+		--[check_description]
+		,'The "Free Space %" value is lower than expected. 
+This does not mean that the disk will be full soon as it may not grow much. Please check the "days until full" value or the actual growth'
+
+		--[check_query]
+		,'select @output=free_space_percentage
+from dbo.vw_sqlwatch_report_dim_os_volume
+where sql_instance = @@SERVERNAME
+and volume_name = ''{DISK}''
+and free_space_percentage is not null
+'
+
+		, 360 --[check_frequency_minutes]
+		,'<0.1' --[check_threshold_warning]
+		,'<0.05' --[check_threshold_critical]
+		,1 --[check_enabled]
+		,1 --[ignore_flapping]
+		,'Disk' --[expand_by]
+		),
+
+	
+	--Days left until disk full
+	(
+		--[check_name]
+		'Disk {DISK} days left until full'
+	
+		--[check_description]
+		,'TThe "days until full" value is lower than expected. One or more disks will be full in few days.'
+
+		--[check_query]
+		,'select @output=days_until_full
+from dbo.vw_sqlwatch_report_dim_os_volume
+where sql_instance = @@SERVERNAME
+and days_until_full is not null
+and volume_name = ''{DISK}''
+'
+
+		, 1440 --[check_frequency_minutes]
+		,'<7' --[check_threshold_warning]
+		,'<3' --[check_threshold_critical]
+		,1 --[check_enabled]
+		,1 --[ignore_flapping]
+		,'Disk' --[expand_by]
+		),
+
+	--Latest LOG backup age (minutes)
+	(
+		--[check_name]
+		'Database {Database} Log Backup Age'
+	
+		--[check_description]
+		,'The latest log backup is older than expected. 
+Databases that are in either FULL or BULK_LOGGED recovery must have frequent Transaction Log backups. The recovery point will be to the last Transaction Log backup and therefore these must happen often to minimise data loss.
+https://docs.microsoft.com/en-us/sql/relational-databases/backup-restore/recovery-models-sql-server'
+
+		--[check_query]
+		,'select @output=isnull(min(case when db.recovery_model_desc = ''SIMPLE'' then 0 else datediff(minute,bs.backup_finish_date,getdate()) end),9999)
+from sys.databases db
+left join msdb.dbo.backupset bs
+		on db.name = bs.database_name
+		and bs.type = ''L''
+where db.name = ''{DATABASE}''
+'
+
+		, 10 --[check_frequency_minutes]
+		,'>10' --[check_threshold_warning]
+		,'>60' --[check_threshold_critical]
+		,1 --[check_enabled]
+		,1 --[ignore_flapping]
+		,'Database' --[expand_by]
+		),
+
+
+	--Latest DATA backup age (days)
+	(
+		--[check_name]
+		'Database {Database} Data Backup Age'
+	
+		--[check_description]
+		,'The Database has no recent backup. The last backup was more than 1 day ago.'
+
+		--[check_query]
+		,'select @output=isnull(min(case when db.name = ''tempdb'' then 0 else datediff(day,bs.backup_finish_date,getdate()) end),9999)
+		from sys.databases db
+		left join msdb.dbo.backupset bs
+				on db.name = bs.database_name
+				and bs.type <> ''L''
+		where db.name = ''{DATABASE}''
+'
+
+		, 720 --[check_frequency_minutes]
+		,'>1' --[check_threshold_warning]
+		,'>7' --[check_threshold_critical]
+		,1 --[check_enabled]
+		,1 --[ignore_flapping]
+		,'Database' --[expand_by]
+		)
+
+
+--	--Databases with no DATA backup
+--	(
+--		--[check_name]
+--		'Database {Database} Data Backup'
+	
+--		--[check_description]
+--		,'The Database has no backup.'
+
+--		--[check_query]
+--		,'select @output = count(*)
+--			from sys.databases d
+--			inner join msdb.dbo.backupset bs
+--				on bs.database_name = d.name
+--				and bs.type <> ''L''
+--			where d.name not in (''tempdb'')
+--			and d.state_desc <> ''RESTORING''
+--			and d.name = ''{DATABASE}''
+--'
+
+--		, 720 --[check_frequency_minutes]
+--		,null --[check_threshold_warning]
+--		,'=0' --[check_threshold_critical]
+--		,1 --[check_enabled]
+--		,1 --[ignore_flapping]
+--		,'Database' --[expand_by]
+--		),
+
+
+
+	--Databases with no LOG backup
+--	(
+--		--[check_name]
+--		'Database {Database} Log Backup'
+--	
+--		--[check_description]
+--		,'The database is in FULL or BULK_LOGGED recovery model but has no Log backups. It is critical to maintain Log backups for databases in these recovery modes in order to keep the log small, othwerise it will be constantly growing. Without a valid log backup the point in time recovery will not be possible.
+--More details: https://docs.microsoft.com/en-us/sql/relational-databases/backup-restore/recovery-models-sql-server'
+--
+--		--[check_query]
+--		,'select @output = count(*)
+--			from sys.databases d
+--			inner join msdb.dbo.backupset bs
+--				on bs.database_name = d.name
+--				and bs.type = ''L''
+--			where d.name not in (''tempdb'')
+--			and d.state_desc <> ''RESTORING''
+--			and d.name = ''{DATABASE}''
+--			and d.recovery_model_desc <> ''SIMPLE''
+--'
+--
+--		, 720 --[check_frequency_minutes]
+--		,null --[check_threshold_warning]
+--		,'=0' --[check_threshold_critical]
+--		,1 --[check_enabled]
+--		,1 --[ignore_flapping]
+--		,'Database' --[expand_by]
+--		);
+		
+
+merge [dbo].[sqlwatch_config_check_template] as target
+using @check_template as source
+on target.[check_name] = source.[check_name]
+
+
+when matched and target.[user_modified] = 0 then
+	update set
+		 [check_description] = source.[check_description]
+		,[check_query] = source.[check_query]
+		,[check_frequency_minutes] = source.[check_frequency_minutes]
+		,[check_threshold_warning] = source.[check_threshold_warning]
+		,[check_threshold_critical] = source.[check_threshold_critical]
+		,[check_enabled] = source.[check_enabled]
+		,[ignore_flapping] = source.[ignore_flapping]
+		,[expand_by] = source.[expand_by]
+
+when not matched then
+	insert ([check_name],[check_description],[check_query],[check_frequency_minutes],[check_threshold_warning],[check_threshold_critical],
+	[check_enabled],[ignore_flapping],[expand_by], [user_modified], [template_enabled])
+	values (source.[check_name],source.[check_description],source.[check_query],source.[check_frequency_minutes],source.[check_threshold_warning]
+	,source.[check_threshold_critical],source.[check_enabled],source.[ignore_flapping],source.[expand_by],0, 1);
+
+
+
+
+--disable trigger dbo.trg_sqlwatch_config_check_U on [dbo].[sqlwatch_config_check];
+--disable trigger dbo.trg_sqlwatch_config_check_action_updated_date_U on [dbo].[sqlwatch_config_check_action];
+disable trigger dbo.trg_sqlwatch_config_check_negative_id on [dbo].[sqlwatch_config_check];
 set identity_insert [dbo].[sqlwatch_config_check] on;
 
-exec [dbo].[usp_sqlwatch_config_add_check]
-	 @check_id = -1
-	,@check_name = 'Failed Agent Job' 
-	,@check_description = 'One or more SQL Server Agent Jobs have failed.
-If there is a report assosiated with this check, details of the failures should be inlcuded below.'
-/*	offset by 1 second to capture own job,
-	this may cause some rare overlap but better to capture failed job twice than miss it */
-	,@check_query = 'select @output=count(*)
-from msdb.dbo.sysjobhistory 
-where DATEADD(second, DATEDIFF(second, GETDATE(), GETUTCDATE()), msdb.dbo.agent_datetime(run_date, run_time)) >= dateadd(second,-1,''{LAST_CHECK_DATE}'') 
-and run_status = 0
-and step_id <> 0'
-	,@check_frequency_minutes = NULL
-	,@check_threshold_warning = NULL
-	,@check_threshold_critical = '>0'
-	,@check_enabled = 1
-	,@check_action_id = -7
-
-	,@action_every_failure = 1
-	,@action_recovery = 0
-	,@action_repeat_period_minutes = 1
-	,@action_hourly_limit = 60
-	,@action_template_id = -2
-	,@ignore_flapping = 1
-
 --------------------------------------------------------------------------------------
+
 exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -2
 	,@check_name = 'Blocked Process'
@@ -62,12 +425,13 @@ where snapshot_time >= ''{LAST_CHECK_DATE}'''
 	,@action_template_id = -2
 
 --------------------------------------------------------------------------------------
+
 exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -3
 	,@check_name = 'CPU Utilistaion'
 	,@check_description = 'The average CPU utilistaion is high.
 https://docs.microsoft.com/en-us/previous-versions/technet-magazine/cc137784(v=msdn.10)
-It is difficult to define what good utilistaion is withoyut knowing the workload and the infrastructure. In the Cloud, where CPUs are expesinve we will aim at high utilistaion for BAU workload to save money and with the potential of spinning new instances to handle ad-hoc spikes. On-prem utilisation, where adding new nodes is not so easy we must account for spikes and therefore BAU utilisation should be low.'
+It is difficult to define what good utilistaion is without knowing the workload and the infrastructure. In the Cloud, where CPUs are expesinve we will aim at high utilistaion for BAU workload to save money and with the potential of spinning new instances to handle ad-hoc spikes. On-prem utilisation, where adding new nodes is not so easy we must account for spikes and therefore BAU utilisation should be low.'
 	,@check_query = 'select @output=avg(q.cntr_value_calculated)
 from (select pc.snapshot_time, sum(pc.cntr_value_calculated) cntr_value_calculated from  [dbo].[sqlwatch_logger_perf_os_performance_counters] pc
 inner join [dbo].[sqlwatch_meta_performance_counter] mpc
@@ -91,6 +455,7 @@ group by pc.snapshot_time ) q'
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
+
 exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -4
 	,@check_name = 'SQL Server Uptime'
@@ -109,6 +474,7 @@ exec [dbo].[usp_sqlwatch_config_add_check]
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
+
 exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -5
 	,@check_name = 'Action queue pending items'
@@ -145,49 +511,7 @@ exec [dbo].[usp_sqlwatch_config_add_check]
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_config_add_check]
-	 @check_id = -7
-	,@check_name = 'Disk Free %'
-	,@check_description = 'The "Free Space %" value is lower than expected. One or more disks have less than expected free space. This does not mean that the disk will be full soon as it may not grow much. Please check the "days until full" value or the actual growth.
-If there is a report assosiated with this check, details of the storage utilistaion should be included below.'
-	,@check_query = 'select @output=min(free_space_percentage)
-from dbo.vw_sqlwatch_report_dim_os_volume
-where sql_instance = @@SERVERNAME
-and free_space_percentage is not null'
-	,@check_frequency_minutes = 60
-	,@check_threshold_warning = '<0.1'
-	,@check_threshold_critical = '<0.05'
-	,@check_enabled = 1
-	,@check_action_id = -9
 
-	,@action_every_failure = 0
-	,@action_recovery = 0
-	,@action_repeat_period_minutes = 1440 --daily
-	,@action_hourly_limit = 10
-	,@action_template_id = -2
-
---------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_config_add_check]
-	 @check_id = -8
-	,@check_name = 'Days left until disk full'
-	,@check_description = 'The "days until full" value is lower than expected. One or more disks will be full in few days. If there is a report assosiated with this check, details of the storage utilistaion should be included below.'
-	,@check_query = 'select @output=min(days_until_full)
-from dbo.vw_sqlwatch_report_dim_os_volume
-where sql_instance = @@SERVERNAME
-and days_until_full is not null'
-	,@check_frequency_minutes = 60
-	,@check_threshold_warning = '<7'
-	,@check_threshold_critical = '<3'
-	,@check_enabled = 1
-	,@check_action_id = -9
-
-	,@action_every_failure = 0
-	,@action_recovery = 0
-	,@action_repeat_period_minutes = 1440 --daily
-	,@action_hourly_limit = 10
-	,@action_template_id = -2
-
---------------------------------------------------------------------------------------
 exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -9
 	,@check_name = 'Check execution time'
@@ -208,29 +532,8 @@ where sql_instance = @@SERVERNAME'
 	,@action_hourly_limit = 10
 	,@action_template_id = -3
 
---------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_config_add_check]
-	 @check_id = -10
-	,@check_name = 'Failed Checks'
-	,@check_description = 'There is one or more failed checks.
-You can view last_check_status in [dbo].[vw_sqlwatch_report_dim_check] and individual runs in [dbo].[sqlwatch_logger_check]'
-	,@check_query = 'select @output=count(*) 
-from [dbo].[vw_sqlwatch_report_dim_check]
-where sql_instance = @@SERVERNAME 
-and last_check_status = ''CHECK ERROR'''
-	,@check_frequency_minutes = 5
-	,@check_threshold_warning = NULL
-	,@check_threshold_critical = '>0'
-	,@check_enabled = 1
-	,@check_action_id = -1
+-------------------------------------------------------------------------------------
 
-	,@action_every_failure = 0
-	,@action_recovery = 0
-	,@action_repeat_period_minutes = 1440 --daily
-	,@action_hourly_limit = 10
-	,@action_template_id = -3
-
---------------------------------------------------------------------------------------
 exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -11
 	,@check_name = 'Queued actions not processed'
@@ -252,284 +555,59 @@ and time_queued < dateadd(hour,-1,SYSDATETIME())'
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_config_add_check]
-	 @check_id = -12
-	,@check_name = 'Databases with Auto Close Enabled'
-	,@check_description = 'There is one or more databases with Auto Close Enabled.
-https://docs.microsoft.com/en-us/sql/relational-databases/policy-based-management/set-the-auto-close-database-option-to-off
-When AUTO_CLOSE is set ON, this option can cause performance degradation on frequently accessed databases because of the increased overhead of opening and closing the database after each connection. AUTO_CLOSE also flushes the procedure cache after each connection.
 
-You can use the below query to see databases with AUTO_CLOSE:
-<code>select * 
-from sys.databases
-where is_auto_close_on = 1</code>'
-	,@check_query = 'select @output=count(*)
-from sys.databases sdb
---join on meta database to respect exclusions, othwerise we could query sys.databases directly:
-inner join [dbo].[sqlwatch_meta_database] mtb
-on sdb.name = mtb.database_name collate database_default
-and sdb.create_date = mtb.database_create_date
-where sdb.is_auto_close_on = 1
-and mtb.sql_instance = @@SERVERNAME'
-	,@check_frequency_minutes = 60
-	,@check_threshold_warning = NULL
-	,@check_threshold_critical = '>0'
-	,@check_enabled = 1
-	,@check_action_id = -1
-
-	,@action_every_failure = 0
-	,@action_recovery = 0
-	,@action_repeat_period_minutes = 1440 --daily
-	,@action_hourly_limit = 10
-	,@action_template_id = -3
+--exec [dbo].[usp_sqlwatch_config_add_check]
+--	 @check_id = -19
+--	,@check_name = 'Databases with no DATA backup'
+--	,@check_description = 'There is one or more databases that has no data backup.'
+--	,@check_query = 'select @output=count(*)
+--from sys.databases d
+--left join msdb.dbo.backupset bs
+--	on bs.database_name = d.name
+--	and bs.type <> ''L''
+--where d.name not in (''tempdb'')
+--and bs.backup_finish_date is null'
+--	,@check_frequency_minutes = 15
+--	,@check_threshold_warning = null
+--	,@check_threshold_critical = '>0'
+--	,@check_enabled = 1
+--	,@check_action_id = -13
+--
+--	,@action_every_failure = 1
+--	,@action_recovery = 0
+--	,@action_repeat_period_minutes = 1440 
+--	,@action_hourly_limit = 10
+--	,@action_template_id = -2
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_config_add_check]
-	 @check_id = -13
-	,@check_name = 'Databases with Auto Shrink Enabled'
-	,@check_description = 'There is one or more databases with Auto Shrink Enabled.
-https://docs.microsoft.com/en-us/sql/relational-databases/policy-based-management/set-the-auto-shrink-database-option-to-off
-https://support.microsoft.com/en-us/help/2160663/recommendations-and-guidelines-for-setting-the-auto-shrink-database-op
-When you enable this option for a database, this database becomes eligible for shrinking by a background task. This background task evaluates all databases which satisfy the criteria for Shrinking and shrink the data or log files. You have to carefully evaluate setting this option for the databases in a SQL Server instance. Frequent grow and shrink operations can lead to various performance problems and physical fragmentation.
-1. If multiple databases undergo frequent shrink and grow operations, then this will easily lead to file system level fragmentation.
-2. After AUTO_SHRINK successfully shrinks the data or log file, a subsequent DML or DDL operation can slow down significantly if space is required and the files need to grow.
-3. The AUTO_SHRINK background task can take up resources when there are a lot of databases that need shrinking.</p>
-4. The AUTO_SHRINK background task will need to acquire locks and other synchronization which can conflict with other regular application activity.
 
-You can use the below query to see databases with AUTO_SHRINK:
-<code>select * 
-from sys.databases
-where is_auto_shrink_on = 1</code>'
-	,@check_query = 'select @output=count(*)
-from sys.databases sdb
---join on meta database to respect exclusions, othwerise we could query sys.databases directly:
-inner join [dbo].[sqlwatch_meta_database] mtb
-on sdb.name = mtb.database_name collate database_default
-and sdb.create_date = mtb.database_create_date
-where sdb.is_auto_shrink_on = 1
-and mtb.sql_instance = @@SERVERNAME'
-	,@check_frequency_minutes = 60
-	,@check_threshold_warning = NULL
-	,@check_threshold_critical = '>0'
-	,@check_enabled = 1
-	,@check_action_id = -1
-
-	,@action_every_failure = 0
-	,@action_recovery = 0
-	,@action_repeat_period_minutes = 1440 --daily
-	,@action_hourly_limit = 10
-	,@action_template_id = -3
-
+--exec [dbo].[usp_sqlwatch_config_add_check]
+--	 @check_id = -20
+--	,@check_name = 'Databases with no LOG backup'
+--	,@check_description = 'There is one or more databases that are in FULL or BULK_LOGGED recovery model that have not Log backups. It is critical to maintain Log backups for databases in these recovery modes in order to keep the log small, othwerise it will be constantly growing. Without a valid log backup the point in time recovery will not be possible.
+--More details: https://docs.microsoft.com/en-us/sql/relational-databases/backup-restore/recovery-models-sql-server'
+--	,@check_query = 'select @output=count(*)
+--from sys.databases d
+--left join msdb.dbo.backupset bs
+--	on bs.database_name = d.name
+--	and bs.type = ''L''
+--where d.recovery_model_desc <> ''SIMPLE''
+--and d.name not in (''tempdb'')
+--and bs.backup_finish_date is null'
+--	,@check_frequency_minutes = 15
+--	,@check_threshold_warning = null 
+--	,@check_threshold_critical = '>0' 
+--	,@check_enabled = 1
+--	,@check_action_id = -14
+--
+--	,@action_every_failure = 1
+--	,@action_recovery = 0
+--	,@action_repeat_period_minutes = 1440 
+--	,@action_hourly_limit = 10
+--	,@action_template_id = -2
+--
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_config_add_check]
-	 @check_id = -14
-	,@check_name = 'Databases not ONLINE'
-	,@check_description = 'There is one or more databases with status other than ONLINE.
-You can use the below query to see databases not ONLINE:
-<code>select *
-from sys.databases
-where state <> 0</code>'
-	,@check_query = 'select @output=count(*)
-from sys.databases sdb
---join on meta database to respect exclusions, othwerise we could query sys.databases directly:
-inner join [dbo].[sqlwatch_meta_database] mtb
-on sdb.name = mtb.database_name collate database_default
-and sdb.create_date = mtb.database_create_date
-where sdb.state <> 0
-and mtb.sql_instance = @@SERVERNAME'
-	,@check_frequency_minutes = 60
-	,@check_threshold_warning = NULL
-	,@check_threshold_critical = '>0'
-	,@check_enabled = 1
-	,@check_action_id = -1
 
-	,@action_every_failure = 0
-	,@action_recovery = 0
-	,@action_repeat_period_minutes = 1440 --daily
-	,@action_hourly_limit = 10
-	,@action_template_id = -3
-
---------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_config_add_check]
-	 @check_id = -15
-	,@check_name = 'Databases not MULTI_USER'
-	,@check_description = 'There is one or more databases with user access other than MULTI_USER. This means that database may not be accessible to multiple concurrent users or access is restricted.
-You can use the below query to see databases with AUTO_SHRINK on:
-<code>select *
-from sys.databases
-where user_access <> 0</code>'
-	,@check_query = 'select @output=count(*)
-from sys.databases sdb
---join on meta database to respect exclusions, othwerise we could query sys.databases directly:
-inner join [dbo].[sqlwatch_meta_database] mtb
-on sdb.name = mtb.database_name collate database_default
-and sdb.create_date = mtb.database_create_date
-where sdb.user_access <> 0
-and mtb.sql_instance = @@SERVERNAME'
-	,@check_frequency_minutes = 60
-	,@check_threshold_warning = NULL
-	,@check_threshold_critical = '>0'
-	,@check_enabled = 1
-	,@check_action_id = -1
-
-	,@action_every_failure = 0
-	,@action_recovery = 0
-	,@action_repeat_period_minutes = 1440 --daily
-	,@action_hourly_limit = 10
-	,@action_template_id = -3
-
---------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_config_add_check]
-	 @check_id = -16
-	,@check_name = 'Database page_verify not CHECKSUM'
-	,@check_description = 'There is one or more databases with page_verify other than CHECKSUM.
-https://docs.microsoft.com/en-us/sql/relational-databases/policy-based-management/set-the-page-verify-database-option-to-checksum
-When CHECKSUM is enabled for the PAGE_VERIFY database option, the SQL Server Database Engine calculates a checksum over the contents of the whole page, and stores the value in the page header when a page is written to disk. When the page is read from disk, the checksum is recomputed and compared to the checksum value that is stored in the page header. This helps provide a high level of data-file integrity.
-You can use the below query to see databases with CHECKSUM not set:
-<code>select *
-from sys.databases
-where page_verify_option <> 2</code>'
-	,@check_query = 'select @output=count(*)
-from sys.databases sdb
---join on meta database to respect exclusions, othwerise we could query sys.databases directly:
-inner join [dbo].[sqlwatch_meta_database] mtb
-on sdb.name = mtb.database_name collate database_default
-and sdb.create_date = mtb.database_create_date
-where sdb.page_verify_option <> 2
-and mtb.sql_instance = @@SERVERNAME'
-	,@check_frequency_minutes = 60
-	,@check_threshold_warning = NULL
-	,@check_threshold_critical = '>0'
-	,@check_enabled = 1
-	,@check_action_id = -1
-
-	,@action_every_failure = 0
-	,@action_recovery = 0
-	,@action_repeat_period_minutes = 1440 --daily
-	,@action_hourly_limit = 10
-	,@action_template_id = -3
-
---------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_config_add_check]
-	 @check_id = -17
-	,@check_name = 'Latest LOG backup age (minutes)'
-	,@check_description = 'There is one or more databases that has no recent log backup. Databases that are in either FULL or BULK_LOGGED recovery must have frequent Transaction Log backups. The recovery point will be to the last Transaction Log backup and therefore these must happen often to minimise data loss.
-https://docs.microsoft.com/en-us/sql/relational-databases/backup-restore/recovery-models-sql-server'
-	,@check_query = 'select @output=case when (
-	--if we have no databases in FULL recovery, 
-	--we have to return a success result
-	select count(*) 
-	from sys.databases (nolock)
-	where recovery_model_desc <> ''SIMPLE''
-	) = 0 
-	
-	then 0 
-	
-	else (
-	select min(isnull(last_backup_age_minutes,999))
-	from (	
-		select database_name = d.name,
-		last_backup_age_minutes = datediff(minute,max(bs.backup_finish_date),getdate())
-		from sys.databases d  (nolock)
-		left join msdb.dbo.backupset bs  (nolock) 
-			on bs.database_name = d.name
-			and bs.type = ''L''
-		where d.name not in (''tempdb'')
-		and d.recovery_model_desc <> ''SIMPLE''
-		group by d.name
-		) t
-		)
-	end'
-	,@check_frequency_minutes = 5
-	,@check_threshold_warning = '>10' --warn if log backup over 10 minutes old
-	,@check_threshold_critical = '>60' --critical if log backup over 1 hour old
-	,@check_enabled = 1
-	,@check_action_id = -11
-
-	,@action_every_failure = 0
-	,@action_recovery = 0
-	,@action_repeat_period_minutes = 60 
-	,@action_hourly_limit = 10
-	,@action_template_id = -2
-
---------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_config_add_check]
-	 @check_id = -18
-	,@check_name = 'Latest DATA backup age (days)'
-	,@check_description = 'There is one or more databases that has no recent data backup.'
-	,@check_query = 'select @output=isnull(max(last_backup_age),999)
-from (	
-	select database_name = d.name,
-	last_backup_age = datediff(day,max(bs.backup_finish_date),getdate())
-	from sys.sysdatabases d
-	left join msdb.dbo.backupset bs ON bs.database_name = d.name
-		and bs.type <> ''L''
-	where d.name not in (''tempdb'')
-	group by d.Name
-	) t'
-	,@check_frequency_minutes = 15
-	,@check_threshold_warning = '>1' --warn if data backup over 1 day old
-	,@check_threshold_critical = '>7' --critical if data backup over 1 week old
-	,@check_enabled = 1
-	,@check_action_id = -12
-
-	,@action_every_failure = 1
-	,@action_recovery = 0
-	,@action_repeat_period_minutes = 1440 
-	,@action_hourly_limit = 10
-	,@action_template_id = -2
-
---------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_config_add_check]
-	 @check_id = -19
-	,@check_name = 'Databases with no DATA backup'
-	,@check_description = 'There is one or more databases that has no data backup.'
-	,@check_query = 'select @output=count(*)
-from sys.databases d
-left join msdb.dbo.backupset bs
-	on bs.database_name = d.name
-	and bs.type <> ''L''
-where d.name not in (''tempdb'')
-and bs.backup_finish_date is null'
-	,@check_frequency_minutes = 15
-	,@check_threshold_warning = null
-	,@check_threshold_critical = '>0'
-	,@check_enabled = 1
-	,@check_action_id = -13
-
-	,@action_every_failure = 1
-	,@action_recovery = 0
-	,@action_repeat_period_minutes = 1440 
-	,@action_hourly_limit = 10
-	,@action_template_id = -2
-
---------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_config_add_check]
-	 @check_id = -20
-	,@check_name = 'Databases with no LOG backup'
-	,@check_description = 'There is one or more databases that are in FULL or BULK_LOGGED recovery model that have not Log backups. It is critical to maintain Log backups for databases in these recovery modes in order to keep the log small, othwerise it will be constantly growing. Without a valid log backup the point in time recovery will not be possible.
-More details: https://docs.microsoft.com/en-us/sql/relational-databases/backup-restore/recovery-models-sql-server'
-	,@check_query = 'select @output=count(*)
-from sys.databases d
-left join msdb.dbo.backupset bs
-	on bs.database_name = d.name
-	and bs.type = ''L''
-where d.recovery_model_desc <> ''SIMPLE''
-and d.name not in (''tempdb'')
-and bs.backup_finish_date is null'
-	,@check_frequency_minutes = 15
-	,@check_threshold_warning = null 
-	,@check_threshold_critical = '>0' 
-	,@check_enabled = 1
-	,@check_action_id = -14
-
-	,@action_every_failure = 1
-	,@action_recovery = 0
-	,@action_repeat_period_minutes = 1440 
-	,@action_hourly_limit = 10
-	,@action_template_id = -2
-
---------------------------------------------------------------------------------------
 exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -21
 	,@check_name = 'Long Running Open Transactions'
@@ -555,8 +633,8 @@ left join sys.dm_exec_requests r
 	,@action_hourly_limit = 6
 	,@action_template_id = -2
 
-
 --------------------------------------------------------------------------------------
+
 exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -22
 	,@check_name = 'Full Scan Rate'
@@ -581,6 +659,7 @@ and snapshot_time > ''{LAST_CHECK_DATE}'''
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
+
 exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -23
 	,@check_name = 'SQL Compilations Rate'
@@ -605,6 +684,7 @@ and snapshot_time > ''{LAST_CHECK_DATE}'''
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
+
 exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -24
 	,@check_name = 'SQL Re-Compilations Rate'
@@ -629,6 +709,7 @@ and snapshot_time > ''{LAST_CHECK_DATE}'''
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
+
 exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -25
 	,@check_name = 'Page Split Rate'
@@ -653,6 +734,7 @@ and snapshot_time > ''{LAST_CHECK_DATE}'''
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
+
 exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -26
 	,@check_name = 'Free list stalls/sec'
@@ -679,8 +761,8 @@ and snapshot_time > ''{LAST_CHECK_DATE}'''
 	,@action_hourly_limit = 6
 	,@action_template_id = -3
 
-
 --------------------------------------------------------------------------------------
+
 exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -27
 	,@check_name = 'Lazy writes/sec'
@@ -708,6 +790,7 @@ and snapshot_time > ''{LAST_CHECK_DATE}'''
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
+
 exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -28
 	,@check_name = 'Page reads/sec'
@@ -735,6 +818,7 @@ and snapshot_time > ''{LAST_CHECK_DATE}'''
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
+
 exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -29
 	,@check_name = 'Page Lookups Rate'
@@ -759,6 +843,7 @@ and snapshot_time > ''{LAST_CHECK_DATE}'''
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
+
 exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -30
 	,@check_name = 'Page writes/sec'
@@ -786,6 +871,7 @@ and snapshot_time > ''{LAST_CHECK_DATE}'''
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
+
 exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -31
 	,@check_name = 'Average Wait Time (ms)'
@@ -813,6 +899,7 @@ and snapshot_time > ''{LAST_CHECK_DATE}'''
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
+
 exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -32
 	,@check_name = 'Lock Requests/sec'
@@ -839,8 +926,8 @@ and snapshot_time > ''{LAST_CHECK_DATE}'''
 	,@action_hourly_limit = 6
 	,@action_template_id = -3
 
-
 --------------------------------------------------------------------------------------
+
 exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -33
 	,@check_name = 'Lock Timeouts/sec'
@@ -868,6 +955,7 @@ and snapshot_time > ''{LAST_CHECK_DATE}'''
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
+
 exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -34
 	,@check_name = 'Lock Waits/sec'
@@ -895,6 +983,7 @@ and snapshot_time > ''{LAST_CHECK_DATE}'''
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
+
 exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -35
 	,@check_name = 'Readahead pages/sec'
@@ -923,6 +1012,7 @@ and snapshot_time > ''{LAST_CHECK_DATE}'''
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
+
 exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -36
 	,@check_name = 'Number of Deadlocks/sec'
@@ -950,6 +1040,7 @@ and snapshot_time > ''{LAST_CHECK_DATE}'''
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
+
 exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -37
 	,@check_name = 'Memory Grants Outstanding'
@@ -976,8 +1067,8 @@ and snapshot_time > ''{LAST_CHECK_DATE}'''
 	,@action_hourly_limit = 6
 	,@action_template_id = -3
 
-
 --------------------------------------------------------------------------------------
+
 exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -38
 	,@check_name = 'Memory Grants Pending'
@@ -1005,6 +1096,7 @@ and snapshot_time > ''{LAST_CHECK_DATE}'''
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
+
 exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -39
 	,@check_name = 'Buffer cache hit ratio'
@@ -1032,6 +1124,7 @@ and snapshot_time > ''{LAST_CHECK_DATE}'''
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
+
 exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -40
 	,@check_name = 'Page life expectancy'
@@ -1058,8 +1151,8 @@ and snapshot_time > ''{LAST_CHECK_DATE}'''
 	,@action_hourly_limit = 6
 	,@action_template_id = -3
 
-
 --------------------------------------------------------------------------------------
+
 exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -41
 	,@check_name = 'Logins/sec'
@@ -1087,6 +1180,7 @@ and snapshot_time > ''{LAST_CHECK_DATE}'''
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
+
 exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -42
 	,@check_name = 'Errors/sec'
@@ -1115,6 +1209,7 @@ and snapshot_time > ''{LAST_CHECK_DATE}'''
 	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
+
 exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -43
 	,@check_name = 'Log Growths'
@@ -1145,9 +1240,8 @@ and snapshot_time > ''{LAST_CHECK_DATE}'''
 	,@action_hourly_limit = 6
 	,@action_template_id = -3
 
-
-
 --------------------------------------------------------------------------------------
+
 exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -44
 	,@check_name = 'Snapshot age'
@@ -1170,70 +1264,70 @@ where snapshot_type_id in (1,6,7,8,9,10,18)'
 	,@action_hourly_limit = 6
 	,@action_template_id = -3
 
+--------------------------------------------------------------------------------------
+
+--exec [dbo].[usp_sqlwatch_config_add_check]
+--	 @check_id = -45
+--	,@check_name = 'Central Repository Import Errors'
+--	,@check_description = 'Applies to central repository only. Checks for any objects in the [dbo].[sqlwatch_meta_repository_import_status] table that have import status of ERROR'
+--	,@check_query = 'select @output=count(*)
+--  from [dbo].[sqlwatch_meta_repository_import_status]
+--  where import_status = ''ERROR'''
+--	,@check_frequency_minutes = 15
+--	,@check_threshold_warning = null
+--	,@check_threshold_critical = '>0' 
+--	,@check_enabled = 1
+--	,@check_action_id = -1
+--
+--	,@action_every_failure = 0
+--	,@action_recovery = 1
+--	,@action_repeat_period_minutes = null 
+--	,@action_hourly_limit = 6
+--	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_config_add_check]
-	 @check_id = -45
-	,@check_name = 'Central Repository Import Errors'
-	,@check_description = 'Applies to central repository only. Checks for any objects in the [dbo].[sqlwatch_meta_repository_import_status] table that have import status of ERROR'
-	,@check_query = 'select @output=count(*)
-  from [dbo].[sqlwatch_meta_repository_import_status]
-  where import_status = ''ERROR'''
-	,@check_frequency_minutes = 15
-	,@check_threshold_warning = null
-	,@check_threshold_critical = '>0' 
-	,@check_enabled = 1
-	,@check_action_id = -1
 
-	,@action_every_failure = 0
-	,@action_recovery = 1
-	,@action_repeat_period_minutes = null 
-	,@action_hourly_limit = 6
-	,@action_template_id = -3
-
-
---------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_config_add_check]
-	 @check_id = -46
-	,@check_name = 'Central Repository Import Age'
-	,@check_description = 'Applies to central repository only. Checks for import age of objects in the [dbo].[sqlwatch_meta_repository_import_status]'
-	,@check_query = 'select @output=isnull(max([import_age_minutes]),0)
-  from [dbo].[sqlwatch_meta_repository_import_status]'
-	,@check_frequency_minutes = 15
-	,@check_threshold_warning = '>15'
-	,@check_threshold_critical = '>60' 
-	,@check_enabled = 1
-	,@check_action_id = -1
-
-	,@action_every_failure = 0
-	,@action_recovery = 1
-	,@action_repeat_period_minutes = null 
-	,@action_hourly_limit = 6
-	,@action_template_id = -3
-
+--xec [dbo].[usp_sqlwatch_config_add_check]
+--	 @check_id = -46
+--	,@check_name = 'Central Repository Import Age'
+--	,@check_description = 'Applies to central repository only. Checks for import age of objects in the [dbo].[sqlwatch_meta_repository_import_status]'
+--	,@check_query = 'select @output=isnull(max([import_age_minutes]),0)
+-- from [dbo].[sqlwatch_meta_repository_import_status]'
+--	,@check_frequency_minutes = 15
+--	,@check_threshold_warning = '>15'
+--	,@check_threshold_critical = '>60' 
+--	,@check_enabled = 1
+--	,@check_action_id = -1
+--
+--	,@action_every_failure = 0
+--	,@action_recovery = 1
+--	,@action_repeat_period_minutes = null 
+--	,@action_hourly_limit = 6
+--	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_config_add_check]
-	 @check_id = -47
-	,@check_name = 'SQLWATCH Errors'
-	,@check_description = 'Logger Log table is a central place for SQLWATCH to log execution messages. Any errors in this table could indicate serious problems with any SQLWATCH component.'
-	,@check_query = 'select @output=count(*) from [dbo].[sqlwatch_app_log]
-where [process_message_type] = ''ERROR''
-and [event_time] > ''{LAST_CHECK_DATE}'''
-	,@check_frequency_minutes = 60
-	,@check_threshold_warning = null
-	,@check_threshold_critical = '>0' 
-	,@check_enabled = 1
-	,@check_action_id = -1
 
-	,@action_every_failure = 0
-	,@action_recovery = 0
-	,@action_repeat_period_minutes = null 
-	,@action_hourly_limit = 6
-	,@action_template_id = -3
-
+--exec [dbo].[usp_sqlwatch_config_add_check]
+--	 @check_id = -47
+--	,@check_name = 'SQLWATCH Errors'
+--	,@check_description = 'Logger Log table is a central place for SQLWATCH to log execution messages. Any errors in this table could indicate serious problems with any SQLWATCH component.'
+--	,@check_query = 'select @output=count(*) from [dbo].[sqlwatch_app_log]
+--where [process_message_type] = ''ERROR''
+--and [event_time] > ''{LAST_CHECK_DATE}'''
+--	,@check_frequency_minutes = 60
+--	,@check_threshold_warning = null
+--	,@check_threshold_critical = '>0' 
+--	,@check_enabled = 1
+--	,@check_action_id = -1
+--
+--	,@action_every_failure = 0
+--	,@action_recovery = 0
+--	,@action_repeat_period_minutes = null 
+--	,@action_hourly_limit = 6
+--	,@action_template_id = -3
 
 --------------------------------------------------------------------------------------
+
 exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -48
 	,@check_name = 'dbachecks failed'
@@ -1255,6 +1349,6 @@ where Result = ''Failed'' AND [Date] >= ''{LAST_CHECK_DATE}'''
 
 
 set identity_insert [dbo].[sqlwatch_config_check] off;
-enable trigger dbo.trg_sqlwatch_config_check_U on [dbo].[sqlwatch_config_check];
-enable trigger dbo.trg_sqlwatch_config_check_action_updated_date_U on [dbo].[sqlwatch_config_check_action];
-enable trigger dbo.trg_sqlwatch_config_check_id_I on [dbo].[sqlwatch_config_check];
+--enable trigger dbo.trg_sqlwatch_config_check_U on [dbo].[sqlwatch_config_check];
+--enable trigger dbo.trg_sqlwatch_config_check_action_updated_date_U on [dbo].[sqlwatch_config_check_action];
+enable trigger dbo.trg_sqlwatch_config_check_negative_id on [dbo].[sqlwatch_config_check];

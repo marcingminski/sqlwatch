@@ -3,8 +3,8 @@
 	[sql_instance] varchar(32) not null constraint df_sqlwatch_meta_check_sql_instance default (@@SERVERNAME),
 
 	/* repeat columns from sqlwatch_config_check so we can detach it from config and retain all the information when sending to central repo */
-	[check_id] smallint not null,
-	[check_name] nvarchar(50)  null,
+	[check_id] bigint not null,
+	[check_name] nvarchar(255)  null,
 	[check_description] nvarchar(2048) null,
 	[check_query] nvarchar(max) null, 
 	[check_frequency_minutes] smallint null, 
