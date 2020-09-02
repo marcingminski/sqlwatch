@@ -2548,4 +2548,53 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[ufn_sqlwatch_parse_client_app_name]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="3f7b958d-62f2-4593-ac6e-6748c7ce2a3c" ChangeDateTime="08/28/2020 08:18:43">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_logger_meta_sql_handle]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[sqlwatch_meta_sql_handle]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="66334f28-90f7-48be-8380-5b6cfbae576b" ChangeDateTime="08/28/2020 08:31:09">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_meta_plan_handle].[first_seen_date]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_meta_plan_handle]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="date_first_seen" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="2a7736f6-d216-49ee-bff7-bf388b8cbb85" ChangeDateTime="08/28/2020 08:31:17">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_meta_plan_handle].[last_seen_date]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_meta_plan_handle]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="date_last_seen" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="a2a13224-ec69-4ba7-918e-2bb713ef1e2e" ChangeDateTime="08/28/2020 08:33:19">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_meta_sql_handle].[first_seen_date]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_meta_sql_handle]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="date_first_seen" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="2d0a5ed6-b49f-400c-911c-ae3a06b5824d" ChangeDateTime="08/28/2020 08:33:28">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_meta_sql_handle].[last_seen_date]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_meta_sql_handle]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="date_last_seen" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="25c0ce74-a4fc-4c52-8425-4c6614cc6409" ChangeDateTime="08/28/2020 13:24:19">
+    <Property Name="ElementName" Value="[dbo].[ufn_sqlwatch_get_time_utc]" />
+    <Property Name="ElementType" Value="SqlScalarFunction" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[ufn_sqlwatch_convert_time_utc]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="bfa54499-4514-4e62-8050-86c0a7e1fcdc" ChangeDateTime="09/01/2020 12:44:13">
+    <Property Name="ElementName" Value="[dbo].[trg_sqlwatch_config_check_id_I]" />
+    <Property Name="ElementType" Value="SqlDmlTrigger" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_config_check]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="trg_sqlwatch_config_check_negative_id" />
+  </Operation>
 </Operations>
