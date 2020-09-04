@@ -33,6 +33,27 @@ begin
 			[ignore_flapping] [bit] NOT NULL
 		)
 
+		if @expand_by is null
+			begin
+				insert into @checks (
+						[check_name],[check_description],[check_query],[check_frequency_minutes],[check_threshold_warning]
+					   ,[check_threshold_critical],[check_enabled],[ignore_flapping],[check_template_id]
+				)
+
+				select 
+				    [check_name]
+				   ,[check_description]
+				   ,[check_query]
+				   ,[check_frequency_minutes]
+				   ,[check_threshold_warning]
+				   ,[check_threshold_critical]
+				   ,[check_enabled]
+				   ,[ignore_flapping]
+				   ,[check_template_id]
+				from [dbo].[sqlwatch_config_check_template] c
+				where c.check_name = @check_name
+			end
+
 		if @expand_by = 'Disk'
 			begin
 				insert into @checks (
@@ -114,7 +135,7 @@ begin
 				where c.check_name = @check_name
 				and c.expand_by = @expand_by
 			end
-		
+
 		fetch next from cur_expand_check 
 			into @check_name, @expand_by, @check_template_id
 	end
@@ -171,5 +192,54 @@ begin
 				,[date_updated] = getutcdate()
 				,[ignore_flapping] = source.[ignore_flapping];
 
+
+
+		-- load action templates:
+		merge [dbo].[sqlwatch_config_check_action] as target
+		using (
+			select 
+				cc.[check_id]
+			   ,a.[action_id]
+			   ,a.[action_every_failure]
+			   ,a.[action_recovery]
+			   ,a.[action_repeat_period_minutes]
+			   ,a.[action_hourly_limit]
+			   ,a.[action_template_id]
+			   ,[date_created]=GETUTCDATE()
+			   ,[date_updated]=GETUTCDATE()
+		
+			from @checks c
+			inner join [dbo].[sqlwatch_config_check_template]  ct
+				on ct.check_template_id = c.check_template_id
+			inner join [dbo].[sqlwatch_config_check_template_action] a
+				on a.check_name = ct.check_name
+			inner join [dbo].[sqlwatch_config_check] cc
+				on cc.check_name = ct.check_name
+			) as source
+		on source.check_id = target.check_id
+		and source.action_id = target.action_id
+
+		when not matched then
+			insert ([check_id]
+           ,[action_id]
+           ,[action_every_failure]
+           ,[action_recovery]
+           ,[action_repeat_period_minutes]
+           ,[action_hourly_limit]
+           ,[action_template_id]
+           ,[date_created]
+           ,[date_updated])
+		   
+		   values (
+			source.[check_id]
+           ,source.[action_id]
+           ,source.[action_every_failure]
+           ,source.[action_recovery]
+           ,source.[action_repeat_period_minutes]
+           ,source.[action_hourly_limit]
+           ,source.[action_template_id]
+           ,source.[date_created]
+           ,source.[date_updated]
+		   );
 
 end
