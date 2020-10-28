@@ -28,7 +28,7 @@ back_to_top_text: "Back to top"
 
 # Footer content 
 # appears at the bottom of every page's main content
-footer_content: "SQLWATCH Docs portal is maintained by <a href='https://github.com/marcingminski/'>@marcingminski</a>. Some content is submitted by contributors. All content is under <a href='https://github.com/sqlwatch/share/blob/master/LICENSE'>MIT license</a>. <!--<p><img src='https://hitcounter.pythonanywhere.com/count/tag.svg' alt='Hits'></p>-->"
+footer_content: "SQLWATCH Docs portal is maintained by <a href='https://github.com/marcingminski/'>@marcingminski</a>. Some content is submitted by contributors. All content is under <a href='https://github.com/sqlwatch/share/blob/master/LICENSE'>MIT license</a>. <p><img src='https://hitcounter.pythonanywhere.com/count/tag.svg' alt='Hits'></p>"
 last_edit_timestamp: true # show or hide edit time - page must have `last_modified_date` defined in the frontmatter
 last_edit_time_format: "%b %e %Y at %I:%M %p" # uses ruby's time format: https://ruby-doc.org/stdlib-2.7.0/libdoc/time/rdoc/Time.html
 
