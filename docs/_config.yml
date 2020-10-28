@@ -1,4 +1,5 @@
 remote_theme: pmarsceill/just-the-docs
+color_scheme: sqlwatch
 
 permalink: pretty
 exclude: ["node_modules/", "*.gemspec", "*.gem", "Gemfile", "Gemfile.lock", "package.json", "package-lock.json",  "script/", "LICENSE.txt", "lib/", "bin/", "README.md", "Rakefile"]
