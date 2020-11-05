@@ -1,0 +1,103 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+variables:
+  configuration: release
+  database: sqlwatch
+  artifactname: sqlwatch
+
+trigger:
+- 3.x
+
+stages:
+
+- stage: sqlwatchBuild
+  displayName: 'Build sqlwatch dacpac'
+  jobs:
+    - job: 'Buildsqlwatch'
+      displayName: 'Build sqlwatch dacpac'  
+      variables:
+        variables:
+        agentpool: 'kchant DevOps Duet'
+        projpath: SqlWatch.Monitor\Project.SqlWatch.Database
+        projfile: SQLWATCH.sqlproj
+
+      pool:
+        vmImage: vs2017-win2016
+
+      steps:
+
+      - task: PowerShell@2
+        displayName: "Temporary collation fix"
+        inputs:
+          targetType: 'inline'
+          script: |
+            # Write your PowerShell commands here.
+            
+            ls
+            cd $(projpath)
+
+            $Old_DC = '<DefaultCollation>Latin1_General_CI_AS</DefaultCollation>'
+            $New_DC = '<DefaultCollation>SQL_Latin1_General_CP1_CI_AS</DefaultCollation>'
+            
+            (Get-Content "SQLWATCH.sqlproj") -replace $Old_DC, $New_DC  | Set-Content "SQLWATCH.sqlproj"
+
+      - task: VSBuild@1
+        displayName: 'Build kcdemoproject for SQL Server 2008'
+        inputs:
+          solution: $(projpath)\$(projfile)
+          configuration: $(configuration)
+
+      - task: CopyFiles@2
+        displayName: "Copy files to artifact folder"
+        inputs:
+          Contents: |
+            $(projpath)\bin\$(configuration)\*.*
+          TargetFolder: '$(Build.ArtifactStagingDirectory)\$(artifactname)'
+          FlattenFolders: true
+          OverWrite: true
+
+      - task: PublishBuildArtifacts@1
+        displayName: 'Publish sqlwatch artifact'
+        inputs:
+          PathtoPublish: '$(Build.ArtifactStagingDirectory)\$(artifactname)'
+          ArtifactName: $(artifactname)
+          publishLocation: 'Container'
+
+- stage: sqlwatchDeploy
+  dependsOn: sqlwatchBuild
+  displayName: 'Deploy sqlwatch update'
+
+  jobs:
+    - job: 'Deploysqlwatch'
+      displayName: 'Deploy sqlwatch update'
+      variables:
+        variables:
+        agentpool: 'sqlwatch'
+        dacpacpath: $(System.ArtifactsDirectory)/$(artifactname)
+        datadacpacfile: sqlwatch.dacpac
+
+      pool: $(agentpool)
+        
+      steps:
+      - task: DownloadBuildArtifacts@0
+        displayName: 'Dowload Artifacts'
+        inputs:
+          buildType: 'current'
+          downloadType: 'specific'
+          downloadPath: '$(System.ArtifactsDirectory)'
+
+      - task: SqlDacpacDeploymentOnMachineGroup@0
+        displayName: 'Install dacpac'
+        inputs:
+          TaskType: 'dacpac'
+          DacpacFile: '$(dacpacpath)\$(datadacpacfile)'
+          TargetMethod: 'server'
+          ServerName: 'localhost,1443'
+          DatabaseName: '$(database)'
+          AuthScheme: 'sqlServerAuthentication'
+          SqlUsername: 'sa'
+          SqlPassword: $(sqlsapw)
+          AdditionalArguments: '/p:IncludeCompositeObjects=true'
