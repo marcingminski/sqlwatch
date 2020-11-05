@@ -45,7 +45,7 @@ stages:
 
             $Old_DC = '<DefaultCollation>Latin1_General_CI_AS</DefaultCollation>'
             # You change the collation below to match your SQL instance
-            $New_DC = '<DefaultCollation>SQL_Latin1_General_CP1_CI_AS</DefaultCollation>'
+            $New_DC = '<DefaultCollation>Latin1_General_CI_AS</DefaultCollation>'
             
             (Get-Content "SQLWATCH.sqlproj") -replace $Old_DC, $New_DC  | Set-Content "SQLWATCH.sqlproj"
 
@@ -103,22 +103,6 @@ stages:
           DacpacFile: '$(dacpacpath)\$(datadacpacfile)'
           TargetMethod: 'server'
           # I used a docker container for this, more options at https://bit.ly/2I7JU7C 
-          ServerName: 'localhost,1443'
-          DatabaseName: '$(database)'
-          AuthScheme: 'sqlServerAuthentication'
-          SqlUsername: 'sa'
-          # You need to decide where to save your p/w variable yourself
-          SqlPassword: $(sqlsapw)
-          AdditionalArguments: '/p:IncludeCompositeObjects=true'
-
-
-      - task: SqlDacpacDeploymentOnMachineGroup@0
-        displayName: 'Install dacpac local'
-        inputs:
-          TaskType: 'dacpac'
-          DacpacFile: '$(dacpacpath)\$(datadacpacfile)'
-          TargetMethod: 'server'
-          # I used a docker container for this, more options at https://bit.ly/2I7JU7C 
           ServerName: 'localhost'
           DatabaseName: '$(database)'
           AuthScheme: 'sqlServerAuthentication'
@@ -126,3 +110,4 @@ stages:
           # You need to decide where to save your p/w variable yourself
           SqlPassword: $(sqlsapw)
           AdditionalArguments: '/p:IncludeCompositeObjects=true'
+
