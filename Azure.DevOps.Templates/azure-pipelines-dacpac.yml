@@ -1,0 +1,112 @@
+# Template you can use to deploy sqlwatch using a dacpac
+# Have put in comments for useful sections to change
+# For example, where to set your Agent pool and to change the default collation
+# You can decide where to save your p/w variable (either in pipeline or library)
+# Add steps that build, run tests, deploy, and more. YAML schema reference can be found at:
+# https://aka.ms/yaml
+
+# Set global variables here
+variables:
+  configuration: release
+  database: sqlwatch
+  artifactname: sqlwatch
+
+# To specify which commits start the pipeline
+trigger:
+- 3.x
+
+stages:
+
+- stage: sqlwatchBuild
+  displayName: 'Build sqlwatch dacpac'
+  jobs:
+    - job: 'Buildsqlwatch'
+      displayName: 'Build sqlwatch dacpac'  
+      variables:
+        variables:
+        projpath: SqlWatch.Monitor\Project.SqlWatch.Database
+        projfile: SQLWATCH.sqlproj
+
+      pool:
+        vmImage: vs2017-win2016
+
+      steps:
+
+      - task: PowerShell@2
+        # This task changes the collation of the sqlwatch database to match yours
+        # You must change the one below to match collation your SQL instance uses
+        displayName: "Collation fix"
+        inputs:
+          targetType: 'inline'
+          script: |
+            # Write your PowerShell commands here.
+            
+            cd $(projpath)
+
+            $Old_DC = '<DefaultCollation>Latin1_General_CI_AS</DefaultCollation>'
+            # You change the collation below to match your SQL instance
+            $New_DC = '<DefaultCollation>SQL_Latin1_General_CP1_CI_AS</DefaultCollation>'
+            
+            (Get-Content "SQLWATCH.sqlproj") -replace $Old_DC, $New_DC  | Set-Content "SQLWATCH.sqlproj"
+
+      - task: VSBuild@1
+        displayName: 'Build sqlwatch project'
+        inputs:
+          solution: $(projpath)\$(projfile)
+          configuration: $(configuration)
+
+      - task: CopyFiles@2
+        displayName: "Copy files to artifact folder"
+        inputs:
+          Contents: |
+            $(projpath)\bin\$(configuration)\*.*
+          TargetFolder: '$(Build.ArtifactStagingDirectory)\$(artifactname)'
+          FlattenFolders: true
+          OverWrite: true
+
+      - task: PublishBuildArtifacts@1
+        displayName: 'Publish sqlwatch artifact'
+        inputs:
+          PathtoPublish: '$(Build.ArtifactStagingDirectory)\$(artifactname)'
+          ArtifactName: $(artifactname)
+          publishLocation: 'Container'
+
+- stage: sqlwatchDeploy
+  dependsOn: sqlwatchBuild
+  displayName: 'Deploy sqlwatch update'
+
+  jobs:
+    - job: 'Deploysqlwatch'
+      displayName: 'Deploy sqlwatch update'
+      variables:
+        variables:
+        # First variable is the name of your own Agent Pool which contains your self-hosted agent
+        # You can read more about that at https://bit.ly/3613ES8
+        agentpool: 'sqlwatch'
+        dacpacpath: $(System.ArtifactsDirectory)/$(artifactname)
+        datadacpacfile: sqlwatch.dacpac
+
+      pool: $(agentpool)
+        
+      steps:
+      - task: DownloadBuildArtifacts@0
+        displayName: 'Dowload Artifacts'
+        inputs:
+          buildType: 'current'
+          downloadType: 'specific'
+          downloadPath: '$(System.ArtifactsDirectory)'
+
+      - task: SqlDacpacDeploymentOnMachineGroup@0
+        displayName: 'Install dacpac'
+        inputs:
+          TaskType: 'dacpac'
+          DacpacFile: '$(dacpacpath)\$(datadacpacfile)'
+          TargetMethod: 'server'
+          # I used a docker container for this, more options at https://bit.ly/2I7JU7C 
+          ServerName: 'localhost,1443'
+          DatabaseName: '$(database)'
+          AuthScheme: 'sqlServerAuthentication'
+          SqlUsername: 'sa'
+          # You need to decide where to save your p/w variable yourself
+          SqlPassword: $(sqlsapw)
+          AdditionalArguments: '/p:IncludeCompositeObjects=true'
