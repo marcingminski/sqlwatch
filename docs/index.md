@@ -41,7 +41,7 @@ SQLWATCH is made of:
 
 ## Requirements
 
-SQLWATCH has been tested with the following SQL Server editions and versions: 
+SQLWATCH has been tested with the following SQL Server editions and versions on Windows: 
 * SQL Server Standard, Enterprise and Express:
   * 2008 R2 SP3
   * 2012
@@ -49,6 +49,8 @@ SQLWATCH has been tested with the following SQL Server editions and versions:
   * 2016
   * 2017
   * 2019
+   
+Running SQLWATCH on Linux is also possible with few exceptions: The disk colletor job relies on the Windows WMI interface and there is currently no alternative to collect disk utilisation from Linux. Notifications rely on a PowerShell script which has not been tested on Linux with PS installed.
   
 Data collection is invoked via SQL Server Agent Jobs since the Express Edition does not have Agent Job, the invocation must happen via Windows Task Scheduler or alternative way. SQLWATCH can generate the required commands to Windows Scheduled tasks:
 
