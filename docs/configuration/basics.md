@@ -58,11 +58,16 @@ Remember to change it back to 0 after you have done investigating the issue as i
 
 ## Table and Index compression
 
-You may wish to compress data in SQLWATCH to improve storage utilisation and I/O performance at the cost of CPU utilisation. You can do so by running:
+You may wish to compress data in SQLWATCH to improve storage utilisation and I/O performance at the cost of CPU utilisation. You can do so by running the below, depending on your version of SQLWATCH:
 
 ```
 exec [dbo].[usp_sqlwatch_config_set_table_compression];
 exec [dbo].[usp_sqlwatch_config_set_index_compression];
+```
+
+```
+exec [dbo].[usp_sqlwatch_config_enable_compression_sqlwatch_indexes]
+exec [dbo].[usp_sqlwatch_config_enable_compression_sqlwatch_tables]
 ```
 
 ## Recreate agent jobs
