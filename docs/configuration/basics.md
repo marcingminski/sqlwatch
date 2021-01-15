@@ -30,10 +30,10 @@ To make this easier, SQLWATCH comes with a stored procedure that can execute the
 
 ```
 --default threshold will be 15 seconds:
-exec [dbo].[usp_sqlwatch_config_set_blocked_proc_threshold] 
+exec [dbo].[usp_sqlwatch_config_sqlserver_set_blocked_proc_threshold] 
 
 --to apply different threshold:
-exec [dbo].[usp_sqlwatch_config_set_blocked_proc_threshold] @threshold_seconds = x 
+exec [dbo].[usp_sqlwatch_config_sqlserver_set_blocked_proc_threshold] @threshold_seconds = x 
 ```
 
 ## Retention periods
@@ -76,10 +76,10 @@ To create all default SQLWATCH agent jobs you can run:
 
 ```
 --add any missing SQLWATCH jobs, will not remove existing SQLWATCH jobs:
-exec [dbo].[usp_sqlwatch_config_set_default_agent_jobs]
+exec [dbo].[usp_sqlwatch_config_create_default_agent_jobs]
 
 --remove existing and recreate all SQLWATCH jobs:
-exec [dbo].[usp_sqlwatch_config_set_default_agent_jobs] @remove_existing = 1
+exec [dbo].[usp_sqlwatch_config_create_default_agent_jobs] @remove_existing = 1
 ```
 
 
