@@ -144,7 +144,7 @@ namespace SqlWatchImport
 									, SqlSecret=isnull([sql_secret],'')
 									, SqlUser=isnull([sql_user],'')
 									, SqlWatchDatabase = [sqlwatch_database_name]
-							from [SQLWATCH].[dbo].[sqlwatch_config_sql_instance]
+							from [dbo].[sqlwatch_config_sql_instance]
 							where repo_collector_is_active = 1";
 
 			List<RemoteInstance> RemoteSqlInstance = new List<RemoteInstance>();
