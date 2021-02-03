@@ -3,28 +3,6 @@
 	@job_owner sysname = null
 as
 set nocount on;
-/*
--------------------------------------------------------------------------------------------------------------------
- Procedure:
-	usp_sqlwatch_internal_create_agent_job
-
- Description:
-	Procedure to create sqlwatch related agent jobs. This is purely for code managability. It relies on ##tables with the job definition.
-	This is so we can have many procedures requesting job creation (i.e. default sqlwatch jobs and the repository related jobs)
-	and one piece of code that actually creates them.
-
- Parameters
-	@print_WTS_command - Whether to print PowerShell code to create Windows Scheduled tasks for SQL Server editions without Agent.
-						 passed from the parent procedure
-	
- Author:
-	Marcin Gminski
-
- Change Log:
-	1.0		2019-12-25	- Marcin Gminski, Initial version
-	1.1		2020-01-29	- Marcin Gminski, add job owner
--------------------------------------------------------------------------------------------------------------------
-*/
 
 declare @job_description nvarchar(255) = 'https://sqlwatch.io',
 		@job_category nvarchar(255) = 'Data Collector',
@@ -76,10 +54,7 @@ else
 					
 					The only exception is the SQLWATCH-INTERNAL-CONFIG job as if this is not run, the data collection cannot happen */ 
 					job_name = 'SQLWATCH-INTERNAL-CONFIG'
-					and /* job has not run yet */ h.run_status is null 
-					and /* only if its the first deployment */ v.deployment_count = 0 
-					and job_enabled = 1 
-					then 'exec [dbo].[usp_sqlwatch_internal_run_job] @job_name = ''' + job_name + '''' else '' end + '
+					then 'exec [dbo].[usp_sqlwatch_internal_run_job] @fail_on_error = 0, @job_name = ''' + job_name + '''' else '' end + '
 	'
 	from ##sqlwatch_jobs
 	outer apply (

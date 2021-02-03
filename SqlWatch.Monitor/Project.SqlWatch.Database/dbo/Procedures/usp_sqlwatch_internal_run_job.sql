@@ -1,5 +1,6 @@
 ﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_internal_run_job]
-	@job_name sysname
+	@job_name sysname,
+	@fail_on_error bit = 1
 as
 
 set nocount on 
@@ -35,6 +36,8 @@ if exists (select top 1 * FROM @xp_results where running = 1)
         return
 	end
 
+declare @startime datetime2(7) = current_timestamp
+
 exec msdb.dbo.sp_start_job @job_name = @job_name
 waitfor delay '00:00:01' --without it we get incorrect results from enum_jobs as it does not register immedially
 
@@ -54,10 +57,19 @@ if (select top 1 run_status
 	where job_id = @job_id and step_id = 0 
 	order by run_date desc, run_time desc) = 1 
 	begin
-		Print 'Job ''' + @job_name + ''' finished successfully.'
+		Print 'Job ''' + @job_name + ''' finished successfully in ' + convert(varchar(1000),datediff(millisecond,@startime,current_timestamp)) + 'ms.'
 	end
 else
 	begin
-		raiserror('Job ''%s'' has not finished successfuly or the state is not known.',10, 1, @job_name)
+		declare @msg nvarchar(512)
+		set @msg = 'Job ' + quotename(@job_name) + ' has not finished successfuly or the state is not known. This does not necessarily mean that the job has failed.'
+		if @fail_on_error = 1
+			begin
+				raiserror(@msg,16, 1, @job_name)
+			end
+		else
+			begin
+				print @msg
+			end
 	end
 
