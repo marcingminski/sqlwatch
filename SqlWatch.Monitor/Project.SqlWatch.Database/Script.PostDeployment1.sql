@@ -81,11 +81,6 @@ exec [dbo].[usp_sqlwatch_internal_add_database]
 exec [dbo].[usp_sqlwatch_internal_start_xes]
 
 -------------------------------------------------------------------------------------
--- Make Constraints Trusted Again
--------------------------------------------------------------------------------------
-:r .\Scripts\Post-Deployment\Data-Fixes\Script.PostDeployment-FixNonTrustedConstraints.sql
-
--------------------------------------------------------------------------------------
 -- Migrate Data
 -------------------------------------------------------------------------------------
 :r .\Scripts\Post-Deployment\Data-Fixes\Script.PostDeployment-DataFix-MigrateReportTime.sql
@@ -118,3 +113,8 @@ if (select case when @@VERSION like '%Express Edition%' then 1 else 0 end) = 0
 	begin
 		exec dbo.[usp_sqlwatch_config_create_default_agent_jobs]
 	end
+
+-------------------------------------------------------------------------------------
+-- Make Constraints Trusted Again
+-------------------------------------------------------------------------------------
+:r .\Scripts\Post-Deployment\Data-Fixes\Script.PostDeployment-FixNonTrustedConstraints.sql

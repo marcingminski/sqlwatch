@@ -106,7 +106,6 @@
     <Build Include="dbo\Tables\sqlwatch_logger_disk_utilisation_volume.sql" />
     <Build Include="dbo\Tables\sqlwatch_logger_index_missing_stats.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_logger_missing_index_stats.sql" />
-    <Build Include="dbo\Tables\sqlwatch_logger_xes_waits_stats.sql" />
     <Build Include="dbo\Tables\sqlwatch_logger_xes_query_processing.sql" />
     <Build Include="dbo\Tables\sqlwatch_logger_xes_iosubsystem.sql" />
     <Build Include="dbo\Tables\sqlwatch_logger_perf_os_schedulers.sql" />
@@ -306,14 +305,23 @@
     <None Include="Scripts\Tools\SSIS Helpers\SSIS_generate_statements.sql" />
     <None Include="Scripts\Tools\SSIS Helpers\SSIS_generate_snapshot_time_variables.sql" />
     <Build Include="dbo\Tables\sqlwatch_logger_xes_wait_event.sql" />
-    <Build Include="dbo\Tables\sqlwatch_logger_xes_wait_stat_event_query.sql" />
-    <Build Include="dbo\Tables\sqlwatch_meta_sql_statement.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_parse_client_app_name.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_get_servername.sql" />
     <Build Include="dbo\Tables\sqlwatch_meta_procedure.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_add_procedure.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_logger_procedure_stats.sql" />
     <Build Include="dbo\Tables\sqlwatch_logger_perf_procedure_stats.sql" />
+    <Build Include="dbo\Tables\sqlwatch_logger_meta_sql_handle.sql" />
+    <Build Include="dbo\Tables\sqlwatch_meta_plan_handle.sql" />
+    <Build Include="dbo\Tables\sqlwatch_logger_perf_query_stats.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_logger_query_stats.sql" />
+    <Build Include="dbo\Functions\ufn_sqlwatch_get_time_utc.sql" />
+    <Build Include="dbo\Tables\sqlwatch_config_exclude_procedure.sql" />
+    <Build Include="dbo\Views\vw_sqlwatch_report_fact_perf_procedure_stats.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_expand_checks.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_purge_orphaned_snapshots.sql" />
+    <Build Include="dbo\Tables\sqlwatch_config_check_template.sql" />
+    <Build Include="dbo\Tables\sqlwatch_config_check_template_action.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />

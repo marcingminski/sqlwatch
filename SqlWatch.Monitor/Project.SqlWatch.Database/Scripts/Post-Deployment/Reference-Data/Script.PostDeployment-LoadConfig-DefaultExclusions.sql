@@ -125,3 +125,29 @@ begin tran
 		insert ([wait_type])
 		values (source.[wait_type]);
 commit tran
+
+
+--------------------------------------------------------------------------------------
+-- exclude procedure stats
+--------------------------------------------------------------------------------------
+;merge [dbo].[sqlwatch_config_exclude_procedure] as target
+using (
+	--we do not want to capture procedures in system databases because we have no control over them anyway and
+	--they will create a lot of noise
+	--if you have user procedures in the msdb or master databases starting with sp_, you are doing it wrong.
+	--either don't put anything in msdb and if you really have to, call them usp_* (user stored proc)
+
+	--if you wonder, the _ in the like pattern means "any single" sign. It does not mean "underscore"
+	--to match on the actual underscore we have to escape it with [_]
+	select [database_name_pattern]='msdb', [procedure_name_pattern]='dbo.sp[_]%', [snapshot_type_id] = 27
+	union
+	select [database_name_pattern]='master', [procedure_name_pattern]='dbo.sp[_]%', [snapshot_type_id] = 27
+
+) as source
+	on source.[database_name_pattern] = target.[database_name_pattern]
+	and source.[procedure_name_pattern] = target.[procedure_name_pattern]
+	and source.[snapshot_type_id] = target.[snapshot_type_id]
+
+when not matched then 
+	insert ([database_name_pattern], [procedure_name_pattern], [snapshot_type_id])
+	values (source.[database_name_pattern], source.[procedure_name_pattern], source.[snapshot_type_id]);

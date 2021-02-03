@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[sqlwatch_config_check_action]
 (
-	[check_id] smallint not null,
+	[check_id] bigint not null,
 	[action_id] smallint not null,
 	[action_every_failure] bit not null constraint df_sqlwatch_config_check_action_every_failure default (0), --whether to send email with every value change as long as its a fail. i.e. we may want to be alerted of every job failure rather than only the first one
 	[action_recovery] bit not null constraint df_sqlwatch_config_check_action_recovery default (1), --whether to send a "recovery" email after check has gone back to OK. just to let us know that there is nothing to worry anymore

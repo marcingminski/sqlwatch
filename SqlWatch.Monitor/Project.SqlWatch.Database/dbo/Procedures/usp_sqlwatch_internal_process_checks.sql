@@ -71,7 +71,7 @@ exec [dbo].[usp_sqlwatch_internal_insert_header]
 	@snapshot_time_new = @snapshot_time OUTPUT,
 	@snapshot_type_id = @snapshot_type_id
 
-declare cur_rules cursor LOCAL FAST_FORWARD for
+declare cur_rules cursor LOCAL STATIC for
 select 
 	  cc.[check_id]
 	, cc.[check_name]
@@ -90,10 +90,16 @@ inner join [dbo].[sqlwatch_meta_check] mc
 	and mc.sql_instance = @@SERVERNAME
 
 where [check_enabled] = 1
-and datediff(minute,isnull(mc.last_check_date,'1970-01-01'),getutcdate()) >= isnull(mc.[check_frequency_minutes],0)
+and datediff(minute,isnull(mc.last_check_date,'1970-01-01'),getutcdate()) >=
+		-- when check has failed to execute, we are going to repeat it after 1 hour (this should be a global config)
+		case when mc.last_check_status = 'CHECK ERROR' and isnull(mc.[check_frequency_minutes],0) > dbo.ufn_sqlwatch_get_config_value(12,null)
+		then dbo.ufn_sqlwatch_get_config_value(12,null) 
+		else isnull(mc.[check_frequency_minutes],0)
+		end
+
 order by cc.[check_id]
 
-open cur_rules   
+open cur_rules
   
 fetch next from cur_rules 
 into @check_id, @check_name, @check_description , @check_query, @check_warning_threshold, @check_critical_threshold
@@ -203,12 +209,16 @@ SET ANSI_WARNINGS OFF
 		begin
 			set @is_flapping = 1
 			--warning only:
-			set @error_message = 'Check (Id: ' + convert(varchar(10),@check_id) + ') is flapping.'
-			exec [dbo].[usp_sqlwatch_internal_log]
-					@proc_id = @@PROCID,
-					@process_stage = '040D0A86-83B8-4543-A34C-9F328DAE5488',
-					@process_message = @error_message,
-					@process_message_type = 'WARNING'
+			if (dbo.ufn_sqlwatch_get_config_value(11,null) = 1)
+				begin
+					set @error_message = 'Check (Id: ' + convert(varchar(10),@check_id) + ') is flapping.'
+					exec [dbo].[usp_sqlwatch_internal_log]
+							@proc_id = @@PROCID,
+							@process_stage = '040D0A86-83B8-4543-A34C-9F328DAE5488',
+							@process_message = @error_message,
+							@process_message_type = 'WARNING'
+				end
+
 		end
 
 	-------------------------------------------------------------------------------------------------------------------

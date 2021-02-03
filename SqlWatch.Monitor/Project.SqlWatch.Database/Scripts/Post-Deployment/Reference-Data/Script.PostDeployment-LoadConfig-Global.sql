@@ -57,6 +57,14 @@ values
 		~10 minutes collection time for databses with 64k (64000) tables. This parameter will limit the total number
 		of tables we collect. */
 	--,(10	,'Table utilisation collector table limit'			,1000) --I don't think this has any value now the collecor has been tweaked
+
+	/*	when SQLWATCH xes are disabled we will try get data from system_health session if enabled.
+		Quite often however system_health session is quite large and it can take couple of minutes ot parse xml
+		It is recommended to use SQLWATCH sessions	*/
+	,(11	,'Log flapping checks in the app_log'				,0)
+	
+	/* how often should we re-run failed checks (CHECK_ERROR) in minutes: */
+	,(12	,'Re-run CHECK_ERROR frequency minutes' ,60)
 ;
 
 merge dbo.sqlwatch_config as target

@@ -60,7 +60,8 @@ if @check_id < 0
 					,source.[check_enabled]
 					,source.[ignore_flapping])
 
-		when matched and target.[date_updated] is null 
+		-- if the user sets the check as "user modified" we will not update it
+		when matched and isnull(target.user_modified,0) = 0
 			then update 
 				set
 				 [check_name] = source.[check_name]
@@ -70,7 +71,8 @@ if @check_id < 0
 				,[check_threshold_warning] = source.[check_threshold_warning]
 				,[check_threshold_critical] = source.[check_threshold_critical]
 				,[check_enabled] = source.[check_enabled]
-				,[ignore_flapping] = source.[ignore_flapping];
+				,[ignore_flapping] = source.[ignore_flapping]
+				;
 	end
 else
 	begin

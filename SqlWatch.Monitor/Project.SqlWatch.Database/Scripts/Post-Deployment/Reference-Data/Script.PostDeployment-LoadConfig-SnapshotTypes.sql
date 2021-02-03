@@ -71,8 +71,12 @@ using (
 	/* System Configuration */
 	select [snapshot_type_id] = 26, [snapshot_type_desc] = 'System Configuration', [snapshot_retention_days] = 365 
 	union
-	/* System Configuration */
+	/* Procedure Stats */
 	select [snapshot_type_id] = 27, [snapshot_type_desc] = 'Procedure Stats', [snapshot_retention_days] = 32
+	union
+	/* Query Stats */
+	select [snapshot_type_id] = 28, [snapshot_type_desc] = 'Query Stats', [snapshot_retention_days] = 32
+
 
 ) as source
 on (source.[snapshot_type_id] = target.[snapshot_type_id])

@@ -1,7 +1,7 @@
 ﻿CREATE FUNCTION [dbo].[ufn_sqlwatch_get_server_utc_offset](
 	@time_unit VARCHAR(20) = 'MINUTE'
 )
-RETURNS INT
+RETURNS INT WITH SCHEMABINDING
 AS
 BEGIN
 	--hour	hh

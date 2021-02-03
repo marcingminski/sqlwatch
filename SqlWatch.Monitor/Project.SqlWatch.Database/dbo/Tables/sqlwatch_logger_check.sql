@@ -4,7 +4,7 @@
 	[sql_instance] varchar(32) not null,
 	[snapshot_time] datetime2(0) not null,
 	[snapshot_type_id] tinyint not null constraint df_sqlwatch_logger_check_type default (18),
-	[check_id] smallint not null,
+	[check_id] bigint not null,
 	[check_value] real null,
 	[check_status] varchar(15) not null, 
 	[check_exec_time_ms] real null,
@@ -24,7 +24,11 @@
 )
 go
 
-create nonclustered index idx_sqlwatch_logger_check_change_status
+create nonclustered index idx_sqlwatch_logger_check_1
 	on [dbo].[sqlwatch_logger_check] ([status_change])
 	include ([check_status])
 go
+
+create nonclustered index idx_sqlwatch_logger_check_2
+	on [dbo].[sqlwatch_logger_check] ([sql_instance],[check_id])
+	include ([snapshot_time],[snapshot_type_id])
