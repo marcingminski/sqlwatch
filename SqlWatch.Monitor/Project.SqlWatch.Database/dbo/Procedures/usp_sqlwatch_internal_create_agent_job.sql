@@ -26,6 +26,12 @@ if @job_owner is null
 	end
 
 
+--adding database name to the job name if not standard SQLWATCH for better clarity and to be able to deploy multiple SQLWATCH databases and corresponding jobs.
+if '$(DatabaseName)' not in ('sqlwatch','SQLWATCH')
+	begin
+		update ##sqlwatch_jobs set job_name = replace(job_name,'SQLWATCH-','SQLWATCH-[' +  '$(DatabaseName)' + ']-')
+		update ##sqlwatch_steps set job_name = replace(job_name,'SQLWATCH-','SQLWATCH-[' +  '$(DatabaseName)' + ']-')
+	end
 
 /* create job and steps */
 select @sql = replace(replace(convert(nvarchar(max),(select ' if (select name from msdb.dbo.sysjobs where name = ''' + job_name + ''') is null 
