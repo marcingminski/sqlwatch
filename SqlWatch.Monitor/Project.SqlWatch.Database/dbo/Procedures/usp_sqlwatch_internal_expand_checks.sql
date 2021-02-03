@@ -64,7 +64,7 @@ begin
 				select 
 				   [check_name]=case 
 							when c.check_name like '%{Disk}%' then replace(c.check_name,'{Disk}',d.[volume_name]) 
-							else c.check_name + ' (' + d.[volume_name] + ')' end
+							else c.check_name + ' (' + d.[volume_name] + ')' end 
 				   ,[check_description]=case when [check_description] like '%{Disk}%'
 											then replace([check_description],'{Disk}',d.[volume_name])
 											else [check_description] end
@@ -90,12 +90,12 @@ begin
 
 				select 
 				   [check_name]=case 
-							when c.check_name like '%{JOB}%' then replace(c.check_name,'{JOB}',d.[name]) 
-							else c.check_name + ' (' + d.[name] + ')' end
+							when c.check_name like '%{JOB}%' then replace(c.check_name,'{JOB}',d.[name] collate database_default) 
+							else c.check_name + ' (' + d.[name] collate database_default + ')' end 
 				   ,[check_description]=case when [check_description] like '%{JOB}%'
-											then replace([check_description],'{JOB}',d.[name])
+											then replace([check_description],'{JOB}',d.[name] collate database_default)
 											else [check_description] end
-				   ,[check_query]=replace([check_query],'{JOB}',d.[name])
+				   ,[check_query]=replace([check_query],'{JOB}',d.[name] collate database_default)
 				   ,[check_frequency_minutes]
 				   ,[check_threshold_warning]
 				   ,[check_threshold_critical]
@@ -118,12 +118,12 @@ begin
 
 				select 
 				   [check_name]=case 
-							when c.check_name like '%{DATABASE}%' then replace(c.check_name,'{DATABASE}',d.[name]) 
-							else c.check_name + ' (' + d.[name] + ')' end
+							when c.check_name like '%{DATABASE}%' then replace(c.check_name,'{DATABASE}',d.[name] collate database_default) 
+							else c.check_name + ' (' + d.[name] collate database_default + ')' end
 				   ,[check_description]=case when [check_description] like '%{DATABASE}%'
-											then replace([check_description],'{DATABASE}',d.[name])
+											then replace([check_description],'{DATABASE}',d.[name] collate database_default)
 											else [check_description] end
-				   ,[check_query]=replace([check_query],'{DATABASE}',d.[name])
+				   ,[check_query]=replace([check_query],'{DATABASE}',d.[name] collate database_default)
 				   ,[check_frequency_minutes]
 				   ,[check_threshold_warning]
 				   ,[check_threshold_critical]
