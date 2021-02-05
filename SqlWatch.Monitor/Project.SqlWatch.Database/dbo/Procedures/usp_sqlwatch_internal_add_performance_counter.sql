@@ -13,7 +13,7 @@ using (
 		union all
 		select 
 			[sql_instance] = @@SERVERNAME
-			, [object_name] = 'win32_perfformatteddata_perfos_processor'
+			, [object_name] = 'Win32_PerfFormattedData_PerfOS_Processor'
 			, [counter_name] = 'Processor Time %'
 			, [cntr_type] = 65792
 		) as source

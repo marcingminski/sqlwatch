@@ -438,7 +438,7 @@ inner join [dbo].[sqlwatch_meta_performance_counter] mpc
 	on pc.sql_instance = mpc.sql_instance
 	and pc.performance_counter_id = mpc.performance_counter_id
 where mpc.sql_instance = @@SERVERNAME
-  and object_name = ''win32_perfformatteddata_perfos_processor''
+  and object_name = ''Win32_PerfFormattedData_PerfOS_Processor''
   and counter_name = ''Processor Time %''
   and snapshot_time > ''{LAST_CHECK_DATE}'' 
 group by pc.snapshot_time ) q'

@@ -135,7 +135,7 @@ declare @sql nvarchar(4000)
 			capture os performance counters such as cpu - hence we captured cpu from ringbuffer and now are going to 
 			make them look like real counter (othwerwise i would have to make up a name) */
 		select 
-				[object_name] = 'win32_perfformatteddata_perfos_processor'
+				[object_name] = 'Win32_PerfFormattedData_PerfOS_Processor'
 			,[counter_name] = 'Processor Time %'
 			,[instance_name] = 'sql'
 			,[cntr_value] = @percent_processor_time
@@ -143,7 +143,7 @@ declare @sql nvarchar(4000)
 			,[base_counter_name] = null
 		union all
 		select 
-				[object_name] = 'win32_perfformatteddata_perfos_processor'
+				[object_name] = 'Win32_PerfFormattedData_PerfOS_Processor'
 			,[counter_name] = 'Idle Time %'
 			,[instance_name] = '_total'
 			,[cntr_value] = @percent_idle_time
@@ -151,7 +151,7 @@ declare @sql nvarchar(4000)
 			,[base_counter_name] = null
 		union all
 		select 
-				[object_name] = 'win32_perfformatteddata_perfos_processor'
+				[object_name] = 'Win32_PerfFormattedData_PerfOS_Processor'
 			,[counter_name] = 'Processor Time %'
 			,[instance_name] = 'system'
 			,[cntr_value] = (100-@percent_idle_time-@percent_processor_time)
