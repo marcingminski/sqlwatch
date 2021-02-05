@@ -37,7 +37,9 @@ as
 	while @@FETCH_STATUS = 0
 		begin
 
-			if @linked_server is null
+			--if no linked server given or if the linked server has been set in the previou iteration
+			--this should skip if the linked server is given by user.
+			if @linked_server is null or @linked_server like 'SQLWATCH-REMOTE-%'
 				begin
 					set @linked_server = 'SQLWATCH-REMOTE-' + @sql_instance
 				end
