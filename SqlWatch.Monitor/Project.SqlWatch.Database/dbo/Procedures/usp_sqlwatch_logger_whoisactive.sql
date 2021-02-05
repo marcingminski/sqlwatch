@@ -65,7 +65,7 @@ set xact_abort on
 				)
 
 			-- we are running WhoIsActive is very lightweight mode without any additional info and without execution plans
-			exec dbo.sp_whoisactive
+			exec dbo.sp_WhoIsActive
 				 @get_outer_command = 1
 				,@output_column_list = '[collection_time][start_time][session_id][status][percent_complete][host_name][database_name][program_name][sql_text][sql_command][login_name][open_tran_count][wait_info][blocking_session_id][blocked_session_count][CPU][used_memory][tempdb_current][tempdb_allocations][reads][writes][physical_reads][login_time]'
 				,@find_block_leaders = 1
