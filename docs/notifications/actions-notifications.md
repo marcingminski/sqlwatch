@@ -76,4 +76,22 @@ Sent from SQLWATCH on host: {SQL_INSTANCE}
 https://docs.sqlwatch.io
 ```
 
+# List of variables exposed to templates:
+```
+{CHECK_ID}
+{CHECK_NAME}
+{CHECK_DESCRIPTION}
+{CHECK_TIME}
+{CHECK_STATUS}
+{CHECK_VALUE}
+{CHECK_LAST_VALUE}
+{CHECK_LAST_STATUS}
+{CHECK_QUERY}
+{LAST_STATUS_CHANGE}
+{THRESHOLD_WARNING}
+{THRESHOLD_CRITICAL}
+{SQL_INSTANCE}
+{SQL_VERSION}
+```
+
 This way, everything is fully customisable and nothing is hardcoded. 
