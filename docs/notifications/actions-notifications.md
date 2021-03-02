@@ -76,7 +76,7 @@ Sent from SQLWATCH on host: {SQL_INSTANCE}
 https://docs.sqlwatch.io
 ```
 
-# List of variables exposed to templates:
+# Variables exposed to templates:
 ```
 {CHECK_ID}
 {CHECK_NAME}
