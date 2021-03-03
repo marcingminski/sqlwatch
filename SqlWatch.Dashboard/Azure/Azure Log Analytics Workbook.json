@@ -83,7 +83,7 @@
             "name": "SqlInstance",
             "type": 2,
             "isRequired": true,
-            "query": "SQLWATCH_Instance_CL | top 1 by TimeGenerated | distinct sql_instance_s | where sql_instance_s != \"\" | sort by sql_instance_s",
+            "query": "SQLWATCH_Instance_CL | distinct sql_instance_s | where sql_instance_s != \"\" | sort by sql_instance_s",
             "value": null,
             "typeSettings": {
               "additionalResourceOptions": []
