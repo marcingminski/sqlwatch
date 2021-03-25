@@ -79,6 +79,7 @@ begin
 				cross apply [dbo].[sqlwatch_meta_os_volume] d
 				where c.check_name = @check_name
 				and c.expand_by = @expand_by
+				and d.sql_instance = dbo.ufn_sqlwatch_get_servername()
 			end
 
 		if @expand_by = 'Job'
@@ -134,6 +135,7 @@ begin
 				cross apply dbo.vw_sqlwatch_sys_databases d
 				where c.check_name = @check_name
 				and c.expand_by = @expand_by
+				and d.sql_instance = dbo.ufn_sqlwatch_get_servername()
 			end
 
 		fetch next from cur_expand_check 
