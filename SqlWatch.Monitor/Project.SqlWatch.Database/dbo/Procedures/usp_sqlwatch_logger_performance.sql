@@ -145,7 +145,7 @@ declare @sql nvarchar(4000)
 		select 
 				[object_name] = 'Win32_PerfFormattedData_PerfOS_Processor'
 			,[counter_name] = 'Idle Time %'
-			,[instance_name] = '_total'
+			,[instance_name] = '_Total                                                                                                                          '
 			,[cntr_value] = @percent_idle_time
 			,[cntr_type] = 65792
 			,[base_counter_name] = null
