@@ -7,6 +7,7 @@
 		, min_check_exec_time_ms = convert(decimal(10,2),t.check_exec_time_ms_min)
 
 		, t.total_checks_executed
+		, ma.check_enabled
 	from [dbo].[sqlwatch_meta_check] ma
 
 	--get average exec time for each check

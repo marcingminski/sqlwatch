@@ -56,9 +56,9 @@ create trigger dbo.trg_sqlwatch_config_check_meta_IU
 		when not matched 
 			then insert (
 			  [sql_instance], [check_id], [check_name], [check_description], [check_query]
-			, [check_frequency_minutes], [check_threshold_warning], [check_threshold_critical])
+			, [check_frequency_minutes], [check_threshold_warning], [check_threshold_critical], [check_enabled])
 			values (@@SERVERNAME, source.[check_id], source.[check_name], source.[check_description], source.[check_query]
-			, source.[check_frequency_minutes], source.[check_threshold_warning], source.[check_threshold_critical])
+			, source.[check_frequency_minutes], source.[check_threshold_warning], source.[check_threshold_critical], source.[check_enabled])
 
 		when matched
 			then update
@@ -69,6 +69,7 @@ create trigger dbo.trg_sqlwatch_config_check_meta_IU
 				, [check_frequency_minutes] = source.[check_frequency_minutes]
 				, [check_threshold_warning] = source.[check_threshold_warning]
 				, [check_threshold_critical] = source.[check_threshold_critical]
+				, [check_enabled] = source.[check_enabled]
 				
 		;
 	end

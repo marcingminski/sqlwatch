@@ -89,7 +89,7 @@ inner join [dbo].[sqlwatch_meta_check] mc
 	on mc.check_id = cc.check_id
 	and mc.sql_instance = @@SERVERNAME
 
-where [check_enabled] = 1
+where cc.[check_enabled] = 1
 and datediff(minute,isnull(mc.last_check_date,'1970-01-01'),getutcdate()) >=
 		-- when check has failed to execute, we are going to repeat it after 1 hour (this should be a global config)
 		case when mc.last_check_status = 'CHECK ERROR' and isnull(mc.[check_frequency_minutes],0) > dbo.ufn_sqlwatch_get_config_value(12,null)
