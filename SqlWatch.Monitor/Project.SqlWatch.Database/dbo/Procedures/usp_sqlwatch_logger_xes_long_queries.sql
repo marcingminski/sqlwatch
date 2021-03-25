@@ -83,8 +83,12 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 					and case when ex.client_hostname is not null then tx.client_hostname else '%' end like isnull(ex.client_hostname,'%')
 					and case when ex.username is not null then tx.username else '%' end like isnull(ex.username,'%')
 
+				left join dbo.sqlwatch_config_exclude_wait_stats ew
+					on ew.wait_type = tx.wait_type
+
 			where x.activity_id is null
 			and ex.[exclusion_id] is null
+			and ew.wait_type is null
 
 		commit tran
 	end
