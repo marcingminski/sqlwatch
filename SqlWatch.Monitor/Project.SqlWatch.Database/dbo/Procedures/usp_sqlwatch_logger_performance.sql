@@ -383,13 +383,13 @@ declare @sql nvarchar(4000)
 			on #fs (sql_instance,sqlwatch_database_id,sqlwatch_master_file_id)
 
 		--reduce compile time of the big query below
-		select d.* , sd.sqlwatch_database_id
+		select d.database_id , sd.sqlwatch_database_id, sd.sql_instance
 		into #d
 		from dbo.vw_sqlwatch_sys_databases d
 
 		inner join [dbo].[sqlwatch_meta_database] sd 
 			on sd.[database_name] = d.[name] collate database_default
-			and sd.[database_create_date] = d.[create_date]
+			and sd.[database_create_date] = case when d.name = 'tempdb' then '1970-01-01 00:00:00.000' else d.[create_date] end
 			and sd.sql_instance = [dbo].[ufn_sqlwatch_get_servername]()
 
 		left join [dbo].[sqlwatch_config_exclude_database] ed

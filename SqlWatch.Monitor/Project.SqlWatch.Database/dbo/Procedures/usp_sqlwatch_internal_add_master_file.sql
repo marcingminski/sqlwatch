@@ -19,7 +19,7 @@ using (
 	inner join [dbo].[sqlwatch_meta_database] mdb
 		on mdb.sql_instance = @@SERVERNAME
 		and mdb.database_name = convert(nvarchar(128),db.name) collate database_default
-		and mdb.database_create_date = db.create_date
+		and mdb.database_create_date = case when db.name = 'tempdb' then '1970-01-01 00:00:00.000' else db.[create_date] end
 	) as source
  on (
 		source.file_id = target.file_id
