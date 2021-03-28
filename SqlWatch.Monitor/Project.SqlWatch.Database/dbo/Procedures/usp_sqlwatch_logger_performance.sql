@@ -1,27 +1,5 @@
 CREATE PROCEDURE [dbo].[usp_sqlwatch_logger_performance] AS
 
-/*
--------------------------------------------------------------------------------------------------------------------
- Procedure:
-	[usp_sqlwatch_logger_performance]
-
- Description:
-	Collect Performance Metrics
-
- Parameters
-	
- Author:
-	Marcin Gminski
-
- Change Log:
-	1.0		2018-08		- Marcin Gminski:	Initial Version
-	1.1		2019-11-17	- Marcin Gminski:	Exclude idle wait stats.
-	1.2		2019-11-24	- Marcin Gminski:	Replace sys.databses with dbo.vw_sqlwatch_sys_databases
-	1.3		2020-03-18	- Marcin Gminski,	move explicit transaction after header to fix https://github.com/marcingminski/sqlwatch/issues/155
--------------------------------------------------------------------------------------------------------------------
-*/
-
-
 set xact_abort on
 
 set nocount on;
@@ -124,8 +102,8 @@ declare @sql nvarchar(4000)
 		and (
 			rtrim(pc.instance_name) = sc.instance_name collate database_default
 			or	(
-				sc.instance_name = '<* !_total>' collate database_default
-				and rtrim(pc.instance_name) <> '_total' collate database_default
+				sc.instance_name = '<* !_Total>' collate database_default
+				and rtrim(pc.instance_name) <> '_Total' collate database_default
 				)
 			)
 		where sc.collect = 1
