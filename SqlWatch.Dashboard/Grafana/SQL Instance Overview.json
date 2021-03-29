@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": 24,
-  "iteration": 1617029665392,
+  "iteration": 1617029665412,
   "links": [
     {
       "asDropdown": true,
@@ -94,7 +94,7 @@
       },
       "id": 59,
       "options": {
-        "content": "<br><a href=\"/d/sqlwatch-repository-summary/repository-dashboard?orgId=1&refresh=15s\">Repository Dashboard</a>\r\n<br><br><h1 id=\"overview\">Overview</h1>\r\n<p>This dashboard was designed to help you understand what happens in your SQL Server and help you find bottlenecks. A single page view helps correlate various events and makes it easier to spot trends. Like most computer systems, SQL Server relies on the following components to perform well: <b>CPU > Memory > Storage > Network</b>.\r\nIf any of these does not perform well, we may be seeing performance degradation in our database and/or application. We start looking at the tiles from left to right. Although the data flows from right to left (Storage to CPU), in case of slow disks, we may be seeing long latencies, lots of disk tranfers and long Pending Queue and not a lot of CPU activity. In case of poorly optimised queries or general workload problems, we may be seeing lots of CPU activity but not a lot of disk activity.</p>",
+        "content": "<br><br><h1 id=\"overview\">Overview</h1>\r\n<p>This dashboard was designed to help you understand what happens in your SQL Server and help you find bottlenecks. A single page view helps correlate various events and makes it easier to spot trends. Like most computer systems, SQL Server relies on the following components to perform well: <b>CPU > Memory > Storage > Network</b>.\r\nIf any of these does not perform well, we may be seeing performance degradation in our database and/or application. We start looking at the tiles from left to right. Although the data flows from right to left (Storage to CPU), in case of slow disks, we may be seeing long latencies, lots of disk tranfers and long Pending Queue and not a lot of CPU activity. In case of poorly optimised queries or general workload problems, we may be seeing lots of CPU activity but not a lot of disk activity.</p>",
         "mode": "html"
       },
       "pluginVersion": "7.4.2",
@@ -146,7 +146,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
+        "h": 5,
         "w": 4,
         "x": 1,
         "y": 9
@@ -231,8 +231,8 @@
                 "value": null
               },
               {
-                "color": "orange",
-                "value": 0.1
+                "color": "light-orange",
+                "value": 1
               },
               {
                 "color": "red",
@@ -244,7 +244,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
+        "h": 5,
         "w": 2,
         "x": 5,
         "y": 9
@@ -317,7 +317,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
+        "h": 5,
         "w": 2,
         "x": 7,
         "y": 9
@@ -363,7 +363,7 @@
             "mode": "thresholds"
           },
           "custom": {},
-          "decimals": 1,
+          "decimals": 0,
           "links": [],
           "mappings": [],
           "min": 0,
@@ -375,7 +375,7 @@
                 "value": null
               },
               {
-                "color": "orange",
+                "color": "light-orange",
                 "value": 800
               },
               {
@@ -389,8 +389,8 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
-        "w": 4,
+        "h": 5,
+        "w": 3,
         "x": 9,
         "y": 9
       },
@@ -448,7 +448,7 @@
                 "value": null
               },
               {
-                "color": "orange",
+                "color": "light-orange",
                 "value": 85
               },
               {
@@ -462,9 +462,9 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 13,
+        "h": 5,
+        "w": 3,
+        "x": 12,
         "y": 9
       },
       "id": 199,
@@ -548,9 +548,9 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
-        "w": 3,
-        "x": 17,
+        "h": 5,
+        "w": 2,
+        "x": 15,
         "y": 9
       },
       "id": 228,
@@ -606,7 +606,7 @@
                 "value": null
               },
               {
-                "color": "orange",
+                "color": "light-orange",
                 "value": 20
               },
               {
@@ -620,9 +620,9 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
+        "h": 5,
         "w": 3,
-        "x": 20,
+        "x": 17,
         "y": 9
       },
       "id": 230,
@@ -654,6 +654,191 @@
       "timeFrom": null,
       "timeShift": null,
       "title": "",
+      "type": "stat"
+    },
+    {
+      "datasource": "$DataSource",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "mappings": [],
+          "max": 2,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "OK"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "thresholds"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "WARNING"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "light-orange",
+                  "mode": "thresholds"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "light-orange",
+                      "value": 1
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "CRITICAL"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "red",
+                  "mode": "thresholds"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "red",
+                      "value": 1
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "CHECK ERROR"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "semi-dark-purple",
+                  "mode": "thresholds"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "purple",
+                      "value": 1
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 3,
+        "x": 20,
+        "y": 9
+      },
+      "id": 246,
+      "links": [],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "limit": 4,
+          "values": true
+        },
+        "text": {},
+        "textMode": "value_and_name"
+      },
+      "pluginVersion": "7.4.2",
+      "targets": [
+        {
+          "alias": "",
+          "format": "time_series",
+          "hide": false,
+          "rawSql": "SELECT time=getdate(),t.last_check_status,last_check_status_count=count(c.last_check_status)\r\n  FROM (\r\n    select last_check_status='OK' union all \r\n    select last_check_status = 'WARNING' union all \r\n    select last_check_status = 'CRITICAL' union all \r\n    select last_check_status = 'CHECK ERROR') t\r\n\r\n\touter apply (\r\n\t\tselect last_check_status\r\n\t\tfrom [dbo].[sqlwatch_meta_check] mc\r\n\t\twhere [sql_instance] =  '$sql_instance'\r\n\t\tand mc.last_check_status = t.last_check_status\r\n\t\tand check_enabled = 1\r\n\t\t) c\r\ngroup by t.last_check_status\r\n\r\n   order by case t.last_check_status when  'OK' then 1 when 'WARNING' then 2 when 'CRITICAL' then 3 else 4 end ",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Checks",
       "type": "stat"
     },
     {
@@ -717,14 +902,38 @@
                 "value": "cps"
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "AG: to Replica"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "Bps"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "AG: from Replica"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "Bps"
+              }
+            ]
           }
         ]
       },
       "gridPos": {
         "h": 12,
-        "w": 3,
+        "w": 4,
         "x": 1,
-        "y": 13
+        "y": 14
       },
       "id": 5,
       "options": {
@@ -751,13 +960,40 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT \n      [time] = $__timeGroup([snapshot_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = avg([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(snapshot_time)\n  AND counter_name IN ('Batch Requests/sec','Logins/sec','Transactions/sec','User Connections')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([snapshot_time], $aggregation)\nORDER BY\n  time ASC",
+          "rawSql": "SELECT \n      [time] = $__timeGroup([snapshot_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = avg([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(snapshot_time)\n  AND counter_name IN ('Batch Requests/sec','Logins/sec','Transactions/sec','User Connections','Bytes Sent to Replica/sec','Bytes Received from Replica/sec')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([snapshot_time], $aggregation)\nORDER BY\n  time ASC",
           "refId": "A"
         }
       ],
       "timeFrom": null,
       "timeShift": null,
       "title": "Activity",
+      "transformations": [
+        {
+          "id": "seriesToColumns",
+          "options": {
+            "byField": "Time"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {
+              "Batch Requests/sec": 1,
+              "Bytes Received from Replica/sec": 5,
+              "Bytes Sent to Replica/sec": 6,
+              "Logins/sec": 2,
+              "Time": 0,
+              "Transactions/sec": 3,
+              "User Connections": 4
+            },
+            "renameByName": {
+              "Bytes Received from Replica/sec": "AG: to Replica",
+              "Bytes Sent to Replica/sec": "AG: from Replica"
+            }
+          }
+        }
+      ],
       "type": "stat"
     },
     {
@@ -785,8 +1021,8 @@
       "gridPos": {
         "h": 12,
         "w": 3,
-        "x": 4,
-        "y": 13
+        "x": 5,
+        "y": 14
       },
       "id": 102,
       "links": [],
@@ -814,7 +1050,7 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT TOP 10\n      [time] = $__timeGroup([snapshot_time], $aggregation) \n      ,metric = [wait_category]\n      ,[wait_time_ms_per_second] = avg([wait_time_ms_per_second]) \n  FROM (SELECT wait_time_ms_per_second, wait_category, snapshot_time, RN=ROW_NUMBER() over (partition by wait_category order by wait_time_ms_per_second desc)\n    FROM [dbo].[vw_sqlwatch_report_fact_perf_os_wait_stats] \n      WHERE 1=1\n      AND $__timeFilter(snapshot_time)\n      AND [sql_instance] = '$sql_instance'\n  ) t\n  WHERE t.RN = 1\n  GROUP BY [wait_category] \n      ,$__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  wait_time_ms_per_second desc\n  \n  ",
+          "rawSql": "SELECT TOP 15\n      [time] = $__timeGroup([snapshot_time], $aggregation) \n      ,metric = case when len([wait])>15 then left([wait],15) + '...' else [wait] end\n      ,[wait_time_ms_per_second] = avg([wait_time_ms_per_second]) \n  FROM (SELECT wait_time_ms_per_second, wait= case when '$Waits' = 'Category' then [wait_category] else [wait_type] end, snapshot_time, RN=ROW_NUMBER() over (partition by wait_category order by wait_time_ms_per_second desc)\n    FROM [dbo].[vw_sqlwatch_report_fact_perf_os_wait_stats] \n      WHERE 1=1\n      AND $__timeFilter(snapshot_time)\n      AND [sql_instance] = '$sql_instance'\n  ) t\n  WHERE t.RN = 1\n  GROUP BY case when len([wait])>15 then left([wait],15) + '...' else [wait] end\n      ,$__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  wait_time_ms_per_second desc\n  \n  ",
           "refId": "A"
         }
       ],
@@ -861,8 +1097,8 @@
       "gridPos": {
         "h": 12,
         "w": 4,
-        "x": 7,
-        "y": 13
+        "x": 8,
+        "y": 14
       },
       "id": 15,
       "options": {
@@ -889,7 +1125,7 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT \n      [time] = $__timeGroup([snapshot_time], $aggregation) \n      ,[Latency] = MAX([io_latency_read]+[io_latency_write])\n      ,[Disk] = left([file_physical_name],2)\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_file_stats]\n  WHERE 1 = 1\n  AND $__timeFilter(snapshot_time)\n  AND [sql_instance] = '$sql_instance'\n  AND database_name IN ($database)\n  GROUP BY $__timeGroup([snapshot_time], $aggregation) , left([file_physical_name],2)\nORDER BY\n  time ASC\n  \n  ",
+          "rawSql": "SELECT \n      [time] = $__timeGroup(fs.[snapshot_time], $aggregation) \n      ,[Latency] = MAX(fs.[io_latency_read]+fs.[io_latency_write])\n      ,[Disk] = left([file_physical_name],2) + ' ' + v.label \n  FROM [dbo].[vw_sqlwatch_report_fact_perf_file_stats] fs\n  outer apply (\n    select top 1 label \n    from [dbo].[sqlwatch_meta_os_volume] v\n\t  where v.volume_name = left(fs.file_physical_name,3)) v\n  WHERE 1 = 1\n  AND $__timeFilter(fs.snapshot_time)\n  AND [sql_instance] = '$sql_instance'\n  AND database_name IN ($database)\n  GROUP BY $__timeGroup(fs.[snapshot_time], $aggregation) , left([file_physical_name],2) + ' ' + v.label \nORDER BY\n  time ASC\n  \n  ",
           "refId": "A"
         }
       ],
@@ -923,8 +1159,8 @@
       "gridPos": {
         "h": 12,
         "w": 4,
-        "x": 11,
-        "y": 13
+        "x": 12,
+        "y": 14
       },
       "id": 162,
       "options": {
@@ -951,7 +1187,7 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT \n      [time] = $__timeGroup([snapshot_time], $aggregation) \n      ,[Reads] = SUM([bytes_read_per_second])\n      ,[Disk Reads] = left([file_physical_name],2)\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_file_stats]\n  WHERE 1 = 1\n  AND $__timeFilter(snapshot_time)\n  AND [sql_instance] = '$sql_instance'\n  AND database_name IN ($database)\n  GROUP BY $__timeGroup([snapshot_time], $aggregation) ,left([file_physical_name],2)\nORDER BY\n  time ASC\n  \n  ",
+          "rawSql": "SELECT \n      [time] = $__timeGroup(fs.[snapshot_time], $aggregation) \n      ,[Latency] = AVG(bytes_read_per_second)\n      ,[Disk] = left([file_physical_name],2) + ' ' + v.label \n  FROM [dbo].[vw_sqlwatch_report_fact_perf_file_stats] fs\n  outer apply (\n    select top 1 label \n    from [dbo].[sqlwatch_meta_os_volume] v\n\t  where v.volume_name = left(fs.file_physical_name,3)) v\n  WHERE 1 = 1\n  AND $__timeFilter(fs.snapshot_time)\n  AND [sql_instance] = '$sql_instance'\n  AND database_name IN ($database)\n  GROUP BY $__timeGroup(fs.[snapshot_time], $aggregation) , left([file_physical_name],2) + ' ' + v.label \nORDER BY\n  time ASC\n  \n  ",
           "refId": "A"
         }
       ],
@@ -985,8 +1221,8 @@
       "gridPos": {
         "h": 12,
         "w": 4,
-        "x": 15,
-        "y": 13
+        "x": 16,
+        "y": 14
       },
       "id": 168,
       "options": {
@@ -1013,7 +1249,7 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT \n      [time] = $__timeGroup([snapshot_time], $aggregation) \n      ,[Writes] = SUM([bytes_written_per_second])\n      ,[Disk Writes] = left([file_physical_name],2)\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_file_stats]\n  WHERE 1 = 1\n  AND $__timeFilter(snapshot_time)\n  AND [sql_instance] = '$sql_instance'\n  AND database_name IN ($database)\n  GROUP BY $__timeGroup([snapshot_time], $aggregation) , left([file_physical_name],2)\nORDER BY\n  time ASC\n  \n  ",
+          "rawSql": "SELECT \n      [time] = $__timeGroup(fs.[snapshot_time], $aggregation) \n      ,[Latency] = AVG(bytes_written_per_second)\n      ,[Disk] = left([file_physical_name],2) + ' ' + v.label \n  FROM [dbo].[vw_sqlwatch_report_fact_perf_file_stats] fs\n  outer apply (\n    select top 1 label \n    from [dbo].[sqlwatch_meta_os_volume] v\n\t  where v.volume_name = left(fs.file_physical_name,3)) v\n  WHERE 1 = 1\n  AND $__timeFilter(fs.snapshot_time)\n  AND [sql_instance] = '$sql_instance'\n  AND database_name IN ($database)\n  GROUP BY $__timeGroup(fs.[snapshot_time], $aggregation) , left([file_physical_name],2) + ' ' + v.label \nORDER BY\n  time ASC\n  \n  ",
           "refId": "A"
         }
       ],
@@ -1048,20 +1284,45 @@
           },
           "unit": "none"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Total Size"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "decbytes"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Growth per day"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "decbytes"
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
-        "h": 3,
-        "w": 2,
-        "x": 19,
-        "y": 13
+        "h": 4,
+        "w": 3,
+        "x": 20,
+        "y": 14
       },
       "id": 225,
       "options": {
         "colorMode": "value",
         "graphMode": "area",
         "justifyMode": "auto",
-        "orientation": "vertical",
+        "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -1070,7 +1331,8 @@
           "values": false
         },
         "text": {
-          "titleSize": 14
+          "titleSize": 14,
+          "valueSize": 20
         },
         "textMode": "value_and_name"
       },
@@ -1080,138 +1342,22 @@
           "alias": "",
           "format": "table",
           "hide": false,
-          "rawSql": "SELECT [Databases]=count(*)\r\n  FROM [dbo].[sqlwatch_meta_database]\r\n  where is_current = 1\r\n  and sql_instance = '$sql_instance'",
+          "rawSql": "SELECT time=getdate(),[Databases]=count(*)\r\n  FROM [dbo].[sqlwatch_meta_database]\r\n  where is_current = 1\r\n  and sql_instance = '$sql_instance'",
           "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "",
-      "type": "stat"
-    },
-    {
-      "datasource": "$DataSource",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "fixedColor": "rgb(117, 117, 117)",
-            "mode": "fixed"
-          },
-          "custom": {},
-          "links": [],
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "none"
         },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 2,
-        "x": 21,
-        "y": 13
-      },
-      "id": 227,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "vertical",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {
-          "titleSize": 14
-        },
-        "textMode": "value_and_name"
-      },
-      "pluginVersion": "7.4.2",
-      "targets": [
         {
           "alias": "",
-          "format": "table",
+          "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT [Jobs]=count(*)\r\n  FROM [dbo].[vw_sqlwatch_report_dim_aget_job]\r\n  where [is_record_deleted] is null\r\n  and sql_instance = '$sql_instance'",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "",
-      "type": "stat"
-    },
-    {
-      "datasource": "$DataSource",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "fixedColor": "rgb(117, 117, 117)",
-            "mode": "fixed"
-          },
-          "custom": {},
-          "links": [],
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "decbytes"
+          "rawSql": "SELECT time=getdate(),[Jobs]=count(*)\r\n  FROM [dbo].[vw_sqlwatch_report_dim_aget_job]\r\n  where [is_record_deleted] is null\r\n  and sql_instance = '$sql_instance'",
+          "refId": "B"
         },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 4,
-        "x": 19,
-        "y": 16
-      },
-      "id": 226,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "vertical",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {
-          "titleSize": 14
-        },
-        "textMode": "value_and_name"
-      },
-      "pluginVersion": "7.4.2",
-      "targets": [
         {
           "alias": "",
-          "format": "table",
+          "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT [Total Size]=sum([database_size_bytes_current])\r\n      ,[Growth per day]=sum(database_growth_bytes_per_day)\r\n  FROM [dbo].[vw_sqlwatch_report_dim_database]\r\n\r\n  WHERE sql_instance = '$sql_instance'",
-          "refId": "A"
+          "rawSql": "SELECT time=getdate(),[Total Size]=sum([database_size_bytes_current])\r\n      ,[Growth per day]=sum(database_growth_bytes_per_day)\r\n  FROM [dbo].[vw_sqlwatch_report_dim_database]\r\n\r\n  WHERE sql_instance = '$sql_instance'",
+          "refId": "C"
         }
       ],
       "timeFrom": null,
@@ -1253,10 +1399,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 6,
-        "w": 4,
-        "x": 19,
-        "y": 19
+        "h": 8,
+        "w": 3,
+        "x": 20,
+        "y": 18
       },
       "id": 212,
       "options": {
@@ -1281,268 +1427,12 @@
           "alias": "",
           "format": "time_series",
           "queryType": "randomWalk",
-          "rawSql": "select time=date_last_seen, left([volume_name],2), 1.0-[free_space_percentage]\nfrom [dbo].[vw_sqlwatch_report_dim_os_volume]\nwhere sql_instance = '$sql_instance'\norder by left([volume_name],2)",
+          "rawSql": "select time=date_last_seen, left([volume_name],2)+ ' ' + label, 1.0-[free_space_percentage]\nfrom [dbo].[vw_sqlwatch_report_dim_os_volume] \nwhere sql_instance = '$sql_instance'\norder by left([volume_name],2)",
           "refId": "A"
         }
       ],
       "title": "Disk Space Used %",
       "type": "bargauge"
-    },
-    {
-      "datasource": "$DataSource",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {},
-          "mappings": [],
-          "max": 2,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "green",
-                "value": 1
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 2,
-        "x": 1,
-        "y": 25
-      },
-      "id": 122,
-      "links": [],
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "sum"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "value_and_name"
-      },
-      "pluginVersion": "7.4.2",
-      "targets": [
-        {
-          "alias": "",
-          "format": "table",
-          "hide": false,
-          "rawSql": "SELECT [OK]=count(*)\n  FROM [dbo].[sqlwatch_meta_check]\n  WHERE [sql_instance] = '$sql_instance'\n  AND [last_check_status] = 'OK'\n  AND check_enabled = 1",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "",
-      "transparent": true,
-      "type": "stat"
-    },
-    {
-      "datasource": "$DataSource",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {},
-          "mappings": [],
-          "max": 2,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "orange",
-                "value": null
-              },
-              {
-                "color": "orange",
-                "value": 1
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 2,
-        "x": 3,
-        "y": 25
-      },
-      "id": 229,
-      "links": [],
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "sum"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "value_and_name"
-      },
-      "pluginVersion": "7.4.2",
-      "targets": [
-        {
-          "alias": "",
-          "format": "table",
-          "hide": false,
-          "rawSql": "SELECT [Warning]=count(*)\n  FROM [dbo].[sqlwatch_meta_check]\n  WHERE [sql_instance] = '$sql_instance'\n  AND [last_check_status] = 'Warning'\n  AND check_enabled = 1",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "",
-      "transparent": true,
-      "type": "stat"
-    },
-    {
-      "datasource": "$DataSource",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {},
-          "mappings": [],
-          "max": 2,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 1
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 2,
-        "x": 5,
-        "y": 25
-      },
-      "id": 126,
-      "links": [],
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "sum"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "value_and_name"
-      },
-      "pluginVersion": "7.4.2",
-      "targets": [
-        {
-          "alias": "",
-          "format": "table",
-          "hide": false,
-          "rawSql": "SELECT [Critical]=count(*)\n  FROM [dbo].[sqlwatch_meta_check]\n  WHERE [sql_instance] = '$sql_instance'\n  AND [last_check_status] <> 'OK'\n  AND [last_check_status] <> 'WARNING'\n  AND check_enabled = 1",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "",
-      "transparent": true,
-      "type": "stat"
-    },
-    {
-      "datasource": "$DataSource",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {},
-          "mappings": [],
-          "max": 2,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "purple",
-                "value": null
-              },
-              {
-                "color": "purple",
-                "value": 1
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 2,
-        "x": 7,
-        "y": 25
-      },
-      "id": 128,
-      "links": [],
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "sum"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "value_and_name"
-      },
-      "pluginVersion": "7.4.2",
-      "targets": [
-        {
-          "alias": "",
-          "format": "table",
-          "hide": false,
-          "rawSql": "SELECT [Error]=count(*)\n  FROM [dbo].[sqlwatch_meta_check]\n  WHERE [sql_instance] = '$sql_instance'\n  AND [last_check_status] = 'CHECK ERROR'\n  AND check_enabled = 1",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "",
-      "transparent": true,
-      "type": "stat"
     },
     {
       "datasource": "${DataSource}",
@@ -1561,7 +1451,7 @@
         "h": 2,
         "w": 22,
         "x": 1,
-        "y": 28
+        "y": 26
       },
       "id": 189,
       "options": {
@@ -1593,7 +1483,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 30
+        "y": 28
       },
       "id": 187,
       "panels": [
@@ -1609,7 +1499,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 29
+            "y": 4
           },
           "id": 159,
           "options": {
@@ -1653,7 +1543,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 35
+            "y": 10
           },
           "hiddenSeries": false,
           "id": 101,
@@ -1817,7 +1707,7 @@
             "h": 12,
             "w": 24,
             "x": 0,
-            "y": 41
+            "y": 16
           },
           "id": 43,
           "options": {
@@ -1863,7 +1753,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 53
+            "y": 28
           },
           "hiddenSeries": false,
           "id": 231,
@@ -1973,7 +1863,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 60
+            "y": 35
           },
           "hiddenSeries": false,
           "id": 65,
@@ -2067,7 +1957,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 67
+            "y": 42
           },
           "id": 109,
           "options": {
@@ -2111,7 +2001,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 73
+            "y": 48
           },
           "hiddenSeries": false,
           "id": 6,
@@ -2290,7 +2180,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 80
+            "y": 55
           },
           "id": 110,
           "options": {
@@ -2339,7 +2229,7 @@
             "h": 11,
             "w": 24,
             "x": 0,
-            "y": 86
+            "y": 61
           },
           "hiddenSeries": false,
           "id": 232,
@@ -2350,7 +2240,7 @@
             "max": true,
             "min": true,
             "show": true,
-            "sort": "avg",
+            "sort": "total",
             "sortDesc": true,
             "total": true,
             "values": true
@@ -2461,7 +2351,7 @@
             "h": 2,
             "w": 24,
             "x": 0,
-            "y": 97
+            "y": 72
           },
           "id": 192,
           "options": {
@@ -2506,7 +2396,7 @@
             "h": 5,
             "w": 24,
             "x": 0,
-            "y": 99
+            "y": 74
           },
           "hiddenSeries": false,
           "id": 191,
@@ -2696,7 +2586,7 @@
             "h": 5,
             "w": 24,
             "x": 0,
-            "y": 104
+            "y": 79
           },
           "id": 194,
           "links": [
@@ -2765,7 +2655,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 31
+        "y": 29
       },
       "id": 208,
       "panels": [
@@ -3480,7 +3370,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 32
+        "y": 30
       },
       "id": 185,
       "panels": [
@@ -4239,7 +4129,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 33
+        "y": 31
       },
       "id": 183,
       "panels": [
@@ -6128,7 +6018,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 34
+        "y": 32
       },
       "id": 181,
       "panels": [
@@ -6493,7 +6383,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 35
+        "y": 33
       },
       "id": 179,
       "panels": [
@@ -7632,7 +7522,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 36
+        "y": 34
       },
       "id": 177,
       "panels": [
@@ -8274,7 +8164,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 37
+        "y": 35
       },
       "id": 175,
       "panels": [
@@ -8434,7 +8324,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 38
+        "y": 36
       },
       "id": 234,
       "panels": [
@@ -8450,7 +8340,7 @@
             "h": 4,
             "w": 24,
             "x": 0,
-            "y": 12
+            "y": 37
           },
           "id": 238,
           "options": {
@@ -8502,7 +8392,7 @@
             "h": 5,
             "w": 24,
             "x": 0,
-            "y": 16
+            "y": 41
           },
           "id": 244,
           "options": {
@@ -8546,7 +8436,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 21
+            "y": 46
           },
           "hiddenSeries": false,
           "id": 235,
@@ -8659,10 +8549,10 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 27
+            "y": 52
           },
           "hiddenSeries": false,
-          "id": 236,
+          "id": 245,
           "legend": {
             "alignAsTable": true,
             "avg": true,
@@ -8767,7 +8657,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 34
+            "y": 59
           },
           "hiddenSeries": false,
           "id": 242,
@@ -8868,7 +8758,7 @@
             "h": 2,
             "w": 24,
             "x": 0,
-            "y": 41
+            "y": 66
           },
           "id": 239,
           "options": {
@@ -8913,7 +8803,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 43
+            "y": 68
           },
           "hiddenSeries": false,
           "id": 237,
@@ -9012,7 +8902,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 39
+        "y": 37
       },
       "id": 220,
       "panels": [
@@ -9333,8 +9223,8 @@
         "allValue": null,
         "current": {
           "selected": true,
-          "text": "SQL-3B",
-          "value": "SQL-3B"
+          "text": "SQL-3A",
+          "value": "SQL-3A"
         },
         "datasource": "$DataSource",
         "definition": "SELECT [servername] FROM [dbo].[sqlwatch_meta_server]",
@@ -9417,9 +9307,9 @@
       {
         "allValue": null,
         "current": {
-          "selected": false,
-          "text": "Type",
-          "value": "Type"
+          "selected": true,
+          "text": "Category",
+          "value": "Category"
         },
         "description": null,
         "error": null,
@@ -9430,12 +9320,12 @@
         "name": "Waits",
         "options": [
           {
-            "selected": false,
+            "selected": true,
             "text": "Category",
             "value": "Category"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "Type",
             "value": "Type"
           }
@@ -9539,7 +9429,6 @@
         "allValue": null,
         "current": {
           "selected": true,
-          "tags": [],
           "text": [
             "All"
           ],
@@ -9592,5 +9481,5 @@
   "timezone": "utc",
   "title": "SQL Instance Overview",
   "uid": "sqlwatch-instance-overview",
-  "version": 619
+  "version": 677
 }
