@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": 24,
-  "iteration": 1617045835843,
+  "iteration": 1617047601384,
   "links": [
     {
       "asDropdown": true,
@@ -371,7 +371,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "dark-green",
                 "value": null
               },
               {
@@ -9224,8 +9224,8 @@
         "allValue": null,
         "current": {
           "selected": true,
-          "text": "SQL-3A",
-          "value": "SQL-3A"
+          "text": "SQLWATCH-REPO",
+          "value": "SQLWATCH-REPO"
         },
         "datasource": "$DataSource",
         "definition": "SELECT [servername] FROM [dbo].[sqlwatch_meta_server]",
@@ -9308,7 +9308,7 @@
       {
         "allValue": null,
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "Category",
           "value": "Category"
         },
@@ -9429,13 +9429,9 @@
       {
         "allValue": null,
         "current": {
-          "selected": true,
-          "text": [
-            "All"
-          ],
-          "value": [
-            "$__all"
-          ]
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
         },
         "datasource": "${DataSource}",
         "definition": "select database_name from [dbo].[sqlwatch_meta_database] where sql_instance = '$sql_instance'",
@@ -9482,5 +9478,5 @@
   "timezone": "utc",
   "title": "SQL Instance Overview",
   "uid": "sqlwatch-instance-overview",
-  "version": 683
+  "version": 690
 }
