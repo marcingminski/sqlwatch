@@ -33,7 +33,7 @@ insert into #sql_perf_mon_config_perf_counters([collect],[object_name],[counter_
 		,(1,'Access Methods','Page Deallocations/sec','',NULL)
 		,(1,'Access Methods','Page compression attempts/sec','',NULL)
 		,(1,'Access Methods','Pages compressed/sec','',NULL)
-		,(0,'Availability Replica','Bytes Received from Replica/sec','_Total',NULL)
+		,(1,'Availability Replica','Bytes Received from Replica/sec','<* !_Total>',NULL)
 		,(1,'Availability Replica','Bytes Sent to Replica/sec','<* !_Total>',NULL)
 		,(0,'Batch Resp Statistics','Batches >=000000ms & <000001ms','CPU Time:Requests',NULL)
 		,(0,'Batch Resp Statistics','Batches >=000001ms & <000002ms','CPU Time:Requests',NULL)
