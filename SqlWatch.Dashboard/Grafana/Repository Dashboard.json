@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 25,
-  "iteration": 1617019800705,
+  "iteration": 1617029656463,
   "links": [
     {
       "asDropdown": true,
@@ -81,7 +81,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "semi-dark-blue",
+                "color": "dark-blue",
                 "value": null
               }
             ]
@@ -761,7 +761,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "semi-dark-blue",
+                "color": "dark-blue",
                 "value": null
               }
             ]
@@ -1262,7 +1262,7 @@
       },
       "pluginVersion": "7.4.2",
       "repeatDirection": "v",
-      "repeatIteration": 1617019800705,
+      "repeatIteration": 1617029656463,
       "repeatPanelId": 4,
       "scopedVars": {
         "sql_instance": {
@@ -1442,7 +1442,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "semi-dark-blue",
+                "color": "dark-blue",
                 "value": null
               }
             ]
@@ -1943,7 +1943,7 @@
       },
       "pluginVersion": "7.4.2",
       "repeatDirection": "v",
-      "repeatIteration": 1617019800705,
+      "repeatIteration": 1617029656463,
       "repeatPanelId": 4,
       "scopedVars": {
         "sql_instance": {
@@ -2123,7 +2123,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "semi-dark-blue",
+                "color": "dark-blue",
                 "value": null
               }
             ]
@@ -2624,7 +2624,7 @@
       },
       "pluginVersion": "7.4.2",
       "repeatDirection": "v",
-      "repeatIteration": 1617019800705,
+      "repeatIteration": 1617029656463,
       "repeatPanelId": 4,
       "scopedVars": {
         "sql_instance": {
@@ -2914,5 +2914,5 @@
   "timezone": "utc",
   "title": "Repository Dashboard",
   "uid": "sqlwatch-repository-summary",
-  "version": 90
+  "version": 91
 }
