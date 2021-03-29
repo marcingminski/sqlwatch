@@ -1024,7 +1024,7 @@
         "defaults": {
           "color": {
             "fixedColor": "rgb(105, 105, 105)",
-            "mode": "fixed"
+            "mode": "thresholds"
           },
           "custom": {},
           "decimals": 0,
@@ -1033,7 +1033,20 @@
           "min": 0,
           "thresholds": {
             "mode": "absolute",
-            "steps": []
+            "steps": [
+              {
+                "color": "dark-green",
+                "value": null
+              },
+              {
+                "color": "light-orange",
+                "value": 800
+              },
+              {
+                "color": "red",
+                "value": 1000
+              }
+            ]
           },
           "unit": "ms"
         },
@@ -9511,5 +9524,5 @@
   "timezone": "utc",
   "title": "SQL Instance Overview",
   "uid": "sqlwatch-instance-overview",
-  "version": 695
+  "version": 696
 }
