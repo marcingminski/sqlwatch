@@ -76,7 +76,9 @@ using (
 	union
 	/* Query Stats */
 	select [snapshot_type_id] = 28, [snapshot_type_desc] = 'Query Stats', [snapshot_retention_days] = 32
-
+	union
+	/* AG */
+	select [snapshot_type_id] = 29, [snapshot_type_desc] = 'Availability Groups', [snapshot_retention_days] = 32
 
 ) as source
 on (source.[snapshot_type_id] = target.[snapshot_type_id])

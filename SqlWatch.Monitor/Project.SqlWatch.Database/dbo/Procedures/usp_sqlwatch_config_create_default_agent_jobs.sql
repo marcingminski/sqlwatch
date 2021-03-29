@@ -61,6 +61,7 @@ insert into ##sqlwatch_jobs
 
 			('SQLWATCH-LOGGER-PERFORMANCE',		4,			1,				2,					10,						0,						1,							20180101,			99991231,			12,					235959,				1),
 			('SQLWATCH-LOGGER-XES',				4,			1,				4,					1,						0,						1,							20180101,			99991231,			12,					235959,				1),
+			('SQLWATCH-LOGGER-AG',				4,			1,				4,					1,						0,						1,							20180101,			99991231,			12,					235959,				1),
 
 			('SQLWATCH-LOGGER-DISK-UTILISATION',4,			1,				8,					1,						0,						1,							20180101,			99991231,			437,				235959,				1),
 			('SQLWATCH-LOGGER-INDEXES',			4,			1,				1,					24,						0,						1,							20180101,			99991231,			1500,				235959,				1),
@@ -98,6 +99,9 @@ insert into ##sqlwatch_steps
 			('dbo.usp_sqlwatch_logger_xes_blockers',	2,			'SQLWATCH-LOGGER-XES',				'TSQL',		'exec dbo.usp_sqlwatch_logger_xes_blockers'),
 			('dbo.usp_sqlwatch_logger_xes_diagnostics',	3,			'SQLWATCH-LOGGER-XES',				'TSQL',		'exec dbo.usp_sqlwatch_logger_xes_diagnostics'),
 			('dbo.usp_sqlwatch_logger_xes_long_queries',4,			'SQLWATCH-LOGGER-XES',				'TSQL',		'exec dbo.usp_sqlwatch_logger_xes_long_queries'),
+
+			('dbo.usp_sqlwatch_logger_hadr_database_replica_states',1,			'SQLWATCH-LOGGER-AG',				'TSQL',		'exec dbo.usp_sqlwatch_logger_hadr_database_replica_states'),
+
 
 			('dbo.usp_sqlwatch_trend_perf_os_performance_counters',1,'SQLWATCH-INTERNAL-TRENDS',		'TSQL',		'exec dbo.usp_sqlwatch_trend_perf_os_performance_counters'),
 
