@@ -15,7 +15,8 @@ insert into [dbo].[sqlwatch_logger_hadr_database_replica_states]
 	[replica_server_name] ,
 	[availability_mode] ,
 	[failover_mode] ,
-	[sqlwatch_database_id] ,
+	[database_name],
+	--[sqlwatch_database_id] ,
 	[is_local] ,
 	[is_primary_replica] ,
 	[synchronization_state] ,
@@ -41,7 +42,8 @@ select
 	,ar.replica_server_name
 	,ar.availability_mode
 	,ar.failover_mode
-	,db.sqlwatch_database_id
+	--,db.sqlwatch_database_id
+	,[database_name] = dbs.name
 	,rs.is_local
 	,[is_primary_replica] = null --rs.[is_primary_replica] --2014 onwards
 	,rs.[synchronization_state]
@@ -66,8 +68,10 @@ inner join sys.availability_replicas ar
 	and ar.replica_id = rs.replica_id
 inner join sys.availability_groups ag
 	on ag.group_id = rs.group_id
-inner join dbo.vw_sqlwatch_sys_databases sdb
-	on sdb.database_id = rs.database_id
-inner join dbo.sqlwatch_meta_database db
-	on db.database_name = sdb.name
-	and db.database_create_date = sdb.create_date
+inner join sys.databases dbs
+	on dbs.database_id = rs.database_id
+--inner join dbo.vw_sqlwatch_sys_databases sdb
+--	on sdb.database_id = rs.database_id
+--inner join dbo.sqlwatch_meta_database db
+--	on db.database_name = sdb.name
+--	and db.database_create_date = sdb.create_date

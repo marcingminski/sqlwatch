@@ -324,6 +324,7 @@
     <Build Include="dbo\Tables\sqlwatch_config_check_template_action.sql" />
     <Build Include="dbo\Tables\sqlwatch_logger_hadr_database_replica_states.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_logger_hadr_database_replica_states.sql" />
+    <Build Include="dbo\Views\vw_sqlwatch_report_hadr_database_replica_states.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
