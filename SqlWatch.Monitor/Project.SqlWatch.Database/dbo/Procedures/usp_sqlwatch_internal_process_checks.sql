@@ -77,8 +77,8 @@ select
 	, cc.[check_name]
 	, cc.[check_description]
 	, cc.[check_query]
-	, cc.[check_threshold_warning]
-	, cc.[check_threshold_critical]
+	, [check_threshold_warning] = case when cc.[check_threshold_warning] like '%{LAST_CHECK_VALUE}%' and mc.last_check_value is not null then replace(cc.[check_threshold_warning],'{LAST_CHECK_VALUE}',mc.last_check_value) else mc.[check_threshold_warning] end
+	, [check_threshold_critical] = case when cc.[check_threshold_critical] like '%{LAST_CHECK_VALUE}%' and mc.last_check_value is not null then replace(cc.[check_threshold_critical],'{LAST_CHECK_VALUE}',mc.last_check_value) else cc.[check_threshold_critical] end
 	, last_check_date = isnull(mc.last_check_date,'1970-01-01')
 	, mc.last_check_value
 	, mc.last_check_status
@@ -232,9 +232,15 @@ SET ANSI_WARNINGS OFF
 
 	--we must either have critical value or warning and critical. constraints dissalow the critical warning to be null and previous check ensured check_value is not null:
 	select @check_status = case 
-		when [dbo].[ufn_sqlwatch_get_check_status] ( @check_critical_threshold, @check_value ) = 1 then 'CRITICAL'
-		when @check_warning_threshold is not null and [dbo].[ufn_sqlwatch_get_check_status] ( @check_warning_threshold, @check_value ) = 1 then 'WARNING'
-		else 'OK' end
+		--since we can reference last check value in the threshold as a parameter, we have to account for the first run, where the previous value does not exist. 
+		--In such situation the threshold cannot be compared to and we have to return an OK (as we dont know if the value is out of bounds). 
+		--The second iteration should then be able to compare to the previous value and return the desired status
+		when @check_critical_threshold like '%{LAST_CHECK_VALUE}%' or @check_warning_threshold like '%{LAST_CHECK_VALUE}%' then 'OK' 
+		else
+			case when [dbo].[ufn_sqlwatch_get_check_status] ( @check_critical_threshold, @check_value ) = 1 then 'CRITICAL'
+			when @check_warning_threshold is not null and [dbo].[ufn_sqlwatch_get_check_status] ( @check_warning_threshold, @check_value ) = 1 then 'WARNING'
+			else 'OK' end
+		end
 
 	----if @check_status is still null then check if its warning, but we may not have warning so need to account for that:
 	--select @check_status = case when @check_status is null 

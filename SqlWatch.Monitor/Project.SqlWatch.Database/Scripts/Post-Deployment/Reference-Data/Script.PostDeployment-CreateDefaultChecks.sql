@@ -1230,7 +1230,7 @@ where mpc.sql_instance = @@SERVERNAME
 and snapshot_time > ''{LAST_CHECK_DATE}'''
 	,@check_frequency_minutes = 15
 	,@check_threshold_warning = null
-	,@check_threshold_critical = '>0' 
+	,@check_threshold_critical = '>{LAST_CHECK_VALUE}' 
 	,@check_enabled = 1
 	,@check_action_id = null
 
