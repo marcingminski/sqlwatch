@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": 24,
-  "iteration": 1617207279874,
+  "iteration": 1617209743981,
   "links": [
     {
       "asDropdown": true,
@@ -951,6 +951,10 @@
               {
                 "id": "unit",
                 "value": "cps"
+              },
+              {
+                "id": "displayName",
+                "value": "Transactions"
               }
             ]
           },
@@ -9563,7 +9567,7 @@
         "auto_count": 500,
         "auto_min": "1s",
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "auto",
           "value": "$__auto_interval_aggregation"
         },
@@ -9755,5 +9759,5 @@
   "timezone": "utc",
   "title": "SQL Instance Overview",
   "uid": "sqlwatch-instance-overview",
-  "version": 809
+  "version": 810
 }
