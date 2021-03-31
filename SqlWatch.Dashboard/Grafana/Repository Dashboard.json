@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 25,
-  "iteration": 1617200558449,
+  "iteration": 1617207286129,
   "links": [
     {
       "asDropdown": true,
@@ -32,13 +32,45 @@
   ],
   "panels": [
     {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 42,
+      "options": {
+        "content": "Folded panels become inactive and do not query database.",
+        "mode": "markdown"
+      },
+      "pluginVersion": "7.4.2",
+      "targets": [
+        {
+          "queryType": "randomWalk",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "text"
+    },
+    {
       "collapsed": false,
       "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 0
+        "y": 2
       },
       "id": 28,
       "panels": [],
@@ -57,7 +89,7 @@
         "h": 2,
         "w": 24,
         "x": 0,
-        "y": 1
+        "y": 3
       },
       "id": 23,
       "options": {
@@ -614,7 +646,7 @@
         "h": 3,
         "w": 24,
         "x": 0,
-        "y": 3
+        "y": 5
       },
       "id": 18,
       "maxPerRow": 6,
@@ -1328,9 +1360,9 @@
         "h": 3,
         "w": 24,
         "x": 0,
-        "y": 6
+        "y": 8
       },
-      "id": 38,
+      "id": 43,
       "maxPerRow": 6,
       "options": {
         "colorMode": "background",
@@ -1352,7 +1384,7 @@
       },
       "pluginVersion": "7.4.2",
       "repeatDirection": "v",
-      "repeatIteration": 1617200558449,
+      "repeatIteration": 1617207286129,
       "repeatPanelId": 18,
       "scopedVars": {
         "sql_instance": {
@@ -2043,9 +2075,9 @@
         "h": 3,
         "w": 24,
         "x": 0,
-        "y": 9
+        "y": 11
       },
-      "id": 39,
+      "id": 44,
       "maxPerRow": 6,
       "options": {
         "colorMode": "background",
@@ -2067,7 +2099,7 @@
       },
       "pluginVersion": "7.4.2",
       "repeatDirection": "v",
-      "repeatIteration": 1617200558449,
+      "repeatIteration": 1617207286129,
       "repeatPanelId": 18,
       "scopedVars": {
         "sql_instance": {
@@ -2758,9 +2790,9 @@
         "h": 3,
         "w": 24,
         "x": 0,
-        "y": 12
+        "y": 14
       },
-      "id": 40,
+      "id": 45,
       "maxPerRow": 6,
       "options": {
         "colorMode": "background",
@@ -2782,7 +2814,7 @@
       },
       "pluginVersion": "7.4.2",
       "repeatDirection": "v",
-      "repeatIteration": 1617200558449,
+      "repeatIteration": 1617207286129,
       "repeatPanelId": 18,
       "scopedVars": {
         "sql_instance": {
@@ -2943,7 +2975,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 15
+        "y": 17
       },
       "id": 37,
       "panels": [
@@ -3576,7 +3608,7 @@
             "h": 16,
             "w": 24,
             "x": 0,
-            "y": 2
+            "y": 4
           },
           "id": 32,
           "options": {
@@ -3590,7 +3622,7 @@
               "alias": "",
               "format": "table",
               "hide": false,
-              "rawSql": "SELECT\n\t   'Batch Requests/sec' = avg(case when counter_name = 'Batch Requests/sec' then [cntr_value_calculated] else null end)\n\t  ,'Readahead pages/sec' = avg(case when counter_name = 'Readahead pages/sec' then [cntr_value_calculated] else null end)\n\t  ,'Transactions/sec' = max(case when counter_name = 'Transactions/sec' then [cntr_value_calculated] else null end)\n\t  ,'Processes blocked' = avg(case when counter_name = 'Processes blocked' then [cntr_value_calculated] else null end)\n\t  ,'User Connections' = avg(case when counter_name = 'User Connections' then [cntr_value_calculated] else null end)\n\t  ,'Logins/sec' = avg(case when counter_name = 'Logins/sec' then cntr_value_calculated else null end)\n\t  ,pc.sql_instance\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters] pc\n  WHERE [aggregation_interval_minutes] = 1\n   AND $__timeFilter(snapshot_time)\n   AND counter_name IN ('Batch Requests/sec','Readahead pages/sec','Transactions/sec','Processes blocked','CPU usage %','User Connections','Logins/sec')\n   GROUP BY pc.sql_instance",
+              "rawSql": "SELECT --repository_dashboard_table\n\t   'Batch Requests/sec' = avg(case when counter_name = 'Batch Requests/sec' then [cntr_value_calculated] else null end)\n\t  ,'Readahead pages/sec' = avg(case when counter_name = 'Readahead pages/sec' then [cntr_value_calculated] else null end)\n\t  ,'Transactions/sec' = max(case when counter_name = 'Transactions/sec' then [cntr_value_calculated] else null end)\n\t  ,'Processes blocked' = avg(case when counter_name = 'Processes blocked' then [cntr_value_calculated] else null end)\n\t  ,'User Connections' = avg(case when counter_name = 'User Connections' then [cntr_value_calculated] else null end)\n\t  ,'Logins/sec' = avg(case when counter_name = 'Logins/sec' then cntr_value_calculated else null end)\n\t  ,pc.sql_instance\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters] pc\n  WHERE [aggregation_interval_minutes] = 1\n   AND $__timeFilter(snapshot_time)\n   AND counter_name IN ('Batch Requests/sec','Readahead pages/sec','Transactions/sec','Processes blocked','CPU usage %','User Connections','Logins/sec')\n   GROUP BY pc.sql_instance",
               "refId": "perf_os_performance_counters"
             },
             {
@@ -3851,5 +3883,5 @@
   "timezone": "utc",
   "title": "Repository Dashboard",
   "uid": "sqlwatch-repository-summary",
-  "version": 244
+  "version": 247
 }
