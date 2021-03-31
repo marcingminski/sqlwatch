@@ -1,0 +1,462 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": false,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": 23,
+  "iteration": 1617186684254,
+  "links": [
+    {
+      "asDropdown": true,
+      "icon": "external link",
+      "includeVars": true,
+      "keepTime": true,
+      "tags": [
+        "SQLWATCH"
+      ],
+      "title": "Dashboards",
+      "type": "dashboards"
+    }
+  ],
+  "panels": [
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DataSource}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {},
+          "custom": {},
+          "thresholds": {
+            "mode": "absolute",
+            "steps": []
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 1,
+      "gridPos": {
+        "h": 5,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "hiddenSeries": false,
+      "id": 31,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": false,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.4.2",
+      "pointradius": 3,
+      "points": true,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "$$hashKey": "object:2873",
+          "alias": "Long queries",
+          "color": "#F2495C"
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "",
+          "format": "time_series",
+          "hide": false,
+          "rawSql": "SELECT [time]= d.event_time, [Long queries] = count(distinct d.session_id)\n  FROM dbo.sqlwatch_logger_snapshot_header h\n    inner join [dbo].[sqlwatch_logger_xes_long_queries] d\n\t\ton  h.snapshot_time = d.[snapshot_time]\n\t\tand h.snapshot_type_id = d.snapshot_type_id\n\t\tand h.sql_instance = d.sql_instance\n  WHERE h.snapshot_type_id = 7\n     AND h.[sql_instance] = '$sql_instance'\n   AND $__timeFilter(d.event_time)\n   GROUP BY d.event_time\nORDER BY\n  d.event_time desc",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Long Queries over time",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "transparent": true,
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:2880",
+          "decimals": 0,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:2881",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "datasource": "$DataSource",
+      "description": "Click on the row or long_query_id column to display SQL Text",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": null,
+            "displayMode": "color-background",
+            "filterable": true
+          },
+          "links": [
+            {
+              "title": "Query Details",
+              "url": "/d/sqlwatch-long-queries/long-queries?orgId=1&${__url_time_range}&var-DataSource=${DataSource}&var-sql_instance=${sql_instance}&var-LongQueryId=${__data.fields.long_query_id}"
+            }
+          ],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "rgba(115, 191, 105, 0)",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "sql_text"
+            },
+            "properties": [
+              {
+                "id": "custom.displayMode",
+                "value": "auto"
+              },
+              {
+                "id": "links",
+                "value": []
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "statement"
+            },
+            "properties": [
+              {
+                "id": "custom.displayMode",
+                "value": "auto"
+              },
+              {
+                "id": "links",
+                "value": []
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "long_query_id"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "title": "Query Text",
+                    "url": "/d/sqlwatch-long-queries/long-queries?orgId=1&${__url_time_range}&var-DataSource=${DataSource}&var-sql_instance=${sql_instance}&var-LongQueryId=${__data.fields.long_query_id}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "event_time"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 219
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 5
+      },
+      "id": 27,
+      "links": [],
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "event_time"
+          }
+        ]
+      },
+      "pluginVersion": "7.4.2",
+      "targets": [
+        {
+          "alias": "",
+          "format": "table",
+          "hide": false,
+          "rawSql": "SELECT d.*\n  FROM dbo.sqlwatch_logger_snapshot_header h\n    inner join [dbo].[sqlwatch_logger_xes_long_queries] d\n\t\ton  h.snapshot_time = d.[snapshot_time]\n\t\tand h.snapshot_type_id = d.snapshot_type_id\n\t\tand h.sql_instance = d.sql_instance\n  WHERE h.snapshot_type_id = 7\n     AND h.[sql_instance] = '$sql_instance'\n   AND $__timeFilter(d.event_time)\nORDER BY\n  event_time desc",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Long Queries Details",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {
+              "activity_id": 2,
+              "activity_id_xfer": 4,
+              "activity_sequence": 3,
+              "activity_sequence_xfer": 5,
+              "client_app_name": 22,
+              "client_hostname": 21,
+              "cpu_time": 10,
+              "database_name": 9,
+              "duration_ms": 23,
+              "event_name": 7,
+              "event_time": 6,
+              "logical_reads": 12,
+              "long_query_id": 1,
+              "object_name": 20,
+              "offset": 15,
+              "offset_end": 16,
+              "physical_reads": 11,
+              "session_id": 8,
+              "snapshot_time": 0,
+              "snapshot_type_id": 25,
+              "spills": 14,
+              "sql_instance": 26,
+              "sql_text": 19,
+              "statement": 17,
+              "username": 18,
+              "wait_type": 24,
+              "writes": 13
+            },
+            "renameByName": {
+              "check_description": "Description",
+              "check_name": "",
+              "last_check_date": "Check Date",
+              "last_check_value": "",
+              "status": ""
+            }
+          }
+        }
+      ],
+      "transparent": true,
+      "type": "table"
+    },
+    {
+      "datasource": "${DataSource}",
+      "fieldConfig": {
+        "defaults": {
+          "color": {},
+          "custom": {},
+          "thresholds": {
+            "mode": "absolute",
+            "steps": []
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 24,
+        "w": 24,
+        "x": 0,
+        "y": 15
+      },
+      "id": 29,
+      "options": {
+        "showLabels": false,
+        "showTime": false,
+        "sortOrder": "Descending",
+        "wrapLogMessage": true
+      },
+      "pluginVersion": "7.4.2",
+      "targets": [
+        {
+          "alias": "",
+          "format": "table",
+          "queryType": "randomWalk",
+          "rawSql": "SELECT time=getdate(),d.sql_text, d.statement\n  FROM dbo.sqlwatch_logger_snapshot_header h\n    inner join [dbo].[sqlwatch_logger_xes_long_queries] d\n\t\ton  h.snapshot_time = d.[snapshot_time]\n\t\tand h.snapshot_type_id = d.snapshot_type_id\n\t\tand h.sql_instance = d.sql_instance\n  WHERE h.snapshot_type_id = 7\n     AND h.[sql_instance] = '$sql_instance'\n   AND long_query_id = isnull('$LongQueryId',-1)\n",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Query Text",
+      "transparent": true,
+      "type": "logs"
+    }
+  ],
+  "refresh": false,
+  "schemaVersion": 27,
+  "style": "dark",
+  "tags": [
+    "SQLWATCH"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "SQLWATCH-REPO",
+          "value": "SQLWATCH-REPO"
+        },
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": "Data Source",
+        "multi": false,
+        "name": "DataSource",
+        "options": [],
+        "query": "mssql",
+        "queryValue": "",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "SQL-3A",
+          "value": "SQL-3A"
+        },
+        "datasource": "$DataSource",
+        "definition": "SELECT [servername] FROM [dbo].[sqlwatch_meta_server]",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": "SQL Instance",
+        "multi": false,
+        "name": "sql_instance",
+        "options": [],
+        "query": "SELECT [servername] FROM [dbo].[sqlwatch_meta_server]",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "",
+          "value": ""
+        },
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "label": "Long Query Id",
+        "name": "LongQueryId",
+        "options": [
+          {
+            "selected": false,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "",
+        "skipUrlSync": false,
+        "type": "textbox"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-10m",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ]
+  },
+  "timezone": "utc",
+  "title": "Long Queries",
+  "uid": "sqlwatch-long-queries",
+  "version": 49
+}
