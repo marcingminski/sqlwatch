@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": 24,
-  "iteration": 1617209743981,
+  "iteration": 1617273845161,
   "links": [
     {
       "asDropdown": true,
@@ -205,7 +205,7 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT \r\n      [time] = $__timeGroup(t.[snapshot_time], $aggregation)\r\n      ,metric = 'CPU'\r\n      ,[value] = avg(t.[cntr_value_calculated])\r\n  FROM (SELECT \r\n\t snapshot_time\r\n\t,[cntr_value_calculated]=sum(pc.[cntr_value_calculated])\r\n\tFROM [dbo].[sqlwatch_logger_perf_os_performance_counters] pc\r\n\t\tinner join [dbo].[sqlwatch_meta_performance_counter] mpc\r\n\t\t\ton pc.sql_instance = mpc.sql_instance\r\n\t\t\tand pc.performance_counter_id = mpc.performance_counter_id  \r\n\tWHERE  $__timeFilter(snapshot_time)\r\n\tAND mpc.counter_name IN ('CPU usage %')\r\n\tAND pc.instance_name NOT IN ('internal')\r\n\tAND pc.[sql_instance] = '$sql_instance'\r\n\tGROUP BY snapshot_time) t\r\n  GROUP BY $__timeGroup(t.[snapshot_time], $aggregation)\r\nORDER BY\r\n  time ASC",
+          "rawSql": "SELECT \r\n      [time] = snapshot_time --$__timeGroup(t.[snapshot_time], $aggregation)\r\n      ,metric = 'CPU'\r\n      ,[value] =t.[cntr_value_calculated]\r\n  FROM (SELECT \r\n\t snapshot_time\r\n\t,[cntr_value_calculated]=sum(pc.[cntr_value_calculated])\r\n\tFROM [dbo].[sqlwatch_logger_perf_os_performance_counters] pc\r\n\t\tinner join [dbo].[sqlwatch_meta_performance_counter] mpc\r\n\t\t\ton pc.sql_instance = mpc.sql_instance\r\n\t\t\tand pc.performance_counter_id = mpc.performance_counter_id  \r\n\tWHERE  $__timeFilter(snapshot_time)\r\n\tand snapshot_time >= dateadd(minute,-15,getutcdate())\r\n\tAND mpc.counter_name IN ('CPU usage %')\r\n\tAND pc.instance_name NOT IN ('internal')\r\n\tAND pc.[sql_instance] = '$sql_instance'\r\n\tGROUP BY snapshot_time) t\r\n  --GROUP BY snapshot_time --$__timeGroup(t.[snapshot_time], $aggregation)\r\nORDER BY\r\n  time ASC",
           "refId": "A"
         }
       ],
@@ -302,7 +302,7 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT \n      [time] =$__timeGroup([snapshot_time], $aggregation)\n\n      ,[Wait Time] = sum([wait_time_ms_per_second])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_wait_stats]\n  WHERE 1=1\n  AND $__timeFilter(snapshot_time)\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY $__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+          "rawSql": "SELECT \n      [time] =snapshot_time --$__timeGroup([snapshot_time], $aggregation)\n\n      ,[Wait Time] = sum([wait_time_ms_per_second])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_wait_stats]\n  WHERE 1=1\n  AND $__timeFilter(snapshot_time)\n  and snapshot_time >= dateadd(minute,-15,getutcdate())\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY snapshot_time --$__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
           "refId": "A"
         }
       ],
@@ -374,7 +374,7 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT \n      [time] = $__timeGroup([snapshot_time], $aggregation) \n      ,[Pending] = MAX([runnable_tasks_count]+work_queue_count+pending_disk_io_count)\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_schedulers]\n  WHERE 1 = 1\n  AND $__timeFilter(snapshot_time)\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY $__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+          "rawSql": "SELECT \n      [time] = snapshot_time --$__timeGroup([snapshot_time], $aggregation) \n      ,[Pending] = sum([runnable_tasks_count]+work_queue_count+pending_disk_io_count)\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_schedulers]\n  WHERE 1 = 1\n  AND $__timeFilter(snapshot_time)\n    and snapshot_time >= dateadd(minute,-15,getutcdate())\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY snapshot_time --$__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
           "refId": "A"
         }
       ],
@@ -446,7 +446,7 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT \n      [time] = $__timeGroup(pc.[snapshot_time], $aggregation)\n      ,metric = 'Blocked'\n      ,[value] = max(pc.[cntr_value_calculated])\n  FROM [dbo].[sqlwatch_logger_perf_os_performance_counters] pc\n\t\tinner join [dbo].[sqlwatch_meta_performance_counter] mpc\n\t\t\ton pc.sql_instance = mpc.sql_instance\n\t\t\tand pc.performance_counter_id = mpc.performance_counter_id  \n  WHERE $__timeFilter(pc.snapshot_time)\n  AND mpc.counter_name IN ('Processes blocked')\n  AND pc.[sql_instance] = '$sql_instance'\n  GROUP BY $__timeGroup(pc.[snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+          "rawSql": "SELECT \n      [time] = snapshot_time --$__timeGroup(pc.[snapshot_time], $aggregation)\n      ,metric = 'Blocked'\n      ,[value] = pc.[cntr_value_calculated]\n  FROM [dbo].[sqlwatch_logger_perf_os_performance_counters] pc\n\t\tinner join [dbo].[sqlwatch_meta_performance_counter] mpc\n\t\t\ton pc.sql_instance = mpc.sql_instance\n\t\t\tand pc.performance_counter_id = mpc.performance_counter_id  \n  WHERE $__timeFilter(pc.snapshot_time)\n    and snapshot_time >= dateadd(minute,-15,getutcdate())\n  AND mpc.counter_name IN ('Processes blocked')\n  AND pc.[sql_instance] = '$sql_instance'\n  --GROUP BY snapshot_time --$__timeGroup(pc.[snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
           "refId": "A"
         }
       ],
@@ -519,7 +519,7 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT \n      [time] = $__timeGroup([snapshot_time], $aggregation) \n      ,[Memory] = AVG([physical_memory_in_use_kb]*1.0/([physical_memory_in_use_kb]+[available_commit_limit_kb]))\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_process_memory]\n  WHERE 1 = 1\n  AND  $__timeFilter(snapshot_time)\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY $__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+          "rawSql": "SELECT \n      [time] = snapshot_time --$__timeGroup([snapshot_time], $aggregation) \n      ,[Memory] = AVG([physical_memory_in_use_kb]*1.0/([physical_memory_in_use_kb]+[available_commit_limit_kb]))\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_process_memory]\n  WHERE 1 = 1\n  AND  $__timeFilter(snapshot_time)\n      and snapshot_time >= dateadd(minute,-15,getutcdate())\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY snapshot_time --$__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
           "refId": "A"
         }
       ],
@@ -605,7 +605,7 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT \n      [time] = $__timeGroup([snapshot_time], $aggregation) \n      ,[Memory Low] = case when MAX(convert(int,process_physical_memory_low)+convert(int,process_virtual_memory_low)) > 0 then 1 else 0 end\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_process_memory]\n  WHERE 1 = 1\n  AND  $__timeFilter(snapshot_time)\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY $__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+          "rawSql": "SELECT \n      [time] = snapshot_time --$__timeGroup([snapshot_time], $aggregation) \n      ,[Memory Low] = case when convert(int,process_physical_memory_low)+convert(int,process_virtual_memory_low) > 0 then 1 else 0 end\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_process_memory]\n  WHERE 1 = 1\n  AND  $__timeFilter(snapshot_time)\n    and snapshot_time >= dateadd(minute,-15,getutcdate())\n  AND [sql_instance] = '$sql_instance'\n  --GROUP BY snapshot_time --$__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
           "refId": "A"
         }
       ],
@@ -677,7 +677,7 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT \n      [time] = $__timeGroup([snapshot_time], $aggregation) \n      ,[Disk Latency] = MAX([io_latency_read]+[io_latency_write])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_file_stats]\n  WHERE 1 = 1\n  AND $__timeFilter(snapshot_time)\n  AND [sql_instance] = '$sql_instance'\n  AND database_name IN ($database)\n  GROUP BY $__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+          "rawSql": "SELECT \n      [time] = snapshot_time --$__timeGroup([snapshot_time], $aggregation) \n      ,[Disk Latency] = max([io_latency_read]+[io_latency_write])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_file_stats]\n  WHERE 1 = 1\n  AND $__timeFilter(snapshot_time)\n    and snapshot_time >= dateadd(minute,-15,getutcdate())\n  AND [sql_instance] = '$sql_instance'\n  AND database_name IN ($database)\n  GROUP BY snapshot_time --$__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
           "refId": "A"
         }
       ],
@@ -1015,7 +1015,7 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT \n      [time] = $__timeGroup([snapshot_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = avg([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(snapshot_time)\n  AND counter_name IN ('Batch Requests/sec','Logins/sec','Transactions/sec','User Connections','Bytes Sent to Replica/sec','Bytes Received from Replica/sec')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([snapshot_time], $aggregation)\nORDER BY\n  time ASC",
+          "rawSql": "SELECT \n      [time] = snapshot_time --$__timeGroup([snapshot_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = [cntr_value_calculated]\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(snapshot_time)\n    and snapshot_time >= dateadd(minute,-15,getutcdate())\n  AND counter_name IN ('Batch Requests/sec','Logins/sec','Transactions/sec','User Connections','Bytes Sent to Replica/sec','Bytes Received from Replica/sec')\n  AND [sql_instance] = '$sql_instance'\n  --GROUP BY [counter_name]\n   --   ,snapshot_time --$__timeGroup([snapshot_time], $aggregation)\nORDER BY\n  time ASC",
           "refId": "A"
         }
       ],
@@ -1118,7 +1118,7 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT TOP 15\n      [time] = $__timeGroup([snapshot_time], $aggregation) \n      ,metric = case when len([wait])>19 then left([wait],19) + '...' else [wait] end\n      ,[wait_time_ms_per_second] = avg([wait_time_ms_per_second]) \n  FROM (SELECT wait_time_ms_per_second, wait= case when '$Waits' = 'Category' then [wait_category] else LOWER([wait_type]) end, snapshot_time, RN=ROW_NUMBER() over (partition by wait_category order by wait_time_ms_per_second desc)\n    FROM [dbo].[vw_sqlwatch_report_fact_perf_os_wait_stats] \n      WHERE 1=1\n      AND $__timeFilter(snapshot_time)\n      AND [sql_instance] = '$sql_instance'\n  ) t\n  WHERE t.RN = 1\n  GROUP BY case when len([wait])>19 then left([wait],19) + '...' else [wait] end\n      ,$__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  wait_time_ms_per_second desc\n  \n  ",
+          "rawSql": "SELECT TOP 15\n      [time] = snapshot_time --$__timeGroup([snapshot_time], $aggregation) \n      ,metric = case when len([wait])>19 then left([wait],19) + '...' else [wait] end\n      ,[wait_time_ms_per_second] = avg([wait_time_ms_per_second]) \n  FROM (SELECT wait_time_ms_per_second, wait= case when '$Waits' = 'Category' then [wait_category] else LOWER([wait_type]) end, snapshot_time, RN=ROW_NUMBER() over (partition by wait_category order by wait_time_ms_per_second desc)\n    FROM [dbo].[vw_sqlwatch_report_fact_perf_os_wait_stats] \n      WHERE 1=1\n      AND $__timeFilter(snapshot_time)\n        and snapshot_time >= dateadd(minute,-15,getutcdate())\n      AND [sql_instance] = '$sql_instance'\n  ) t\n  WHERE t.RN = 1\n  GROUP BY case when len([wait])>19 then left([wait],19) + '...' else [wait] end\n      ,snapshot_time --$__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  wait_time_ms_per_second desc\n  \n  ",
           "refId": "A"
         }
       ],
@@ -1193,7 +1193,7 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT \n      [time] = $__timeGroup(fs.[snapshot_time], $aggregation) \n      ,[Latency] = MAX(fs.[io_latency_read]+fs.[io_latency_write])\n      ,[Disk] = left([file_physical_name],2) + ' ' + v.label \n  FROM [dbo].[vw_sqlwatch_report_fact_perf_file_stats] fs\n  outer apply (\n    select top 1 label \n    from [dbo].[sqlwatch_meta_os_volume] v\n\t  where v.volume_name = left(fs.file_physical_name,3)) v\n  WHERE 1 = 1\n  AND $__timeFilter(fs.snapshot_time)\n  AND [sql_instance] = '$sql_instance'\n  AND database_name IN ($database)\n  GROUP BY $__timeGroup(fs.[snapshot_time], $aggregation) \n  , left([file_physical_name],2) + ' ' + v.label \nORDER BY\n  time ASC\n  \n  ",
+          "rawSql": "SELECT \n      [time] = snapshot_time --$__timeGroup(fs.[snapshot_time], $aggregation) \n      ,[Latency] = MAX(fs.[io_latency_read]+fs.[io_latency_write])\n      ,[Disk] = left([file_physical_name],2) + ' ' + v.label \n  FROM [dbo].[vw_sqlwatch_report_fact_perf_file_stats] fs\n  outer apply (\n    select top 1 label \n    from [dbo].[sqlwatch_meta_os_volume] v\n\t  where v.volume_name = left(fs.file_physical_name,3)) v\n  WHERE 1 = 1\n  AND $__timeFilter(fs.snapshot_time)\n    and snapshot_time >= dateadd(minute,-15,getutcdate())\n  AND [sql_instance] = '$sql_instance'\n  AND database_name IN ($database)\n  GROUP BY fs.snapshot_time --$__timeGroup(fs.[snapshot_time], $aggregation) \n  , left([file_physical_name],2) + ' ' + v.label \nORDER BY\n  time ASC\n  \n  ",
           "refId": "A"
         }
       ],
@@ -1260,7 +1260,7 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT \n      [time] = $__timeGroup(fs.[snapshot_time], $aggregation) \n      ,[Latency] = AVG(bytes_read_per_second)\n      ,[Disk] = left([file_physical_name],2) + ' ' + v.label \n  FROM [dbo].[vw_sqlwatch_report_fact_perf_file_stats] fs\n  outer apply (\n    select top 1 label \n    from [dbo].[sqlwatch_meta_os_volume] v\n\t  where v.volume_name = left(fs.file_physical_name,3)) v\n  WHERE 1 = 1\n  AND $__timeFilter(fs.snapshot_time)\n  AND [sql_instance] = '$sql_instance'\n  AND database_name IN ($database)\n  GROUP BY $__timeGroup(fs.[snapshot_time], $aggregation) \n  , left([file_physical_name],2) + ' ' + v.label \nORDER BY\n  time ASC\n  \n  ",
+          "rawSql": "SELECT \n      [time] = snapshot_time --$__timeGroup(fs.[snapshot_time], $aggregation) \n      ,[Latency] = AVG(bytes_read_per_second)\n      ,[Disk] = left([file_physical_name],2) + ' ' + v.label \n  FROM [dbo].[vw_sqlwatch_report_fact_perf_file_stats] fs\n  outer apply (\n    select top 1 label \n    from [dbo].[sqlwatch_meta_os_volume] v\n\t  where v.volume_name = left(fs.file_physical_name,3)) v\n  WHERE 1 = 1\n  AND $__timeFilter(fs.snapshot_time)\n    and snapshot_time >= dateadd(minute,-15,getutcdate())\n  AND [sql_instance] = '$sql_instance'\n  AND database_name IN ($database)\n  GROUP BY snapshot_time --$__timeGroup(fs.[snapshot_time], $aggregation) \n  , left([file_physical_name],2) + ' ' + v.label \nORDER BY\n  time ASC\n  \n  ",
           "refId": "A"
         }
       ],
@@ -1327,7 +1327,7 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT \n      [time] = $__timeGroup(fs.[snapshot_time], $aggregation) \n      ,[Latency] = AVG(bytes_written_per_second)\n      ,[Disk] = left([file_physical_name],2) + ' ' + v.label \n  FROM [dbo].[vw_sqlwatch_report_fact_perf_file_stats] fs\n  outer apply (\n    select top 1 label \n    from [dbo].[sqlwatch_meta_os_volume] v\n\t  where v.volume_name = left(fs.file_physical_name,3)) v\n  WHERE 1 = 1\n  AND  $__timeFilter(fs.snapshot_time)\n  AND [sql_instance] = '$sql_instance'\n  AND database_name IN ($database)\n  GROUP BY $__timeGroup(fs.[snapshot_time], $aggregation) \n  , left([file_physical_name],2) + ' ' + v.label \nORDER BY\n  time ASC\n  \n  ",
+          "rawSql": "SELECT \n      [time] = snapshot_time --$__timeGroup(fs.[snapshot_time], $aggregation) \n      ,[Latency] = AVG(bytes_written_per_second)\n      ,[Disk] = left([file_physical_name],2) + ' ' + v.label \n  FROM [dbo].[vw_sqlwatch_report_fact_perf_file_stats] fs\n  outer apply (\n    select top 1 label \n    from [dbo].[sqlwatch_meta_os_volume] v\n\t  where v.volume_name = left(fs.file_physical_name,3)) v\n  WHERE 1 = 1\n  AND  $__timeFilter(fs.snapshot_time)\n    and snapshot_time >= dateadd(minute,-15,getutcdate())\n  AND [sql_instance] = '$sql_instance'\n  AND database_name IN ($database)\n  GROUP BY snapshot_time --$__timeGroup(fs.[snapshot_time], $aggregation) \n  , left([file_physical_name],2) + ' ' + v.label \nORDER BY\n  time ASC\n  \n  ",
           "refId": "A"
         }
       ],
@@ -1705,7 +1705,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 32
+            "y": 5
           },
           "id": 159,
           "options": {
@@ -1749,7 +1749,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 38
+            "y": 11
           },
           "hiddenSeries": false,
           "id": 101,
@@ -1913,7 +1913,7 @@
             "h": 12,
             "w": 24,
             "x": 0,
-            "y": 44
+            "y": 17
           },
           "id": 43,
           "options": {
@@ -1959,7 +1959,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 56
+            "y": 29
           },
           "hiddenSeries": false,
           "id": 231,
@@ -2069,7 +2069,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 63
+            "y": 36
           },
           "hiddenSeries": false,
           "id": 65,
@@ -2163,7 +2163,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 70
+            "y": 43
           },
           "id": 109,
           "options": {
@@ -2207,7 +2207,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 76
+            "y": 49
           },
           "hiddenSeries": false,
           "id": 6,
@@ -2386,7 +2386,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 83
+            "y": 56
           },
           "id": 110,
           "options": {
@@ -2435,7 +2435,7 @@
             "h": 11,
             "w": 24,
             "x": 0,
-            "y": 89
+            "y": 62
           },
           "hiddenSeries": false,
           "id": 232,
@@ -2557,7 +2557,7 @@
             "h": 2,
             "w": 24,
             "x": 0,
-            "y": 100
+            "y": 73
           },
           "id": 192,
           "options": {
@@ -2602,7 +2602,7 @@
             "h": 5,
             "w": 24,
             "x": 0,
-            "y": 102
+            "y": 75
           },
           "hiddenSeries": false,
           "id": 191,
@@ -2792,7 +2792,7 @@
             "h": 5,
             "w": 24,
             "x": 0,
-            "y": 107
+            "y": 80
           },
           "id": 194,
           "links": [
@@ -9564,16 +9564,16 @@
       },
       {
         "auto": true,
-        "auto_count": 500,
+        "auto_count": 100,
         "auto_min": "1s",
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "auto",
           "value": "$__auto_interval_aggregation"
         },
         "description": null,
         "error": null,
-        "hide": 2,
+        "hide": 0,
         "label": "Aggregation",
         "name": "aggregation",
         "options": [
@@ -9586,9 +9586,24 @@
             "selected": false,
             "text": "1s",
             "value": "1s"
+          },
+          {
+            "selected": false,
+            "text": "1m",
+            "value": "1m"
+          },
+          {
+            "selected": false,
+            "text": "1h",
+            "value": "1h"
+          },
+          {
+            "selected": false,
+            "text": "1d",
+            "value": "1d"
           }
         ],
-        "query": "1s",
+        "query": "1s,1m,1h,1d",
         "queryValue": "",
         "refresh": 2,
         "skipUrlSync": false,
@@ -9597,7 +9612,7 @@
       {
         "allValue": null,
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "Category",
           "value": "Category"
         },
@@ -9718,9 +9733,13 @@
       {
         "allValue": null,
         "current": {
-          "selected": false,
-          "text": "All",
-          "value": "$__all"
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
         },
         "datasource": "${DataSource}",
         "definition": "select database_name from [dbo].[sqlwatch_meta_database] where sql_instance = '$sql_instance'",
@@ -9746,7 +9765,7 @@
     ]
   },
   "time": {
-    "from": "now-10m",
+    "from": "now-15m",
     "to": "now"
   },
   "timepicker": {
@@ -9759,5 +9778,5 @@
   "timezone": "utc",
   "title": "SQL Instance Overview",
   "uid": "sqlwatch-instance-overview",
-  "version": 810
+  "version": 818
 }
