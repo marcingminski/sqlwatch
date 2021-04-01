@@ -52,15 +52,7 @@ else
 	begin
 		Print ''Job ''''' + job_name + ''''' not created because it already exists.''
 	end;
-	' + case when /* #198 we will not be executing jobs as part of the deployment anymore. 
-					This was only done so the check job does not return NULL error when perf counters 
-					tables are empty after the deployment. However, often they fail due to a number of
-					reasons on the client server - agent disabled, or broker running behind, accounts not up to date
-					this should not stop the deployment. 
-					
-					The only exception is the SQLWATCH-INTERNAL-CONFIG job as if this is not run, the data collection cannot happen */ 
-					job_name = 'SQLWATCH-INTERNAL-CONFIG'
-					then 'exec [dbo].[usp_sqlwatch_internal_run_job] @fail_on_error = 0, @job_name = ''' + job_name + '''' else '' end + '
+	' + 'exec [dbo].[usp_sqlwatch_internal_run_job] @fail_on_error = 0, @job_name = ''' + job_name + '''
 	'
 	from ##sqlwatch_jobs
 	outer apply (
