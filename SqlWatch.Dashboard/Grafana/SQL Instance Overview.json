@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": 24,
-  "iteration": 1617273845161,
+  "iteration": 1617314866640,
   "links": [
     {
       "asDropdown": true,
@@ -1015,7 +1015,7 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT \n      [time] = snapshot_time --$__timeGroup([snapshot_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = [cntr_value_calculated]\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(snapshot_time)\n    and snapshot_time >= dateadd(minute,-15,getutcdate())\n  AND counter_name IN ('Batch Requests/sec','Logins/sec','Transactions/sec','User Connections','Bytes Sent to Replica/sec','Bytes Received from Replica/sec')\n  AND [sql_instance] = '$sql_instance'\n  --GROUP BY [counter_name]\n   --   ,snapshot_time --$__timeGroup([snapshot_time], $aggregation)\nORDER BY\n  time ASC",
+          "rawSql": "SELECT \n      [time] = snapshot_time --$__timeGroup([snapshot_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = sum([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n  AND $__timeFilter(snapshot_time)\n    and snapshot_time >= dateadd(minute,-15,getutcdate())\n  AND counter_name IN ('Batch Requests/sec','Logins/sec','Transactions/sec','User Connections','Bytes Sent to Replica/sec','Bytes Received from Replica/sec')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n     ,snapshot_time --$__timeGroup([snapshot_time], $aggregation)\nORDER BY\n  time ASC",
           "refId": "A"
         }
       ],
@@ -9538,8 +9538,8 @@
         "allValue": null,
         "current": {
           "selected": false,
-          "text": "SQL-2",
-          "value": "SQL-2"
+          "text": "SQL-3A",
+          "value": "SQL-3A"
         },
         "datasource": "$DataSource",
         "definition": "SELECT [servername] FROM [dbo].[sqlwatch_meta_server]",
@@ -9733,7 +9733,7 @@
       {
         "allValue": null,
         "current": {
-          "selected": true,
+          "selected": false,
           "text": [
             "All"
           ],
@@ -9778,5 +9778,5 @@
   "timezone": "utc",
   "title": "SQL Instance Overview",
   "uid": "sqlwatch-instance-overview",
-  "version": 818
+  "version": 819
 }

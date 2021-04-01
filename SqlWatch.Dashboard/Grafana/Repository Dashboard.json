@@ -12,11 +12,11 @@
       }
     ]
   },
-  "editable": true,
+  "editable": false,
   "gnetId": null,
   "graphTooltip": 0,
   "id": 25,
-  "iteration": 1617273862804,
+  "iteration": 1617314664859,
   "links": [
     {
       "asDropdown": true,
@@ -124,7 +124,7 @@
             }
           ],
           "mappings": [],
-          "min": 0,
+          "min": 1,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -683,7 +683,7 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT\n      [time] = [snapshot_time] --$__timeGroup([snapshot_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = [cntr_value_calculated]\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n   AND $__timeFilter(snapshot_time)\n   AND snapshot_time >= dateadd(minute,-15,getutcdate())\n   AND counter_name IN ('Batch Requests/sec','Readahead pages/sec','Transactions/sec','Processes blocked')\n   AND [sql_instance] IN ($sql_instance)\n   --GROUP BY snapshot_time, counter_name --, $__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  ",
+          "rawSql": "SELECT\n      [time] = [snapshot_time] --$__timeGroup([snapshot_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = sum([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n   AND $__timeFilter(snapshot_time)\n   AND snapshot_time >= dateadd(minute,-15,getutcdate())\n   AND counter_name IN ('Batch Requests/sec','Readahead pages/sec','Transactions/sec','Processes blocked')\n   AND instance_name NOT IN ('mssqlsystemresource')\n   AND [sql_instance] IN ($sql_instance)\n   GROUP BY snapshot_time, counter_name --, $__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  ",
           "refId": "perf_os_performance_counters"
         },
         {
@@ -838,7 +838,7 @@
             }
           ],
           "mappings": [],
-          "min": 0,
+          "min": 1,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -1384,7 +1384,7 @@
       },
       "pluginVersion": "7.4.2",
       "repeatDirection": "v",
-      "repeatIteration": 1617273862804,
+      "repeatIteration": 1617314664859,
       "repeatPanelId": 18,
       "scopedVars": {
         "sql_instance": {
@@ -1398,7 +1398,7 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT\n      [time] = [snapshot_time] --$__timeGroup([snapshot_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = [cntr_value_calculated]\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n   AND $__timeFilter(snapshot_time)\n   AND snapshot_time >= dateadd(minute,-15,getutcdate())\n   AND counter_name IN ('Batch Requests/sec','Readahead pages/sec','Transactions/sec','Processes blocked')\n   AND [sql_instance] IN ($sql_instance)\n   --GROUP BY snapshot_time, counter_name --, $__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  ",
+          "rawSql": "SELECT\n      [time] = [snapshot_time] --$__timeGroup([snapshot_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = sum([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n   AND $__timeFilter(snapshot_time)\n   AND snapshot_time >= dateadd(minute,-15,getutcdate())\n   AND counter_name IN ('Batch Requests/sec','Readahead pages/sec','Transactions/sec','Processes blocked')\n   AND instance_name NOT IN ('mssqlsystemresource')\n   AND [sql_instance] IN ($sql_instance)\n   GROUP BY snapshot_time, counter_name --, $__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  ",
           "refId": "perf_os_performance_counters"
         },
         {
@@ -1553,7 +1553,7 @@
             }
           ],
           "mappings": [],
-          "min": 0,
+          "min": 1,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -2099,7 +2099,7 @@
       },
       "pluginVersion": "7.4.2",
       "repeatDirection": "v",
-      "repeatIteration": 1617273862804,
+      "repeatIteration": 1617314664859,
       "repeatPanelId": 18,
       "scopedVars": {
         "sql_instance": {
@@ -2113,7 +2113,7 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT\n      [time] = [snapshot_time] --$__timeGroup([snapshot_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = [cntr_value_calculated]\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n   AND $__timeFilter(snapshot_time)\n   AND snapshot_time >= dateadd(minute,-15,getutcdate())\n   AND counter_name IN ('Batch Requests/sec','Readahead pages/sec','Transactions/sec','Processes blocked')\n   AND [sql_instance] IN ($sql_instance)\n   --GROUP BY snapshot_time, counter_name --, $__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  ",
+          "rawSql": "SELECT\n      [time] = [snapshot_time] --$__timeGroup([snapshot_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = sum([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n   AND $__timeFilter(snapshot_time)\n   AND snapshot_time >= dateadd(minute,-15,getutcdate())\n   AND counter_name IN ('Batch Requests/sec','Readahead pages/sec','Transactions/sec','Processes blocked')\n   AND instance_name NOT IN ('mssqlsystemresource')\n   AND [sql_instance] IN ($sql_instance)\n   GROUP BY snapshot_time, counter_name --, $__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  ",
           "refId": "perf_os_performance_counters"
         },
         {
@@ -2268,7 +2268,7 @@
             }
           ],
           "mappings": [],
-          "min": 0,
+          "min": 1,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -2814,7 +2814,7 @@
       },
       "pluginVersion": "7.4.2",
       "repeatDirection": "v",
-      "repeatIteration": 1617273862804,
+      "repeatIteration": 1617314664859,
       "repeatPanelId": 18,
       "scopedVars": {
         "sql_instance": {
@@ -2828,7 +2828,7 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT\n      [time] = [snapshot_time] --$__timeGroup([snapshot_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = [cntr_value_calculated]\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n   AND $__timeFilter(snapshot_time)\n   AND snapshot_time >= dateadd(minute,-15,getutcdate())\n   AND counter_name IN ('Batch Requests/sec','Readahead pages/sec','Transactions/sec','Processes blocked')\n   AND [sql_instance] IN ($sql_instance)\n   --GROUP BY snapshot_time, counter_name --, $__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  ",
+          "rawSql": "SELECT\n      [time] = [snapshot_time] --$__timeGroup([snapshot_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = sum([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 1\n   AND $__timeFilter(snapshot_time)\n   AND snapshot_time >= dateadd(minute,-15,getutcdate())\n   AND counter_name IN ('Batch Requests/sec','Readahead pages/sec','Transactions/sec','Processes blocked')\n   AND instance_name NOT IN ('mssqlsystemresource')\n   AND [sql_instance] IN ($sql_instance)\n   GROUP BY snapshot_time, counter_name --, $__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  ",
           "refId": "perf_os_performance_counters"
         },
         {
@@ -2991,7 +2991,7 @@
             "h": 2,
             "w": 24,
             "x": 0,
-            "y": 18
+            "y": 4
           },
           "id": 46,
           "options": {
@@ -3640,7 +3640,7 @@
             "h": 16,
             "w": 24,
             "x": 0,
-            "y": 20
+            "y": 6
           },
           "id": 32,
           "options": {
@@ -3915,5 +3915,5 @@
   "timezone": "utc",
   "title": "Repository Dashboard",
   "uid": "sqlwatch-repository-summary",
-  "version": 262
+  "version": 265
 }
