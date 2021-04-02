@@ -124,12 +124,7 @@ while @row_count > 0
 	set @snapshot_type_id = 1 --Performance Counters
 	delete from [dbo].[sqlwatch_trend_perf_os_performance_counters]
 	where sql_instance = @@SERVERNAME
-	and [report_time] < (
-		select dateadd(day,-[snapshot_retention_days_trend],getutcdate())
-		from [dbo].[sqlwatch_config_snapshot_type]
-		where snapshot_type_id = @snapshot_type_id
-		and [snapshot_retention_days_trend] is not null
-		)
+	and getutcdate() > valid_until
 	Print 'Deleted ' + convert(varchar(max),@@ROWCOUNT) + ' records from [dbo].[sqlwatch_trend_perf_os_performance_counters]'
 
 go

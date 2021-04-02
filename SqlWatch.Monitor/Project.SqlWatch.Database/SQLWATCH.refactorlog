@@ -2597,4 +2597,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="trg_sqlwatch_config_check_negative_id" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="7dcaee07-7114-407f-8c1c-04567e48f8f1" ChangeDateTime="04/01/2021 23:39:00">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_trend_perf_os_performance_counters].[trend_interval_minutes]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_trend_perf_os_performance_counters]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[interval_minutes]" />
+  </Operation>
 </Operations>

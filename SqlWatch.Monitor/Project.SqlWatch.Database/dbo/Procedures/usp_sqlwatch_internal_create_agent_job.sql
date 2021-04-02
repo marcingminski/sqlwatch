@@ -52,7 +52,11 @@ else
 	begin
 		Print ''Job ''''' + job_name + ''''' not created because it already exists.''
 	end;
-	' + 'exec [dbo].[usp_sqlwatch_internal_run_job] @fail_on_error = 0, @job_name = ''' + job_name + '''
+	' + case 
+		when /* trends must run once an hour */ job_name not like '%INTERNAL-TRENDS' 
+		and /* job has not run yet */ h.run_status is null 
+		and /* only if its the first deployment */ v.deployment_count <= 1 
+		and job_enabled = 1 then 'exec [dbo].[usp_sqlwatch_internal_run_job] @fail_on_error = 0, @job_name = ''' + job_name + '''' else '' end + '
 	'
 	from ##sqlwatch_jobs
 	outer apply (
