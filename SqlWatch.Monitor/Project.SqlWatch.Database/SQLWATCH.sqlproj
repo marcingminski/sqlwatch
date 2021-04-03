@@ -84,6 +84,8 @@
     <Folder Include="Scripts\HotFixes" />
     <Folder Include="Scripts\Data Migrations" />
     <Folder Include="Scripts\Tools\SSIS Helpers" />
+    <Folder Include="dbo\Queues" />
+    <Folder Include="dbo\Services" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\sqlwatch_logger_snapshot_header.sql" />
@@ -325,6 +327,11 @@
     <Build Include="dbo\Tables\sqlwatch_logger_hadr_database_replica_states.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_logger_hadr_database_replica_states.sql" />
     <Build Include="dbo\Views\vw_sqlwatch_report_hadr_database_replica_states.sql" />
+    <Build Include="dbo\Queues\sqlwatch_exec_queue.sql" />
+    <Build Include="dbo\Services\sqlwatch_exec_service.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_exec_activated.sql" />
+    <Build Include="dbo\Tables\sqlwatch_config_activated_procedures.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_exec_activated_invoke.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
