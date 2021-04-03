@@ -12,47 +12,27 @@ begin
 			@sql_instance varchar(32),
 			@lockresult int
 
-	/*	AS OF 2020-08-27 this needs revisiting. I cannot think of a scenario where multiple threads can insert the same snapshot_time, per primary key.
-												Each collector handles its own snapshot_type_id so no two collectors will every try to access the same snapshot_type_id.
-												Repository import does a BULK INSERT...I actually wonder if this was some hack to address some other issue.
-	
-		We have to make sure we only access the header table in a single thread in order to "allocate" snapshot times.
-		They are datetime2(0) which means accureate to 1 second. If we have multithreaded procesing (repository) we may
-		be having many threads trying to insert the same @snapshot_time.
-		The database is in RCSI which makes blocking difficult but in this case we actually want blocking and queueing.  */
-	set transaction isolation level serializable
+	declare @snapshot_time_output table (
+		snapshot_time datetime2(0)
+	)
+
 	begin transaction
-	set lock_timeout 1000; 
-	--exec @lockresult = master.dbo.sp_getapplock @Resource = 'usp_sqlwatch_internal_insert_header', @LockMode = 'Exclusive'
 
-	--if @lockresult >= 0
-	--	begin
-			select @snapshot_time = convert(datetime2(0),GETUTCDATE()), @sql_instance = @@SERVERNAME
+		set @snapshot_time = convert(datetime2(0),GETUTCDATE());
 
-			insert into [dbo].[sqlwatch_logger_snapshot_header] ([snapshot_time], [snapshot_type_id], [sql_instance], [report_time]) 
-				select  [snapshot_time] = @snapshot_time,
-						[snapshot_type_id] = @snapshot_type_id,
-						[sql_instance] = @@SERVERNAME, 
-						[report_time] = dateadd(mi, datepart(TZOFFSET,SYSDATETIMEOFFSET()), (CONVERT([smalldatetime],dateadd(minute,ceiling(datediff(second,(0),CONVERT([time],CONVERT([datetime],@snapshot_time)))/(60.0)),datediff(day,(0),@snapshot_time)))))
-				where not exists (
-					select * from [dbo].[sqlwatch_logger_snapshot_header] t
-					where t.sql_instance = @sql_instance
-					and t.snapshot_type_id = @snapshot_type_id
-					and t.snapshot_time = @snapshot_time
-					)
-
-			--exec @lockresult = master.dbo.sp_releaseapplock @Resource = 'usp_sqlwatch_internal_insert_header'
-		--end
+		insert into [dbo].[sqlwatch_logger_snapshot_header] ([snapshot_time], [snapshot_type_id], [sql_instance], [report_time]) 
+		output inserted.[snapshot_time] into @snapshot_time_output ( snapshot_time )
+		select  [snapshot_time] = @snapshot_time,
+				[snapshot_type_id] = @snapshot_type_id,
+				[sql_instance] = dbo.ufn_sqlwatch_get_servername(), 
+				[report_time] = dateadd(mi, datepart(TZOFFSET,SYSDATETIMEOFFSET()), (CONVERT([smalldatetime],dateadd(minute,ceiling(datediff(second,(0),CONVERT([time],CONVERT([datetime],@snapshot_time)))/(60.0)),datediff(day,(0),@snapshot_time)))))
 			
 	if @@TRANCOUNT > 0
 		commit transaction
 
-	if @snapshot_time is not null
-		begin	
-			select @snapshot_time_new = @snapshot_time
-			return 
-		end
-	else
+	select @snapshot_time_new = snapshot_time from @snapshot_time_output
+
+	if @snapshot_time_new  is null
 		begin
 			raiserror ('Fatal error: Variable @snapshot_time must not be null. Possible issue with acquiring an application lock.',16,1)
 		end
