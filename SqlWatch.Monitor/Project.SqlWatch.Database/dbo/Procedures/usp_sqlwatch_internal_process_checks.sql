@@ -288,7 +288,7 @@ SET ANSI_WARNINGS OFF
 								@snapshot_time_new = @snapshot_time_action OUTPUT,
 								@snapshot_type_id = @snapshot_type_id_action
 
-						Print 'Processing actions for check.'
+						--Print 'Processing actions for check.'
 					end
  
 				fetch next from cur_actions 
