@@ -2604,4 +2604,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="[interval_minutes]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="047e1d58-6224-4f33-9d8f-e55e7210300c" ChangeDateTime="04/04/2021 12:37:32">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_internal_exec_activated_invoke]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_internal_exec_activated_async]" />
+  </Operation>
 </Operations>

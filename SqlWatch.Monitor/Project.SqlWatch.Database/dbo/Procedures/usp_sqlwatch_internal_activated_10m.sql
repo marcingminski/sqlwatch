@@ -1,3 +1,4 @@
 ﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_internal_activated_10m]
 AS
-PRINT '[usp_sqlwatch_internal_activated_10m]'
+exec dbo.usp_sqlwatch_logger_agent_job_history
+exec dbo.usp_sqlwatch_logger_procedure_stats

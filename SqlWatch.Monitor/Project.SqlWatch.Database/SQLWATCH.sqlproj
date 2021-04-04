@@ -33,6 +33,9 @@
     <DacVersion>3.0.0.0</DacVersion>
     <DefaultCollation>Latin1_General_CI_AS</DefaultCollation>
     <TargetFrameworkProfile />
+    <ServiceBrokerOption>EnableBroker</ServiceBrokerOption>
+    <Trustworthy>True</Trustworthy>
+    <EnableFullTextSearch>False</EnableFullTextSearch>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -329,7 +332,7 @@
     <Build Include="dbo\Views\vw_sqlwatch_report_hadr_database_replica_states.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_exec_activated.sql" />
     <Build Include="dbo\Tables\sqlwatch_config_activated_procedures.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_internal_exec_activated_invoke.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_exec_activated_async.sql" />
     <Build Include="dbo\Queues\sqlwatch_invoke_5s.sql" />
     <Build Include="dbo\Queues\sqlwatch_invoke_1m.sql" />
     <Build Include="dbo\Queues\sqlwatch_invoke_60m.sql" />
@@ -346,6 +349,9 @@
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_activated_1m.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_activated_5s.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_activated_60m.sql" />
+    <Build Include="dbo\Queues\sqlwatch_exec_async.sql" />
+    <Build Include="dbo\Services\sqlwatch_exec_async.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_activated_activation_async.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />

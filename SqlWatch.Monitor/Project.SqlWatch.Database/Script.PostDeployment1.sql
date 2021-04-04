@@ -127,6 +127,7 @@ if (select case when @@VERSION like '%Express Edition%' then 1 else 0 end) = 0
     select @sql = @sql + '
     end conversation ''' + convert(varchar(max),conversation_handle) + ''' WITH CLEANUP;'
     from sys.conversation_endpoints
+    where far_service like 'sqlwatch%'
 
     exec (@sql)
 
