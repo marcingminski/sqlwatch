@@ -13,7 +13,8 @@ as
     begin dialog conversation @conversation_handle
         from service sqlwatch_exec_async
         to service N'sqlwatch_exec_async', N'current database'
-        with encryption = off;
+        with encryption = off,
+        lifetime = 60;
 
     send on conversation @conversation_handle (@xmlBody);
         

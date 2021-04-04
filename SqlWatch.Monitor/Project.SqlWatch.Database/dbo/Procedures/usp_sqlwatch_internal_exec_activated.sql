@@ -72,6 +72,12 @@ begin
                         
                     begin try
                         exec @procedure_name;
+
+                        -- if its not a DialogTimer, its a one off async execution and we must end it here
+                        if @message_type_name <> N'http://schemas.microsoft.com/SQL/ServiceBroker/DialogTimer'
+                            begin
+                                end conversation @conversation_handle
+                            end
                     end try
                     begin catch
                         select  @error_number = ERROR_NUMBER(),
