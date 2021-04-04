@@ -3,36 +3,29 @@ as
 
 --this procedure is used to start conversation dialogues
 
-declare @conversation_handle uniqueidentifier, 
-        @procedure_name nvarchar(128),
-        @xmlBody xml;
+    declare @conversation_handle uniqueidentifier;
 
-declare cur_activated_procs cursor for
-select [procedure_name] from [dbo].[sqlwatch_config_activated_procedures]
-
-open cur_activated_procs
-fetch next from cur_activated_procs
-into @procedure_name
-
-while @@FETCH_STATUS = 0
-    begin
-
-        begin dialog conversation @conversation_handle
-        from service sqlwatch_exec_service
-        to service N'sqlwatch_exec_service', N'current database'
+    begin dialog conversation @conversation_handle
+        from service sqlwatch_invoke_5s
+        to service N'sqlwatch_invoke_5s', N'current database'
         with encryption = off;
+    begin conversation timer (@conversation_handle) timeout = 5;
 
-        --push procedure name in the message body so we can retrieve it later
-	    select @xmlBody = (
-                select @procedure_name as [name]
-                for xml path('procedure'), type);
+    begin dialog conversation @conversation_handle
+        from service sqlwatch_invoke_1m
+        to service N'sqlwatch_invoke_1m', N'current database'
+        with encryption = off;
+    begin conversation timer (@conversation_handle) timeout = 60;
 
-        send on conversation @conversation_handle (@xmlBody);
+    begin dialog conversation @conversation_handle
+        from service sqlwatch_invoke_10m
+        to service N'sqlwatch_invoke_10m', N'current database'
+        with encryption = off;
+    begin conversation timer (@conversation_handle) timeout = 600;
 
-        fetch next from cur_activated_procs
-        into @procedure_name
-    end
-
-close cur_activated_procs
-deallocate cur_activated_procs
+    begin dialog conversation @conversation_handle
+        from service sqlwatch_invoke_60m
+        to service N'sqlwatch_invoke_60m', N'current database'
+        with encryption = off;
+    begin conversation timer (@conversation_handle) timeout = 3600;
 
