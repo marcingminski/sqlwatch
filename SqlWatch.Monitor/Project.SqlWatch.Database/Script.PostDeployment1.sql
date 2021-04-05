@@ -122,7 +122,8 @@ if (select case when @@VERSION like '%Express Edition%' then 1 else 0 end) = 0
 -------------------------------------------------------------------------------------
 -- Begin conversations
 ------------------------------------------------------------------------------------- 
-    --stop all conversations in the databse:
+    --stop and clean all sqlwatch conversations in the database
+    --this needs improvements as we shuold not be cleaning up existing conversations.
     set @sql = ''
     select @sql = @sql + '
     end conversation ''' + convert(varchar(max),conversation_handle) + ''' WITH CLEANUP;'
