@@ -352,6 +352,7 @@
     <Build Include="dbo\Queues\sqlwatch_exec_async.sql" />
     <Build Include="dbo\Services\sqlwatch_exec_async.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_activated_activation_async.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_restart_queues.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
