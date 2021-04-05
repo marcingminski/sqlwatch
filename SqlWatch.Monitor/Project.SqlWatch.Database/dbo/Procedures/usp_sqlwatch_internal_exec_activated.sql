@@ -72,12 +72,6 @@ begin
                         
                     begin try
                         exec @procedure_name;
-
-                        -- if its not a DialogTimer, its a one off async execution and we must end it here
-                        if @message_type_name <> N'http://schemas.microsoft.com/SQL/ServiceBroker/DialogTimer'
-                            begin
-                                end conversation @conversation_handle
-                            end
                     end try
                     begin catch
                         select  @error_number = ERROR_NUMBER(),
@@ -87,8 +81,28 @@ begin
                             begin
                                 rollback
                             end
+                        end conversation @conversation_handle
                         raiserror(N'Error whilst executing SQLWATCH Procedure %s: %i: %s', 16, 10, @procedure_name, @error_number, @error_message);
                     end catch
+
+                    if @message_type_name = N'http://schemas.microsoft.com/SQL/ServiceBroker/Error'
+                        begin
+                            -- we should get the error content from the broker here and output to the errorlog
+                            select 
+                                @error_message = @message_body.value ('(/Error/Description)[1]', 'nvarchar(4000)')
+                            ,   @error_number = @message_body.value ('(/Error/Code)[1]', 'int')
+                            print 'The converstaion ' + convert(varchar(max),@conversation_handle) + ' has returned an error (' + convert(varchar(10),@error_number) + ') ' + @error_message
+
+                            end conversation @conversation_handle
+                        end
+
+                    if (
+                            @message_type_name = N'http://schemas.microsoft.com/SQL/ServiceBroker/EndDialog'
+                        or  @message_type_name = N'DEFAULT'
+                        )
+                        begin
+                            end conversation @conversation_handle
+                        end
                 end
             else
                 begin
