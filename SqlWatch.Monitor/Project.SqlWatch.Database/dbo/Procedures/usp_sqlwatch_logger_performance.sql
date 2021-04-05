@@ -15,12 +15,13 @@ declare @percent_idle_time real
 declare @percent_processor_time real
 declare @date_snapshot_current datetime2(0)
 declare @date_snapshot_previous datetime2(0)
+declare @sql_instance varchar(32)
 
 declare @snapshot_type_id tinyint = 1
 
-
 declare @sql nvarchar(4000) 
 
+		set @sql_instance = [dbo].[ufn_sqlwatch_get_servername]()
 		--------------------------------------------------------------------------------------------------------------
 		-- detect which version of sql we are running as some dmvs are different in different versions of sql
 		--------------------------------------------------------------------------------------------------------------
@@ -500,27 +501,30 @@ declare @sql nvarchar(4000)
 			 only keep all values in the most recent snapshot
 		*/
 		--------------------------------------------------------------------------------------------------------------
-		insert into [dbo].[sqlwatch_stage_perf_os_wait_stats]
-		select * , @date_snapshot_current
-		from sys.dm_os_wait_stats
+
+		-- moving join on meta to stage brings the execution down from 42ms to 14ms
+		insert into [dbo].[sqlwatch_stage_perf_os_wait_stats] with (tablock)
+		select * , @date_snapshot_current, ms.wait_type_id
+		from sys.dm_os_wait_stats ws (nolock)
+
+		inner join [dbo].[sqlwatch_meta_wait_stats] ms
+			on ms.[wait_type] = ws.[wait_type] collate database_default
+			and ms.[sql_instance] = @sql_instance
 
 		-- exclude idle waits and noise
-		where wait_type not like 'SLEEP_%'
-		and wait_type collate database_default not in (
-			select wait_type 
-			from [dbo].[sqlwatch_config_exclude_wait_stats]
-			)
+		where ws.wait_type not like 'SLEEP_%'
+		and ms.[is_excluded] = 0
 
 		insert into [dbo].[sqlwatch_logger_perf_os_wait_stats]
 			select 
-				[wait_type_id] = ms.[wait_type_id]
+				  [wait_type_id] = ws.[wait_type_id]
 				, [waiting_tasks_count] = convert(real,ws.[waiting_tasks_count])
 				, [wait_time_ms] = convert(real,ws.[wait_time_ms])
 				, [max_wait_time_ms] = convert(real,ws.[max_wait_time_ms])
 				, [signal_wait_time_ms] = convert(real,ws.[signal_wait_time_ms])
 				
 				, [snapshot_time]=@date_snapshot_current
-				, @snapshot_type_id, [dbo].[ufn_sqlwatch_get_servername]()
+				, @snapshot_type_id, @sql_instance
 
 			, [waiting_tasks_count_delta] = convert(real,case when ws.[waiting_tasks_count] > wsprev.[waiting_tasks_count] then ws.[waiting_tasks_count] - wsprev.[waiting_tasks_count] else 0 end)
 			, [wait_time_ms_delta] = convert(real,case when ws.[wait_time_ms] > wsprev.[wait_time_ms] then ws.[wait_time_ms] - wsprev.[wait_time_ms] else 0 end)
@@ -528,9 +532,6 @@ declare @sql nvarchar(4000)
 			, [signal_wait_time_ms_delta] = convert(real,case when ws.[signal_wait_time_ms] > wsprev.[signal_wait_time_ms] then ws.[signal_wait_time_ms] - wsprev.[signal_wait_time_ms] else 0 end)
 			, [delta_seconds] = datediff(second,@date_snapshot_previous,@date_snapshot_current)
 			from [dbo].[sqlwatch_stage_perf_os_wait_stats] ws
-			inner join [dbo].[sqlwatch_meta_wait_stats] ms
-				on ms.[wait_type] = ws.[wait_type] collate database_default
-				and ms.[sql_instance] = [dbo].[ufn_sqlwatch_get_servername]()
 
 			left join [dbo].[sqlwatch_stage_perf_os_wait_stats] wsprev
 				on wsprev.wait_type = ws.wait_type
@@ -539,12 +540,7 @@ declare @sql nvarchar(4000)
 			where ws.snapshot_time = @date_snapshot_current
 			and ws.[waiting_tasks_count] - wsprev.[waiting_tasks_count]  > 0
 
-		delete from [dbo].[sqlwatch_stage_perf_os_wait_stats]
+		delete from [dbo].[sqlwatch_stage_perf_os_wait_stats] with (tablock)
 		where snapshot_time < @date_snapshot_current
-		--and sql_instance = @@SERVERNAME
-
-
-		/*  */
-
 
 commit tran
