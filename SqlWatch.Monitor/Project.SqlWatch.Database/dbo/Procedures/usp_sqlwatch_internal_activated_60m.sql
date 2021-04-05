@@ -15,6 +15,8 @@ exec dbo.usp_sqlwatch_internal_add_memory_clerk;
 exec dbo.usp_sqlwatch_internal_add_wait_type;
 exec dbo.usp_sqlwatch_internal_expand_checks;
 
+exec dbo.usp_sqlwatch_logger_disk_utilisation;
+
 --trends:
 exec dbo.usp_sqlwatch_trend_perf_os_performance_counters @interval_minutes = 1, @valid_days = 7
 exec dbo.usp_sqlwatch_trend_perf_os_performance_counters @interval_minutes = 5, @valid_days = 90
