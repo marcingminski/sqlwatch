@@ -41,26 +41,46 @@ declare @sql nvarchar(4000)
 		exec [dbo].[usp_sqlwatch_internal_insert_header] 
 			@snapshot_time_new = @date_snapshot_current OUTPUT,
 			@snapshot_type_id = @snapshot_type_id
+
 		--------------------------------------------------------------------------------------------------------------
-		-- 1. get cpu
+		-- 1. get cpu -- Ring Buffer updates once a minute so we're not going to get any better resolution than that
+		-- When running more frequent that 1 minute, we need to get CPU from perf counters
+		-- Tapping into ring buffer can be expensive as we have to parse the response so we're only going to do so
+		-- hen we know the data has refreshed i.e. every 60 seconds
 		--------------------------------------------------------------------------------------------------------------
-		select 
-				--original PR https://github.com/marcingminski/sqlwatch/commit/b8a8a5bbaf134dcd6afb4d5b9fef13e052a5c164
-				--by https://github.com/marcingminski/sqlwatch/commits?author=sporri
-				@percent_processor_time=convert(real,ProcessUtilization)
-			,	@percent_idle_time=convert(real,SystemIdle)
-		FROM ( 
-				SELECT SystemIdle=record.value('(./Record/SchedulerMonitorEvent/SystemHealth/SystemIdle)[1]', 'int'), 
-					ProcessUtilization=record.value('(./Record/SchedulerMonitorEvent/SystemHealth/ProcessUtilization)[1]', 'int')
+		if datediff(second,
+			isnull((select top 1 snapshot_time
+			from [dbo].[sqlwatch_stage_ring_buffer]
+			order by snapshot_time desc),'1970-01-01'),@date_snapshot_current) >= 60
+			begin
+				truncate table [dbo].[sqlwatch_stage_ring_buffer];
+
+				insert into [dbo].[sqlwatch_stage_ring_buffer] (snapshot_time, percent_processor_time, percent_idle_time)
+				select 
+						--original PR https://github.com/marcingminski/sqlwatch/commit/b8a8a5bbaf134dcd6afb4d5b9fef13e052a5c164
+						--by https://github.com/marcingminski/sqlwatch/commits?author=sporri
+						@date_snapshot_current
+					,	percent_processor_time=convert(real,ProcessUtilization)
+					,	percent_idle_time=convert(real,SystemIdle)
 				FROM ( 
-					SELECT TOP 1 CONVERT(xml, record) AS [record] 
-					FROM sys.dm_os_ring_buffers WITH (NOLOCK)
-					WHERE ring_buffer_type = N'RING_BUFFER_SCHEDULER_MONITOR' collate database_default
-					AND record LIKE N'%<SystemHealth>%' collate database_default
-					ORDER BY [timestamp] DESC
-					) AS x 
-				) AS y
-		OPTION (RECOMPILE);
+						SELECT SystemIdle=record.value('(./Record/SchedulerMonitorEvent/SystemHealth/SystemIdle)[1]', 'int'), 
+							ProcessUtilization=record.value('(./Record/SchedulerMonitorEvent/SystemHealth/ProcessUtilization)[1]', 'int')
+						FROM ( 
+							SELECT TOP 1 CONVERT(xml, record) AS [record] 
+							FROM sys.dm_os_ring_buffers WITH (NOLOCK)
+							WHERE ring_buffer_type = N'RING_BUFFER_SCHEDULER_MONITOR' collate database_default
+							AND record LIKE N'%<SystemHealth>%' collate database_default
+							ORDER BY [timestamp] DESC
+							) AS x 
+						) AS y
+				OPTION (RECOMPILE);
+			end
+
+		select top 1 
+				@percent_processor_time = percent_processor_time
+			,	@percent_idle_time = percent_idle_time
+		from [dbo].[sqlwatch_stage_ring_buffer]
+		order by snapshot_time desc
 
 
 	begin tran
