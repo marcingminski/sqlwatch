@@ -493,7 +493,7 @@ declare @sql nvarchar(4000)
 
 		insert into [dbo].[sqlwatch_logger_perf_os_wait_stats]
 			select 
-				[wait_type_id] = convert(real,ms.[wait_type_id])
+				[wait_type_id] = ms.[wait_type_id]
 				, [waiting_tasks_count] = convert(real,ws.[waiting_tasks_count])
 				, [wait_time_ms] = convert(real,ws.[wait_time_ms])
 				, [max_wait_time_ms] = convert(real,ws.[max_wait_time_ms])
