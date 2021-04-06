@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 23,
-  "iteration": 1617186684254,
+  "iteration": 1617743155954,
   "links": [
     {
       "asDropdown": true,
@@ -95,7 +95,7 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT [time]= d.event_time, [Long queries] = count(distinct d.session_id)\n  FROM dbo.sqlwatch_logger_snapshot_header h\n    inner join [dbo].[sqlwatch_logger_xes_long_queries] d\n\t\ton  h.snapshot_time = d.[snapshot_time]\n\t\tand h.snapshot_type_id = d.snapshot_type_id\n\t\tand h.sql_instance = d.sql_instance\n  WHERE h.snapshot_type_id = 7\n     AND h.[sql_instance] = '$sql_instance'\n   AND $__timeFilter(d.event_time)\n   GROUP BY d.event_time\nORDER BY\n  d.event_time desc",
+          "rawSql": "SELECT [time]=event_time, [Long queries] = count(distinct session_id)\n  FROM [dbo].[vw_sqlwatch_report_fact_xes_long_queries]\n     where [sql_instance] = '$sql_instance'\n   AND $__timeFilter(event_time)\n   GROUP BY event_time\nORDER BY\n  time desc",
           "refId": "A"
         }
       ],
@@ -258,7 +258,7 @@
           "alias": "",
           "format": "table",
           "hide": false,
-          "rawSql": "SELECT d.*\n  FROM dbo.sqlwatch_logger_snapshot_header h\n    inner join [dbo].[sqlwatch_logger_xes_long_queries] d\n\t\ton  h.snapshot_time = d.[snapshot_time]\n\t\tand h.snapshot_type_id = d.snapshot_type_id\n\t\tand h.sql_instance = d.sql_instance\n  WHERE h.snapshot_type_id = 7\n     AND h.[sql_instance] = '$sql_instance'\n   AND $__timeFilter(d.event_time)\nORDER BY\n  event_time desc",
+          "rawSql": "SELECT *\n  FROM [dbo].[vw_sqlwatch_report_fact_xes_long_queries]\n     where [sql_instance] = '$sql_instance'\n   AND $__timeFilter(event_time)\nORDER BY\n  event_time desc",
           "refId": "A"
         }
       ],
@@ -348,7 +348,7 @@
           "alias": "",
           "format": "table",
           "queryType": "randomWalk",
-          "rawSql": "SELECT time=getdate(),d.sql_text, d.statement\n  FROM dbo.sqlwatch_logger_snapshot_header h\n    inner join [dbo].[sqlwatch_logger_xes_long_queries] d\n\t\ton  h.snapshot_time = d.[snapshot_time]\n\t\tand h.snapshot_type_id = d.snapshot_type_id\n\t\tand h.sql_instance = d.sql_instance\n  WHERE h.snapshot_type_id = 7\n     AND h.[sql_instance] = '$sql_instance'\n   AND long_query_id = isnull('$LongQueryId',-1)\n",
+          "rawSql": "SELECT time=getdate(),sql_text, statement\n  FROM [dbo].[vw_sqlwatch_report_fact_xes_long_queries]\n     where [sql_instance] = '$sql_instance'\n   AND $__timeFilter(event_time)\n   AND long_query_id = isnull('$LongQueryId',-1) \n",
           "refId": "A"
         }
       ],
@@ -370,8 +370,8 @@
       {
         "current": {
           "selected": false,
-          "text": "SQLWATCH-REPO",
-          "value": "SQLWATCH-REPO"
+          "text": "SQL-2",
+          "value": "SQL-2"
         },
         "description": null,
         "error": null,
@@ -392,8 +392,8 @@
         "allValue": null,
         "current": {
           "selected": false,
-          "text": "SQL-3A",
-          "value": "SQL-3A"
+          "text": "SQL-2",
+          "value": "SQL-2"
         },
         "datasource": "$DataSource",
         "definition": "SELECT [servername] FROM [dbo].[sqlwatch_meta_server]",
@@ -418,7 +418,7 @@
       },
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "",
           "value": ""
         },
@@ -429,7 +429,7 @@
         "name": "LongQueryId",
         "options": [
           {
-            "selected": false,
+            "selected": true,
             "text": "",
             "value": ""
           }
@@ -441,22 +441,14 @@
     ]
   },
   "time": {
-    "from": "now-10m",
+    "from": "now-1h",
     "to": "now"
   },
   "timepicker": {
-    "refresh_intervals": [
-      "1m",
-      "5m",
-      "15m",
-      "30m",
-      "1h",
-      "2h",
-      "1d"
-    ]
+    "refresh_intervals": []
   },
   "timezone": "utc",
   "title": "Long Queries",
   "uid": "sqlwatch-long-queries",
-  "version": 49
+  "version": 51
 }
