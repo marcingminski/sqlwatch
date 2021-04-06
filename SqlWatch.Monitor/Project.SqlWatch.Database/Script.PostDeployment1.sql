@@ -122,4 +122,4 @@ if (select case when @@VERSION like '%Express Edition%' then 1 else 0 end) = 0
 -------------------------------------------------------------------------------------
 -- Retart queues
 ------------------------------------------------------------------------------------- 
-exec [dbo].[usp_sqlwatch_internal_restart_queues]
+-- don't start queues on install until version 4.x exec [dbo].[usp_sqlwatch_internal_restart_queues]
