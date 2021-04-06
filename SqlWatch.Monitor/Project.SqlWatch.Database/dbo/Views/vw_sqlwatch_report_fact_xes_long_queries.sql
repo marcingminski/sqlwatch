@@ -5,7 +5,8 @@ SELECT [activity_id]
       ,[activity_sequence]
       ,[activity_id_xfer]
       ,[activity_sequence_xfer]
-      ,[event_time]
+      --#244 temporary fix:
+      ,event_time=dateadd(minute,-[dbo].[ufn_sqlwatch_get_server_utc_offset]('MINUTE'),event_time)
       ,[event_name]
       ,[session_id]
       ,[database_name]

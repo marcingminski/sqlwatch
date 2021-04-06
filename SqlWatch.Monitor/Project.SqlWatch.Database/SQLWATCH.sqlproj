@@ -353,6 +353,8 @@
     <Build Include="dbo\Services\sqlwatch_exec_async.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_activated_activation_async.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_restart_queues.sql" />
+    <Build Include="dbo\Tables\sqlwatch_stage_ring_buffer.sql" />
+    <Build Include="dbo\Functions\ufn_sqlwatch_convert_datetimeoffset_to_local.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
