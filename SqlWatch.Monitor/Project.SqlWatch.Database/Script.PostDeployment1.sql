@@ -118,3 +118,8 @@ if (select case when @@VERSION like '%Express Edition%' then 1 else 0 end) = 0
 -- Make Constraints Trusted Again
 -------------------------------------------------------------------------------------
 :r .\Scripts\Post-Deployment\Data-Fixes\Script.PostDeployment-FixNonTrustedConstraints.sql
+
+-------------------------------------------------------------------------------------
+-- Retart queues
+------------------------------------------------------------------------------------- 
+exec [dbo].[usp_sqlwatch_internal_restart_queues]
