@@ -2611,4 +2611,39 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[ufn_sqlwatch_convert_datetimeoffset_to_local]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="12055693-36b9-4f87-abe0-6569227132f1" ChangeDateTime="04/06/2021 15:31:30">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_stage_os_performance_counters]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[sqlwatch_stage_perf_os_performance_counters]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="bec55529-fb80-40dc-be84-67aeff484b65" ChangeDateTime="04/06/2021 17:54:34">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_logger_perf_os_schedulers]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_logger_performance_os_schedulers]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="b2b828fe-cd89-4c4c-93ca-9ad42f1d6d1f" ChangeDateTime="04/06/2021 17:56:48">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_logger_performance_os_schedulers]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_logger_dm_os_schedulers]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="777127ab-6fa4-479d-82b7-125b47fa311a" ChangeDateTime="04/06/2021 17:57:17">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_logger_performance_perf_counters]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_logger_dm_os_performance_counters]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="136523b8-d46c-44ae-8fa2-75640e1ede84" ChangeDateTime="04/06/2021 18:29:35">
+    <Property Name="ElementName" Value="[dbo].[ufn_sqlwatch_get_current_snapshot_time_type_1]" />
+    <Property Name="ElementType" Value="SqlScalarFunction" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[ufn_sqlwatch_get_snapshot_time_type_1_current]" />
+  </Operation>
 </Operations>

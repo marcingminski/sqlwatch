@@ -25,8 +25,6 @@ declare @sql nvarchar(4000)
 		--------------------------------------------------------------------------------------------------------------
 		-- detect which version of sql we are running as some dmvs are different in different versions of sql
 		--------------------------------------------------------------------------------------------------------------
-		set @product_version = convert(nvarchar(128),serverproperty('productversion')); --no longer needed
-
 		select 
 			 @product_version_major = [dbo].[ufn_sqlwatch_get_product_version]('major')
 			,@product_version_minor = [dbo].[ufn_sqlwatch_get_product_version]('minor')
@@ -82,6 +80,7 @@ declare @sql nvarchar(4000)
 			,	@percent_idle_time = percent_idle_time
 		from [dbo].[sqlwatch_stage_ring_buffer]
 		order by snapshot_time desc
+		option (keep plan)
 
 
 	begin tran
@@ -100,124 +99,144 @@ declare @sql nvarchar(4000)
 		
 		--2020-08-27 11:31 performance tweak to try and get the execution down from ~600ms to minimum. 
 		-- as of 11:31 this is down to 23ms		
-		select *
+		--2021-04-06 further performance tweaks to reduce number of logical reads
+		-- down from 1440 to 900 and exec time down t 16ms:
+		select 
+				pc.[object_name]
+			, pc.[counter_name]
+			, pc.[instance_name]
+			, pc.cntr_value
+			, pc.cntr_type
+			, pc.base_counter_name
+			, pc.base_cntr_value
+			, mc.performance_counter_id
 		into #t
-		from [dbo].[sqlwatch_logger_perf_os_performance_counters] prev --previous
-		where sql_instance = [dbo].[ufn_sqlwatch_get_servername]()
-		and snapshot_time = @date_snapshot_previous
-		and snapshot_type_id = @snapshot_type_id
+		from (
+			select
+					[object_name]=rtrim(pc1.[object_name])
+			, counter_name=rtrim(pc1.[counter_name])
+			, instance_name=rtrim(pc1.[instance_name])
+			, pc1.cntr_value
+			, pc1.cntr_type
+			, base_counter_name = rtrim(sc.base_counter_name)
+			, base_cntr_value = bc.cntr_value
+			from sys.dm_os_performance_counters pc1 with (nolock)
 
-		select   [object_name]=rtrim(pc.[object_name])
-				,[counter_name]=rtrim(pc.[counter_name])
-				,[instance_name]=rtrim(pc.[instance_name])
-				,[cntr_value]
-				,[cntr_type]
-				,[base_counter_name]=sc.base_counter_name
-		into #p
-		from sys.dm_os_performance_counters pc (nolock)
+			inner join dbo.[sqlwatch_config_performance_counters] sc with (nolock)
+				on rtrim(pc1.[object_name]) like '%' + sc.[object_name] collate database_default
+				and rtrim(pc1.counter_name) = sc.counter_name collate database_default
+				and (
+					rtrim(pc1.instance_name) = sc.instance_name collate database_default
+					or	(
+						sc.instance_name = '<* !_Total>' collate database_default
+						and rtrim(pc1.instance_name) <> '_Total' collate database_default
+						)
+					)
 
-		--limit the perf counters we're collecting to only those in the config:
-		inner join dbo.[sqlwatch_config_performance_counters] sc
-		on rtrim(pc.[object_name]) like '%' + sc.[object_name] collate database_default
-		and rtrim(pc.counter_name) = sc.counter_name collate database_default
-		and (
-			rtrim(pc.instance_name) = sc.instance_name collate database_default
-			or	(
-				sc.instance_name = '<* !_Total>' collate database_default
-				and rtrim(pc.instance_name) <> '_Total' collate database_default
-				)
-			)
-		where sc.collect = 1
+			outer apply (
+						select pcb.cntr_value
+						from sys.dm_os_performance_counters pcb with (nolock)
+						where pcb.cntr_type = 1073939712
+							and pcb.[object_name] = pc1.[object_name] collate database_default
+							and pcb.instance_name = pc1.instance_name collate database_default
+							and pcb.counter_name = sc.base_counter_name collate database_default
+						) bc
 
-		union all
-		/*  because we are only querying sql related performance counters (as only those are exposed through sql) we do not
-			capture os performance counters such as cpu - hence we captured cpu from ringbuffer and now are going to 
-			make them look like real counter (othwerwise i would have to make up a name) */
-		select 
-				[object_name] = 'Win32_PerfFormattedData_PerfOS_Processor'
-			,[counter_name] = 'Processor Time %'
-			,[instance_name] = 'sql'
-			,[cntr_value] = @percent_processor_time
-			,[cntr_type] = 65792
-			,[base_counter_name] = null
-		union all
-		select 
-				[object_name] = 'Win32_PerfFormattedData_PerfOS_Processor'
-			,[counter_name] = 'Idle Time %'
-			,[instance_name] = '_Total                                                                                                                          '
-			,[cntr_value] = @percent_idle_time
-			,[cntr_type] = 65792
-			,[base_counter_name] = null
-		union all
-		select 
-				[object_name] = 'Win32_PerfFormattedData_PerfOS_Processor'
-			,[counter_name] = 'Processor Time %'
-			,[instance_name] = 'system'
-			,[cntr_value] = (100-@percent_idle_time-@percent_processor_time)
-			,[cntr_type] = 65792
-			,[base_counter_name] = null
-		option (maxdop 1)
+			where sc.collect = 1
+			and pc1.cntr_type <> 1073939712
+
+			union all
+			/*  because we are only querying sql related performance counters (as only those are exposed through sql) we do not
+				capture os performance counters such as cpu - hence we captured cpu from ringbuffer and now are going to 
+				make them look like real counter (othwerwise i would have to make up a name) */
+			select 
+					[object_name] = 'Win32_PerfFormattedData_PerfOS_Processor'
+				,[counter_name] = 'Processor Time %'
+				,[instance_name] = 'sql'
+				,[cntr_value] = 1
+				,[cntr_type] = 65792
+				,base_counter_name = null
+				,base_cntr_value = null
+
+			union all
+			select 
+					[object_name] = 'Win32_PerfFormattedData_PerfOS_Processor'
+				,[counter_name] = 'Idle Time %'
+				,[instance_name] = '_Total                                                                                                                          '
+				,[cntr_value] = 2
+				,[cntr_type] = 65792
+				,base_counter_name = null
+				,base_cntr_value = null
+
+			union all
+			select 
+					[object_name] = 'Win32_PerfFormattedData_PerfOS_Processor'
+				,[counter_name] = 'Processor Time %'
+				,[instance_name] = 'system'
+				,[cntr_value] = 3
+				,[cntr_type] = 65792
+				,base_counter_name = null
+				,base_cntr_value = null
+
+			) pc
+
+		inner join [dbo].[sqlwatch_meta_performance_counter] mc (nolock)
+			on mc.[object_name] = pc.[object_name] collate database_default
+			and mc.[counter_name] = pc.[counter_name] collate database_default
+			and mc.[sql_instance] = @sql_instance
+
+		option (maxdop 1, keep plan)
+
+		;
 
 		insert into dbo.[sqlwatch_logger_perf_os_performance_counters] ([performance_counter_id],[instance_name], [cntr_value], [base_cntr_value],
 			[snapshot_time], [snapshot_type_id], [sql_instance], [cntr_value_calculated])
 		select
-			 mc.[performance_counter_id]
+				pc.[performance_counter_id]
 			,instance_name = rtrim(pc.instance_name)
 			,pc.cntr_value
-			,base_cntr_value=bc.cntr_value
+			,base_cntr_value=pc.base_cntr_value
 			,snapshot_time=@date_snapshot_current
 			, @snapshot_type_id
-			, [dbo].[ufn_sqlwatch_get_servername]()
+			, @sql_instance
 			,[cntr_value_calculated] = convert(real,(
 				case 
 					--https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.performancecountertype?view=netframework-4.8
 					--https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.performancedata.countertype?view=netframework-4.8
-					when mc.object_name = 'Batch Resp Statistics' then case when pc.cntr_value > prev.cntr_value then cast((pc.cntr_value - prev.cntr_value) as real) else 0 end -- delta absolute
+					when pc.object_name = 'Batch Resp Statistics' then case when pc.cntr_value > prev.cntr_value then cast((pc.cntr_value - prev.cntr_value) as real) else 0 end -- delta absolute
 					
 					/*	65792
 						An instantaneous counter that shows the most recently observed value. Used, for example, to maintain a simple count of a very large number of items or operations. 
 						It is the same as NumberOfItems32 except that it uses larger fields to accommodate larger values.	*/
-					when mc.cntr_type = 65792 then isnull(pc.cntr_value,0) 	
+					when pc.cntr_type = 65792 then isnull(pc.cntr_value,0) 	
 					
 					/*	272696576
 						A difference counter that shows the average number of operations completed during each second of the sample interval. Counters of this type measure time in ticks of the system clock. 
 						This counter type is the same as the RateOfCountsPerSecond32 type, but it uses larger fields to accommodate larger values to track a high-volume number of items or operations per second, 
 						such as a byte-transmission rate. Counters of this type include System\ File Read Bytes/sec.	*/
-					when mc.cntr_type = 272696576 then case when (pc.cntr_value > prev.cntr_value) then (pc.cntr_value - prev.cntr_value) / cast(datediff(second,prev.snapshot_time,@date_snapshot_current) as real) else 0 end -- delta rate
+					when pc.cntr_type = 272696576 then case when (pc.cntr_value > prev.cntr_value) then (pc.cntr_value - prev.cntr_value) / cast(datediff(second,prev.snapshot_time,@date_snapshot_current) as real) else 0 end -- delta rate
 					
 					/*	537003264	
 						This counter type shows the ratio of a subset to its set as a percentage. For example, it compares the number of bytes in use on a disk to the total number of bytes on the disk. 
 						Counters of this type display the current percentage only, not an average over time. It is the same as the RawFraction32 counter type, except that it uses larger fields to accommodate larger values.	*/
-					when mc.cntr_type = 537003264 then isnull(cast(100.0 as real) * pc.cntr_value / nullif(bc.cntr_value, 0),0) -- ratio
+					when pc.cntr_type = 537003264 then isnull(cast(100.0 as real) * pc.cntr_value / nullif(pc.base_cntr_value, 0),0) -- ratio
 
 					/*	1073874176		
 						An average counter that shows how many items are processed, on average, during an operation. Counters of this type display a ratio of the items processed to the number of operations completed. 
 						The ratio is calculated by comparing the number of items processed during the last interval to the number of operations completed during the last interval. 
 						Counters of this type include PhysicalDisk\ Avg. Disk Bytes/Transfer.	*/
-					when mc.cntr_type = 1073874176 then isnull(case when pc.cntr_value > prev.cntr_value then isnull((pc.cntr_value - prev.cntr_value) / nullif(bc.cntr_value - prev.base_cntr_value, 0) / cast(datediff(second,prev.snapshot_time,@date_snapshot_current) as real), 0) else 0 end,0) -- delta ratio
+					when pc.cntr_type = 1073874176 then isnull(case when pc.cntr_value > prev.cntr_value then isnull((pc.cntr_value - prev.cntr_value) / nullif(pc.base_cntr_value - prev.base_cntr_value, 0) / cast(datediff(second,prev.snapshot_time,@date_snapshot_current) as real), 0) else 0 end,0) -- delta ratio
 				end))
-		from #p pc
+		from #t pc
 
-		inner join [dbo].[sqlwatch_meta_performance_counter] mc
-			on mc.[object_name] = pc.[object_name] collate database_default
-			and mc.[counter_name] = pc.[counter_name] collate database_default
-			and mc.[sql_instance] = [dbo].[ufn_sqlwatch_get_servername]()
-
-		left join #t prev --previous
-			on prev.sql_instance = [dbo].[ufn_sqlwatch_get_servername]()
-			and prev.performance_counter_id = mc.performance_counter_id
-			and prev.instance_name = pc.instance_name collate database_default
-
-		outer apply (
-					select pc2.cntr_value
-					from #p as pc2
-					where pc2.cntr_type = 1073939712
-						and pc2.[object_name] = pc.[object_name] collate database_default
-						and pc2.instance_name = pc.instance_name collate database_default
-						and pc2.counter_name = pc.base_counter_name collate database_default
-					) bc
-
-		option (maxdop 1)
+		left join [dbo].[sqlwatch_logger_perf_os_performance_counters] prev (nolock) --previous
+			on prev.snapshot_time = @date_snapshot_previous
+			and prev.performance_counter_id = pc.performance_counter_id
+			and prev.instance_name = pc.instance_name
+			and prev.sql_instance = @sql_instance
+			and prev.snapshot_type_id = 1
+		
+		option (maxdop 1, keep plan)
 
 		--------------------------------------------------------------------------------------------------------------
 		-- get schedulers summary
@@ -249,17 +268,19 @@ declare @sql nvarchar(4000)
 				, total_cpu_usage_ms = null --sum(convert(bigint,total_cpu_usage_ms))
 				, total_scheduler_delay_ms = null --sum(convert(bigint,total_scheduler_delay_ms))
 
-				, [dbo].[ufn_sqlwatch_get_servername]()
+				, @sql_instance
 			from sys.dm_os_schedulers
 			where scheduler_id < 255
 			and status = 'VISIBLE ONLINE' collate database_default
+			option (keep plan)
 
 		--------------------------------------------------------------------------------------------------------------
 		-- get process memory
 		--------------------------------------------------------------------------------------------------------------
 		insert into dbo.[sqlwatch_logger_perf_os_process_memory]
-		select snapshot_time=@date_snapshot_current, * , 1, [dbo].[ufn_sqlwatch_get_servername]()
+		select snapshot_time=@date_snapshot_current, * , 1, @sql_instance
 		from sys.dm_os_process_memory
+		option (keep plan)
 
 		--------------------------------------------------------------------------------------------------------------
 		-- get sql memory. dynamic again based on sql version
@@ -292,7 +313,7 @@ declare @sql nvarchar(4000)
 					sum(shared_memory_committed_kb) as shared_memory_committed_kb
 				from sys.dm_os_memory_clerks mc
 				group by type, memory_node_id
-				option (recompile)
+				option (keep plan)
 				'
 			end
 		else
@@ -311,7 +332,7 @@ declare @sql nvarchar(4000)
 					sum(shared_memory_committed_kb) as shared_memory_committed_kb
 				from sys.dm_os_memory_clerks
 				group by type, memory_node_id
-				option (recompile)
+				option (keep plan)
 			'
 			end
 
@@ -338,6 +359,7 @@ declare @sql nvarchar(4000)
 				+ (case when type <> 'MEMORYCLERK_SQLBUFFERPOOL' collate database_default then mc.virtual_memory_committed_kb else 0 end) 
 				+ mc.shared_memory_committed_kb as total_kb
 		from @dm_os_memory_clerks as mc
+		option (keep plan)
 
 		insert into dbo.[sqlwatch_logger_perf_os_memory_clerks]
 		select t.snapshot_time, t.total_kb, t.allocated_kb,  mm.sqlwatch_mem_clerk_id
@@ -365,8 +387,8 @@ declare @sql nvarchar(4000)
 		) t
 		inner join [dbo].[sqlwatch_meta_memory_clerk] mm
 			on mm.clerk_name = t.[type] collate database_default
-			and mm.sql_instance = [dbo].[ufn_sqlwatch_get_servername]()
-		option (recompile)					
+			and mm.sql_instance = @sql_instance
+		option (keep plan)					
 
 		--------------------------------------------------------------------------------------------------------------
 		-- file stats snapshot
@@ -374,9 +396,10 @@ declare @sql nvarchar(4000)
 		select *
 		into #fs
 		from [dbo].[sqlwatch_logger_perf_file_stats] (nolock) prevfs
-		where prevfs.sql_instance = [dbo].[ufn_sqlwatch_get_servername]()
+		where prevfs.sql_instance = @sql_instance
 			and prevfs.snapshot_type_id = @snapshot_type_id
 			and prevfs.snapshot_time = @date_snapshot_previous
+		option (keep plan)
 
 		create unique clustered index idx_tmp_fs 
 			on #fs (sql_instance,sqlwatch_database_id,sqlwatch_master_file_id)
@@ -389,12 +412,13 @@ declare @sql nvarchar(4000)
 		inner join [dbo].[sqlwatch_meta_database] sd 
 			on sd.[database_name] = d.[name] collate database_default
 			and sd.[database_create_date] = case when d.name = 'tempdb' then '1970-01-01 00:00:00.000' else d.[create_date] end
-			and sd.sql_instance = [dbo].[ufn_sqlwatch_get_servername]()
+			and sd.sql_instance = @sql_instance
 
 		left join [dbo].[sqlwatch_config_exclude_database] ed
 			on d.[name] like ed.database_name_pattern collate database_default
 			and ed.snapshot_type_id = @snapshot_type_id
 		where ed.snapshot_type_id is null
+		option (keep plan)
 
 		create unique clustered index idx_tmp_d
 			on #d (database_id)
@@ -467,6 +491,8 @@ declare @sql nvarchar(4000)
 			and prevfs.sqlwatch_database_id = mf.sqlwatch_database_id
 			and prevfs.sqlwatch_master_file_id = mf.sqlwatch_master_file_id
 
+		option (keep plan)
+
 
 		--------------------------------------------------------------------------------------------------------------
 		/*	wait stats snapshot
@@ -504,7 +530,7 @@ declare @sql nvarchar(4000)
 
 		-- moving join on meta to stage brings the execution down from 42ms to 14ms
 		insert into [dbo].[sqlwatch_stage_perf_os_wait_stats] with (tablock)
-		select * , @date_snapshot_current, ms.wait_type_id
+		select ws.* , @date_snapshot_current, ms.wait_type_id
 		from sys.dm_os_wait_stats ws (nolock)
 
 		inner join [dbo].[sqlwatch_meta_wait_stats] ms
@@ -514,6 +540,8 @@ declare @sql nvarchar(4000)
 		-- exclude idle waits and noise
 		where ws.wait_type not like 'SLEEP_%'
 		and ms.[is_excluded] = 0
+
+		option (keep plan)
 
 		insert into [dbo].[sqlwatch_logger_perf_os_wait_stats]
 			select 
@@ -542,5 +570,7 @@ declare @sql nvarchar(4000)
 
 		delete from [dbo].[sqlwatch_stage_perf_os_wait_stats] with (tablock)
 		where snapshot_time < @date_snapshot_current
+
+		option (keep plan)
 
 commit tran
