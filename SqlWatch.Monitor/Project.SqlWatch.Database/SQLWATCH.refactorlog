@@ -2604,4 +2604,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="[interval_minutes]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="973f7d1c-da06-475e-a327-daea2524997f" ChangeDateTime="04/06/2021 12:51:23">
+    <Property Name="ElementName" Value="[dbo].[ufn_sqlwatch_convert_utc_to_local]" />
+    <Property Name="ElementType" Value="SqlScalarFunction" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[ufn_sqlwatch_convert_datetimeoffset_to_local]" />
+  </Operation>
 </Operations>

@@ -326,6 +326,7 @@
     <Build Include="dbo\Procedures\usp_sqlwatch_logger_hadr_database_replica_states.sql" />
     <Build Include="dbo\Views\vw_sqlwatch_report_hadr_database_replica_states.sql" />
     <Build Include="dbo\Tables\sqlwatch_stage_ring_buffer.sql" />
+    <Build Include="dbo\Functions\ufn_sqlwatch_convert_datetimeoffset_to_local.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
