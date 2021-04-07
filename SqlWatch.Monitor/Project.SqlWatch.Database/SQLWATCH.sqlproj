@@ -342,6 +342,7 @@
     <Build Include="dbo\Procedures\usp_sqlwatch_logger_dm_exec_requests.sql" />
     <Build Include="dbo\Queues\sqlwatch_exec.sql" />
     <Build Include="dbo\Services\sqlwatch_exec.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_broker_diagnostics.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
