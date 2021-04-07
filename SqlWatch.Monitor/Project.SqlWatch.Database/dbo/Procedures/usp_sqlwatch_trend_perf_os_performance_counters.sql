@@ -59,11 +59,25 @@ declare		@snapshot_time datetime2(0),
   inner join [dbo].[sqlwatch_meta_performance_counter] mpc
 	on mpc.performance_counter_id = pc.performance_counter_id
 	and mpc.sql_instance = pc.sql_instance
- 
+
+  left join [dbo].[sqlwatch_trend_perf_os_performance_counters] t
+	on t.snapshot_time = dateadd(minute, datediff(minute, 0, h.snapshot_time ) / @interval_minutes * @interval_minutes, 0)
+	and t.[instance_name] = pc.[instance_name]
+	and t.[sql_instance] = pc.[sql_instance]
+	and t.[interval_minutes] = @interval_minutes
+	and t.[performance_counter_id] = pc.[performance_counter_id]
+
   where mpc.cntr_type <> 1073939712  --exclude base counters
   and h.snapshot_time >= @first_snapshot_time
   and h.snapshot_time <= @last_snapshot_time
   and pc.sql_instance = dbo.ufn_sqlwatch_get_servername()
+  and (	
+			t.snapshot_time is null
+		and	t.instance_name is null
+		and t.sql_instance is null
+		and t.interval_minutes is null
+		and t.performance_counter_id is null
+		)
 
   group by  pc.[performance_counter_id]
       ,pc.[instance_name]
