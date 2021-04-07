@@ -5,32 +5,7 @@
 	@process_message_type	nvarchar(max),
 	@proc_id				int = null
 as
-/*
--------------------------------------------------------------------------------------------------------------------
- Procedure:
-	usp_sqlwatch_internal_log
 
- Description:
-	Log ERRORS from the catch block into a table.
-	All errors are being returned back to the console via print anyway so logging to table is only for convinience.
-	Also keep in mind that any explicit rollbacks will also rollback the inert into the error log, for this to survive,
-	the data must have been inserted into table viarable as they survive rollbacks. 
-	Not all procedures are enabled to call this logger upon failure. 
-
- Parameters
-	@snapshot_time			-	OPTIONAL. Can be passed from calling proc to retain time correlation 
-	@CALLER_PROC_ID			-	ID of the calling procedure in case of nested proc so we can identify the caller as oppose
-								to just the procedure that failed
-	@APP_STAGE				-	custom user message to identify step within the procedure. I usually use GUIDS
-	@APP_MESSAGE			-	custom user message to explain what the problem is within the application if custom error raised
-
- Author:
-	Marcin Gminski
-
- Change Log:
-	1.0		2019-12-01	- Marcin Gminski, Initial version
--------------------------------------------------------------------------------------------------------------------
-*/
 SET XACT_ABORT ON
 SET NOCOUNT ON 
 
@@ -73,16 +48,16 @@ begin try
 			, case when @process_message_type <> 'INFO' then ERROR_MESSAGE() else null end
 	)
 
-	begin
-		Print char(10) + '>>>---- ' + @process_message_type + ' ------------------------------------' + char(10) +
-'Time: ' + convert(nvarchar(23),@snapshot_time,121) + char(10) + 
-'Process Name: ' + @process_name + char(10) + 
-'Stage: ' + @process_stage + char(10) +  
-'Message: ' + @process_message + char(10) + 
-'Message Type: ' + @process_message_type + char(10) + 
-case when @process_message_type <> 'INFO' then 'Error: ' + [dbo].[ufn_sqlwatch_get_error_detail_text] () else '' end + char(10) +
-'---- ' + @process_message_type + ' ------------------------------------<<<' + char(10)
-	end 
+--	begin
+--		Print char(10) + '>>>---- ' + @process_message_type + ' ------------------------------------' + char(10) +
+--'Time: ' + convert(nvarchar(23),@snapshot_time,121) + char(10) + 
+--'Process Name: ' + @process_name + char(10) + 
+--'Stage: ' + @process_stage + char(10) +  
+--'Message: ' + @process_message + char(10) + 
+--'Message Type: ' + @process_message_type + char(10) + 
+--case when @process_message_type <> 'INFO' then 'Error: ' + [dbo].[ufn_sqlwatch_get_error_detail_text] () else '' end + char(10) +
+--'---- ' + @process_message_type + ' ------------------------------------<<<' + char(10)
+--	end 
 
 end try
 begin catch
