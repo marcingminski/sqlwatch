@@ -2611,4 +2611,11 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[usp_sqlwatch_internal_exec_activated_async]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="04c246fb-7d60-49ec-8f1d-8f48fe94a2f2" ChangeDateTime="04/07/2021 11:27:20">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_internal_migreate_jobs_to_queues]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_internal_migrate_jobs_to_queues]" />
+  </Operation>
 </Operations>

@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_internal_migreate_jobs_to_queues]
+﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_internal_migrate_jobs_to_queues]
 as
 
 --this procedure will disable and remove the relevent agent jobs and enable broker based collection
@@ -17,5 +17,11 @@ and name not like '%WHOISACTIVE'
 exec (@sql);
 
 
---activate queues:
+-- activate queues:
 exec [dbo].[usp_sqlwatch_internal_restart_queues];
+
+-- update config so the next deployment is aware of the migration:
+update dbo.sqlwatch_config
+set config_value = 1
+where config_id = 13
+and config_value = 0

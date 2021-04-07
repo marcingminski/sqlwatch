@@ -65,6 +65,10 @@ values
 	
 	/* how often should we re-run failed checks (CHECK_ERROR) in minutes: */
 	,(12	,'Re-run CHECK_ERROR frequency minutes' ,60)
+
+	/* are we using queues? */
+	,(13	,'Use Broker Activation' ,0)
+
 ;
 
 merge dbo.sqlwatch_config as target

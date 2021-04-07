@@ -174,7 +174,7 @@ Get-WMIObject Win32_Volume | ?{$_.DriveType -eq 3 -And $_.Name -notlike "\\?\Vol
 		@volume_name = ''$VolumeName'', 
 		@label = ''$VolumeLabel'', 
 		@file_system = ''$FileSystem'', 
-		@block_size = ''$BlockSize''
+		@block_size = ''$BlockSize'';
 	 exec [dbo].[usp_sqlwatch_logger_disk_utilisation_os_volume] 
 		@volume_name = ''$VolumeName'',
 		@volume_free_space_bytes = $FreeSpace,
@@ -204,6 +204,13 @@ Get-WMIObject Win32_Volume | ?{$_.DriveType -eq 3 -And $_.Name -notlike "\\?\Vol
 
 			,('dbo.usp_sqlwatch_logger_procedure_stats',		1,		'SQLWATCH-LOGGER-PROCS',		'TSQL', 'exec dbo.usp_sqlwatch_logger_procedure_stats')
 
-	exec [dbo].[usp_sqlwatch_internal_create_agent_job]
-		@print_WTS_command = @print_WTS_command, @job_owner = @job_owner
 
+	if [dbo].[ufn_sqlwatch_get_config_value] ( 13 , null ) = 0
+		begin
+			exec [dbo].[usp_sqlwatch_internal_create_agent_job]
+				@print_WTS_command = @print_WTS_command, @job_owner = @job_owner
+		end
+	else
+		begin
+			Print 'This SQLWATCH instance is using broker for data collection. Jobs will not be deployed'
+		end
