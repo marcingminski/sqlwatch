@@ -355,7 +355,9 @@
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_restart_queues.sql" />
     <Build Include="dbo\Tables\sqlwatch_stage_ring_buffer.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_convert_datetimeoffset_to_local.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_internal_migreate_jobs_to_queues.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_migrate_jobs_to_queues.sql" />
+    <Build Include="dbo\Tables\sqlwatch_logger_dm_exec_requests.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_logger_dm_exec_requests.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
