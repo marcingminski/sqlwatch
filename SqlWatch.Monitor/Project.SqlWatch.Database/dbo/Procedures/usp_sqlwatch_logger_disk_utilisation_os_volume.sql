@@ -5,12 +5,12 @@
 as
 
 declare @snapshot_type_id smallint = 17,
-		@snapshot_time datetime
+		@snapshot_time datetime2(0);
 
 exec [dbo].[usp_sqlwatch_internal_insert_header] 
 	@snapshot_time_new = @snapshot_time OUTPUT,
-	@snapshot_type_id = @snapshot_type_id
-
+	@snapshot_type_id = @snapshot_type_id;
+		
 insert into [dbo].[sqlwatch_logger_disk_utilisation_volume] (
 	[sqlwatch_volume_id],
 	[volume_free_space_bytes],
