@@ -11,8 +11,8 @@ as
             , type);
 
     begin dialog conversation @conversation_handle
-        from service sqlwatch_exec_async
-        to service N'sqlwatch_exec_async', N'current database'
+        from service sqlwatch_exec
+        to service N'sqlwatch_exec', N'current database'
         with encryption = off,
         lifetime = 60;
 

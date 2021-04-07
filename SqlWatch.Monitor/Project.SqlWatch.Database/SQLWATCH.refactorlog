@@ -2618,4 +2618,11 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[usp_sqlwatch_internal_migrate_jobs_to_queues]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="024373a7-3892-4648-834a-c1207085cf24" ChangeDateTime="04/07/2021 19:54:33">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_exec_timer]" />
+    <Property Name="ElementType" Value="SqlQueue" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[sqlwatch_exec]" />
+  </Operation>
 </Operations>
