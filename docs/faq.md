@@ -10,6 +10,28 @@ nav_order: 500
 - TOC
 {:toc}
 
+# How can I check which SQLWATCH version I'm running?
+The table `[dbo].[sqlwatch_app_version]` is update every time you install or upgrade the application:
+
+```
+SELECT [install_sequence]
+      ,[install_date]
+      ,[sqlwatch_version]
+  FROM [dbo].[sqlwatch_app_version]
+```
+
+To See the currently installed version, you can use the view `[dbo].[vw_sqlwatch_app_version]` which simply returns the most recent row from the table above.
+
+In addition, SQLWATCH version and other information is written in the database extended properties. To see it, **right click on the database, click properties and select extended properties**. You can also get extended properties from system views:
+
+![SQLWATCH Extended Properties Version]({{ site.baseurl }}/assets/images/sqlwatch-extended-properties-version.png)
+
+```
+select * 
+from sys.extended_properties 
+where class = 0
+```
+
 # Why is `date_last_seen` not showing the correct date.
 This field is on some of the `sqlwatch_meta*` tables and used to remove old items as part of the retention process. By default, anything "not seen" in over 32 days will be removed.
 When the any of the meta tables is merged, this field is also updated for any matched rows to ensure they are not deleted as part of the retention process. Any new rows have the `date_last_seen` set as `getutcdate()` 
