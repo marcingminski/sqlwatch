@@ -60,9 +60,10 @@ begin
 			insert into [dbo].[sqlwatch_meta_snapshot_header_baseline] with (tablock) (
 					baseline_id
 				,	snapshot_time
+				,	[snapshot_type_id]
 				,	sql_instance
 				) 
-			select distinct @baseline_id, snapshot_time, @sql_instance
+			select @baseline_id, snapshot_time, [snapshot_type_id], @sql_instance
 			from dbo.sqlwatch_logger_snapshot_header h
 			where sql_instance = @sql_instance
 			and snapshot_time between @baseline_start and @baseline_end
