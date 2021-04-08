@@ -28,7 +28,8 @@ declare @check_name nvarchar(100),
 		@baseline_id smallint,
 		@check_baseline real,
 		@i tinyint,
-		@i_len tinyint
+		@i_len tinyint,
+		@check_critical_threshold_baseline varchar(100)
 
 declare @check_status varchar(50),
 		@check_value decimal(28,5),
@@ -280,9 +281,9 @@ SET ANSI_WARNINGS OFF
 						and lc.check_id = @check_id
 
 					--replace numbers only in the original check threshold:
-					select @check_critical_threshold = left(@check_critical_threshold,patindex('%[0-9]%',@check_critical_threshold)-1)+convert(varchar(10),@check_baseline)
+					select @check_critical_threshold_baseline = left(@check_critical_threshold,patindex('%[0-9]%',@check_critical_threshold)-1)+convert(varchar(10),@check_baseline)
 
-					set @error_message = 'Check (Id: ' + convert(varchar(10),@check_id) + ') is using baseline value (' + @check_critical_threshold + ')'
+					set @error_message = 'Check (Id: ' + convert(varchar(10),@check_id) + ') baseline value (' + @check_critical_threshold + ')'
 					exec [dbo].[usp_sqlwatch_internal_log]
 							@proc_id = @@PROCID,
 							@process_stage = '55C51822-5204-42B0-97A6-039608B9ACB8',
@@ -294,6 +295,42 @@ SET ANSI_WARNINGS OFF
 	
 	--we must either have critical value or warning and critical. constraints dissalow the critical warning to be null and previous check ensured check_value is not null:
 	select @check_status = case 
+
+			-- baseline checks
+			when @use_baseline = 1 
+
+				-- if strict baselining, only compare baseline check
+				and dbo.ufn_sqlwatch_get_config_value ( 16, null ) = 1 
+				and [dbo].[ufn_sqlwatch_get_check_status] ( @check_critical_threshold_baseline, @check_value ) = 1 then 'CRITICAL'
+
+			when @use_baseline = 1 
+
+				-- if relaxed baselining, check both and pick more optimistic value.
+				and dbo.ufn_sqlwatch_get_config_value ( 16, null ) = 0
+				then
+					case	
+						-- if both return OK then OK
+						when [dbo].[ufn_sqlwatch_get_check_status] ( @check_critical_threshold_baseline, @check_value ) = 0
+						and	[dbo].[ufn_sqlwatch_get_check_status] ( @check_critical_threshold, @check_value ) = 0
+						then 'OK'
+
+						-- if baseline fails but default is OK then OK
+						when [dbo].[ufn_sqlwatch_get_check_status] ( @check_critical_threshold_baseline, @check_value ) = 1
+						and [dbo].[ufn_sqlwatch_get_check_status] ( @check_critical_threshold, @check_value ) = 0
+						then 'OK'
+
+						-- if baseline OK but default fails then OK
+						when [dbo].[ufn_sqlwatch_get_check_status] ( @check_critical_threshold_baseline, @check_value ) = 0
+						and [dbo].[ufn_sqlwatch_get_check_status] ( @check_critical_threshold, @check_value ) = 1
+						then 'OK'
+
+						-- if both fail then FAIL
+						when [dbo].[ufn_sqlwatch_get_check_status] ( @check_critical_threshold_baseline, @check_value ) = 1
+						and [dbo].[ufn_sqlwatch_get_check_status] ( @check_critical_threshold, @check_value ) = 1
+						then 'CRITICAL'
+					end
+
+			-- no baseline checks				
 			when [dbo].[ufn_sqlwatch_get_check_status] ( @check_critical_threshold, @check_value ) = 1 then 'CRITICAL'
 			when @check_warning_threshold is not null and [dbo].[ufn_sqlwatch_get_check_status] ( @check_warning_threshold, @check_value ) = 1 then 'WARNING'
 			else 'OK' end

@@ -75,6 +75,15 @@ values
 	/* Intelligent index collection. Max Batch Size. Set to -1 to disable. */
 	,(15	,'Index Usage Batch Size' ,1000)
 
+	/* When using [use_baseline] in Checks, the check can raise the error when value is over the baseline, even though is within the recommended setting
+	   or it can be more relaxed and not raise alerts untill its above the recommended value. 
+	   For example, imagine a system with Readahead pages/sec baselined to 20. The default check would raise an alert if the value was over 25.
+	   If we set Baseline mode to strict, we're going to raise alert if the value is over 20 (more than baselined)
+	   If we set Baseline mode to relaxed, we're not going to raise alert of the value is over 20 but less than 25 (more than baseline but less than recommended.
+	   
+	   Normally I would recommend the relaxed baselining so you get less alerts whilst maintaining good performance.
+	   Only use stric baselining if you have an agreed SLA or have done it on the back of performance testing etc... */
+	,(16	,'Strict Baseline Checks' ,0)
 ;
 
 merge dbo.sqlwatch_config as target
