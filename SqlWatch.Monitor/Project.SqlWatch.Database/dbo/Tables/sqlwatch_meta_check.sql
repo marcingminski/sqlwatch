@@ -17,7 +17,8 @@
 	[last_status_change_date] datetime null,
 	[date_updated] datetime not null constraint df_sqlwatch_meta_check_updated default (getutcdate()),
 
-	[check_enabled] bit not null default 1
+	[check_enabled] bit not null default 1,
+	[use_baseline] bit not null default 1,
 
 	/*	primary key */
 	constraint pk_sqlwatch_meta_alert primary key clustered ([sql_instance], [check_id]),

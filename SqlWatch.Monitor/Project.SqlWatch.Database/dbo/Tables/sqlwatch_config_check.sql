@@ -8,6 +8,7 @@
 	[check_threshold_warning] varchar(100) null, --warning is optional
 	[check_threshold_critical] varchar(100) not null, --critical is not optional
 	[check_enabled] bit not null default 1, --if enabled the check will be processed
+	[use_baseline] bit not null default 1,
 	[date_created] datetime not null constraint df_sqlwatch_config_check_date_created default (getdate()),
 	[date_updated] datetime null,
 	[ignore_flapping] bit not null constraint df_sqlwatch_config_check_flapping default (0),
@@ -56,9 +57,9 @@ create trigger dbo.trg_sqlwatch_config_check_meta_IU
 		when not matched 
 			then insert (
 			  [sql_instance], [check_id], [check_name], [check_description], [check_query]
-			, [check_frequency_minutes], [check_threshold_warning], [check_threshold_critical], [check_enabled])
+			, [check_frequency_minutes], [check_threshold_warning], [check_threshold_critical], [check_enabled], [use_baseline])
 			values (@@SERVERNAME, source.[check_id], source.[check_name], source.[check_description], source.[check_query]
-			, source.[check_frequency_minutes], source.[check_threshold_warning], source.[check_threshold_critical], source.[check_enabled])
+			, source.[check_frequency_minutes], source.[check_threshold_warning], source.[check_threshold_critical], source.[check_enabled], source.[use_baseline])
 
 		when matched
 			then update
@@ -70,6 +71,7 @@ create trigger dbo.trg_sqlwatch_config_check_meta_IU
 				, [check_threshold_warning] = source.[check_threshold_warning]
 				, [check_threshold_critical] = source.[check_threshold_critical]
 				, [check_enabled] = source.[check_enabled]
+				, [use_baseline] = source.[use_baseline]
 				
 		;
 	end

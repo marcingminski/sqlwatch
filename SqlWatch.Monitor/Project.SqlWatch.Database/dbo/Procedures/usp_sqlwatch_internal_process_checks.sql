@@ -22,7 +22,13 @@ declare @check_name nvarchar(100),
 		@check_start_time datetime2(7),
 		@check_end_time datetime2(7),
 		@check_exec_time_ms real,
-		@actions xml
+		@actions xml,
+		@sql_instance varchar(32) = dbo.ufn_sqlwatch_get_servername(),
+		@use_baseline bit,
+		@baseline_id smallint,
+		@check_baseline real,
+		@i tinyint,
+		@i_len tinyint
 
 declare @check_status varchar(50),
 		@check_value decimal(28,5),
@@ -77,17 +83,26 @@ select
 	, cc.[check_name]
 	, cc.[check_description]
 	, cc.[check_query]
-	, [check_threshold_warning] = case when cc.[check_threshold_warning] like '%{LAST_CHECK_VALUE}%' and mc.last_check_value is not null then replace(cc.[check_threshold_warning],'{LAST_CHECK_VALUE}',mc.last_check_value) else mc.[check_threshold_warning] end
-	, [check_threshold_critical] = case when cc.[check_threshold_critical] like '%{LAST_CHECK_VALUE}%' and mc.last_check_value is not null then replace(cc.[check_threshold_critical],'{LAST_CHECK_VALUE}',mc.last_check_value) else cc.[check_threshold_critical] end
+	, [check_threshold_warning] = case 
+			when cc.[check_threshold_warning] like '%{LAST_CHECK_VALUE}%' and mc.last_check_value is not null 
+			then replace(cc.[check_threshold_warning],'{LAST_CHECK_VALUE}',mc.last_check_value) 
+			else mc.[check_threshold_warning] 
+		end
+	, [check_threshold_critical] = case 
+			when cc.[check_threshold_critical] like '%{LAST_CHECK_VALUE}%' and mc.last_check_value is not null 
+			then replace(cc.[check_threshold_critical],'{LAST_CHECK_VALUE}',mc.last_check_value) 
+			else cc.[check_threshold_critical] 
+		end
 	, last_check_date = isnull(mc.last_check_date,'1970-01-01')
 	, mc.last_check_value
 	, mc.last_check_status
 	, cc.[ignore_flapping]
+	, cc.use_baseline
 from [dbo].[sqlwatch_config_check] cc
 
 inner join [dbo].[sqlwatch_meta_check] mc
 	on mc.check_id = cc.check_id
-	and mc.sql_instance = @@SERVERNAME
+	and mc.sql_instance = @sql_instance
 
 where cc.[check_enabled] = 1
 and datediff(minute,isnull(mc.last_check_date,'1970-01-01'),getutcdate()) >=
@@ -103,7 +118,7 @@ open cur_rules
   
 fetch next from cur_rules 
 into @check_id, @check_name, @check_description , @check_query, @check_warning_threshold, @check_critical_threshold
-	, @previous_check_date, @previous_check_value, @previous_check_status, @ignore_flapping
+	, @previous_check_date, @previous_check_value, @previous_check_status, @ignore_flapping, @use_baseline
 
 
 while @@FETCH_STATUS = 0  
@@ -174,13 +189,13 @@ SET ANSI_WARNINGS OFF
 		set last_check_date = isnull(@check_end_time,SYSUTCDATETIME()),
 			last_check_status = 'CHECK ERROR'
 		where [check_id] = @check_id
-		and sql_instance = @@SERVERNAME
+		and sql_instance = @sql_instance
 
 		set @error_message = 'CheckID : ' + convert(varchar(10),@check_id)
 						
 		insert into [dbo].[sqlwatch_logger_check] (sql_instance, snapshot_time, snapshot_type_id, check_id, 
 			[check_value], [check_status], check_exec_time_ms)
-		values (@@SERVERNAME, @snapshot_time, @snapshot_type_id, @check_id, null, 'CHECK ERROR', @check_exec_time_ms)
+		values (@sql_instance, @snapshot_time, @snapshot_type_id, @check_id, null, 'CHECK ERROR', @check_exec_time_ms)
 			
 		goto ProcessNextCheck
 	end catch
@@ -200,7 +215,7 @@ SET ANSI_WARNINGS OFF
 								select top 12 *
 								from dbo.[sqlwatch_logger_check] lc
 								where snapshot_time > dateadd(hour,-6,getutcdate())
-								and sql_instance = @@SERVERNAME
+								and sql_instance = @sql_instance
 								and check_id = @check_id
 								and snapshot_type_id = @snapshot_type_id
 								order by snapshot_time desc
@@ -230,17 +245,58 @@ SET ANSI_WARNINGS OFF
 	--	3. we can have a trigger that checks for a number of databases and any change is critical either greater or lower.
 	-------------------------------------------------------------------------------------------------------------------
 
+	--since we can reference last check value in the threshold as a parameter, we have to account for the first run, where the previous value does not exist. 
+	--In such situation the threshold cannot be compared to and we have to return an OK (as we dont know if the value is out of bounds). 
+	--The second iteration should then be able to compare to the previous value and return the desired status
+	--If we have {LAST_CHECK_VALUE} value at this point, it means there is no previous check value.
+	--The baseline will take precedence over values in [check_threshold_warning] and [check_threshold_critical].
+	if @check_critical_threshold like '%{LAST_CHECK_VALUE}%' or @check_warning_threshold like '%{LAST_CHECK_VALUE}%' 
+		begin
+			set @check_status =	'OK'  
+		end
+	else if @use_baseline = 1 
+		begin
+			-- If we are asked to use the baseline and if have a default baseline, get value from the baseline data 
+			-- (in this case, the baseline data means the check that had previously run and has been baselined:
+			-- when using baseline, we're going to set it as critical. in the future we will also set warning based on % of baseline or even based on another baseline
+			select @baseline_id = baseline_id 
+			from [dbo].[sqlwatch_meta_baseline]
+			where is_default = 1
+			and sql_instance = @sql_instance				
+
+			if @baseline_id is not null
+				begin
+					select @check_baseline = null 
+
+					select @check_baseline=avg(check_value)
+					from [dbo].[sqlwatch_logger_check] lc
+
+					inner join [dbo].[sqlwatch_meta_snapshot_header_baseline] b
+						on b.snapshot_time = lc.snapshot_time
+						and b.sql_instance = lc.sql_instance
+						and b.snapshot_type_id = lc.snapshot_type_id
+
+					where b.baseline_id = @baseline_id
+						and lc.check_id = @check_id
+
+					--replace numbers only in the original check threshold:
+					select @check_critical_threshold = left(@check_critical_threshold,patindex('%[0-9]%',@check_critical_threshold)-1)+convert(varchar(10),@check_baseline)
+
+					set @error_message = 'Check (Id: ' + convert(varchar(10),@check_id) + ') is using baseline value (' + @check_critical_threshold + ')'
+					exec [dbo].[usp_sqlwatch_internal_log]
+							@proc_id = @@PROCID,
+							@process_stage = '55C51822-5204-42B0-97A6-039608B9ACB8',
+							@process_message = @error_message,
+							@process_message_type = 'INFO'
+
+				end
+		end
+	
 	--we must either have critical value or warning and critical. constraints dissalow the critical warning to be null and previous check ensured check_value is not null:
 	select @check_status = case 
-		--since we can reference last check value in the threshold as a parameter, we have to account for the first run, where the previous value does not exist. 
-		--In such situation the threshold cannot be compared to and we have to return an OK (as we dont know if the value is out of bounds). 
-		--The second iteration should then be able to compare to the previous value and return the desired status
-		when @check_critical_threshold like '%{LAST_CHECK_VALUE}%' or @check_warning_threshold like '%{LAST_CHECK_VALUE}%' then 'OK' 
-		else
-			case when [dbo].[ufn_sqlwatch_get_check_status] ( @check_critical_threshold, @check_value ) = 1 then 'CRITICAL'
+			when [dbo].[ufn_sqlwatch_get_check_status] ( @check_critical_threshold, @check_value ) = 1 then 'CRITICAL'
 			when @check_warning_threshold is not null and [dbo].[ufn_sqlwatch_get_check_status] ( @check_warning_threshold, @check_value ) = 1 then 'WARNING'
 			else 'OK' end
-		end
 
 	----if @check_status is still null then check if its warning, but we may not have warning so need to account for that:
 	--select @check_status = case when @check_status is null 
@@ -256,7 +312,7 @@ SET ANSI_WARNINGS OFF
 	-------------------------------------------------------------------------------------------------------------------
 	insert into [dbo].[sqlwatch_logger_check] (sql_instance, snapshot_time, snapshot_type_id, check_id, 
 		[check_value], [check_status], check_exec_time_ms, [status_change], [is_flapping])
-	values (@@SERVERNAME, @snapshot_time, @snapshot_type_id, @check_id, @check_value, @check_status, @check_exec_time_ms, 
+	values (@sql_instance, @snapshot_time, @snapshot_type_id, @check_id, @check_value, @check_status, @check_exec_time_ms, 
 		case when isnull(@check_status,'') <> isnull(@previous_check_status,'') then 1 else 0 end,
 		@is_flapping )
 
@@ -298,7 +354,7 @@ SET ANSI_WARNINGS OFF
 					begin
 						begin try						
 							exec [dbo].[usp_sqlwatch_internal_process_actions] 
-								@sql_instance = @@SERVERNAME,
+								@sql_instance = @sql_instance,
 								@check_id = @check_id,
 								@action_id = @action_id,
 								@check_status = @check_status,
@@ -343,13 +399,13 @@ SET ANSI_WARNINGS OFF
 		last_check_status = @check_status,
 		last_status_change_date = case when @previous_check_status <> @check_status then getutcdate() else last_status_change_date end
 	where [check_id] = @check_id
-	and sql_instance = @@SERVERNAME
+	and sql_instance = @sql_instance
 
 	ProcessNextCheck:
 
 	fetch next from cur_rules 
 	into @check_id, @check_name, @check_description , @check_query, @check_warning_threshold, @check_critical_threshold
-		, @previous_check_date, @previous_check_value, @previous_check_status, @ignore_flapping
+		, @previous_check_date, @previous_check_value, @previous_check_status, @ignore_flapping, @use_baseline
 	
 end
 
