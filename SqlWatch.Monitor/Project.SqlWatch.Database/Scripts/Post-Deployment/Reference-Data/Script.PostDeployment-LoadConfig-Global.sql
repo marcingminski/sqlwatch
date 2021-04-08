@@ -69,6 +69,12 @@ values
 	/* are we using queues? */
 	,(13	,'Use Broker Activation' ,0)
 
+	/* Intelligent index collection - Usage Stats Age. Set to -1 to disable. */
+	,(14	,'Index Usage Age Hours' ,24)
+
+	/* Intelligent index collection. Max Batch Size. Set to -1 to disable. */
+	,(15	,'Index Usage Batch Size' ,1000)
+
 ;
 
 merge dbo.sqlwatch_config as target

@@ -1,36 +1,62 @@
 ﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_logger_index_usage_stats]
-	@databases varchar(max) = '-tempdb',
+	@databases varchar(max) = null,
 	@ignore_global_exclusion bit = 0
 AS
 
-/*
--------------------------------------------------------------------------------------------------------------------
- Procedure:
-	usp_sqlwatch_logger_index_usage_stats
+declare @index_usage_age smallint = [dbo].[ufn_sqlwatch_get_config_value] ( 14, null ),
+		@index_batch_size smallint = [dbo].[ufn_sqlwatch_get_config_value] ( 15, null )
 
- Description:
-	Collect index statistics.
+if @databases is null 
+	begin
+		set @databases = '-tempdb'
+	end
 
- Parameters
-	@databases		: list of databases to include exclude in Ola Hallengren format:
-						include specific dbs: 'DB1,DB2,DB3, %DB%' 
-						exclude specific dbs: '-DB1,-DB2'
-	@ignore_global_exclusion		: whether to ignore exclusions in the config table [dbo].[sqlwatch_config_exclude_database]
+-- if intelligent index stats collection is enabled,
+-- reset database list as we're going to set it dynamically
+if @index_usage_age >= 0
+	begin
+
+		select distinct database_name, table_name, index_name
+		into ##sqlwatch_index_usage_stats_collector_1546356805384099A7534C851E48C6D1
+		from (
+			select distinct top (@index_batch_size) 
+					  db.database_name
+					, tb.table_name
+					, id.index_name
+					, us.snapshot_time
+			from [dbo].[sqlwatch_logger_index_usage_stats] us
 	
- Author:
-	Marcin Gminski
+				inner join dbo.sqlwatch_meta_database db
+				on db.sqlwatch_database_id = us.sqlwatch_database_id
+				and db.sql_instance = us.sql_instance
 
- Change Log:
-	1.0		2018-08		- Marcin Gminski, Initial version
-	1.1		2019-12-05	- Marcin Gminski, Ability to exclude database from iteration altogether rather than just data collection.
-							In some cases, trying to get index stats from tempdb may deadlock due to schema locks in tempdb.
-							Excluding tempdb from iteration means the code will not even be executed there.
-	1.2		2019-12-09	- Marcin Gminski, Fixed cartersian product #129
-	1.3		2019-12-14	- Marcin Gminski, use usp_sqlwatch_internal_insert_header isntead of direct insert
-	1.4		2020-03-18	- Marcin Gminski, move explicit transaction after header to fix https://github.com/marcingminski/sqlwatch/issues/155
-	1.5		2020-04-24	- Marcin Gminski, fixed transaction count error on failure.
--------------------------------------------------------------------------------------------------------------------
-*/
+				inner join dbo.sqlwatch_meta_table tb
+				on tb.sqlwatch_database_id = us.sqlwatch_database_id
+				and tb.sql_instance = us.sql_instance
+				and tb.sqlwatch_table_id = us.sqlwatch_table_id
+
+				inner join dbo.sqlwatch_meta_index id
+				on id.sqlwatch_database_id = us.sqlwatch_database_id
+				and id.sqlwatch_table_id = us.sqlwatch_table_id
+				and id.sqlwatch_index_id = us.sqlwatch_index_id
+				and id.sql_instance = us.sql_instance
+
+			where snapshot_time < dateadd(minute,-@index_usage_age,getutcdate())
+			and tb.table_type = 'BASE TABLE'
+			order by snapshot_time asc
+		) t
+
+		create clustered index idx_tmp_sqlwatch_index_usage_stats_collector_1546356805384099A7534C851E48C6D1
+		on ##sqlwatch_index_usage_stats_collector_1546356805384099A7534C851E48C6D1 (database_name, table_name, index_name)
+
+		set @databases = null
+		select @databases = @databases + ',' + database_name
+		from (
+			select distinct database_name
+			from ##sqlwatch_index_usage_stats_collector_1546356805384099A7534C851E48C6D1
+			) t
+
+	end
 
 set xact_abort on
 set nocount on
@@ -55,7 +81,7 @@ select @date_snapshot_previous = max([snapshot_time])
 		@snapshot_type_id = @snapshot_type_id
 
 /* step 2 , collect indexes from all databases */
-		set @sql = 'insert into [dbo].[sqlwatch_logger_index_usage_stats] (
+		select @sql = 'insert into [dbo].[sqlwatch_logger_index_usage_stats] (
 	sqlwatch_database_id, [sqlwatch_index_id], [used_pages_count],
 	user_seeks, user_scans, user_lookups, user_updates, last_user_seek, last_user_scan, last_user_lookup, last_user_update,
 	stats_date, snapshot_time, snapshot_type_id, index_disabled, partition_id, [sqlwatch_table_id],
@@ -132,6 +158,15 @@ select @date_snapshot_previous = max([snapshot_time])
 				and mi.sqlwatch_table_id = mt.sqlwatch_table_id
 				and mi.index_id = ixus.index_id
 				and mi.index_name = case when mi.index_type_desc = ''HEAP'' then t.[name] else ix.[name] end collate database_default
+
+
+			' + case when @index_usage_age >= 0 then '
+			inner join ##sqlwatch_index_usage_stats_collector_1546356805384099A7534C851E48C6D1 x
+				on x.database_name = mdb.database_name
+				and x.table_name = mt.table_name
+				and x.index_name = mi.index_name
+			
+			' else '' end + '
 
 			left join [dbo].[sqlwatch_logger_index_usage_stats] usprev
 				on usprev.sql_instance = mi.sql_instance
