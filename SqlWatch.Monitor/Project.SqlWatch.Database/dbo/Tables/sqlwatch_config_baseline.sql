@@ -123,10 +123,19 @@ begin
 				set is_default = i.is_default,
 					comments = i.comments
 
+			from [dbo].[sqlwatch_config_baseline] m
+			inner join inserted i
+			on m.baseline_id = i.baseline_id;
+
+			update m
+				set is_default = i.is_default,
+					comments = i.comments
+
 			from [dbo].[sqlwatch_meta_baseline] m
 			inner join inserted i
 			on m.baseline_id = i.baseline_id
 			and m.sql_instance = @sql_instance
+
 		end
 end
 go
