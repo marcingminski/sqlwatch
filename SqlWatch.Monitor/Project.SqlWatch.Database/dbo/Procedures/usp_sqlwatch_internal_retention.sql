@@ -1,37 +1,6 @@
 ﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_internal_retention]
 as
 
-/*
--------------------------------------------------------------------------------------------------------------------
- Procedure:
-	usp_sqlwatch_internal_retention
-
- Description:
-	Process retention of each snapshot based on the snapshot_retention_days.
-	Deleting from the header [sqlwatch_logger_snapshot_header] will also delete from child tables through cascade
-	action. To avoid blowing transaction logs we have running batches of 500 rows by default. This can be adjusted
-	by passing different batch size as a parameter. This procedure should run every hour so there is never too 
-	much to delete. Do not leave this to run once a day or once a week, the more often it runs the less it will do.
-	Average execution does not exceed few seconds.
-
- Parameters
-	N/A
-
- Author:
-	Marcin Gminski
-
- Change Log:
-	1.0		2019-08		- Marcin Gminski,	Initial version
-	1.1		2019-11-29	- Marcin Gminski,	Ability to only leave most recent snapshot with -1 retention
-	1.2		2019-12-07	- Marcin Gminski,	Added retention of the action queue
-	1.3		2019-12-09	- Marcin Gminski,	build deletion keys out of the loop to improve loop performance and reduce contention
-	1.4		2019-12-31	- Marcin Gminski,	changed hardcoded to configurable retention periods for non-logger tables,
-											replaced input parameters with global config
-	1.5		2020-02-18	- Marcin Gminski,	fixed an issue where retention would not be correctly applied due to null variables,
-											code cleanse
-	1.6		2020-05-13  - Marcin Gminski,	batch up app_log retention
--------------------------------------------------------------------------------------------------------------------
-*/
 set nocount on;
 set xact_abort on;
 
@@ -40,7 +9,8 @@ declare @snapshot_type_id tinyint,
 		@row_count int,
 		@action_queue_retention_days_failed smallint,
 		@action_queue_retention_days_success smallint,
-		@application_log_retention_days smallint
+		@application_log_retention_days smallint,
+		@sql_instance varchar(32) = dbo.ufn_sqlwatch_get_servername();
 
 select @batch_size = [dbo].[ufn_sqlwatch_get_config_value](6, null)
 select @action_queue_retention_days_failed = [dbo].[ufn_sqlwatch_get_config_value](3, null)
@@ -94,6 +64,12 @@ while @row_count > 0
 				and h.sql_instance = c.sql_instance
 				and h.snapshot_type_id = c.snapshot_type_id
 
+			-- do not remove baseline snapshots:
+			where h.snapshot_time not in (
+				select snapshot_time
+				from [dbo].[sqlwatch_meta_snapshot_header_baseline]
+				)
+
 			set @row_count = @@ROWCOUNT
 			print 'Deleted ' + convert(varchar(max),@row_count) + ' records from [dbo].[sqlwatch_logger_snapshot_header]'
 		commit tran
@@ -123,7 +99,7 @@ while @row_count > 0
 
 	set @snapshot_type_id = 1 --Performance Counters
 	delete from [dbo].[sqlwatch_trend_perf_os_performance_counters]
-	where sql_instance = @@SERVERNAME
+	where sql_instance = @sql_instance
 	and getutcdate() > valid_until
 	Print 'Deleted ' + convert(varchar(max),@@ROWCOUNT) + ' records from [dbo].[sqlwatch_trend_perf_os_performance_counters]'
 

@@ -2625,4 +2625,11 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[sqlwatch_exec]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="8d1c3af4-6405-4f81-82a4-124fedeab4c0" ChangeDateTime="04/08/2021 11:03:00">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_meta_retention]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[sqlwatch_meta_baseline]" />
+  </Operation>
 </Operations>
