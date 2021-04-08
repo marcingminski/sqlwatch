@@ -53,7 +53,6 @@ inner join (
 on t.sql_instance = c.sql_instance collate database_default
 and t.snapshot_type_id = c.snapshot_type_id
 
-
 while @row_count > 0
 	begin
 		begin tran
@@ -68,6 +67,7 @@ while @row_count > 0
 			where h.snapshot_time not in (
 				select snapshot_time
 				from [dbo].[sqlwatch_meta_snapshot_header_baseline]
+				where sql_instance = h.sql_instance
 				)
 
 			set @row_count = @@ROWCOUNT
