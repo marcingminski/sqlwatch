@@ -40,3 +40,12 @@ CREATE NONCLUSTERED INDEX idx_sqlwatch_trend_perf_os_performance_counters_interv
 ON [dbo].[sqlwatch_trend_perf_os_performance_counters] ([interval_minutes])
 INCLUDE ([performance_counter_id],[instance_name],[sql_instance],[snapshot_time])
 go
+
+CREATE NONCLUSTERED INDEX idx_sqlwatch_trend_perf_os_performance_counters_sql_instance
+ON [dbo].[sqlwatch_trend_perf_os_performance_counters] ([sql_instance])
+INCLUDE ([performance_counter_id],[cntr_value_calculated_avg],[snapshot_time_offset])
+go
+
+CREATE NONCLUSTERED INDEX idx_sqlwatch_trend_perf_os_performance_counters_perf_counter
+ON [dbo].[sqlwatch_trend_perf_os_performance_counters] ([performance_counter_id],[sql_instance])
+INCLUDE ([cntr_value_calculated_avg],[snapshot_time_offset])

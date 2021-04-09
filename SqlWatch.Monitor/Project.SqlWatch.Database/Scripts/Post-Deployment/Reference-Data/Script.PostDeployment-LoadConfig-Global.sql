@@ -84,6 +84,16 @@ values
 	   Normally I would recommend the relaxed baselining so you get less alerts whilst maintaining good performance.
 	   Only use stric baselining if you have an agreed SLA or have done it on the back of performance testing etc... */
 	,(16	,'Strict Baseline Checks' ,0)
+
+	/* Baseline variance percentage.
+	   When setting baseline, we have to allow for some flex, for example, baseline may say 20 Readahead pages/sec.
+	   With 20% variance we will not raise alert when the counter hits 24. */
+	,(17	,'Baseline Checks Variance %' ,20)
+
+	/* Check variance percentage.
+	   Same as above but for normal checks with no baseline. */
+	,(18	,'Checks Variance %' ,10)
+
 ;
 
 merge dbo.sqlwatch_config as target
