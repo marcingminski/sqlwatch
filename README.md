@@ -1,7 +1,7 @@
 ![GitHub release](https://img.shields.io/github/release/marcingminski/sqlwatch.svg)
 ![GitHub All Releases](https://img.shields.io/github/downloads/marcingminski/sqlwatch/total.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
-
+![AppVeyor](https://img.shields.io/appveyor/build/marcingminski/sqlwatch?label=branch%20build)
 # About
 SQLWATCH is a SQL Server Performance and capacity data collector with Power BI dashboard for data analysis. The idea behind is to provide community driven, standardised "interface" for SQL Server monitoring that can be consumed by various interfaces and integrate with availabilty monitoring platforms such as Nagios, Zabbix, PRTG
 
