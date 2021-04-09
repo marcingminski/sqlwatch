@@ -72,7 +72,7 @@ declare @sql nvarchar(4000)
 							ORDER BY [timestamp] DESC
 							) AS x 
 						) AS y
-				OPTION (RECOMPILE);
+				OPTION (keep plan);
 			end
 
 		select top 1 
