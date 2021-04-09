@@ -3,6 +3,7 @@
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![GitHub commits since latest release (by date)](https://img.shields.io/github/commits-since/marcingminski/sqlwatch/latest)
 ![AppVeyor](https://img.shields.io/appveyor/build/marcingminski/sqlwatch?label=branch%20build)
+![AppVeyor tests](https://img.shields.io/appveyor/tests/marcingminski/sqlwatch)
 
 
 # About
