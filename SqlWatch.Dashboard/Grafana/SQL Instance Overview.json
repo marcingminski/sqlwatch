@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": 32,
-  "iteration": 1617967898974,
+  "iteration": 1617980885730,
   "links": [
     {
       "asDropdown": true,
@@ -2253,8 +2253,8 @@
             },
             "overrides": []
           },
-          "fill": 0,
-          "fillGradient": 0,
+          "fill": 1,
+          "fillGradient": 4,
           "gridPos": {
             "h": 7,
             "w": 24,
@@ -2287,18 +2287,12 @@
             {
               "$$hashKey": "object:281",
               "alias": "SQL Compilation Rate",
-              "color": "#5794F2",
-              "fill": 0,
-              "fillBelowTo": "SQL Re-Compilation Rate",
-              "fillGradient": 0,
-              "lines": true
+              "color": "#5794F2"
             },
             {
               "$$hashKey": "object:282",
               "alias": "SQL Re-Compilation Rate",
-              "color": "#FADE2A",
-              "fill": 1,
-              "lines": true
+              "color": "#FADE2A"
             }
           ],
           "spaceLength": 10,
@@ -9703,5 +9697,5 @@
   "timezone": "utc",
   "title": "SQL Instance Overview",
   "uid": "sqlwatch-instance-overview",
-  "version": 29
+  "version": 33
 }
