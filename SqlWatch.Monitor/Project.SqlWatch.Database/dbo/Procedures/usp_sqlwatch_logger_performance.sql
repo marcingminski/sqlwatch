@@ -491,7 +491,7 @@ declare @sql nvarchar(4000)
 			and prevfs.sqlwatch_database_id = mf.sqlwatch_database_id
 			and prevfs.sqlwatch_master_file_id = mf.sqlwatch_master_file_id
 
-		option (keep plan)
+		option (keepfixed plan)
 
 
 		--------------------------------------------------------------------------------------------------------------
@@ -540,7 +540,6 @@ declare @sql nvarchar(4000)
 		-- exclude idle waits and noise
 		where ws.wait_type not like 'SLEEP_%'
 		and ms.[is_excluded] = 0
-
 		option (keep plan)
 
 		insert into [dbo].[sqlwatch_logger_perf_os_wait_stats]
@@ -567,10 +566,10 @@ declare @sql nvarchar(4000)
 
 			where ws.snapshot_time = @date_snapshot_current
 			and ws.[waiting_tasks_count] - wsprev.[waiting_tasks_count]  > 0
+		option (keepfixed plan)
 
 		delete from [dbo].[sqlwatch_stage_perf_os_wait_stats] with (tablock)
 		where snapshot_time < @date_snapshot_current
-
 		option (keep plan)
 
 commit tran
