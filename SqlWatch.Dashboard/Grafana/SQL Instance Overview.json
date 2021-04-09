@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": 32,
-  "iteration": 1617980885730,
+  "iteration": 1617999690049,
   "links": [
     {
       "asDropdown": true,
@@ -446,7 +446,7 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT \n      [time] = snapshot_time --$__timeGroup(pc.[snapshot_time], $aggregation)\n      ,metric = 'Blocked'\n      ,[value] = pc.[cntr_value_calculated]\n  FROM [dbo].[sqlwatch_logger_perf_os_performance_counters] pc\n\t\tinner join [dbo].[sqlwatch_meta_performance_counter] mpc\n\t\t\ton pc.sql_instance = mpc.sql_instance\n\t\t\tand pc.performance_counter_id = mpc.performance_counter_id  \n  WHERE $__timeFilter(pc.snapshot_time)\n    and snapshot_time >= dateadd(minute,-15,getutcdate())\n  AND mpc.counter_name IN ('Processes blocked')\n  AND pc.[sql_instance] = '$sql_instance'\n  --GROUP BY snapshot_time --$__timeGroup(pc.[snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+          "rawSql": "SELECT time = h.snapshot_time\r\n      ,[Blocked] = sum(case when isnull(blocking_session_id,0) > 0 then 1 else 0 end)\r\n  FROM sqlwatch_logger_snapshot_header h\r\n  left join [dbo].[sqlwatch_logger_dm_exec_requests] r1\r\n  on h.snapshot_time = r1.snapshot_time\r\n  and h.snapshot_type_id = r1.snapshot_type_id\r\n  and h.sql_instance = r1.sql_instance\r\n  and blocking_session_id > 0\r\n\twhere $__timeFilter(h.snapshot_time)\r\n    and h.snapshot_time >= dateadd(minute,-15,getutcdate())\r\n  and h.sql_instance = '$sql_instance'\r\n  group by h.snapshot_time\r\n  order by time asc",
           "refId": "A"
         }
       ],
@@ -1715,7 +1715,7 @@
         "x": 0,
         "y": 32
       },
-      "id": 187,
+      "id": 257,
       "panels": [
         {
           "datasource": null,
@@ -1732,6 +1732,187 @@
             "y": 33
           },
           "id": 159,
+          "options": {
+            "content": "<br><br><h1 id=\"blocking\">SQL Server Blocking Chains</h1>\r\n\r\n<br>\r\n<p>Blocking chains happen when one query is holding back other queries. This happens when poorly written query is holding excessive and exclusive locks on tables. Relational databases are written with ACID properties in mind, \r\nthis means that in order to retain data integrity, only one query at a time can modify the data. To achieve this, a lock is applied so no other queries can even read the data to avoid partially written data being displayed back to the client. When blocking chains happen for long period of time, you will have the impression that the database is slow, even though it isn't. It's just doing its job. It is important to undertand how locking works to avoid blocking chains.>",
+            "mode": "html"
+          },
+          "pluginVersion": "7.4.2",
+          "targets": [
+            {
+              "queryType": "randomWalk",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "",
+          "transparent": true,
+          "type": "text"
+        },
+        {
+          "cards": {
+            "cardPadding": null,
+            "cardRound": null
+          },
+          "color": {
+            "cardColor": "#F2495C",
+            "colorScale": "sqrt",
+            "colorScheme": "interpolateOranges",
+            "exponent": 0.5,
+            "mode": "opacity"
+          },
+          "dataFormat": "tsbuckets",
+          "datasource": "$DataSource",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {},
+              "thresholds": {
+                "mode": "absolute",
+                "steps": []
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 6,
+            "w": 24,
+            "x": 0,
+            "y": 39
+          },
+          "heatmap": {},
+          "hideZeroBuckets": false,
+          "highlightCards": true,
+          "id": 101,
+          "legend": {
+            "show": false
+          },
+          "pluginVersion": "7.4.2",
+          "reverseYBuckets": false,
+          "targets": [
+            {
+              "alias": "",
+              "format": "time_series",
+              "hide": false,
+              "rawSql": "SELECT time = $__timeGroup(r1.snapshot_time, $aggregation)\r\n      ,[value] = sum(case when isnull(blocking_session_id,0) > 0 then 1 else 0 end)\r\n      ,[metric] = 'SPID: ' + convert(varchar(10),session_id)\r\n  FROM [dbo].[sqlwatch_logger_dm_exec_requests] r1\r\n\twhere $__timeFilter(r1.snapshot_time)\r\n  and r1.sql_instance = '$sql_instance'\r\n  and blocking_session_id > 0\r\n  group by $__timeGroup(r1.snapshot_time, $aggregation), 'SPID: ' + convert(varchar(10),session_id)\r\n  order by time asc",
+              "refId": "2"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Blockers",
+          "tooltip": {
+            "show": true,
+            "showHistogram": false
+          },
+          "transformations": [
+            {
+              "id": "seriesToColumns",
+              "options": {
+                "byField": "Time"
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {
+                  "Time": 0,
+                  "max": 3,
+                  "min": 4,
+                  "sql": 2,
+                  "system": 1
+                },
+                "renameByName": {}
+              }
+            }
+          ],
+          "transparent": true,
+          "type": "heatmap",
+          "xAxis": {
+            "show": true
+          },
+          "xBucketNumber": null,
+          "xBucketSize": null,
+          "yAxis": {
+            "decimals": null,
+            "format": "short",
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true,
+            "splitFactor": null
+          },
+          "yBucketBound": "middle",
+          "yBucketNumber": null,
+          "yBucketSize": null
+        },
+        {
+          "datasource": "${DataSource}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 24,
+            "x": 0,
+            "y": 45
+          },
+          "id": 255,
+          "options": {
+            "showLabels": false,
+            "showTime": false,
+            "sortOrder": "Descending",
+            "wrapLogMessage": false
+          },
+          "pluginVersion": "7.4.2",
+          "targets": [
+            {
+              "alias": "",
+              "format": "table",
+              "queryType": "randomWalk",
+              "rawSql": ";with cte_blocking as (\r\n   select \r\n          r1.session_id \r\n        , r1.blocking_session_id\r\n\t\t, blocking_chain_id = ROW_NUMBER() over (partition by snapshot_time  order by snapshot_time)\r\n\t\t--the visual tree inspired by https://blog.sqlauthority.com/2015/07/07/sql-server-identifying-blocking-chain-using-sql-scripts/\r\n\t\t, blocking_level = cast (replicate ( '0', 4 - len(cast(r1.session_id as varchar(10)))) + cast (r1.session_id as varchar(10)) as varchar(max))\r\n\t\t, r1.database_name\r\n\t\t, r1.snapshot_time\r\n\t\t, r1.text\r\n\t\t, is_first = 1\r\n\t\t, r1.sql_instance\r\n    from [dbo].[sqlwatch_logger_dm_exec_requests] r1 (nolock)\r\n\r\n\twhere $__timeFilter(r1.snapshot_time)\r\n\tand r1.sql_instance = '$sql_instance'\r\n\tand r1.blocking_session_id = 0\r\n\t\r\n\tand exists (\r\n\t\tselect *\r\n\t\tfrom [dbo].[sqlwatch_logger_dm_exec_requests] b2 (nolock)\r\n\t\twhere b2.blocking_session_id = r1.session_id \r\n\t\tand b2.blocking_session_id <> b2.session_id\r\n\t\tand b2.snapshot_time = r1.snapshot_time\r\n\t\tand b2.sql_instance = r1.sql_instance\r\n\t\tand b2.snapshot_type_id = r1.snapshot_type_id\r\n\t\t)\t\r\n\r\n\t/*where r1.snapshot_time = (\r\n\t\t\tselect max(snapshot_time) \r\n\t\t\tfrom sqlwatch_logger_snapshot_header\r\n\t\t\twhere snapshot_type_id = 30\r\n\t\t\tand sql_instance = @@SERVERNAME\r\n\t\t\tand snapshot_time >= $__timeFrom()\r\n\t\t\tand snapshot_time <= $__timeTo()\r\n\t)*/\r\n\r\n\tunion all\r\n\r\n    select\r\n          r.session_id\r\n        , r.blocking_session_id \r\n        , c.blocking_chain_id\r\n        , blocking_level = cast (c.blocking_level + right (cast ((1000 + r.session_id) as varchar(100)), 4) as varchar (max))\r\n        , r.database_name \r\n\t\t, r.snapshot_time\r\n\t\t, r.text\r\n\t\t, is_first = 0\r\n\t\t, r.sql_instance\r\n    FROM [dbo].[sqlwatch_logger_dm_exec_requests] r (nolock)\r\n    \r\n\tinner join cte_blocking c\r\n\t\ton r.blocking_session_id = c.session_id\r\n    and r.snapshot_time = c.snapshot_time\r\n    and r.sql_instance = c.sql_instance\r\n    \r\n\twhere r.blocking_session_id > 0\r\n\tand r.blocking_session_id <> r.session_id\r\n\r\n)\r\n\r\n  select display=0, blocking_level, time=snapshot_time, blocking_tree = N'    ' + char (160) + char (160) + replicate (N'|         ', len (blocking_level)/4 - 1) +\r\n  '   ' \r\n  from cte_blocking\r\n  where is_first = 1 and blocking_chain_id = 1\r\n  \r\n  union all\r\n  \r\n  select display=1, blocking_level, time=snapshot_time, blocking_tree = N'    ' + char (160) + char (160) + replicate (N'|         ', len (blocking_level)/4 - 1) +\r\n  '====================== BLOCKING CHAIN AT : ' + convert(varchar(23),snapshot_time,121) + ': ' \r\n  from cte_blocking\r\n  where is_first = 1 and blocking_chain_id = 1\r\n  \r\n  union all\r\n  \r\n  select display=2, blocking_level, time=snapshot_time, blocking_tree = N'    ' + char (160) + char (160) + replicate (N'|         ', len (blocking_level)/4 - 1) +\r\n  case when (len(blocking_level)/4 - 1) = 0\r\n  then 'HEAD BLOCKER -->  '\r\n  else '|------->  ' end\r\n  + 'SPID: '+ cast (session_id as nvarchar(10)) + N' ' + '(DB: ' + database_name + ') SQL: ' + isnull(text,'') + char(10) \r\n  from cte_blocking\r\n  order by time,display,blocking_level\r\n\r\n",
+              "refId": "Blocking Chains"
+            }
+          ],
+          "title": "Blocking Chains",
+          "transparent": true,
+          "type": "logs"
+        }
+      ],
+      "title": "$sql_instance: SQL Blocking Chains",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 33
+      },
+      "id": 187,
+      "panels": [
+        {
+          "datasource": null,
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 6,
+            "w": 24,
+            "x": 0,
+            "y": 34
+          },
+          "id": 259,
           "options": {
             "content": "<br><br><h1 id=\"workload\">SQL Server Activity and Workload</h1>\r\n\r\n<br><h2 id=\"cpu\">CPU</h2>\r\n<p>The CPU chart is split into System (OS) and SQL Server. In an ideal scenario, all of the utilistaison should be allocated to SQL Server and only very small amount to system. SQL Server is also licensed per core, the more CPU cores the most expensive the license. You do not want to be paying a lot of money and not use it.\r\n<a href=\"/d/sqlwatch-long-queries/long-queries?${__url_time_range}&var-DataSource=${DataSource}&var-sql_instance=${sql_instance}\">See Long Queries captured during this period</a>\r\n</p>",
             "mode": "html"
@@ -1773,10 +1954,10 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 39
+            "y": 40
           },
           "hiddenSeries": false,
-          "id": 101,
+          "id": 258,
           "legend": {
             "avg": true,
             "current": true,
@@ -1933,7 +2114,7 @@
             "h": 12,
             "w": 24,
             "x": 0,
-            "y": 45
+            "y": 46
           },
           "id": 43,
           "options": {
@@ -1979,7 +2160,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 57
+            "y": 58
           },
           "hiddenSeries": false,
           "id": 231,
@@ -2120,7 +2301,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 64
+            "y": 65
           },
           "hiddenSeries": false,
           "hideTimeOverride": false,
@@ -2215,7 +2396,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 71
+            "y": 72
           },
           "id": 109,
           "options": {
@@ -2259,7 +2440,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 77
+            "y": 78
           },
           "hiddenSeries": false,
           "id": 6,
@@ -2406,7 +2587,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 84
+            "y": 85
           },
           "id": 110,
           "options": {
@@ -2455,7 +2636,7 @@
             "h": 11,
             "w": 24,
             "x": 0,
-            "y": 90
+            "y": 91
           },
           "hiddenSeries": false,
           "id": 232,
@@ -2576,7 +2757,7 @@
             "h": 2,
             "w": 24,
             "x": 0,
-            "y": 101
+            "y": 102
           },
           "id": 192,
           "options": {
@@ -2621,7 +2802,7 @@
             "h": 5,
             "w": 24,
             "x": 0,
-            "y": 103
+            "y": 104
           },
           "hiddenSeries": false,
           "id": 191,
@@ -2813,7 +2994,7 @@
             "h": 5,
             "w": 24,
             "x": 0,
-            "y": 108
+            "y": 109
           },
           "id": 194,
           "links": [
@@ -2882,7 +3063,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 33
+        "y": 34
       },
       "id": 208,
       "panels": [
@@ -3583,7 +3764,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 34
+        "y": 35
       },
       "id": 185,
       "panels": [
@@ -4326,7 +4507,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 35
+        "y": 36
       },
       "id": 183,
       "panels": [
@@ -6177,7 +6358,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 36
+        "y": 37
       },
       "id": 181,
       "panels": [
@@ -6536,7 +6717,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 37
+        "y": 38
       },
       "id": 179,
       "panels": [
@@ -7651,7 +7832,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 38
+        "y": 39
       },
       "id": 177,
       "panels": [
@@ -8277,7 +8458,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 39
+        "y": 40
       },
       "id": 175,
       "panels": [
@@ -8434,7 +8615,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 40
+        "y": 41
       },
       "id": 234,
       "panels": [
@@ -9001,7 +9182,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 41
+        "y": 42
       },
       "id": 220,
       "panels": [
@@ -9458,7 +9639,7 @@
         "auto_count": 100,
         "auto_min": "1s",
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "auto",
           "value": "$__auto_interval_aggregation"
         },
@@ -9697,5 +9878,5 @@
   "timezone": "utc",
   "title": "SQL Instance Overview",
   "uid": "sqlwatch-instance-overview",
-  "version": 33
+  "version": 90
 }

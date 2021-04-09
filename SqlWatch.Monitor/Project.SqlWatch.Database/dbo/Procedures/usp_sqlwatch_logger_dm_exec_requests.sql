@@ -14,8 +14,8 @@ as
 		, er.start_time
 		, er.status
 		, er.command
-		, er.sql_handle
-		, er.plan_handle
+		, sql_handle = null --er.sql_handle
+		, plan_handle = null -- er.plan_handle
 		, database_name = db.name
 		, er.blocking_session_id
 		, er.wait_type
@@ -35,8 +35,10 @@ as
 
 		left join sys.dm_exec_sessions s (nolock)
 		on s.session_id = er.session_id
+
 	cross apply sys.dm_exec_sql_text (er.plan_handle) sql_text
 	where er.session_id > 50
-	and er.session_id <> @@SPID
-	and wait_time > 0
-	and s.cpu_time > 0
+	--and er.session_id <> @@SPID
+	--and wait_time > 0
+	--and s.cpu_time > 0)
+	--or blocking_session_id > 0

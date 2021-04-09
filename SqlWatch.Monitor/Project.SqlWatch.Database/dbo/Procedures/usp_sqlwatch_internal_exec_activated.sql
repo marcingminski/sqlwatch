@@ -63,6 +63,7 @@ begin
                                         set @timestart = SYSDATETIME();
 
                                         exec dbo.usp_sqlwatch_logger_performance;
+                                        exec dbo.usp_sqlwatch_logger_dm_exec_requests;
 
                                         set @process_message = 'Message Type: ' + convert(varchar(4000),@message_type_name) + '; Timer: ' + convert(varchar(5),@timer) + '; Time Taken: ' + convert(varchar(100),datediff(ms,@timestart,SYSDATETIME()))  + 'ms'
                                     
