@@ -6,6 +6,18 @@
 # Get root path of this script:
 $PSScriptRoot = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
 
+# Run Build and force Rebuild so we bump the build number for a clean state:
+cd "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin"
+.\MSBuild.exe /t:Rebuild "$PSScriptRoot\SqlWatch.Monitor\Project.SqlWatch.Database\SQLWATCH.sqlproj"
+
+# Run Build again without rebuild so we dont bump the build number but include in the dacpac.
+# This is because the build number is pushed to the sql file whilst the project is being build, but that that time
+# That file is already included in the build so its a chicken and egg situation. If we now build it again, becuase
+# Nothing has changed since the last build, the build number will reman the same but it will now be included in the build itself.
+cd "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin"
+.\MSBuild.exe "$PSScriptRoot\SqlWatch.Monitor\Project.SqlWatch.Database\SQLWATCH.sqlproj"
+
+
 # Read SQLWATCH build version:
 
 [string]$Version = Select-String -Path "$PSScriptRoot\SqlWatch.Monitor\Project.SqlWatch.Database\Scripts\Pre-Deployment\SetDacVersion.sql" -Pattern [0-9] | select-object -ExpandProperty Line
