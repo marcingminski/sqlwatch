@@ -3,7 +3,7 @@ parent: Dashboards
 ---
 
 # Grafana
-
+{: .no_toc }
 ---
 
 - TOC
