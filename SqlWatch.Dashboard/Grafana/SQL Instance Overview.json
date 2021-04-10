@@ -12,11 +12,11 @@
       }
     ]
   },
-  "editable": false,
+  "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
   "id": 32,
-  "iteration": 1617999690049,
+  "iteration": 1617999690073,
   "links": [
     {
       "asDropdown": true,
@@ -1733,8 +1733,8 @@
           },
           "id": 159,
           "options": {
-            "content": "<br><br><h1 id=\"blocking\">SQL Server Blocking Chains</h1>\r\n\r\n<br>\r\n<p>Blocking chains happen when one query is holding back other queries. This happens when poorly written query is holding excessive and exclusive locks on tables. Relational databases are written with ACID properties in mind, \r\nthis means that in order to retain data integrity, only one query at a time can modify the data. To achieve this, a lock is applied so no other queries can even read the data to avoid partially written data being displayed back to the client. When blocking chains happen for long period of time, you will have the impression that the database is slow, even though it isn't. It's just doing its job. It is important to undertand how locking works to avoid blocking chains.>",
-            "mode": "html"
+            "content": "# SQL Server Blocking Chains\r\n*****\r\nBlocking chains happen when one query is holding back other queries. This happens when poorly written query is holding excessive and exclusive locks on tables. Relational databases are written with ACID properties in mind, \r\nthis means that in order to retain data integrity, only one query at a time can modify the data. To achieve this, a lock is applied so no other queries can even read the data to avoid partially written data being displayed back to the client. When blocking chains happen for long period of time, you will have the impression that the database is slow, even though it isn't. It's just doing its job. It is important to undertand how locking works to avoid blocking chains.\r\n\r\nThese graphs come from sampling `sys.dm_exec_requests` every few seconds. In addition, blocking chains are also captured by Extended Events Session which is more reliable than sampling but more expensive to process. Make sure the extended events session captures blocking chains. You must enable blocked process monitor: `sp_configure 'blocked process threshold', 5 ; -- set desired value in seconds`",
+            "mode": "markdown"
           },
           "pluginVersion": "7.4.2",
           "targets": [
@@ -1884,8 +1884,432 @@
           "type": "logs"
         }
       ],
-      "title": "$sql_instance: SQL Blocking Chains",
+      "title": "$sql_instance: SQL Server Blocking Chains",
       "type": "row"
+    },
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 33
+      },
+      "id": 263,
+      "panels": [],
+      "title": "$sql_instance: SQL Server Requests",
+      "type": "row"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 34
+      },
+      "id": 265,
+      "options": {
+        "content": "# SQL Server Requests\r\n*****\r\nList of current requests sampled from `dm_exec_requests`.\r\n",
+        "mode": "markdown"
+      },
+      "pluginVersion": "7.4.2",
+      "targets": [
+        {
+          "queryType": "randomWalk",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$DataSource",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "thresholds": {
+            "mode": "absolute",
+            "steps": []
+          }
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 37
+      },
+      "hiddenSeries": false,
+      "id": 264,
+      "legend": {
+        "alignAsTable": false,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": true,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.4.2",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "$$hashKey": "object:2019",
+          "alias": "running",
+          "color": "#37872D"
+        },
+        {
+          "$$hashKey": "object:2027",
+          "alias": "suspended",
+          "color": "#FFB357"
+        },
+        {
+          "$$hashKey": "object:2035",
+          "alias": "runnable",
+          "color": "#F2495C"
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "",
+          "format": "time_series",
+          "hide": false,
+          "rawSql": "SELECT time = $__timeGroup(r1.snapshot_time, $aggregation, 0)\r\n      ,[value] = count(*)\r\n      ,[metric] = status\r\n  FROM [dbo].[sqlwatch_logger_dm_exec_requests] r1\r\n\twhere $__timeFilter(r1.snapshot_time)\r\n  and r1.sql_instance = '$sql_instance'\r\n  group by $__timeGroup(r1.snapshot_time, $aggregation, 0), status\r\n  order by time asc",
+          "refId": "2"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Requests by Status",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "transformations": [
+        {
+          "id": "seriesToColumns",
+          "options": {
+            "byField": "Time"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {
+              "Time": 0,
+              "max": 3,
+              "min": 4,
+              "sql": 2,
+              "system": 1
+            },
+            "renameByName": {}
+          }
+        }
+      ],
+      "transparent": true,
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:1699",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:1700",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": true,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$DataSource",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "thresholds": {
+            "mode": "absolute",
+            "steps": []
+          }
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 43
+      },
+      "hiddenSeries": false,
+      "id": 267,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": true,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": false,
+      "linewidth": 1,
+      "nullPointMode": "null as zero",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.4.2",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "$$hashKey": "object:2019",
+          "alias": "running",
+          "color": "#37872D"
+        },
+        {
+          "$$hashKey": "object:2027",
+          "alias": "suspended",
+          "color": "#FFB357"
+        },
+        {
+          "$$hashKey": "object:2035",
+          "alias": "runnable",
+          "color": "#F2495C"
+        }
+      ],
+      "spaceLength": 10,
+      "stack": true,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "",
+          "format": "time_series",
+          "hide": false,
+          "rawSql": "SELECT time = $__timeGroup(r1.snapshot_time, $aggregation, 0)\r\n      ,[value] = sum(wait_time)\r\n      ,[metric] = case when '$Waits' = 'Category' then ws.wait_category else r1.wait_type end\r\n  FROM [dbo].[sqlwatch_logger_dm_exec_requests] r1\r\n  left join [dbo].[vw_sqlwatch_meta_wait_stats_category] ws\r\n  on ws.wait_type = r1.wait_type\r\n  and ws.sql_instance = r1.sql_instance\r\n\twhere $__timeFilter(r1.snapshot_time)\r\n\tand r1.wait_type is not null\r\n  and r1.sql_instance = '$sql_instance'\r\n  group by $__timeGroup(r1.snapshot_time, $aggregation, 0), case when '$Waits' = 'Category' then ws.wait_category else r1.wait_type end\r\n  order by time asc",
+          "refId": "2"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Requests by Wait",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "transformations": [
+        {
+          "id": "seriesToColumns",
+          "options": {
+            "byField": "Time"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {
+              "Time": 0,
+              "max": 3,
+              "min": 4,
+              "sql": 2,
+              "system": 1
+            },
+            "renameByName": {}
+          }
+        }
+      ],
+      "transparent": true,
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:1699",
+          "format": "ms",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:1700",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 24,
+        "x": 0,
+        "y": 52
+      },
+      "id": 266,
+      "options": {
+        "content": "Note that the below will show all requests as captured during the Time Period specified in this dashboard.\r\nTo see the most recent (current) requests only set the `Requests=Current` parameter on top of the dashboard.\r\nTo see what was running in the past, set the `Requests=All`",
+        "mode": "markdown"
+      },
+      "pluginVersion": "7.4.2",
+      "targets": [
+        {
+          "queryType": "randomWalk",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "datasource": "${DataSource}",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": null,
+            "filterable": true
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 54
+      },
+      "id": 261,
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "start_time"
+          }
+        ]
+      },
+      "pluginVersion": "7.4.2",
+      "targets": [
+        {
+          "alias": "",
+          "format": "table",
+          "queryType": "randomWalk",
+          "rawSql": "SELECT is_current = case when t.snapshot_time = r1.snapshot_time then 1 else 0 end, *\r\n  FROM [dbo].[sqlwatch_logger_dm_exec_requests] r1\r\n  outer apply (\r\n    select snapshot_time=max(snapshot_time)\r\n    from dbo.sqlwatch_logger_snapshot_header \r\n    where $__timeFilter(r1.snapshot_time)\r\n    and snapshot_type_id = r1.snapshot_type_id\r\n    and sql_instance = r1.sql_instance\r\n    ) t\r\n\twhere $__timeFilter(r1.snapshot_time)\r\n\tand r1.snapshot_time = case when '$currentrequests' = 'Current' then t.snapshot_time else r1.snapshot_time end\r\n  and r1.sql_instance = '$sql_instance'\r\n  order by r1.snapshot_time desc, session_id asc",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Requests",
+      "transparent": true,
+      "type": "table"
     },
     {
       "collapsed": true,
@@ -1894,7 +2318,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 33
+        "y": 64
       },
       "id": 187,
       "panels": [
@@ -1907,15 +2331,15 @@
             "overrides": []
           },
           "gridPos": {
-            "h": 6,
+            "h": 5,
             "w": 24,
             "x": 0,
-            "y": 34
+            "y": 35
           },
           "id": 259,
           "options": {
-            "content": "<br><br><h1 id=\"workload\">SQL Server Activity and Workload</h1>\r\n\r\n<br><h2 id=\"cpu\">CPU</h2>\r\n<p>The CPU chart is split into System (OS) and SQL Server. In an ideal scenario, all of the utilistaison should be allocated to SQL Server and only very small amount to system. SQL Server is also licensed per core, the more CPU cores the most expensive the license. You do not want to be paying a lot of money and not use it.\r\n<a href=\"/d/sqlwatch-long-queries/long-queries?${__url_time_range}&var-DataSource=${DataSource}&var-sql_instance=${sql_instance}\">See Long Queries captured during this period</a>\r\n</p>",
-            "mode": "html"
+            "content": "# SQL Server Activity and Workload\r\n*****\r\n## CPU\r\nThe CPU chart is split into System (OS) and SQL Server. In an ideal scenario, all of the utilistaison should be allocated to SQL Server and only very small amount to system. SQL Server is also licensed per core, the more CPU cores the most expensive the license. You do not want to be paying a lot of money and not use it. [See Long Queries captured during this period](/d/sqlwatch-long-queries/long-queries?${__url_time_range}&var-DataSource=${DataSource}&var-sql_instance=${sql_instance})",
+            "mode": "markdown"
           },
           "pluginVersion": "7.4.2",
           "targets": [
@@ -2111,15 +2535,15 @@
             "overrides": []
           },
           "gridPos": {
-            "h": 12,
+            "h": 11,
             "w": 24,
             "x": 0,
             "y": 46
           },
           "id": 43,
           "options": {
-            "content": "<br><br><h2 id=\"activity\">Activity</h2>\r\n<p><b>Batch Requests/sec</b>: The number of batch requests received per second and is a good general indicator for the activity level of the SQL Server. This counter is highly dependent on the hardware and quality of code running on the server. The more powerful the hardware, the higher this number can be, even on poorly coded applications. A value of 1000 batch requests/sec is easily attainable, though a typical 100Mbs NIC can only handle about 3000 batch requests/sec. Many other counter thresholds depend upon batch requests/sec while, in some cases, a low (or high) number does not point to poor processing power. You should frequently use this counter in combination with other counters, such as processor utilization or user connections. In version 2000, \"Transactions/ sec\" was the counter most often used to measure overall activity, while versions 2005 and later use \"Batch Requests/sec\". Versions 2005 before SP2, measure this counter differently and may lead to some misunderstandings. Read the footnote for more details.</p>\r\n\r\n<p><b>SQL Compilations/sec</b>: Number of times that Transact-SQL compilations occurred, per second (including recompiles). The lower this value is the better. High values often indicate excessive ad-hoc querying and should be as low as possible. If excessive ad-hoc querying is happening, try rewriting the queries as procedures or invoke the queries using sp_executeSQL. When rewriting isn’t possible, consider using a plan guide or setting the database to parameterization forced mode.</p>\r\n\r\n<p><b>SQL Re-Compilations/sec</b>: The number of times, per second, that Transact-SQL objects attempted to be executed but had to be recompiled before completion. This number should be at or near zero since recompiles can cause deadlocks and exclusive compile locks. This counter’s value should follow in proportion to \"Batch Requests/sec\" and \"SQL Compilations/ sec\". This needs to be nil in your system as much as possible.</p>\r\n\r\n<p><b>Logins/sec</b>: *You want < 2* The number of user logins per second. Any value over 2 may indicate insufficient connection pooling.</p>\r\n\r\n<p><b>User Connections</b>: The number of users currently connected to the SQL Server. This counter should roughly track with \"Batch Requests/Sec\". They should generally rise and fall together. For example, blocking problems could be revealed by rising user connections, lock waits and lock wait time coupled with declining batch requests/sec.</p>\r\n\r\n<p><b>Transactions/sec</b>: Number of transactions started for the database per second.</p>",
-            "mode": "html"
+            "content": "   \r\n\r\n## Activity  \r\n\r\n**Batch Requests/sec**: The number of batch requests received per second and is a good general indicator for the activity level of the SQL Server. This counter is highly dependent on the hardware and quality of code running on the server. The more powerful the hardware, the higher this number can be, even on poorly coded applications. A value of 1000 batch requests/sec is easily attainable, though a typical 100Mbs NIC can only handle about 3000 batch requests/sec. Many other counter thresholds depend upon batch requests/sec while, in some cases, a low (or high) number does not point to poor processing power. You should frequently use this counter in combination with other counters, such as processor utilization or user connections. In version 2000, \"Transactions/ sec\" was the counter most often used to measure overall activity, while versions 2005 and later use \"Batch Requests/sec\". Versions 2005 before SP2, measure this counter differently and may lead to some misunderstandings. Read the footnote for more details.\r\n\r\n**SQL Compilations/sec**: Number of times that Transact-SQL compilations occurred, per second (including recompiles). The lower this value is the better. High values often indicate excessive ad-hoc querying and should be as low as possible. If excessive ad-hoc querying is happening, try rewriting the queries as procedures or invoke the queries using sp_executeSQL. When rewriting isn’t possible, consider using a plan guide or setting the database to parameterization forced mode.\r\n\r\n**SQL Re-Compilations/sec**: The number of times, per second, that Transact-SQL objects attempted to be executed but had to be recompiled before completion. This number should be at or near zero since recompiles can cause deadlocks and exclusive compile locks. This counter’s value should follow in proportion to \"Batch Requests/sec\" and \"SQL Compilations/ sec\". This needs to be nil in your system as much as possible.\r\n\r\n**Logins/sec**: *You want < 2* The number of user logins per second. Any value over 2 may indicate insufficient connection pooling.\r\n\r\nUser Connections: The number of users currently connected to the SQL Server. This counter should roughly track with \"Batch Requests/Sec\". They should generally rise and fall together. For example, blocking problems could be revealed by rising user connections, lock waits and lock wait time coupled with declining batch requests/sec.\r\n\r\n**Transactions/sec**: Number of transactions started for the database per second.",
+            "mode": "markdown"
           },
           "pluginVersion": "7.4.2",
           "targets": [
@@ -2160,7 +2584,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 58
+            "y": 57
           },
           "hiddenSeries": false,
           "id": 231,
@@ -2301,7 +2725,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 65
+            "y": 64
           },
           "hiddenSeries": false,
           "hideTimeOverride": false,
@@ -2396,7 +2820,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 72
+            "y": 71
           },
           "id": 109,
           "options": {
@@ -2440,7 +2864,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 78
+            "y": 77
           },
           "hiddenSeries": false,
           "id": 6,
@@ -2587,7 +3011,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 85
+            "y": 84
           },
           "id": 110,
           "options": {
@@ -2636,7 +3060,7 @@
             "h": 11,
             "w": 24,
             "x": 0,
-            "y": 91
+            "y": 90
           },
           "hiddenSeries": false,
           "id": 232,
@@ -2757,7 +3181,7 @@
             "h": 2,
             "w": 24,
             "x": 0,
-            "y": 102
+            "y": 101
           },
           "id": 192,
           "options": {
@@ -2802,7 +3226,7 @@
             "h": 5,
             "w": 24,
             "x": 0,
-            "y": 104
+            "y": 103
           },
           "hiddenSeries": false,
           "id": 191,
@@ -2994,7 +3418,7 @@
             "h": 5,
             "w": 24,
             "x": 0,
-            "y": 109
+            "y": 108
           },
           "id": 194,
           "links": [
@@ -3053,7 +3477,7 @@
           "type": "table"
         }
       ],
-      "title": "$sql_instance: SQL Server Workload",
+      "title": "$sql_instance: SQL Server Activity",
       "type": "row"
     },
     {
@@ -3063,7 +3487,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 34
+        "y": 65
       },
       "id": 208,
       "panels": [
@@ -3764,7 +4188,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 35
+        "y": 66
       },
       "id": 185,
       "panels": [
@@ -4507,7 +4931,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 36
+        "y": 67
       },
       "id": 183,
       "panels": [
@@ -6358,7 +6782,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 37
+        "y": 68
       },
       "id": 181,
       "panels": [
@@ -6717,7 +7141,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 38
+        "y": 69
       },
       "id": 179,
       "panels": [
@@ -7832,7 +8256,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 39
+        "y": 70
       },
       "id": 177,
       "panels": [
@@ -8458,7 +8882,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 40
+        "y": 71
       },
       "id": 175,
       "panels": [
@@ -8615,7 +9039,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 41
+        "y": 72
       },
       "id": 234,
       "panels": [
@@ -9182,7 +9606,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 42
+        "y": 73
       },
       "id": 220,
       "panels": [
@@ -9591,7 +10015,7 @@
           "text": "SQL-2",
           "value": "SQL-2"
         },
-        "description": null,
+        "description": "The repository is the SQL Server Instance hosting the SQLWATCH database. This can be a stand alone production instance or the central repository.",
         "error": null,
         "hide": 0,
         "includeAll": false,
@@ -9609,13 +10033,13 @@
       {
         "allValue": null,
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "SQL-2",
           "value": "SQL-2"
         },
         "datasource": "$DataSource",
         "definition": "SELECT [servername] FROM [dbo].[sqlwatch_meta_server]",
-        "description": null,
+        "description": "The SQL Instance (servername) as captured by the SQLWATCH in `dbo].[sqlwatch_meta_server]. If you are connecting to the central repository, this list will show all collected servers.",
         "error": null,
         "hide": 0,
         "includeAll": false,
@@ -9639,11 +10063,11 @@
         "auto_count": 100,
         "auto_min": "1s",
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "auto",
           "value": "$__auto_interval_aggregation"
         },
-        "description": null,
+        "description": "When showing larger periods, such as last hour or last day, we have to aggregate the data as otherwise we would have killed the SQL and Grafana. Aggregation means that we're going to average the data over time buckets such 1 minute or 1 hour. You can set this to your liking but best leave to Auto.",
         "error": null,
         "hide": 0,
         "label": "Aggregation",
@@ -9684,11 +10108,11 @@
       {
         "allValue": null,
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "Category",
           "value": "Category"
         },
-        "description": null,
+        "description": "Whether to show Wait Categories or Types. Wait Types are grouped into categories and whilst types provide more insight, categories give you a quick view into where the problems are.",
         "error": null,
         "hide": 0,
         "includeAll": false,
@@ -9719,7 +10143,7 @@
           "text": "ms/sec",
           "value": "ms/sec"
         },
-        "description": null,
+        "description": "How we should be showing wait calculation - as a delta between snapshots, or as absolute ms/sec within the snapshot. Delta will allow to see trends into whether waits are getting worse or better.",
         "error": null,
         "hide": 0,
         "includeAll": false,
@@ -9815,7 +10239,7 @@
         },
         "datasource": "${DataSource}",
         "definition": "select database_name from [dbo].[sqlwatch_meta_database] where sql_instance = '$sql_instance'",
-        "description": null,
+        "description": "Filter database related metrics by database. This can be handy if we're interested in performance of  a particular database. However, note that metrics at the server level (like CPU) will not account for this filter.",
         "error": null,
         "hide": 0,
         "includeAll": true,
@@ -9843,9 +10267,9 @@
         },
         "datasource": "${DataSource}",
         "definition": "select [baseline] = 'None'\nunion all\nselect [baseline] = '-1h'\nunion all\nselect [baseline] = '-1d'\nunion all\nselect [baseline] = '-1w'\nunion all\nselect [baseline] = 'Daily'\nunion all\nSELECT [baseline] = 'User Baseline: ' + convert(varchar(100),[baseline_id])\nFROM [dbo].[sqlwatch_meta_baseline]\nWHERE sql_instance = '$sql_instance'",
-        "description": "",
+        "description": "This is not yet Implemented",
         "error": null,
-        "hide": 0,
+        "hide": 2,
         "includeAll": false,
         "label": "Baseline",
         "multi": false,
@@ -9861,6 +10285,37 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "All"
+        },
+        "description": "Whether we should only show currently running requests (as of very last capture) or all requests captured within the dashboard time period.",
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": "Requests",
+        "multi": false,
+        "name": "currentrequests",
+        "options": [
+          {
+            "selected": false,
+            "text": "Current",
+            "value": "Current"
+          },
+          {
+            "selected": true,
+            "text": "All",
+            "value": "All"
+          }
+        ],
+        "query": "Current,All",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
       }
     ]
   },
@@ -9878,5 +10333,5 @@
   "timezone": "utc",
   "title": "SQL Instance Overview",
   "uid": "sqlwatch-instance-overview",
-  "version": 90
+  "version": 138
 }
