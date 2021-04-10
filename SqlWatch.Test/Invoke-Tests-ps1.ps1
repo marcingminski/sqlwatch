@@ -1,7 +1,9 @@
-﻿cd C:\Users\marcin\Documents\GitHub\sqlwatch\sqlwatch\SqlWatch.Test
+﻿param (
+    [string]$SqlInstance,
+    [string]$SqlWatchDatabase
+)
+cd C:\Users\marcin\Documents\GitHub\sqlwatch\sqlwatch\SqlWatch.Test
 
-$SqlInstance = "SQL-1";
-$SqlWatchDatabase = "SQLWATCH";
 $MinSqlUpHours = 2;
 
 #$sql = "select datediff(hour,install_date,getdate()) from vw_sqlwatch_app_version"
@@ -13,7 +15,7 @@ $LookBackHours = 2
 $ChecksFolder = "C:\Users\marcin\Documents\GitHub\sqlwatch\sqlwatch\SqlWatch.Test"
 $CustomPesterChecksPath = "$($ChecksFolder)\Pester.SqlWatch.Test.Checks.ps1";
 
-$Checks = "FailedJob","IndentityUsage","DuplicateIndex","UnusedIndex","DisabledIndex","FKCKTrusted"
+$Checks = "IndentityUsage","FKCKTrusted"
 
 ## custom pester scripts
 Write-Output "Custom SqlWatch Tests"
