@@ -10,7 +10,9 @@ $MinSqlUpHours = 2;
 
 $LookBackHours = 2
 
-$ChecksFolder = "C:\Users\marcin\Documents\GitHub\sqlwatch\sqlwatch\SqlWatch.Test"
+$PSScriptRoot = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
+
+$ChecksFolder = $PSScriptRoot
 $CustomPesterChecksPath = "$($ChecksFolder)\Pester.SqlWatch.Test.Checks.ps1";
 
 $Checks = "IndentityUsage","FKCKTrusted"
