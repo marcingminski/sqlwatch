@@ -1,5 +1,5 @@
 ﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_config_sqlserver_set_blocked_proc_threshold]
-	@threshold_seconds int = 15
+	@threshold_seconds int = 5
 AS
 exec sp_configure 'show advanced options', 1 ;  
 RECONFIGURE ;  
