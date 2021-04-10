@@ -123,3 +123,23 @@ if (select case when @@VERSION like '%Express Edition%' then 1 else 0 end) = 0
 -- Retart queues
 ------------------------------------------------------------------------------------- 
 -- don't start queues on install until version 4.x exec [dbo].[usp_sqlwatch_internal_restart_queues]
+
+-------------------------------------------------------------------------------------
+-- reset session counts
+-------------------------------------------------------------------------------------
+merge [dbo].[sqlwatch_stage_xes_exec_count] as target
+using (
+	select session_name = name , execution_count = 0
+	from sys.dm_xe_session_targets t
+	inner join sys.dm_xe_sessions s
+	on t.event_session_address = s.address
+	where s.name like 'SQLWATCH%'	
+) as source
+on source.session_name = target.session_name
+
+when matched then update
+	set execution_count = source.execution_count
+
+when not matched then
+	insert (session_name, execution_count)
+	values (source.session_name, source.execution_count);
