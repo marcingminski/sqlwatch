@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": 32,
-  "iteration": 1618058043665,
+  "iteration": 1618064948746,
   "links": [
     {
       "asDropdown": true,
@@ -143,7 +143,7 @@
       "type": "text"
     },
     {
-      "datasource": "$DataSource",
+      "datasource": "-- Dashboard --",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -183,7 +183,7 @@
         "x": 1,
         "y": 13
       },
-      "id": 163,
+      "id": 268,
       "options": {
         "colorMode": "background",
         "graphMode": "area",
@@ -202,10 +202,7 @@
       "pluginVersion": "7.4.2",
       "targets": [
         {
-          "alias": "",
-          "format": "time_series",
-          "hide": false,
-          "rawSql": "SELECT \r\n      [time] = snapshot_time --$__timeGroup(t.[snapshot_time], $aggregation)\r\n      ,metric = 'CPU'\r\n      ,[value] =t.[cntr_value_calculated]\r\n  FROM (SELECT \r\n\t snapshot_time\r\n\t,[cntr_value_calculated]=sum(pc.[cntr_value_calculated])\r\n\tFROM [dbo].[sqlwatch_logger_perf_os_performance_counters] pc\r\n\t\tinner join [dbo].[sqlwatch_meta_performance_counter] mpc\r\n\t\t\ton pc.sql_instance = mpc.sql_instance\r\n\t\t\tand pc.performance_counter_id = mpc.performance_counter_id  \r\n\tWHERE  $__timeFilter(snapshot_time)\r\n\tand snapshot_time >= dateadd(minute,-15,getutcdate())\r\n\tAND mpc.counter_name IN ('CPU usage %')\r\n\tAND pc.[sql_instance] = '$sql_instance'\r\n\tGROUP BY snapshot_time) t\r\n  --GROUP BY snapshot_time --$__timeGroup(t.[snapshot_time], $aggregation)\r\nORDER BY\r\n  time ASC",
+          "panelId": 269,
           "refId": "A"
         }
       ],
@@ -223,6 +220,15 @@
           "id": "organize",
           "options": {
             "excludeByName": {
+              "Availability Group Bytes": true,
+              "Batch Requests/sec": true,
+              "Bytes Received from Replica/sec": true,
+              "Bytes Sent to Replica/sec": true,
+              "Logins/sec": true,
+              "SQL Compilations/sec": true,
+              "Transactions/sec": true,
+              "User Connections": true,
+              "Wait Time": true,
               "max": true,
               "min": true
             },
@@ -233,7 +239,9 @@
               "sql": 2,
               "system": 1
             },
-            "renameByName": {}
+            "renameByName": {
+              "CPU usage %": "CPU"
+            }
           }
         }
       ],
@@ -489,11 +497,45 @@
           },
           "unit": "percentunit"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Memory Low"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "none"
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "from": "",
+                    "id": 1,
+                    "text": "OK",
+                    "to": "",
+                    "type": 1,
+                    "value": "0"
+                  },
+                  {
+                    "from": "",
+                    "id": 2,
+                    "text": "! ! !",
+                    "to": "",
+                    "type": 1,
+                    "value": "1"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 4,
-        "w": 3,
+        "w": 5,
         "x": 12,
         "y": 13
       },
@@ -519,93 +561,7 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT \n      [time] = snapshot_time --$__timeGroup([snapshot_time], $aggregation) \n      ,[Memory] = AVG([physical_memory_in_use_kb]*1.0/([physical_memory_in_use_kb]+[available_commit_limit_kb]))\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_process_memory]\n  WHERE 1 = 1\n  AND  $__timeFilter(snapshot_time)\n      and snapshot_time >= dateadd(minute,-15,getutcdate())\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY snapshot_time --$__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "",
-      "transparent": true,
-      "type": "stat"
-    },
-    {
-      "datasource": "$DataSource",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "custom": {},
-          "decimals": 0,
-          "links": [],
-          "mappings": [
-            {
-              "from": "",
-              "id": 1,
-              "text": "OK",
-              "to": "",
-              "type": 1,
-              "value": "0"
-            },
-            {
-              "from": "",
-              "id": 2,
-              "text": "! ! !",
-              "to": "",
-              "type": 1,
-              "value": "1"
-            }
-          ],
-          "max": 1,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "dark-green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 1
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 2,
-        "x": 15,
-        "y": 13
-      },
-      "id": 228,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "vertical",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "value_and_name"
-      },
-      "pluginVersion": "7.4.2",
-      "targets": [
-        {
-          "alias": "",
-          "format": "time_series",
-          "hide": false,
-          "rawSql": "SELECT \n      [time] = snapshot_time --$__timeGroup([snapshot_time], $aggregation) \n      ,[Memory Low] = case when convert(int,process_physical_memory_low)+convert(int,process_virtual_memory_low) > 0 then 1 else 0 end\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_process_memory]\n  WHERE 1 = 1\n  AND  $__timeFilter(snapshot_time)\n    and snapshot_time >= dateadd(minute,-15,getutcdate())\n  AND [sql_instance] = '$sql_instance'\n  --GROUP BY snapshot_time --$__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+          "rawSql": "SELECT \n      [time] = snapshot_time --$__timeGroup([snapshot_time], $aggregation) \n      ,[Memory] = AVG([physical_memory_in_use_kb]*1.0/([physical_memory_in_use_kb]+[available_commit_limit_kb]))\n      ,[Memory Low] = case when convert(int,process_physical_memory_low)+convert(int,process_virtual_memory_low) > 0 then 1 else 0 end\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_process_memory]\n  WHERE 1 = 1\n  AND  $__timeFilter(snapshot_time)\n      and snapshot_time >= dateadd(minute,-15,getutcdate())\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY snapshot_time --$__timeGroup([snapshot_time], $aggregation) \n  , case when convert(int,process_physical_memory_low)+convert(int,process_virtual_memory_low) > 0 then 1 else 0 end\nORDER BY\n  time ASC\n  \n  ",
           "refId": "A"
         }
       ],
@@ -961,24 +917,16 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "AG: to Replica"
+              "options": "Availability Group Bytes"
             },
             "properties": [
               {
                 "id": "unit",
                 "value": "Bps"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "AG: from Replica"
-            },
-            "properties": [
+              },
               {
-                "id": "unit",
-                "value": "Bps"
+                "id": "noValue",
+                "value": "No AG"
               }
             ]
           },
@@ -991,6 +939,10 @@
               {
                 "id": "unit",
                 "value": "cps"
+              },
+              {
+                "id": "displayName",
+                "value": "SQL Compilations"
               }
             ]
           }
@@ -1002,7 +954,7 @@
         "x": 1,
         "y": 17
       },
-      "id": 5,
+      "id": 269,
       "options": {
         "colorMode": "value",
         "graphMode": "area",
@@ -1027,8 +979,8 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT \n      [time] = snapshot_time --$__timeGroup([snapshot_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = sum([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 0\n  AND $__timeFilter(snapshot_time)\n    and snapshot_time >= dateadd(minute,-15,getutcdate())\n  AND counter_name IN ('Batch Requests/sec','Logins/sec','Transactions/sec','User Connections','Bytes Sent to Replica/sec','Bytes Received from Replica/sec','SQL Compilations/sec')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n     ,snapshot_time --$__timeGroup([snapshot_time], $aggregation)\nORDER BY\n  time ASC",
-          "refId": "A"
+          "rawSql": "select \r\n\t  time = pc.snapshot_time\r\n\t, 'CPU usage %' = sum(case when mpc.counter_name = 'CPU usage %' then pc.[cntr_value_calculated] else null end)\r\n\t, 'Batch Requests/sec' = avg(case when mpc.counter_name = 'Batch Requests/sec' then pc.[cntr_value_calculated] else null end)\r\n\r\n\t, 'Logins/sec' = avg(case when mpc.counter_name = 'Logins/sec' then pc.[cntr_value_calculated] else null end)\r\n\t, 'Transactions/sec' = sum(case when mpc.counter_name = 'Transactions/sec' and pc.instance_name not in ('_Total','mssqlsystemresource') then pc.[cntr_value_calculated] else null end)\r\n\t, 'User Connections' = avg(case when mpc.counter_name = 'User Connections' then pc.[cntr_value_calculated] else null end)\r\n\t, 'SQL Compilations/sec' = avg(case when mpc.counter_name = 'SQL Compilations/sec' then pc.[cntr_value_calculated] else null end)\r\n\t, 'Availability Group Bytes' = avg(case when mpc.counter_name in ('Bytes Sent to Replica/sec','Bytes Received from Replica/sec') then pc.[cntr_value_calculated] else null end)\r\n\r\nfrom [dbo].[sqlwatch_logger_perf_os_performance_counters] pc\r\n\r\ninner join [dbo].[sqlwatch_meta_performance_counter] mpc\r\n\ton pc.sql_instance = mpc.sql_instance\r\n\tand pc.performance_counter_id = mpc.performance_counter_id\r\n\t\r\nwhere $__timeFilter(pc.snapshot_time)\r\nand pc.snapshot_time >= dateadd(minute,-15,getutcdate())\r\nand pc.[sql_instance] = '$sql_instance'\r\nand mpc.counter_name in ('CPU usage %'\r\n  ,'Batch Requests/sec'\r\n  ,'Logins/sec'\r\n  ,'Transactions/sec'\r\n  ,'User Connections'\r\n  ,'SQL Compilations/sec'\r\n  ,'Bytes Sent to Replica/sec'\r\n  ,'Bytes Received from Replica/sec'\r\n  )\r\n\r\ngroup by pc.snapshot_time\r\norder by time asc",
+          "refId": "SQL Server Perf Counters"
         }
       ],
       "timeFrom": null,
@@ -1044,7 +996,11 @@
         {
           "id": "organize",
           "options": {
-            "excludeByName": {},
+            "excludeByName": {
+              "CPU usage %": true,
+              "SQL Compilations/sec": true,
+              "Wait Time": true
+            },
             "indexByName": {
               "Batch Requests/sec": 1,
               "Logins/sec": 3,
@@ -1205,7 +1161,7 @@
           "format": "time_series",
           "hide": false,
           "rawSql": "SELECT \n      [time] = snapshot_time \n      ,[Latency] = MAX(fs.[io_latency_read]+fs.[io_latency_write])\n  \t  ,[Reads IO] = AVG(fs.bytes_read_per_second)\n  \t  ,[Writes IO] = AVG(fs.bytes_written_per_second)\n      ,[Disk] = left([file_physical_name],2) + ' ' + v.label \n  FROM [dbo].[vw_sqlwatch_report_fact_perf_file_stats] fs\n  outer apply (\n    select top 1 label \n    from [dbo].[sqlwatch_meta_os_volume] v\n\t  where v.volume_name = left(fs.file_physical_name,3)) v\n  WHERE 1 = 1\n  AND $__timeFilter(fs.snapshot_time)\n    and snapshot_time >= dateadd(minute,-15,getutcdate())\n  AND [sql_instance] = '$sql_instance'\n  AND database_name IN ($database)\n  GROUP BY fs.snapshot_time \n  , left([file_physical_name],2) + ' ' + v.label \nORDER BY\n  time ASC",
-          "refId": "A"
+          "refId": "File Stats"
         }
       ],
       "timeFrom": null,
@@ -1218,6 +1174,13 @@
             "include": {
               "pattern": "/Latency/"
             }
+          }
+        },
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "(.Latency$)",
+            "renamePattern": ""
           }
         }
       ],
@@ -1293,6 +1256,13 @@
               "pattern": "/Reads IO/"
             }
           }
+        },
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "(.Reads IO$)",
+            "renamePattern": ""
+          }
         }
       ],
       "type": "stat"
@@ -1366,6 +1336,13 @@
             "include": {
               "pattern": "/Writes IO/"
             }
+          }
+        },
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "(.Writes IO$)",
+            "renamePattern": ""
           }
         }
       ],
@@ -1455,28 +1432,19 @@
           "alias": "",
           "format": "table",
           "hide": false,
-          "rawSql": "SELECT time=getdate(),[Databases]=count(*)\r\n  FROM [dbo].[sqlwatch_meta_database]\r\n  where is_current = 1\r\n  and sql_instance = '$sql_instance'",
-          "refId": "Database Count"
-        },
-        {
-          "alias": "",
-          "format": "time_series",
-          "hide": false,
-          "rawSql": "SELECT time=getdate(),[Data Size]=sum([database_size_bytes_current])\r\n      ,[Growth per day]=sum(database_growth_bytes_per_day)\r\n  FROM [dbo].[vw_sqlwatch_report_dim_database]\r\n\r\n  WHERE sql_instance = '$sql_instance'",
-          "refId": "Size"
-        },
-        {
-          "alias": "",
-          "format": "time_series",
-          "hide": false,
-          "rawSql": "SELECT time=getdate(),[Jobs]=count(*)\r\n  FROM [dbo].[vw_sqlwatch_report_dim_aget_job]\r\n  where [is_record_deleted] is null\r\n  and sql_instance = '$sql_instance'",
-          "refId": "Jobs Count"
+          "rawSql": "select \r\n\t  s.servername\r\n\t, [Databases]\r\n\t, [Data Size]\r\n\t, [Growth per day]\r\n\t, [Jobs]\r\nfrom dbo.sqlwatch_meta_server s\r\n\r\nouter apply (\r\n\tselect\r\n\t  [Databases]=count(db.database_name)\r\n\t, [Data Size]=sum([database_size_bytes_current])\r\n\t, [Growth per day]=sum(database_growth_bytes_per_day)\r\n\tfrom [dbo].[vw_sqlwatch_report_dim_database] db\r\n\twhere db.sql_instance = s.sql_instance\r\n) dbs\r\n\r\nouter apply (\r\n\tselect \r\n\t\t[Jobs]=count(jb.job_name)\r\n\tfrom [dbo].[vw_sqlwatch_report_dim_aget_job] jb\r\n\twhere jb.sql_instance = s.sql_instance\r\n) jbs",
+          "refId": "Basic Stats"
         }
       ],
       "timeFrom": null,
       "timeShift": null,
       "title": "",
-      "transformations": [],
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {}
+        }
+      ],
       "type": "stat"
     },
     {
@@ -1921,7 +1889,7 @@
             "h": 8,
             "w": 24,
             "x": 0,
-            "y": 34
+            "y": 56
           },
           "id": 265,
           "options": {
@@ -1964,7 +1932,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 42
+            "y": 64
           },
           "hiddenSeries": false,
           "id": 264,
@@ -2107,7 +2075,7 @@
             "h": 9,
             "w": 24,
             "x": 0,
-            "y": 48
+            "y": 70
           },
           "hiddenSeries": false,
           "id": 267,
@@ -2239,7 +2207,7 @@
             "h": 2,
             "w": 24,
             "x": 0,
-            "y": 57
+            "y": 79
           },
           "id": 266,
           "options": {
@@ -2291,7 +2259,7 @@
             "h": 10,
             "w": 24,
             "x": 0,
-            "y": 59
+            "y": 81
           },
           "id": 261,
           "options": {
@@ -2346,7 +2314,7 @@
             "h": 5,
             "w": 24,
             "x": 0,
-            "y": 35
+            "y": 92
           },
           "id": 259,
           "options": {
@@ -2390,7 +2358,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 40
+            "y": 97
           },
           "hiddenSeries": false,
           "id": 258,
@@ -2550,7 +2518,7 @@
             "h": 11,
             "w": 24,
             "x": 0,
-            "y": 46
+            "y": 103
           },
           "id": 43,
           "options": {
@@ -2596,7 +2564,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 57
+            "y": 114
           },
           "hiddenSeries": false,
           "id": 231,
@@ -2737,7 +2705,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 64
+            "y": 121
           },
           "hiddenSeries": false,
           "hideTimeOverride": false,
@@ -2832,7 +2800,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 71
+            "y": 128
           },
           "id": 109,
           "options": {
@@ -2876,7 +2844,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 77
+            "y": 134
           },
           "hiddenSeries": false,
           "id": 6,
@@ -3023,7 +2991,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 84
+            "y": 141
           },
           "id": 110,
           "options": {
@@ -3072,7 +3040,7 @@
             "h": 11,
             "w": 24,
             "x": 0,
-            "y": 90
+            "y": 147
           },
           "hiddenSeries": false,
           "id": 232,
@@ -3193,7 +3161,7 @@
             "h": 2,
             "w": 24,
             "x": 0,
-            "y": 101
+            "y": 158
           },
           "id": 192,
           "options": {
@@ -3238,7 +3206,7 @@
             "h": 5,
             "w": 24,
             "x": 0,
-            "y": 103
+            "y": 160
           },
           "hiddenSeries": false,
           "id": 191,
@@ -3430,7 +3398,7 @@
             "h": 5,
             "w": 24,
             "x": 0,
-            "y": 108
+            "y": 165
           },
           "id": 194,
           "links": [
@@ -10345,5 +10313,5 @@
   "timezone": "utc",
   "title": "SQL Instance Overview",
   "uid": "sqlwatch-instance-overview",
-  "version": 143
+  "version": 164
 }
