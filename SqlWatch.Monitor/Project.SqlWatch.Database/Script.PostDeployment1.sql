@@ -135,7 +135,7 @@ using (
 	on t.event_session_address = s.address
 	where s.name like 'SQLWATCH%'	
 ) as source
-on source.session_name = target.session_name
+on source.session_name = target.session_name collate database_default
 
 when matched then update
 	set execution_count = source.execution_count
