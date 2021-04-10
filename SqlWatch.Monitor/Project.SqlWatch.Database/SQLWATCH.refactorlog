@@ -2632,4 +2632,11 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[sqlwatch_meta_baseline]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="ba863dc2-2d57-4be6-9555-895dac04e1c2" ChangeDateTime="04/10/2021 15:44:40">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_logger_dm_exec_requests]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_logger_requests_and_sessions]" />
+  </Operation>
 </Operations>

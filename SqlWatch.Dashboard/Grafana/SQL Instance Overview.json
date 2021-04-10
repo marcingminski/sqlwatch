@@ -12,11 +12,11 @@
       }
     ]
   },
-  "editable": false,
+  "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
   "id": 32,
-  "iteration": 1618064948746,
+  "iteration": 1618067162620,
   "links": [
     {
       "asDropdown": true,
@@ -1889,7 +1889,7 @@
             "h": 8,
             "w": 24,
             "x": 0,
-            "y": 56
+            "y": 34
           },
           "id": 265,
           "options": {
@@ -1932,7 +1932,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 64
+            "y": 42
           },
           "hiddenSeries": false,
           "id": 264,
@@ -1982,7 +1982,7 @@
               "alias": "",
               "format": "time_series",
               "hide": false,
-              "rawSql": "SELECT time = $__timeGroup(r1.snapshot_time, $aggregation, 0)\r\n      ,[value] = count(*)\r\n      ,[metric] = status\r\n  FROM [dbo].[sqlwatch_logger_dm_exec_requests] r1\r\n\twhere $__timeFilter(r1.snapshot_time)\r\n  and r1.sql_instance = '$sql_instance'\r\n  group by $__timeGroup(r1.snapshot_time, $aggregation, 0), status\r\n  order by time asc",
+              "rawSql": "SELECT time = $__timeGroup(r1.snapshot_time, $aggregation)\r\n      ,[value] = count(*)\r\n      ,[metric] = status\r\n  FROM [dbo].[sqlwatch_logger_dm_exec_requests] r1\r\n\twhere $__timeFilter(r1.snapshot_time)\r\n  and r1.sql_instance = '$sql_instance'\r\n  group by $__timeGroup(r1.snapshot_time, $aggregation), status\r\n  order by time asc",
               "refId": "2"
             }
           ],
@@ -2075,7 +2075,7 @@
             "h": 9,
             "w": 24,
             "x": 0,
-            "y": 70
+            "y": 48
           },
           "hiddenSeries": false,
           "id": 267,
@@ -2125,7 +2125,7 @@
               "alias": "",
               "format": "time_series",
               "hide": false,
-              "rawSql": "SELECT time = $__timeGroup(r1.snapshot_time, $aggregation, 0)\r\n      ,[value] = sum(wait_time)\r\n      ,[metric] = case when '$Waits' = 'Category' then ws.wait_category else r1.wait_type end\r\n  FROM [dbo].[sqlwatch_logger_dm_exec_requests] r1\r\n  left join [dbo].[vw_sqlwatch_meta_wait_stats_category] ws\r\n  on ws.wait_type = r1.wait_type\r\n  and ws.sql_instance = r1.sql_instance\r\n\twhere $__timeFilter(r1.snapshot_time)\r\n\tand r1.wait_type is not null\r\n  and r1.sql_instance = '$sql_instance'\r\n  group by $__timeGroup(r1.snapshot_time, $aggregation, 0), case when '$Waits' = 'Category' then ws.wait_category else r1.wait_type end\r\n  order by time asc",
+              "rawSql": "SELECT time = $__timeGroup(r1.snapshot_time, $aggregation)\r\n      ,[value] = sum(wait_time)\r\n      ,[metric] = case when '$Waits' = 'Category' then ws.wait_category else r1.wait_type end\r\n  FROM [dbo].[sqlwatch_logger_dm_exec_requests] r1\r\n  left join [dbo].[vw_sqlwatch_meta_wait_stats_category] ws\r\n  on ws.wait_type = r1.wait_type\r\n  and ws.sql_instance = r1.sql_instance\r\n\twhere $__timeFilter(r1.snapshot_time)\r\n\tand r1.wait_type is not null\r\n  and r1.sql_instance = '$sql_instance'\r\n  group by $__timeGroup(r1.snapshot_time, $aggregation), case when '$Waits' = 'Category' then ws.wait_category else r1.wait_type end\r\n  order by time asc",
               "refId": "2"
             }
           ],
@@ -2207,7 +2207,7 @@
             "h": 2,
             "w": 24,
             "x": 0,
-            "y": 79
+            "y": 57
           },
           "id": 266,
           "options": {
@@ -2259,7 +2259,7 @@
             "h": 10,
             "w": 24,
             "x": 0,
-            "y": 81
+            "y": 59
           },
           "id": 261,
           "options": {
@@ -2286,9 +2286,249 @@
           "title": "Requests",
           "transparent": true,
           "type": "table"
+        },
+        {
+          "datasource": null,
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 3,
+            "w": 24,
+            "x": 0,
+            "y": 69
+          },
+          "id": 272,
+          "options": {
+            "content": "# SQL Server Sessions\r\n*****\r\nList of current sessions sampled from `dm_exec_sessions`.\r\n",
+            "mode": "markdown"
+          },
+          "pluginVersion": "7.4.2",
+          "targets": [
+            {
+              "queryType": "randomWalk",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "",
+          "transparent": true,
+          "type": "text"
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$DataSource",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {},
+              "thresholds": {
+                "mode": "absolute",
+                "steps": []
+              }
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 6,
+            "w": 24,
+            "x": 0,
+            "y": 72
+          },
+          "hiddenSeries": false,
+          "id": 271,
+          "legend": {
+            "alignAsTable": false,
+            "avg": true,
+            "current": true,
+            "max": true,
+            "min": true,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "7.4.2",
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "$$hashKey": "object:2019",
+              "alias": "running",
+              "color": "#37872D"
+            },
+            {
+              "$$hashKey": "object:2027",
+              "alias": "suspended",
+              "color": "#FFB357"
+            },
+            {
+              "$$hashKey": "object:2035",
+              "alias": "runnable",
+              "color": "#F2495C"
+            },
+            {
+              "$$hashKey": "object:1755",
+              "alias": "sleeping",
+              "color": "#1F60C4"
+            }
+          ],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "alias": "",
+              "format": "time_series",
+              "hide": false,
+              "rawSql": "SELECT time = $__timeGroup(r1.snapshot_time, $aggregation)\r\n      ,[value] = count(*)\r\n      ,[metric] = status\r\n  FROM [dbo].[sqlwatch_logger_dm_exec_sessions] r1\r\n\twhere $__timeFilter(r1.snapshot_time)\r\n  and r1.sql_instance = '$sql_instance'\r\n  group by $__timeGroup(r1.snapshot_time, $aggregation), status\r\n  order by time asc",
+              "refId": "2"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Sessions by Status",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "transformations": [
+            {
+              "id": "seriesToColumns",
+              "options": {
+                "byField": "Time"
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {
+                  "Time": 0,
+                  "max": 3,
+                  "min": 4,
+                  "sql": 2,
+                  "system": 1
+                },
+                "renameByName": {}
+              }
+            }
+          ],
+          "transparent": true,
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "$$hashKey": "object:1699",
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "$$hashKey": "object:1700",
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "datasource": "${DataSource}",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": null,
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 24,
+            "x": 0,
+            "y": 78
+          },
+          "id": 270,
+          "options": {
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": true,
+                "displayName": "start_time"
+              }
+            ]
+          },
+          "pluginVersion": "7.4.2",
+          "targets": [
+            {
+              "alias": "",
+              "format": "table",
+              "queryType": "randomWalk",
+              "rawSql": "SELECT is_current = case when t.snapshot_time = r1.snapshot_time then 1 else 0 end, *\r\n  FROM [dbo].[sqlwatch_logger_dm_exec_sessions] r1\r\n  outer apply (\r\n    select snapshot_time=max(snapshot_time)\r\n    from dbo.sqlwatch_logger_snapshot_header \r\n    where $__timeFilter(r1.snapshot_time)\r\n    and snapshot_type_id = r1.snapshot_type_id\r\n    and sql_instance = r1.sql_instance\r\n    ) t\r\n\twhere $__timeFilter(r1.snapshot_time)\r\n\tand r1.snapshot_time = case when '$currentrequests' = 'Current' then t.snapshot_time else r1.snapshot_time end\r\n  and r1.sql_instance = '$sql_instance'\r\n  order by r1.snapshot_time desc, session_id asc",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Sessions",
+          "transparent": true,
+          "type": "table"
         }
       ],
-      "title": "$sql_instance: SQL Server Requests",
+      "title": "$sql_instance: SQL Server Requests and Sessions",
       "type": "row"
     },
     {
@@ -7137,7 +7377,7 @@
             "h": 5,
             "w": 24,
             "x": 0,
-            "y": 38
+            "y": 40
           },
           "id": 70,
           "options": {
@@ -7182,7 +7422,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 43
+            "y": 45
           },
           "hiddenSeries": false,
           "id": 14,
@@ -7208,10 +7448,12 @@
           "renderer": "flot",
           "seriesOverrides": [
             {
+              "$$hashKey": "object:2473",
               "alias": "Bytes Written",
               "color": "#F2495C"
             },
             {
+              "$$hashKey": "object:2474",
               "alias": "Bytes Read",
               "color": "#FADE2A"
             }
@@ -7224,14 +7466,8 @@
               "alias": "",
               "format": "time_series",
               "hide": false,
-              "rawSql": "SELECT \n      [time] = $__timeGroup([snapshot_time], $aggregation) \n      ,[Bytes Written] = SUM([num_of_bytes_written_delta])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_file_stats]\n  WHERE 1 = 1\n  AND $__timeFilter(snapshot_time)\n  AND [sql_instance] = '$sql_instance'\n  AND database_name IN ($database)\n  GROUP BY $__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+              "rawSql": "SELECT \n        [time] = $__timeGroup([snapshot_time], $aggregation) \n      , [Bytes Written] = SUM([num_of_bytes_written_delta])\n      , [Bytes Read] = SUM([num_of_bytes_read_delta])\n      , [Bytes Written/sec] = AVG([bytes_written_per_second])\n      , [Bytes Read/sec] = AVG([bytes_read_per_second])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_file_stats]\n  WHERE 1 = 1\n  AND $__timeFilter(snapshot_time)\n  AND [sql_instance] = '$sql_instance'\n  AND database_name IN ($database)\n  GROUP BY $__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
               "refId": "A"
-            },
-            {
-              "alias": "",
-              "format": "time_series",
-              "rawSql": "SELECT \n      [time] = $__timeGroup([snapshot_time], $aggregation) \n      ,[Bytes Read] = SUM([num_of_bytes_read_delta])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_file_stats]\n  WHERE 1 = 1\n  AND $__timeFilter(snapshot_time)\n  AND [sql_instance] = '$sql_instance'\n   AND database_name IN ($database)\n  GROUP BY $__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
-              "refId": "B"
             }
           ],
           "thresholds": [],
@@ -7244,6 +7480,20 @@
             "sort": 0,
             "value_type": "individual"
           },
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "Time",
+                    "Bytes Written",
+                    "Bytes Read"
+                  ]
+                }
+              }
+            }
+          ],
           "transparent": true,
           "type": "graph",
           "xaxis": {
@@ -7255,6 +7505,7 @@
           },
           "yaxes": [
             {
+              "$$hashKey": "object:2446",
               "decimals": 0,
               "format": "decbytes",
               "label": "",
@@ -7264,6 +7515,7 @@
               "show": true
             },
             {
+              "$$hashKey": "object:2447",
               "format": "short",
               "label": null,
               "logBase": 1,
@@ -7282,7 +7534,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$DataSource",
+          "datasource": "-- Dashboard --",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -7302,10 +7554,10 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 49
+            "y": 51
           },
           "hiddenSeries": false,
-          "id": 76,
+          "id": 273,
           "legend": {
             "avg": true,
             "current": true,
@@ -7328,10 +7580,12 @@
           "renderer": "flot",
           "seriesOverrides": [
             {
+              "$$hashKey": "object:2748",
               "alias": "Bytes Written/sec",
               "color": "#F2495C"
             },
             {
+              "$$hashKey": "object:2749",
               "alias": "Bytes Read/sec",
               "color": "#73BF69"
             }
@@ -7341,17 +7595,8 @@
           "steppedLine": false,
           "targets": [
             {
-              "alias": "",
-              "format": "time_series",
-              "hide": false,
-              "rawSql": "SELECT \n      [time] = $__timeGroup([snapshot_time], $aggregation) \n      ,[Bytes Written/sec] = AVG([bytes_written_per_second])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_file_stats]\n  WHERE 1 = 1\n  AND $__timeFilter(snapshot_time)\n  AND [sql_instance] = '$sql_instance'\n   AND database_name IN ($database)\n  GROUP BY $__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+              "panelId": 14,
               "refId": "A"
-            },
-            {
-              "alias": "",
-              "format": "time_series",
-              "rawSql": "SELECT \n      [time] = $__timeGroup([snapshot_time], $aggregation) \n      ,[Bytes Read/sec] = AVG([bytes_read_per_second])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_file_stats]\n  WHERE 1 = 1\n  AND $__timeFilter(snapshot_time)\n  AND [sql_instance] = '$sql_instance'\n   AND database_name IN ($database)\n  GROUP BY $__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
-              "refId": "B"
             }
           ],
           "thresholds": [],
@@ -7364,6 +7609,20 @@
             "sort": 0,
             "value_type": "individual"
           },
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "Time",
+                    "Bytes Written/sec",
+                    "Bytes Read/sec"
+                  ]
+                }
+              }
+            }
+          ],
           "transparent": true,
           "type": "graph",
           "xaxis": {
@@ -7375,6 +7634,7 @@
           },
           "yaxes": [
             {
+              "$$hashKey": "object:2762",
               "decimals": 0,
               "format": "Bps",
               "label": "",
@@ -7384,6 +7644,7 @@
               "show": true
             },
             {
+              "$$hashKey": "object:2763",
               "format": "short",
               "label": null,
               "logBase": 1,
@@ -7409,7 +7670,7 @@
             "h": 3,
             "w": 24,
             "x": 0,
-            "y": 55
+            "y": 57
           },
           "id": 92,
           "options": {
@@ -7453,7 +7714,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 58
+            "y": 60
           },
           "hiddenSeries": false,
           "id": 91,
@@ -7494,7 +7755,7 @@
               "alias": "",
               "format": "time_series",
               "hide": false,
-              "rawSql": "SELECT \n      [time] = $__timeGroup([snapshot_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 0\n  AND $__timeFilter(snapshot_time)\n  AND counter_name IN ('Page Splits/sec','Batch Requests/Sec')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+              "rawSql": "SELECT \n      [time] = $__timeGroup([snapshot_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 0\n  AND $__timeFilter(snapshot_time)\n  AND counter_name IN ('Page Splits/sec','Batch Requests/Sec','Log write waits','Log Flushes/sec')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
               "refId": "A"
             }
           ],
@@ -7529,7 +7790,9 @@
               "id": "organize",
               "options": {
                 "excludeByName": {
-                  "Batch Requests/sec": true
+                  "Batch Requests/sec": true,
+                  "Log Flushes/sec": true,
+                  "Log write waits": true
                 },
                 "indexByName": {},
                 "renameByName": {}
@@ -7594,7 +7857,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 64
+            "y": 66
           },
           "hiddenSeries": false,
           "id": 16,
@@ -7679,7 +7942,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$DataSource",
+          "datasource": "-- Dashboard --",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -7698,10 +7961,10 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 70
+            "y": 72
           },
           "hiddenSeries": false,
-          "id": 67,
+          "id": 274,
           "legend": {
             "avg": true,
             "current": true,
@@ -7733,10 +7996,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "alias": "",
-              "format": "time_series",
-              "hide": false,
-              "rawSql": "SELECT \n      [time] = $__timeGroup([snapshot_time], $aggregation) \n      ,metric = counter_name\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 0\n  AND $__timeFilter(snapshot_time)\n  AND counter_name IN ('Log write waits')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY counter_name\n      ,$__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+              "panelId": 91,
               "refId": "A"
             }
           ],
@@ -7750,6 +8010,19 @@
             "sort": 0,
             "value_type": "individual"
           },
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "Time",
+                    "Log write waits"
+                  ]
+                }
+              }
+            }
+          ],
           "transparent": true,
           "type": "graph",
           "xaxis": {
@@ -7795,7 +8068,7 @@
             "h": 2,
             "w": 21,
             "x": 0,
-            "y": 76
+            "y": 78
           },
           "id": 120,
           "options": {
@@ -7820,7 +8093,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$DataSource",
+          "datasource": "-- Dashboard --",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -7839,10 +8112,10 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 78
+            "y": 80
           },
           "hiddenSeries": false,
-          "id": 140,
+          "id": 275,
           "legend": {
             "avg": true,
             "current": true,
@@ -7869,10 +8142,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "alias": "",
-              "format": "time_series",
-              "hide": false,
-              "rawSql": "SELECT \n      [time] = $__timeGroup([snapshot_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 0\n  AND $__timeFilter(snapshot_time)\n  AND counter_name IN ('Log Flushes/sec')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+              "panelId": 91,
               "refId": "A"
             }
           ],
@@ -7895,6 +8165,19 @@
             "sort": 0,
             "value_type": "individual"
           },
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "Time",
+                    "Log Flushes/sec"
+                  ]
+                }
+              }
+            }
+          ],
           "transparent": true,
           "type": "graph",
           "xaxis": {
@@ -7940,7 +8223,7 @@
             "h": 2,
             "w": 24,
             "x": 0,
-            "y": 84
+            "y": 86
           },
           "id": 141,
           "options": {
@@ -7984,7 +8267,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 86
+            "y": 88
           },
           "hiddenSeries": false,
           "id": 69,
@@ -8076,7 +8359,7 @@
             "h": 3,
             "w": 24,
             "x": 0,
-            "y": 92
+            "y": 94
           },
           "id": 135,
           "options": {
@@ -8120,7 +8403,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 95
+            "y": 97
           },
           "hiddenSeries": false,
           "id": 130,
@@ -10270,10 +10553,10 @@
         "allValue": null,
         "current": {
           "selected": false,
-          "text": "All",
-          "value": "All"
+          "text": "Current",
+          "value": "Current"
         },
-        "description": "Whether we should only show currently running requests (as of very last capture) or all requests captured within the dashboard time period.",
+        "description": "Whether we should only show currently running requests and sessions (as of very last capture) or all requests captured within the dashboard time period.",
         "error": null,
         "hide": 0,
         "includeAll": false,
@@ -10282,12 +10565,12 @@
         "name": "currentrequests",
         "options": [
           {
-            "selected": false,
+            "selected": true,
             "text": "Current",
             "value": "Current"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "All",
             "value": "All"
           }
@@ -10313,5 +10596,5 @@
   "timezone": "utc",
   "title": "SQL Instance Overview",
   "uid": "sqlwatch-instance-overview",
-  "version": 164
+  "version": 183
 }

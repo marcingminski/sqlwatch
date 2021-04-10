@@ -81,7 +81,7 @@ using (
 	select [snapshot_type_id] = 29, [snapshot_type_desc] = 'Availability Groups', [snapshot_retention_days] = 32
 	/* Exec Requests */
 	union
-	select [snapshot_type_id] = 30, [snapshot_type_desc] = 'Exec Requests', [snapshot_retention_days] = 2
+	select [snapshot_type_id] = 30, [snapshot_type_desc] = 'Exec Requests and Sessions', [snapshot_retention_days] = 2
 
 ) as source
 on (source.[snapshot_type_id] = target.[snapshot_type_id])
