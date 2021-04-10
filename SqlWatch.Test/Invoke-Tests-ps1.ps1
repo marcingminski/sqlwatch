@@ -1,9 +1,7 @@
-﻿param (
-    [string]$SqlInstance,
-    [string]$SqlWatchDatabase
-)
-cd C:\Users\marcin\Documents\GitHub\sqlwatch\sqlwatch\SqlWatch.Test
+﻿cd C:\Users\marcin\Documents\GitHub\sqlwatch\sqlwatch\SqlWatch.Test
 
+$SqlInstance = "localhost"
+$SqlWatchDatabase = "SQLWATCH"
 $MinSqlUpHours = 2;
 
 #$sql = "select datediff(hour,install_date,getdate()) from vw_sqlwatch_app_version"
