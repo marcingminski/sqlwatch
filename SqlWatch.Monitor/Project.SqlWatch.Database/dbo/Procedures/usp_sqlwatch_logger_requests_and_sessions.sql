@@ -1,6 +1,7 @@
 ﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_logger_requests_and_sessions]
 as
 
+declare @dummy int
 	/*
 
 	I am not entirely happy with this approach....
