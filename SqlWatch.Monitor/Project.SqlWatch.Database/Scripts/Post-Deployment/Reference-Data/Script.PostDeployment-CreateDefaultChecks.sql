@@ -479,7 +479,7 @@ exec [dbo].[usp_sqlwatch_config_add_check]
 	 @check_id = -5
 	,@check_name = 'Action queue pending items'
 	,@check_description = 'There is a large number of items awaiting action. This could indicate a problem with the action mechanism. Note that in this context, the succesful action means that the item was succesfuly executed, for example sp_send_dbmail and not that the email was delivered.'
-	,@check_query = 'select @output=count(*) from dbo.sqlwatch_meta_action_queue where exec_status is null or exec_status <> ''OK'' and time_queued < dateadd(minute,-2,getdate())'
+	,@check_query = 'select @output=count(*) from dbo.sqlwatch_meta_action_queue where exec_status is null or exec_status not in (''OK'',''ERROR'',''FAILED'') and time_queued < dateadd(minute,-2,getdate())'
 	,@check_frequency_minutes = 5
 	,@check_threshold_warning = NULL
 	,@check_threshold_critical = '>10'
