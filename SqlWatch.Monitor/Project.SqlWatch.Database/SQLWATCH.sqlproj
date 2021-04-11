@@ -349,6 +349,7 @@
     <Build Include="dbo\Tables\sqlwatch_logger_dm_exec_sessions.sql" />
     <Build Include="dbo\Tables\sqlwatch_meta_program_name.sql" />
     <Build Include="dbo\Tables\sqlwatch_stage_xes_exec_count.sql" />
+    <Build Include="dbo\Functions\ufn_sqlwatch_get_blocking_chains.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />

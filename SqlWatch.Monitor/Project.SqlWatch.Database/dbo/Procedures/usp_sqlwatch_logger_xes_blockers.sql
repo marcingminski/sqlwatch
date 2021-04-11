@@ -22,6 +22,7 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 		select @execution_count = isnull(execution_count,0)
 		from sys.dm_xe_session_targets t
 		where event_session_address = @address
+		and target_name = 'event_file'
 		option (keepfixed plan)
 
 		--if the session has not triggered since last run there will not be any new records so we may not bother querying it
@@ -33,16 +34,47 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 			begin
 				--update execution count
 				update [dbo].[sqlwatch_stage_xes_exec_count]
-				set execution_count = @execution_count
+				set  execution_count = @execution_count
+					,last_updated = getutcdate()
 				where session_name = @session_name;
 
-				/* for this to work you must enable blocked process monitor */
-				--inspired by and based on Michael J Stewart http://michaeljswart.com/2016/02/look-at-blocked-process-reports-collected-with-extended-events/
+				/*  For this to work you must enable blocked process monitor */
+
+				/*  The below code, whilst not directly copied, is inspired by and based on Michael J Stewart blocked process report.
+					I have learned how to approach this problem from Michael's blog. Please add his blog to your favourites as its a really good SQL Server Knowledgebase.
+
+					http://michaeljswart.com/2016/02/look-at-blocked-process-reports-collected-with-extended-events/
+					https://github.com/mjswart/sqlblockedprocesses licensed under MIT
+					https://github.com/mjswart/sqlblockedprocesses/blob/master/LICENSE
+
+					MIT License
+
+					Copyright (c) 2018 mjswart
+
+					Permission is hereby granted, free of charge, to any person obtaining a copy
+					of this software and associated documentation files (the "Software"), to deal
+					in the Software without restriction, including without limitation the rights
+					to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+					copies of the Software, and to permit persons to whom the Software is
+					furnished to do so, subject to the following conditions:
+
+					The above copyright notice and this permission notice shall be included in all
+					copies or substantial portions of the Software.
+
+					THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+					IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+					FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+					AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+					LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+					OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+					SOFTWARE.	
+				
+				*/
 
 				declare @snapshot_time datetime,
 						@snapshot_type_id tinyint = 9,
 						@filename varchar(8000),
-						@utc_offset_minute int = [dbo].[ufn_sqlwatch_get_server_utc_offset]('MINUTE')
+						@sql_instance varchar(32) = dbo.ufn_sqlwatch_get_servername();
 
 				declare @event_data table (event_data xml)
 
@@ -56,153 +88,118 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 						@snapshot_time_new = @snapshot_time OUTPUT,
 						@snapshot_type_id = @snapshot_type_id
 
-						merge [dbo].[sqlwatch_logger_xes_blockers] as target
-						using 
-							(
-							select 
-								  attach_activity_id
-								, attach_activity_sequence
-								, blocking_start_time
-								, blocking_end_time
-								, blocked_ecid
-								, blocked_spid
-								, blocked_sql
-								, [database name]
-								, lock_mode
-								, blocking_ecid
-								, blocking_spid
-								, blocking_sql
-								, blocking_duration_ms
-								, [blocking_client app name]
-								, [blocking_client hostname]
-								, report_xml
-								, snapshot_time = @snapshot_time
-								, snapshot_type_id = @snapshot_type_id
-								, [sql_instance] = @@SERVERNAME
-							from (
-								select 
-									 [attach_activity_id]=substring(bps.[attach_activity_id],1,len(bps.[attach_activity_id])-charindex('-',reverse(bps.[attach_activity_id]))) 
-									,[attach_activity_sequence]=right(bps.[attach_activity_id],charindex('-',reverse(bps.[attach_activity_id]))-1)
-									,blocking_start_time = dateadd(ms,-bps.[blocking_duration_ms],bps.[report_end_time])
-									,blocking_end_time=bps.[report_end_time]
-									,bps.blocked_ecid
-									,bps.blocked_spid
-									,bps.blocked_sql
-									,bps.[database name]
-									,bps.[lock_mode]
-									,bps.blocking_ecid
-									,bps.blocking_spid
-									,bps.blocking_sql
-									,bps.[blocking_duration_ms]
-									,bps.[blocking_client app name]
-									,bps.[blocking_client hostname]
-									,bps.report_xml
-									/* SQL starts logging blocking chains as soon as they reach thresholds and NOT once the blocking chain has finished
-										this means we are going to get multiple entries per each chain until it has finished. we can go ahead and remove any previous
-										records of the same chain */
-									,session_blocking_sequence = row_number() over (partition by convert(datetime2(0),dateadd(ms,-bps.[blocking_duration_ms],bps.[report_end_time]))
-																												, bps.blocked_spid
-																												, bps.[database name]
-																												, bps.blocking_spid
-																												, bps.[blocking_client app name]
-																												, bps.[blocking_client hostname] 
-																										order by bps.[blocking_duration_ms] desc)
-								from @event_data xet
-								cross apply ( select xet.event_data ) AS target_data ([xml])
-								cross apply target_data.[xml].nodes('/event[@name="blocked_process_report"]') AS bp_nodes(bp_node)
-								cross apply bp_node.nodes('./data[@name="blocked_process"]/value/blocked-process-report') AS bp_report_xml_nodes(bp_report_xml_node)
-								cross apply
-									(
-										select 
-										 [report_xml] = cast(bp_report_xml_node.query('.') as xml)
-										 --https://github.com/marcingminski/sqlwatch/issues/169
-										 --timestamp is UTC, adjust for local time:
-										,[report_end_time] = dateadd(minute,@utc_offset_minute,bp_node.value('(./@timestamp)[1]', 'datetime'))
-										,[monitor_loop] = bp_report_xml_node.value('(//@monitorLoop)[1]', 'nvarchar(100)')
-										,[blocked_spid] = bp_report_xml_node.value('(./blocked-process/process/@spid)[1]', 'int')
-										,[blocked_ecid] = bp_report_xml_node.value('(./blocked-process/process/@ecid)[1]', 'int')
-										,[blocked_sql] = bp_report_xml_node.value('(./blocked-process/process/inputbuf)[1]', 'nvarchar(max)')
-										,[client app name] = bp_node.value('(./action[@name="client app name"]/value)[1]', 'nvarchar(128)')
-										,[database name] = nullif(bp_node.value('(./data[@name="database_name"]/value)[1]', 'nvarchar(128)'),'')
-										,[lock_mode]=bp_node.value('(./data[@name="lock_mode"]/text)[1]', 'varchar(50)')
-										,[blocking_spid] = bp_report_xml_node.value('(./blocking-process/process/@spid)[1]', 'int')
-										,[blocking_ecid] = bp_report_xml_node.value('(./blocking-process/process/@ecid)[1]', 'int')
-										,[blocking_sql] = bp_report_xml_node.value('(./blocking-process/process/inputbuf)[1]', 'varchar(max)')
-										,[blocking_duration_ms] = bp_node.value('(./data[@name="duration"]/value)[1]', 'bigint')/1000
-										,[blocking_username]=bp_report_xml_node.value('(./action[@name="username"]/value)[1]', 'nvarchar(128)')
-										,[blocking_client app name] = bp_report_xml_node.value('(./blocking-process/process/@clientapp)[1]', 'nvarchar(128)')
-										,[blocking_client hostname] = bp_report_xml_node.value('(./blocking-process/process/@hostname)[1]', 'nvarchar(128)')
-										,[attach_activity_id] = bp_node.value('(./action[@name="attach_activity_id"]/value )[1]', 'varchar(255)')
-									) AS bps
-								left join [dbo].[sqlwatch_logger_xes_blockers] t
-									on t.attach_activity_id = substring(bps.[attach_activity_id],1,len(bps.[attach_activity_id])-charindex('-',reverse(bps.[attach_activity_id]))) 
-									and t.attach_activity_sequence = right(bps.[attach_activity_id],charindex('-',reverse(bps.[attach_activity_id]))-1)
-								where t.attach_activity_id is null
-							) t
-							where session_blocking_sequence = 1
-						) as source
-						/* if a blocking chain already exists, we are going to update it with the most recent data as per the comment above */
-						on      source.[sql_instance] = target.[sql_instance]
-							and source.[blocked_ecid] = target.[blocked_ecid]
-							and source.[blocked_spid] = target.[blocked_spid]
-							and source.[blocked_sql] = target.[blocked_sql]
-							and source.[database name] = target.[database_name]
-							and source.[lock_mode] = target.[lock_mode]
-							and source.[blocking_ecid] = target.[blocking_ecid]
-							and source.[blocking_spid] = target.[blocking_spid]
-							and source.[blocking_sql] = target.[blocking_sql]
-							and source.[blocking_client app name] = target.[blocking_client_app_name]
-							and source.[blocking_client hostname] = target.[blocking_client_hostname]
-							and convert(datetime2(0),source.blocking_start_time) = convert(datetime2(0),target.blocking_start_time) --it may vary by few miliseconds
+				insert into dbo.sqlwatch_logger_xes_blockers (
+						  [monitor_loop]
+						, [lockMode]
+						, [blocked_spid]
+						, [blocked_ecid]
+						, [blocked_clientapp]
+						, [blocked_currentdbname]
+						, [blocked_hostname]
+						, [blocked_loginname]
+						, [blocked_inputbuff]
+						, [blocking_spid]
+						, [blocking_ecid]
+						, [blocking_clientapp]
+						, [blocking_currentdbname]
+						, [blocking_hostname]
+						, [blocking_loginname]
+						, [blocking_inputbuff]
+						, [event_time]
+						, [blocking_duration_ms]
+						, [report_xml]
+						, [snapshot_time]
+						, snapshot_type_id
+						, sql_instance
+				)
+				
+				select
+						  [blocked_process_report_details].[monitor_loop]
+						, [blocked_process_report_details].[lockMode]
+						, [blocked_process_report_details].[blocked_spid]
+						, [blocked_process_report_details].[blocked_ecid]
+						, [blocked_process_report_details].[blocked_clientapp]
+						, [blocked_process_report_details].[blocked_currentdbname]
+						, [blocked_process_report_details].[blocked_hostname]
+						, [blocked_process_report_details].[blocked_loginname]
+						, [blocked_process_report_details].[blocked_inputbuff]
+						, [blocked_process_report_details].[blocking_spid]
+						, [blocked_process_report_details].[blocking_ecid]
+						, [blocked_process_report_details].[blocking_clientapp]
+						, [blocked_process_report_details].[blocking_currentdbname]
+						, [blocked_process_report_details].[blocking_hostname]
+						, [blocked_process_report_details].[blocking_loginname]
+						, [blocked_process_report_details].[blocking_inputbuff]
 
-						when not matched then
-							insert (  attach_activity_id
-									, attach_activity_sequence
-									, blocking_start_time
-									, blocking_end_time
-									, blocked_ecid
-									, blocked_spid
-									, blocked_sql
-									, [database_name]
-									, lock_mode
-									, blocking_ecid
-									, blocking_spid
-									, blocking_sql
-									, blocking_duration_ms
-									, [blocking_client_app_name]
-									, [blocking_client_hostname]
-									, report_xml
-									, snapshot_time
-									, snapshot_type_id)
-							values (  source.attach_activity_id
-									, source.attach_activity_sequence
-									, source.blocking_start_time
-									, source.blocking_end_time
-									, source.blocked_ecid
-									, source.blocked_spid
-									, source.blocked_sql
-									, source.[database name]
-									, source.lock_mode
-									, source.blocking_ecid
-									, source.blocking_spid
-									, source.blocking_sql
-									, source.blocking_duration_ms
-									, source.[blocking_client app name]
-									, source.[blocking_client hostname]
-									, source.report_xml
-									, source.snapshot_time
-									, source.snapshot_type_id)
+						, [bp_report_xml].[event_date]
+						, convert(real,[bp_report_xml].[blocking_duration_ms])
+						, [bp_report_xml].[bp_report_xml]	
 
-						when matched and source.blocking_duration_ms > target.blocking_duration_ms then 
-							update set
-									  blocking_start_time = source.blocking_start_time --it may vary by few miliseconds
-									, blocking_end_time = source.blocking_end_time
-									, blocking_duration_ms = source.blocking_duration_ms
-									, report_xml = source.report_xml
-									, snapshot_time = @snapshot_time;
+						, [snapshot_time] = @snapshot_time
+						, snapshot_type_id = @snapshot_type_id
+						, sql_instance = @sql_instance
+				from @event_data xet
 
-						--option (maxdop 1);
-					commit tran
+				cross apply ( 
+					select 
+					xet.event_data 
+				) AS event_data ([xml])
+
+				cross apply  (
+					select
+						 -- extract blocked process xml contained in the event session xml
+						  event_date = event_data.[xml].value('(event/@timestamp)[1]', 'datetime')
+						, blocking_duration_ms = event_data.[xml].value('(//event/data[@name="duration"]/value)[1]', 'bigint')/1000
+						, bp_report_xml = event_data.[xml].query('//event/data/value/blocked-process-report')
+				) as bp_report_xml
+
+				cross apply (
+					select 
+
+							-- generic
+						  [monitor_loop] = bp_report_xml.value('(//@monitorLoop)[1]', 'nvarchar(100)')
+						, [lockMode]= bp_report_xml.value('(./blocked-process-report/blocked-process/process/@lockMode)[1]', 'nvarchar(128)')
+						  
+						 	-- blocked-process-report
+						, [blocked_spid] = bp_report_xml.value('(./blocked-process-report/blocked-process/process/@spid)[1]', 'int')
+						, [blocked_ecid] = bp_report_xml.value('(./blocked-process-report/blocked-process/process/@ecid)[1]', 'int')
+						, [blocked_clientapp] = bp_report_xml.value('(./blocked-process-report/blocked-process/process/@clientapp)[1]', 'nvarchar(128)')
+						, [blocked_currentdbname] = nullif(bp_report_xml.value('(./blocked-process-report/blocked-process/process/@currentdbname)[1]', 'nvarchar(128)'),'')
+						, [blocked_hostname] = nullif(bp_report_xml.value('(./blocked-process-report/blocked-process/process/@hostname)[1]', 'nvarchar(128)'),'')
+						, [blocked_loginname] = nullif(bp_report_xml.value('(./blocked-process-report/blocked-process/process/@loginname)[1]', 'nvarchar(128)'),'')
+						, [blocked_inputbuff] = nullif(bp_report_xml.value('(./blocked-process-report/blocked-process/process/inputbuf)[1]', 'nvarchar(max)'),'')
+						  
+							-- blocking-process
+						, [blocking_spid] = bp_report_xml.value('(./blocked-process-report/blocking-process/process/@spid)[1]', 'int')
+						, [blocking_ecid] = bp_report_xml.value('(./blocked-process-report/blocking-process/process/@ecid)[1]', 'int')
+						, [blocking_clientapp] = bp_report_xml.value('(./blocked-process-report/blocking-process/process/@clientapp)[1]', 'nvarchar(128)')
+						, [blocking_currentdbname] = nullif(bp_report_xml.value('(./blocked-process-report/blocking-process/process/@currentdbname)[1]', 'nvarchar(128)'),'')
+						, [blocking_hostname] = nullif(bp_report_xml.value('(./blocked-process-report/blocking-process/process/@hostname)[1]', 'nvarchar(128)'),'')
+						, [blocking_loginname] = nullif(bp_report_xml.value('(./blocked-process-report/blocking-process/process/@loginname)[1]', 'nvarchar(128)'),'')
+						, [blocking_inputbuff] = nullif(bp_report_xml.value('(./blocked-process-report/blocking-process/process/inputbuf)[1]', 'nvarchar(max)'),'')
+						  
+					) as blocked_process_report_details
+
+				left join dbo.sqlwatch_logger_xes_blockers b
+				on b.event_time = [bp_report_xml].[event_date]
+				and b.monitor_loop = [blocked_process_report_details].[monitor_loop]
+				and b.[blocked_spid] = [blocked_process_report_details].[blocked_spid]
+				and b.[blocked_ecid] = [blocked_process_report_details].[blocked_ecid]
+				and b.[blocking_spid] = [blocked_process_report_details].[blocking_spid]
+				and b.[blocking_ecid] = [blocked_process_report_details].[blocking_ecid]
+
+
+				where [blocked_process_report_details].[blocking_spid] is not null
+				and [blocked_process_report_details].[blocked_spid] is not null
+
+				-- skip existing rows:
+				and b.monitor_loop is null
+				and b.event_time is null
+				and b.blocked_spid is null
+
+				option (maxdop 1, keep plan)
+
+				commit tran
 
 			end
 	end

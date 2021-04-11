@@ -63,7 +63,8 @@ begin
                                         set @timestart = SYSDATETIME();
 
                                         exec dbo.usp_sqlwatch_logger_performance;
-                                        exec dbo.[usp_sqlwatch_logger_requests_and_sessions];
+                                        --exec dbo.[usp_sqlwatch_logger_requests_and_sessions];
+                                        exec [dbo].[usp_sqlwatch_internal_exec_activated_async] @procedure_name = 'dbo.usp_sqlwatch_logger_xes_blockers';
 
                                         set @process_message = 'Message Type: ' + convert(varchar(4000),@message_type_name) + '; Timer: ' + convert(varchar(5),@timer) + '; Time Taken: ' + convert(varchar(100),datediff(ms,@timestart,SYSDATETIME()))  + 'ms'
                                     
@@ -83,7 +84,6 @@ begin
 
                                         -- execute in sequence:
                                         exec dbo.usp_sqlwatch_logger_xes_waits
-                                        exec dbo.usp_sqlwatch_logger_xes_blockers
                                         exec dbo.usp_sqlwatch_logger_xes_diagnostics
                                         exec dbo.usp_sqlwatch_logger_xes_long_queries
 

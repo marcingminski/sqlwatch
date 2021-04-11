@@ -2,6 +2,7 @@
 (
 	session_name nvarchar (64) not null,
 	execution_count bigint not null,
+	last_updated datetime2(0) null, 
 
 	constraint pk_sqlwatch_stage_xes_exec_count 
 		primary key clustered (

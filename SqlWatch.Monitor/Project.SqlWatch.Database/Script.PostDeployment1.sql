@@ -129,17 +129,19 @@ if (select case when @@VERSION like '%Express Edition%' then 1 else 0 end) = 0
 -------------------------------------------------------------------------------------
 merge [dbo].[sqlwatch_stage_xes_exec_count] as target
 using (
-	select session_name = name , execution_count = 0
+	select session_name = name
 	from sys.dm_xe_session_targets t
 	inner join sys.dm_xe_sessions s
 	on t.event_session_address = s.address
 	where s.name like 'SQLWATCH%'	
+	and t.target_name = 'event_file'
 ) as source
 on source.session_name = target.session_name collate database_default
 
 when matched then update
-	set execution_count = source.execution_count
+	set	  execution_count = 0
+		, last_updated = null
 
 when not matched then
-	insert (session_name, execution_count)
-	values (source.session_name, source.execution_count);
+	insert (session_name, execution_count, last_updated)
+	values (source.session_name, 0, null);
