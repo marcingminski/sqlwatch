@@ -62,7 +62,7 @@ UPDATE curr
 
 -- Add the new ones or the changed:
 INSERT INTO [dbo].[sqlwatch_meta_system_configuration_scd] (sql_instance, sqlwatch_configuration_id, value, value_in_use, valid_from, valid_until)
-SELECT v.sql_instance, m.sqlwatch_configuration_id, v.value, v.value_in_use, @snapshot_time, NULL
+SELECT DISTINCT v.sql_instance, m.sqlwatch_configuration_id, v.value, v.value_in_use, @snapshot_time, NULL
   FROM dbo.vw_sqlwatch_sys_configurations v
  INNER JOIN dbo.[sqlwatch_meta_system_configuration] m
     ON v.configuration_id = m.configuration_id
