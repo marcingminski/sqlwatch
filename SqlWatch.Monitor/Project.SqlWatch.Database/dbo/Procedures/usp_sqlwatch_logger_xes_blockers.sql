@@ -9,7 +9,11 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 
 		declare @execution_count bigint = 0,
 				@session_name nvarchar(64) = 'SQLWATCH_Blockers',
-				@address varbinary(8)
+				@address varbinary(8),
+				@snapshot_time datetime,
+				@snapshot_type_id tinyint = 9,
+				@filename varchar(8000),
+				@sql_instance varchar(32) = dbo.ufn_sqlwatch_get_servername();
 
 		--we're getting session address in a separate batch
 		--becuase when we join xe_sessions with xe_session_targets
@@ -24,6 +28,14 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 		where event_session_address = @address
 		and target_name = 'event_file'
 		option (keepfixed plan)
+
+
+		-- even though we may not collect any xes data
+		-- we are still going to create a snapshot becausae it makes it easier to then show data on the dashboard as 0 rathern than "No Data"
+
+		exec [dbo].[usp_sqlwatch_internal_insert_header] 
+			@snapshot_time_new = @snapshot_time OUTPUT,
+			@snapshot_type_id = @snapshot_type_id
 
 		--if the session has not triggered since last run there will not be any new records so we may not bother querying it
 		if @execution_count > (
@@ -71,11 +83,6 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 				
 				*/
 
-				declare @snapshot_time datetime,
-						@snapshot_type_id tinyint = 9,
-						@filename varchar(8000),
-						@sql_instance varchar(32) = dbo.ufn_sqlwatch_get_servername();
-
 				declare @event_data table (event_data xml)
 
 				insert into @event_data
@@ -83,10 +90,6 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 				from sys.fn_xe_file_target_read_file ('SQLWATCH_blockers*.xel', null, null, null) t
 
 				begin transaction
-
-					exec [dbo].[usp_sqlwatch_internal_insert_header] 
-						@snapshot_time_new = @snapshot_time OUTPUT,
-						@snapshot_type_id = @snapshot_type_id
 
 				insert into dbo.sqlwatch_logger_xes_blockers (
 						  [monitor_loop]

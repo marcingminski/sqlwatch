@@ -17,4 +17,4 @@ select
 	, [sql_text]
 	, [report_xml]
 	, [sequence]
-from [dbo].[ufn_sqlwatch_get_blocking_chains]('1970-01-01','2099-21-31')
+from [dbo].[ufn_sqlwatch_get_blocking_chains]('1970-01-01','2099-21-31', null)

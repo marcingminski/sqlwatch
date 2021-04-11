@@ -1,7 +1,8 @@
 ﻿CREATE FUNCTION [dbo].[ufn_sqlwatch_get_blocking_chains] 
 (
 	@start_date datetime2(0),
-	@end_date datetime2(0)
+	@end_date datetime2(0),
+	@sql_instance varchar(32) = null
 ) 
 
 RETURNS @returntable TABLE 
@@ -19,10 +20,19 @@ RETURNS @returntable TABLE
 	[hostname] [nvarchar](128) NULL,
 	[sql_text] [nvarchar](max) NULL,
 	[report_xml] [xml] NULL,
-	[sequence] [bigint] NULL
+	[sequence] [bigint] NULL,
+	sql_instance varchar(32),
+	snapshot_time datetime2(0),
+	snapshot_type_id tinyint
 ) with schemabinding
 AS
 BEGIN
+
+		if @sql_instance is null
+			begin
+				set @sql_instance= dbo.ufn_sqlwatch_get_servername();
+			end;
+
 		with cte_block_headers AS
 		(
 			select 
@@ -30,7 +40,11 @@ BEGIN
 				, ecid = blocking_ecid
 				, monitor_loop
 			from [dbo].[sqlwatch_logger_xes_blockers]
+
+			--this is a chance, that we will select a subset of the original chain here and will miss the head blocker.
+			--ideally, we'd need to select all rows participating in a blocking chain that had at least one event between these dates.
 			where event_time between @start_date and @end_date
+			and sql_instance = @sql_instance
 
 			except
 			
@@ -40,6 +54,7 @@ BEGIN
 				, monitor_loop
 			from [dbo].[sqlwatch_logger_xes_blockers]
 			where event_time between @start_date and @end_date
+			and sql_instance = @sql_instance
 		), 
 
 
@@ -74,13 +89,16 @@ BEGIN
 				on b.monitor_loop = h.monitor_loop
 				and b.blocking_spid = h.session_id
 				and b.blocking_ecid = h.ecid
-			and b.event_time between @start_date and @end_date
+			where b.event_time between @start_date and @end_date
+			and sql_instance = @sql_instance
 		)
 		
 		INSERT @returntable
 		select 
 			  h.monitor_loop
 			, event_time = case when h.blocking_level = 0 then bhead.event_time else bproc.event_time end
+
+			--the visual tree inspired by https://blog.sqlauthority.com/2015/07/07/sql-server-identifying-blocking-chain-using-sql-scripts/
 			, blocking_tree = N'    ' + char (160) + char (160) + replicate (N'|         ', len (blocking_level_t)/4 - 1) +
 			  case when (len(blocking_level_t)/4 - 1) = 0
 			  then 'HEAD BLOCKER -  '
@@ -97,6 +115,9 @@ BEGIN
 			, [sql_text]= case when h.blocking_level = 0 then bhead.blocking_inputbuff else bproc.[blocked_inputbuff] end
 			, report_xml = isnull(bproc.report_xml,bhead.report_xml)
 			, sequence = ROW_NUMBER() over (order by h.monitor_loop , h.blocking_chain)
+			, sql_instance = @sql_instance
+			, snapshot_time = isnull(bproc.snapshot_time,bhead.snapshot_time)
+			, snapshot_type_id = isnull(bproc.snapshot_type_id,bhead.snapshot_type_id)
 		from cte_blocking_hierarchy h
 
 		--block process details
@@ -105,12 +126,12 @@ BEGIN
 			and bproc.blocked_spid = h.session_id
 			and bproc.blocked_ecid = h.ecid
 			and bproc.event_time between @start_date and @end_date
-
+			and sql_instance = @sql_instance
 
 		--blocked header details
 		outer apply (
 			select top 1 
-				[monitor_loop]
+				  [monitor_loop]
 				, [event_time]
 				, [blocked_ecid]
 				, [blocked_spid]
@@ -137,6 +158,9 @@ BEGIN
 			and bheadt.blocking_spid = h.session_id
 			and bheadt.blocking_ecid = h.ecid
 			and h.blocking_level=0
+			and bheadt.event_time between @start_date and @end_date
+			and bheadt.sql_instance = @sql_instance
+
 
 		) bhead
 	RETURN
