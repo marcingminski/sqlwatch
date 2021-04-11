@@ -1251,7 +1251,7 @@ Disabled snapshots on the local instance are ignored but if you have disabled sn
 You can use [dbo].[vw_sqlwatch_help_last_snapshot_time] to see latest snapshot time. '
 	,@check_query = 'select @output=max(snapshot_age_minutes)
 from [dbo].[vw_sqlwatch_help_last_snapshot_time]
-where snapshot_type_id in (1,6,7,8,9,10,18)'
+where snapshot_type_id in (1,6,7,8,10,18)'
 	,@check_frequency_minutes = 15
 	,@check_threshold_warning = '>10'
 	,@check_threshold_critical = '>60' 
