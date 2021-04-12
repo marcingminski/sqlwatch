@@ -1,9 +1,9 @@
 ﻿CREATE TABLE [dbo].[sqlwatch_logger_xes_long_queries](
 	[long_query_id] bigint identity (1,1),
-	[activity_id] uniqueidentifier,
-	[activity_sequence] bigint,
-	[activity_id_xfer] uniqueidentifier,
-	[activity_sequence_xfer] bigint,
+	--[activity_id] uniqueidentifier,
+	--[activity_sequence] bigint,
+	--[activity_id_xfer] uniqueidentifier,
+	--[activity_sequence_xfer] bigint,
 	--[event_time_start] datetime not null,
 	[event_time] [datetime] not null,
 	[event_name] [varchar](255) not null,
@@ -29,9 +29,12 @@
 	[snapshot_time] datetime2(0) not null,
 	[snapshot_type_id] tinyint not null constraint df_sqlwatch_logger_xes_long_queries_type default (7),
 	[sql_instance] varchar(32) not null constraint df_sqlwatch_logger_xes_long_queries_sql_instance default (@@SERVERNAME),
+
+	[query_plan] xml null,
+
 	constraint fk_logger_perf_xes_long_queries foreign key ([snapshot_time],[sql_instance],[snapshot_type_id]) references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time],[sql_instance],[snapshot_type_id]) on delete cascade  on update cascade,
 	constraint pk_logger_perf_xes_long_queries primary key nonclustered (
-		[snapshot_time], [snapshot_type_id], [activity_id], [activity_sequence],[sql_instance]
+		[snapshot_time], [snapshot_type_id], [event_time], [event_name],[session_id]
 	),
 	constraint fk_sqlwatch_logger_xes_long_queries_server foreign key ([sql_instance])
 		references [dbo].[sqlwatch_meta_server] ([servername]) on delete cascade

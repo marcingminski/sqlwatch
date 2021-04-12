@@ -1,12 +1,8 @@
 ﻿CREATE VIEW [dbo].[vw_sqlwatch_report_fact_xes_long_queries] with schemabinding
 as
 
-SELECT [activity_id]
-      ,[activity_sequence]
-      ,[activity_id_xfer]
-      ,[activity_sequence_xfer]
-      --#244 temporary fix:
-      ,event_time=dateadd(minute,-[dbo].[ufn_sqlwatch_get_server_utc_offset]('MINUTE'),event_time)
+SELECT
+       event_time
       ,[event_name]
       ,[session_id]
       ,[database_name]
