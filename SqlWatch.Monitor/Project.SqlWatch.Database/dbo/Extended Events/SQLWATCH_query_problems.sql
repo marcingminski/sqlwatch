@@ -60,13 +60,16 @@ ADD EVENT sqlserver.long_io_detected(
         and ([sqlserver].[client_app_name]<>N'SQLServerCEIP')
         and ([sqlserver].[client_app_name]<>N'DacFx Deploy')    
     ) ,
+
 ADD EVENT sqlserver.missing_column_statistics(
+    SET collect_column_list=(1)
     ACTION(sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.nt_username,sqlserver.plan_handle,sqlserver.sql_text,sqlserver.username)
-     WHERE ([sqlserver].[is_system]=(0)) 
-        and ([sqlserver].[client_app_name]<>N'Microsoft SQL Server Management Studio')
-        and ([sqlserver].[client_app_name]<>N'SQLServerCEIP')
-        and ([sqlserver].[client_app_name]<>N'DacFx Deploy')    
+    WHERE ([sqlserver].[is_system]=(0) 
+        and [sqlserver].[client_app_name]<>N'Microsoft SQL Server Management Studio' 
+        and [sqlserver].[client_app_name]<>N'SQLServerCEIP' 
+        and [sqlserver].[client_app_name]<>N'DacFx Deploy')
     ) ,
+
 ADD EVENT sqlserver.missing_join_predicate(
     ACTION(sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.nt_username,sqlserver.plan_handle,sqlserver.sql_text,sqlserver.username)
       WHERE ([sqlserver].[is_system]=(0)) 
