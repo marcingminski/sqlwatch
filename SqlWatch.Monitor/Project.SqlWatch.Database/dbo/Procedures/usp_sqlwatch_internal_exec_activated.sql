@@ -97,6 +97,7 @@ begin
                                         exec dbo.usp_sqlwatch_logger_xes_waits
                                         exec dbo.usp_sqlwatch_logger_xes_diagnostics
                                         exec dbo.usp_sqlwatch_logger_xes_long_queries
+                                        exec dbo.usp_sqlwatch_logger_xes_query_problems
 
                                         set @process_message = 'Message Type: ' + convert(varchar(4000),@message_type_name) + '; Timer: ' + convert(varchar(5),@timer) + '; Time Taken: ' + convert(varchar(100),datediff(ms,@timestart,SYSDATETIME()))  + 'ms'
 

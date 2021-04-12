@@ -142,6 +142,10 @@ when matched then update
 	set	  execution_count = 0
 		, last_updated = null
 
+--remove any non existing sessions from our count table:
+when not matched by source then
+	delete
+
 when not matched then
 	insert (session_name, execution_count, last_updated)
 	values (source.session_name, 0, null);

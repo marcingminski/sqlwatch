@@ -82,6 +82,9 @@ using (
 	/* Exec Requests */
 	union
 	select [snapshot_type_id] = 30, [snapshot_type_desc] = 'Exec Requests and Sessions', [snapshot_retention_days] = 2
+	/* Query Problems */
+	union
+	select [snapshot_type_id] = 31, [snapshot_type_desc] = 'XES Query Problems', [snapshot_retention_days] = 2
 
 ) as source
 on (source.[snapshot_type_id] = target.[snapshot_type_id])
