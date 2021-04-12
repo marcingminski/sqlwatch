@@ -1,117 +1,81 @@
 ﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_logger_requests_and_sessions]
 as
 
-declare @dummy int
-	/*
-
-	I am not entirely happy with this approach....
-
 	declare @snapshot_type_id tinyint = 30,
-			@date_snapshot_current datetime2(0),
+			@snapshot_time datetime2(0),
 			@sql_instance varchar(32) = dbo.ufn_sqlwatch_get_servername();
 
-	declare @requests table (
-		[session_id] [smallint] NOT NULL,
-		[start_time] [datetime] NOT NULL,
-		[status] [nvarchar](30) NOT NULL,
-		[command] [nvarchar](32) NOT NULL,
-		[sql_handle] [varbinary](64) NULL,
-		[plan_handle] [varbinary](64) NULL,
-		[database_name] [sysname] NOT NULL,
-		[blocking_session_id] [smallint] NULL,
-		[wait_type] [nvarchar](60) NULL,
-		[wait_time] [int] NOT NULL,
-		[text] [nvarchar](max) NULL,
-		[program_name] [nvarchar](128) NULL,
-		[client_interface_name] [nvarchar](32) NULL,
-		[host_name] [nvarchar](128) NULL,
-		[login_name] [nvarchar](128) NULL
-	);
-
-	insert into @requests
-	select 
-		session_id
-		, start_time
-		, status
-		, command
-		, sql_handle
-		, plan_handle
-		, sqlwatch_database_id
-		, blocking_session_id
-		, wait_type 
-		, wait_time
-	from sys.dm_exec_requests r
-	
-	inner join sys.databases db
-	on db.database_id = r.database_id
-	
-	inner join dbo.sqlwatch_meta_database sdb
-	on sdb.database_name = db.name
-	and sdb.database_create_date = case when db.name = 'tempdb' then '1970-01-01' else db.create_date end
-
-	;
 	exec [dbo].[usp_sqlwatch_internal_insert_header] 
-		@snapshot_time_new = @date_snapshot_current OUTPUT,
+		@snapshot_time_new = @snapshot_time OUTPUT,
 		@snapshot_type_id = @snapshot_type_id;
 
-	insert into [dbo].[sqlwatch_logger_dm_exec_requests]
+	insert into dbo.sqlwatch_logger_dm_exec_requests_stats (
+		[type]
+		, background
+		, running
+		, runnable
+		, sleeping
+		, suspended
+		, waiting_tasks
+		, wait_duration_ms
+		, snapshot_time
+		, snapshot_type_id
+		, sql_instance
+	)
 	select 
-		  er.session_id
-		, er.start_time
-		, er.status
-		, er.command
-		, sql_handle = null --er.sql_handle
-		, plan_handle = null -- er.plan_handle
-		, database_name = db.name
-		, er.blocking_session_id
-		, er.wait_type
-		, er.wait_time
-		, sql_text.text
-		--, s.program_name
-		--, s.client_interface_name
-		--, s.host_name
-		--, s.login_name
-		, snapshot_time = @date_snapshot_current
+		  'type' = case when r.session_id > 50 then 1 else 0 end
+		, 'background' = sum(case status when 'Background' then 1 else 0 end)
+		-- exclude our own session from counting. This way, if there are no other sessions we can still get a count that shows 0
+		-- if we excluded it in the where clause, we would have had a missing for this snapshot time which would have upset dashboards
+		, 'running' = sum(case when status = 'Running' and session_id <> @@SPID then 1 else 0 end)
+		, 'runnable' = sum(case status when 'Runnable' then 1 else 0 end)
+		, 'sleeping' = sum(case status when 'Sleeping' then 1 else 0 end)
+		, 'suspended' = sum(case status when 'Suspended' then 1 else 0 end)
+		, 'waiting_tasks' = sum(sessions)
+		, 'wait_duration_ms' = isnull(sum(tc.wait_duration_ms),0)
+		, snapshot_time = @snapshot_time
 		, snapshot_type_id = @snapshot_type_id
 		, sql_instance = @sql_instance
-
-	from sys.dm_exec_requests er (nolock)
-
-	inner join sys.databases db (nolock)
-		on db.database_id = er.database_id
-
-	cross apply sys.dm_exec_sql_text (er.plan_handle) sql_text
-	
-	where er.session_id > 50
+	from sys.dm_exec_requests r (nolock)
+	cross apply (
+		select wait_duration_ms=sum(wait_duration_ms), sessions=count(session_id)
+		from sys.dm_os_waiting_tasks t (nolock)
+		where t.session_id = r.session_id
+		and wait_type not in (
+			select wait_type
+			from dbo.sqlwatch_config_exclude_wait_stats (nolock)
+			)
+		) tc
+	group by case when r.session_id > 50 then 1 else 0 end
 	option (keep plan);
 
-	insert into [dbo].[sqlwatch_logger_dm_exec_sessions]
-	select
-		  session_id
-		, login_time
-		, host_name
-		, program_name
-		, client_interface_name
-		, login_name
-		, status
+	insert into dbo.sqlwatch_logger_dm_exec_sessions_stats (
+		  [type]
+		, running
+		, sleeping
+		, dormant
+		, preconnect
 		, cpu_time
-		, memory_usage
-		, total_scheduled_time
-		, total_elapsed_time
-		, last_request_start_time
-		, last_request_end_time
 		, reads
 		, writes
-		, logical_reads
-		, database_name = db.name
-
-		, snapshot_time = @date_snapshot_current
+		, snapshot_time
+		, snapshot_type_id
+		, sql_instance
+	)
+	select 
+		'type' = is_user_process
+		-- exclude our own session from counting. This way, if there are no other sessions we can still get a count that shows 0
+		-- if we excluded it in the where clause, we would have had a missing for this snapshot time which would have upset dashboards
+		,'running' = sum(case when status = 'Running' and session_id <> @@SPID then 1 else 0 end)
+		,'sleeping' = sum(case status when 'Sleeping' then 1 else 0 end)
+		,'dormant' = sum(case status when 'Dormant' then 1 else 0 end)
+		,'preconnect' = sum(case status when 'Preconnect' then 1 else 0 end)
+		,'cpu_time' = avg(cpu_time)
+		,'reads' = avg(reads)
+		,'writes' = avg(writes)
+		, snapshot_time = @snapshot_time
 		, snapshot_type_id = @snapshot_type_id
 		, sql_instance = @sql_instance
-	from sys.dm_exec_sessions s
-
-	left join sys.databases db
-	on s.database_id = db.database_id
-	where session_id > 50
-	option (keep plan);
-	*/
+	from sys.dm_exec_sessions (nolock)
+	group by is_user_process
+	option (keep plan)

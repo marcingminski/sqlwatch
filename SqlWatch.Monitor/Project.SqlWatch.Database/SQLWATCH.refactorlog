@@ -2646,4 +2646,18 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[sqlwatch_stage_xes_exec_count]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="1760cb5b-b65f-4b41-b9d9-78be873e21c4" ChangeDateTime="04/12/2021 13:43:37">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_logger_dm_exec_requests]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[sqlwatch_logger_dm_exec_requests_stats]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="4c8af657-fd24-4dc9-bc01-4bfe2cba5f9b" ChangeDateTime="04/12/2021 13:48:22">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_logger_dm_exec_sessions]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[sqlwatch_logger_dm_exec_sessions_stats]" />
+  </Operation>
 </Operations>

@@ -338,7 +338,7 @@
     <Build Include="dbo\Tables\sqlwatch_stage_ring_buffer.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_convert_datetimeoffset_to_local.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_migrate_jobs_to_queues.sql" />
-    <Build Include="dbo\Tables\sqlwatch_logger_dm_exec_requests.sql" />
+    <Build Include="dbo\Tables\sqlwatch_logger_dm_exec_requests_stats.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_logger_requests_and_sessions.sql" />
     <Build Include="dbo\Queues\sqlwatch_exec.sql" />
     <Build Include="dbo\Services\sqlwatch_exec.sql" />
@@ -346,7 +346,7 @@
     <Build Include="dbo\Tables\sqlwatch_config_baseline.sql" />
     <Build Include="dbo\Tables\sqlwatch_meta_baseline.sql" />
     <Build Include="dbo\Tables\sqlwatch_meta_snapshot_header_baseline.sql" />
-    <Build Include="dbo\Tables\sqlwatch_logger_dm_exec_sessions.sql" />
+    <Build Include="dbo\Tables\sqlwatch_logger_dm_exec_sessions_stats.sql" />
     <Build Include="dbo\Tables\sqlwatch_meta_program_name.sql" />
     <Build Include="dbo\Tables\sqlwatch_stage_xes_exec_count.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_get_blocking_chains.sql" />
