@@ -1,9 +1,7 @@
 CREATE PROCEDURE [dbo].[usp_sqlwatch_logger_performance] AS
 
 set xact_abort on
-
 set nocount on;
-
 
 declare	@product_version nvarchar(128)
 declare @product_version_major decimal(10,2)
@@ -40,6 +38,12 @@ declare @sql nvarchar(4000)
 		exec [dbo].[usp_sqlwatch_internal_insert_header] 
 			@snapshot_time_new = @date_snapshot_current OUTPUT,
 			@snapshot_type_id = @snapshot_type_id
+
+		
+		--this procedure normally takes around 100ms to run but if we ever encounter any long locks, we should bail after 1 second so we don't hold up the queue.
+		--it shuold never happen but if it does, this will make sure the proc isn't running forever.
+		--notice we're setting the timeout after we have obtained the snapshot
+		set lock_timeout 1000; 
 
 		--------------------------------------------------------------------------------------------------------------
 		-- 1. get cpu -- Ring Buffer updates once a minute so we're not going to get any better resolution than that
