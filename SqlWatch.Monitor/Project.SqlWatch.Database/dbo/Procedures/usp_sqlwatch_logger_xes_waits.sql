@@ -1,6 +1,8 @@
 ﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_logger_xes_waits]
 AS
 
+--this needs to be reviewed. I am not happy with how we're getting the query hash
+--we also need to add conditional execution like in the other collectors based on the xes exec count
 if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 	begin
 
