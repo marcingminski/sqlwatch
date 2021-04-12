@@ -12,11 +12,11 @@
       }
     ]
   },
-  "editable": false,
+  "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
   "id": 32,
-  "iteration": 1618246226531,
+  "iteration": 1618265467587,
   "links": [
     {
       "asDropdown": true,
@@ -817,7 +817,7 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT time=getdate(),t.last_check_status,last_check_status_count=count(c.last_check_status)\r\n  FROM (\r\n    select last_check_status='OK' union all \r\n    select last_check_status = 'WARNING' union all \r\n    select last_check_status = 'CRITICAL' union all \r\n    select last_check_status = 'CHECK ERROR') t\r\n\r\n\touter apply (\r\n\t\tselect last_check_status\r\n\t\tfrom [dbo].[sqlwatch_meta_check] mc\r\n\t\twhere [sql_instance] =  '$sql_instance'\r\n\t\tand mc.last_check_status = t.last_check_status\r\n\t\tand check_enabled = 1\r\n\t\t) c\r\ngroup by t.last_check_status\r\n\r\n   order by case t.last_check_status when  'OK' then 1 when 'WARNING' then 2 when 'CRITICAL' then 3 else 4 end ",
+          "rawSql": "SELECT time=getdate(),t.last_check_status,last_check_status_count=count(c.last_check_status)\r\n  FROM (\r\n    select last_check_status='OK' union all \r\n    select last_check_status = 'WARNING' union all \r\n    select last_check_status = 'CRITICAL' union all \r\n    select last_check_status = 'CHECK ERROR') t\r\n\r\n\touter apply (\r\n\t\tselect last_check_status = case when last_check_status is null then 'CHECK ERROR' else last_check_status end\r\n\t\tfrom [dbo].[sqlwatch_meta_check] mc\r\n\t\twhere [sql_instance] =  '$sql_instance'\r\n\t\tand case when last_check_status is null then 'CHECK ERROR' else last_check_status end = t.last_check_status\r\n\t\tand check_enabled = 1\r\n\t\t) c\r\ngroup by t.last_check_status\r\n\r\n   order by case t.last_check_status when  'OK' then 1 when 'WARNING' then 2 when 'CRITICAL' then 3 else 4 end ",
           "refId": "A"
         }
       ],
@@ -1553,7 +1553,7 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT  top 15 time=last_check_date,[check_name] = CASE WHEN LEN([check_name]) > 23 THEN LEFT(check_name,22) + '...' ELSE [check_name] END\n        ,status = CASE [last_check_status] \n        WHEN 'CRITICAL' THEN 2\n        WHEN 'WARNING' THEN 1\n        WHEN 'OK' THEN 0\n        ELSE 3 END\n  FROM (select last_check_date , check_name = (replace(replace([check_name],'Database',''),' failure count','')),last_check_status\n  from [dbo].[vw_sqlwatch_report_dim_check] with (nolock)\n  WHERE  [sql_instance] = '$sql_instance'\n  AND check_enabled = 1\n  ) t\n  --AND last_check_status <> 'ok'\n  --AND $__timeFilter(last_check_date)\n  --AND last_check_status IN ($Status)\n  order by case when last_check_status = 'OK' then dateadd(month,-12,last_check_date) else last_check_date end desc",
+          "rawSql": "SELECT  top 15 time=isnull(last_check_date,getutcdate()),[check_name] = CASE WHEN LEN([check_name]) > 23 THEN LEFT(check_name,22) + '...' ELSE [check_name] END\n        ,status = CASE [last_check_status] \n        WHEN 'CRITICAL' THEN 2\n        WHEN 'WARNING' THEN 1\n        WHEN 'OK' THEN 0\n        ELSE 3 END\n  FROM (select last_check_date , check_name = (replace(replace([check_name],'Database',''),' failure count',''))\n    , last_check_status = case when last_check_status is null then 'CHECK ERROR' else last_check_status end\n  from [dbo].[vw_sqlwatch_report_dim_check] with (nolock)\n  WHERE  [sql_instance] = '$sql_instance'\n  AND check_enabled = 1\n  ) t\n  --AND last_check_status <> 'ok'\n  --AND $__timeFilter(last_check_date)\n  --AND last_check_status IN ($Status)\n  order by case when last_check_status = 'OK' then dateadd(month,-12,last_check_date) else isnull(last_check_date,getutcdate()) end desc",
           "refId": "A"
         }
       ],
@@ -1711,7 +1711,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 33
+            "y": 5
           },
           "id": 159,
           "options": {
@@ -1755,7 +1755,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 39
+            "y": 11
           },
           "hiddenSeries": false,
           "id": 101,
@@ -1877,7 +1877,7 @@
             "h": 2,
             "w": 24,
             "x": 0,
-            "y": 45
+            "y": 17
           },
           "id": 276,
           "options": {
@@ -1910,7 +1910,7 @@
             "h": 10,
             "w": 24,
             "x": 0,
-            "y": 47
+            "y": 19
           },
           "id": 255,
           "options": {
@@ -1938,7 +1938,7 @@
       "type": "row"
     },
     {
-      "collapsed": false,
+      "collapsed": true,
       "datasource": null,
       "gridPos": {
         "h": 1,
@@ -1947,534 +1947,535 @@
         "y": 33
       },
       "id": 263,
-      "panels": [],
+      "panels": [
+        {
+          "datasource": null,
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 24,
+            "x": 0,
+            "y": 6
+          },
+          "id": 265,
+          "options": {
+            "content": "# SQL Server Requests\r\n*****\r\nList of current requests sampled from `dm_exec_requests`.\r\n\r\n**Runnable** - The session has been assigned a worker thread but it is waiting for CPU to become available.\r\nMany runnable threads would indicate CPU bottleneck.\r\n\r\n**Pending** - The session is awaiting a worker thread to be assigned. Unitil a workthread is assigned the session will not run even if the CPU is available.\r\nIn most cases, the worker will not be assigned due to CPU bottlenecks but in some cases, you may encounter a thread exhaustion.\r\nThis is a scenerio where SQL Server ran out of threads to allocate.\r\n\r\n**Suspended** - The session was running but has been put on hold due to lack of resources. Suspended session will likely have `wait_type` assigned to them.\r\n\r\n**Sleeping** - Sessions that SQL Server has put \"to sleep\" as they are not doing anything or could have ended recently but the connetion is still open. \r\nThis may be often observed with .NET Connection pooling. \r\n\r\nThis data provides a very high level view of the SQL Server Requests and Sessions. Becuase of the data sampling, we could be misssing a lot of the workload that happens between samples. However, this is by design, we do not want to capture too much of meaningless workload. Any transactions that cause trouble will be captured by Extended Events",
+            "mode": "markdown"
+          },
+          "pluginVersion": "7.4.2",
+          "targets": [
+            {
+              "queryType": "randomWalk",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "",
+          "transparent": true,
+          "type": "text"
+        },
+        {
+          "aliasColors": {},
+          "bars": true,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$DataSource",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {},
+              "thresholds": {
+                "mode": "absolute",
+                "steps": []
+              }
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 6,
+            "w": 24,
+            "x": 0,
+            "y": 15
+          },
+          "hiddenSeries": false,
+          "id": 264,
+          "legend": {
+            "alignAsTable": false,
+            "avg": true,
+            "current": true,
+            "max": true,
+            "min": true,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": false,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "7.4.2",
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "$$hashKey": "object:2019",
+              "alias": "running",
+              "color": "#37872D"
+            },
+            {
+              "$$hashKey": "object:2027",
+              "alias": "suspended",
+              "color": "#FFB357"
+            },
+            {
+              "$$hashKey": "object:2035",
+              "alias": "runnable",
+              "color": "#F2495C"
+            },
+            {
+              "$$hashKey": "object:636",
+              "alias": "sleeping",
+              "color": "#1F60C4"
+            },
+            {
+              "$$hashKey": "object:644",
+              "alias": "waiting_tasks",
+              "color": "#8F3BB8"
+            }
+          ],
+          "spaceLength": 10,
+          "stack": true,
+          "steppedLine": false,
+          "targets": [
+            {
+              "alias": "",
+              "format": "time_series",
+              "hide": false,
+              "rawSql": "SELECT time = $__timeGroup(r1.snapshot_time, $aggregation,0)\r\n      ,  background\t= avg(background)\r\n      ,  running = avg(running)\t\r\n      ,  runnable = avg(runnable)\t\r\n      ,  sleeping\t = avg(sleeping)\r\n      ,  suspended\t = avg(suspended)\r\n      ,  waiting_tasks\t = avg(waiting_tasks)\r\n     -- ,  wait_duration_ms = avg(wait_duration_ms)\r\n      ,  type = case when type = 1 then 'User' else 'System' end\r\n  FROM [sqlwatch_logger_dm_exec_requests_stats] r1 (nolock)\r\n\twhere $__timeFilter(r1.snapshot_time)\r\n  and r1.sql_instance = '$sql_instance'\r\n  and type = 1\r\n  group by $__timeGroup(r1.snapshot_time, $aggregation,0), case when type = 1 then 'User' else 'System' end\r\n  order by time asc",
+              "refId": "2"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "User Requests by Status",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "transformations": [
+            {
+              "id": "seriesToColumns",
+              "options": {
+                "byField": "Time"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "(^User.)",
+                "renamePattern": ""
+              }
+            },
+            {
+              "id": "organize",
+              "options": {}
+            }
+          ],
+          "transparent": true,
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "$$hashKey": "object:1699",
+              "decimals": 0,
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": "0",
+              "show": true
+            },
+            {
+              "$$hashKey": "object:1700",
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "datasource": null,
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 3,
+            "w": 24,
+            "x": 0,
+            "y": 21
+          },
+          "id": 272,
+          "options": {
+            "content": "# SQL Server Sessions\r\n*****\r\nList of current sessions sampled from `dm_exec_sessions`.\r\n",
+            "mode": "markdown"
+          },
+          "pluginVersion": "7.4.2",
+          "targets": [
+            {
+              "queryType": "randomWalk",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "",
+          "transparent": true,
+          "type": "text"
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$DataSource",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {},
+              "thresholds": {
+                "mode": "absolute",
+                "steps": []
+              }
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 6,
+            "w": 24,
+            "x": 0,
+            "y": 24
+          },
+          "hiddenSeries": false,
+          "id": 271,
+          "legend": {
+            "alignAsTable": false,
+            "avg": true,
+            "current": true,
+            "max": true,
+            "min": true,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "connected",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "7.4.2",
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "$$hashKey": "object:2019",
+              "alias": "running",
+              "color": "#37872D"
+            },
+            {
+              "$$hashKey": "object:2027",
+              "alias": "sleeping",
+              "color": "#1F60C4",
+              "fill": 0,
+              "yaxis": 2
+            },
+            {
+              "$$hashKey": "object:2035",
+              "alias": "dormant",
+              "color": "#3274D9"
+            },
+            {
+              "$$hashKey": "object:596",
+              "alias": "preconnect",
+              "color": "#8AB8FF"
+            }
+          ],
+          "spaceLength": 10,
+          "stack": true,
+          "steppedLine": false,
+          "targets": [
+            {
+              "alias": "",
+              "format": "time_series",
+              "hide": false,
+              "rawSql": "SELECT time = $__timeGroup(r1.snapshot_time, $aggregation)\r\n      ,[running] = avg(running)\r\n      ,[sleeping] = avg(sleeping)\r\n      ,[dormant] = avg(dormant)\r\n      ,[preconnect] = avg(preconnect)\r\n      ,[cpu_time] = avg(cpu_time)\r\n      ,[reads] = avg(reads)\r\n      ,[writes] = avg(writes)\r\n      ,  type = case when type = 1 then 'User' else 'System' end\r\n  FROM [sqlwatch_logger_dm_exec_sessions_stats] r1 (nolock)\r\n\twhere $__timeFilter(r1.snapshot_time)\r\n  and r1.sql_instance = '$sql_instance'\r\n  and type = 1\r\n  group by $__timeGroup(r1.snapshot_time, $aggregation), case when type = 1 then 'User' else 'System' end\r\n  order by time asc",
+              "refId": "2"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "User Sessions by Status",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "transformations": [
+            {
+              "id": "seriesToColumns",
+              "options": {
+                "byField": "Time"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "(^User.)",
+                "renamePattern": ""
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "User cpu_time": true,
+                  "User reads": true,
+                  "User writes": true,
+                  "cpu_time": true,
+                  "reads": true,
+                  "writes": true
+                },
+                "indexByName": {
+                  "Time": 0,
+                  "max": 3,
+                  "min": 4,
+                  "sql": 2,
+                  "system": 1
+                },
+                "renameByName": {}
+              }
+            }
+          ],
+          "transparent": true,
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "$$hashKey": "object:1699",
+              "decimals": 0,
+              "format": "short",
+              "label": "",
+              "logBase": 2,
+              "max": null,
+              "min": "0",
+              "show": true
+            },
+            {
+              "$$hashKey": "object:1700",
+              "decimals": 0,
+              "format": "short",
+              "label": "",
+              "logBase": 10,
+              "max": null,
+              "min": "0",
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "-- Dashboard --",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {},
+              "thresholds": {
+                "mode": "absolute",
+                "steps": []
+              }
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 6,
+            "w": 24,
+            "x": 0,
+            "y": 30
+          },
+          "hiddenSeries": false,
+          "id": 277,
+          "legend": {
+            "alignAsTable": false,
+            "avg": true,
+            "current": true,
+            "max": true,
+            "min": true,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "connected",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "7.4.2",
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": true,
+          "steppedLine": false,
+          "targets": [
+            {
+              "panelId": 271,
+              "refId": "A"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "User Sessions by Resource",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "transformations": [
+            {
+              "id": "seriesToColumns",
+              "options": {
+                "byField": "Time"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "(^User.)",
+                "renamePattern": ""
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "User cpu_time": true,
+                  "User reads": true,
+                  "User writes": true,
+                  "cpu_time": false,
+                  "dormant": true,
+                  "preconnect": true,
+                  "reads": false,
+                  "running": true,
+                  "sleeping": true,
+                  "writes": false
+                },
+                "indexByName": {
+                  "Time": 0,
+                  "max": 3,
+                  "min": 4,
+                  "sql": 2,
+                  "system": 1
+                },
+                "renameByName": {}
+              }
+            }
+          ],
+          "transparent": true,
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "$$hashKey": "object:1699",
+              "decimals": 0,
+              "format": "short",
+              "label": "Active",
+              "logBase": 1,
+              "max": null,
+              "min": "0",
+              "show": true
+            },
+            {
+              "$$hashKey": "object:1700",
+              "decimals": 0,
+              "format": "short",
+              "label": "Sleeping",
+              "logBase": 10,
+              "max": null,
+              "min": "0",
+              "show": false
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        }
+      ],
       "title": "$sql_instance: SQL Server Requests and Sessions",
       "type": "row"
-    },
-    {
-      "datasource": null,
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 24,
-        "x": 0,
-        "y": 34
-      },
-      "id": 265,
-      "options": {
-        "content": "# SQL Server Requests\r\n*****\r\nList of current requests sampled from `dm_exec_requests`.\r\n\r\n**Runnable** - The session has been assigned a worker thread but it is waiting for CPU to become available.\r\nMany runnable threads would indicate CPU bottleneck.\r\n\r\n**Pending** - The session is awaiting a worker thread to be assigned. Unitil a workthread is assigned the session will not run even if the CPU is available.\r\nIn most cases, the worker will not be assigned due to CPU bottlenecks but in some cases, you may encounter a thread exhaustion.\r\nThis is a scenerio where SQL Server ran out of threads to allocate.\r\n\r\n**Suspended** - The session was running but has been put on hold due to lack of resources. Suspended session will likely have `wait_type` assigned to them.\r\n\r\n**Sleeping** - Sessions that SQL Server has put \"to sleep\" as they are not doing anything or could have ended recently but the connetion is still open. \r\nThis may be often observed with .NET Connection pooling. ",
-        "mode": "markdown"
-      },
-      "pluginVersion": "7.4.2",
-      "targets": [
-        {
-          "queryType": "randomWalk",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "",
-      "transparent": true,
-      "type": "text"
-    },
-    {
-      "aliasColors": {},
-      "bars": true,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$DataSource",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {},
-          "thresholds": {
-            "mode": "absolute",
-            "steps": []
-          }
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 6,
-        "w": 24,
-        "x": 0,
-        "y": 42
-      },
-      "hiddenSeries": false,
-      "id": 264,
-      "legend": {
-        "alignAsTable": false,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": true,
-        "show": true,
-        "total": false,
-        "values": true
-      },
-      "lines": false,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "7.4.2",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "$$hashKey": "object:2019",
-          "alias": "running",
-          "color": "#37872D"
-        },
-        {
-          "$$hashKey": "object:2027",
-          "alias": "suspended",
-          "color": "#FFB357"
-        },
-        {
-          "$$hashKey": "object:2035",
-          "alias": "runnable",
-          "color": "#F2495C"
-        },
-        {
-          "$$hashKey": "object:636",
-          "alias": "sleeping",
-          "color": "#1F60C4"
-        },
-        {
-          "$$hashKey": "object:644",
-          "alias": "waiting_tasks",
-          "color": "#8F3BB8"
-        }
-      ],
-      "spaceLength": 10,
-      "stack": true,
-      "steppedLine": false,
-      "targets": [
-        {
-          "alias": "",
-          "format": "time_series",
-          "hide": false,
-          "rawSql": "SELECT time = $__timeGroup(r1.snapshot_time, $aggregation)\r\n      ,  background\t= avg(background)\r\n      ,  running = avg(running)\t\r\n      ,  runnable = avg(runnable)\t\r\n      ,  sleeping\t = avg(sleeping)\r\n      ,  suspended\t = avg(suspended)\r\n      ,  waiting_tasks\t = avg(waiting_tasks)\r\n     -- ,  wait_duration_ms = avg(wait_duration_ms)\r\n      ,  type = case when type = 1 then 'User' else 'System' end\r\n  FROM [sqlwatch_logger_dm_exec_requests_stats] r1 (nolock)\r\n\twhere $__timeFilter(r1.snapshot_time)\r\n  and r1.sql_instance = '$sql_instance'\r\n  and type = 1\r\n  group by $__timeGroup(r1.snapshot_time, $aggregation), case when type = 1 then 'User' else 'System' end\r\n  order by time asc",
-          "refId": "2"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "User Requests by Status",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "transformations": [
-        {
-          "id": "seriesToColumns",
-          "options": {
-            "byField": "Time"
-          }
-        },
-        {
-          "id": "renameByRegex",
-          "options": {
-            "regex": "(^User.)",
-            "renamePattern": ""
-          }
-        },
-        {
-          "id": "organize",
-          "options": {}
-        }
-      ],
-      "transparent": true,
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:1699",
-          "decimals": 0,
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": "0",
-          "show": true
-        },
-        {
-          "$$hashKey": "object:1700",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "datasource": null,
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 24,
-        "x": 0,
-        "y": 48
-      },
-      "id": 272,
-      "options": {
-        "content": "# SQL Server Sessions\r\n*****\r\nList of current sessions sampled from `dm_exec_sessions`.\r\n",
-        "mode": "markdown"
-      },
-      "pluginVersion": "7.4.2",
-      "targets": [
-        {
-          "queryType": "randomWalk",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "",
-      "transparent": true,
-      "type": "text"
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$DataSource",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {},
-          "thresholds": {
-            "mode": "absolute",
-            "steps": []
-          }
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 6,
-        "w": 24,
-        "x": 0,
-        "y": 51
-      },
-      "hiddenSeries": false,
-      "id": 271,
-      "legend": {
-        "alignAsTable": false,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": true,
-        "show": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "connected",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "7.4.2",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "$$hashKey": "object:2019",
-          "alias": "running",
-          "color": "#37872D"
-        },
-        {
-          "$$hashKey": "object:2027",
-          "alias": "sleeping",
-          "color": "#1F60C4",
-          "fill": 0,
-          "yaxis": 2
-        },
-        {
-          "$$hashKey": "object:2035",
-          "alias": "dormant",
-          "color": "#3274D9"
-        },
-        {
-          "$$hashKey": "object:596",
-          "alias": "preconnect",
-          "color": "#8AB8FF"
-        }
-      ],
-      "spaceLength": 10,
-      "stack": true,
-      "steppedLine": false,
-      "targets": [
-        {
-          "alias": "",
-          "format": "time_series",
-          "hide": false,
-          "rawSql": "SELECT time = $__timeGroup(r1.snapshot_time, $aggregation)\r\n      ,[running] = avg(running)\r\n      ,[sleeping] = avg(sleeping)\r\n      ,[dormant] = avg(dormant)\r\n      ,[preconnect] = avg(preconnect)\r\n      ,[cpu_time] = avg(cpu_time)\r\n      ,[reads] = avg(reads)\r\n      ,[writes] = avg(writes)\r\n      ,  type = case when type = 1 then 'User' else 'System' end\r\n  FROM [sqlwatch_logger_dm_exec_sessions_stats] r1 (nolock)\r\n\twhere $__timeFilter(r1.snapshot_time)\r\n  and r1.sql_instance = '$sql_instance'\r\n  and type = 1\r\n  group by $__timeGroup(r1.snapshot_time, $aggregation), case when type = 1 then 'User' else 'System' end\r\n  order by time asc",
-          "refId": "2"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "User Sessions by Status",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "transformations": [
-        {
-          "id": "seriesToColumns",
-          "options": {
-            "byField": "Time"
-          }
-        },
-        {
-          "id": "renameByRegex",
-          "options": {
-            "regex": "(^User.)",
-            "renamePattern": ""
-          }
-        },
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {
-              "User cpu_time": true,
-              "User reads": true,
-              "User writes": true,
-              "cpu_time": true,
-              "reads": true,
-              "writes": true
-            },
-            "indexByName": {
-              "Time": 0,
-              "max": 3,
-              "min": 4,
-              "sql": 2,
-              "system": 1
-            },
-            "renameByName": {}
-          }
-        }
-      ],
-      "transparent": true,
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:1699",
-          "decimals": 0,
-          "format": "short",
-          "label": "Active",
-          "logBase": 2,
-          "max": null,
-          "min": "0",
-          "show": true
-        },
-        {
-          "$$hashKey": "object:1700",
-          "decimals": 0,
-          "format": "short",
-          "label": "Sleeping",
-          "logBase": 10,
-          "max": null,
-          "min": "0",
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "-- Dashboard --",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {},
-          "thresholds": {
-            "mode": "absolute",
-            "steps": []
-          }
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 6,
-        "w": 24,
-        "x": 0,
-        "y": 57
-      },
-      "hiddenSeries": false,
-      "id": 277,
-      "legend": {
-        "alignAsTable": false,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": true,
-        "show": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "connected",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "7.4.2",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": true,
-      "steppedLine": false,
-      "targets": [
-        {
-          "panelId": 271,
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "User Sessions by Resource",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "transformations": [
-        {
-          "id": "seriesToColumns",
-          "options": {
-            "byField": "Time"
-          }
-        },
-        {
-          "id": "renameByRegex",
-          "options": {
-            "regex": "(^User.)",
-            "renamePattern": ""
-          }
-        },
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {
-              "User cpu_time": true,
-              "User reads": true,
-              "User writes": true,
-              "cpu_time": false,
-              "dormant": true,
-              "preconnect": true,
-              "reads": false,
-              "running": true,
-              "sleeping": true,
-              "writes": false
-            },
-            "indexByName": {
-              "Time": 0,
-              "max": 3,
-              "min": 4,
-              "sql": 2,
-              "system": 1
-            },
-            "renameByName": {}
-          }
-        }
-      ],
-      "transparent": true,
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:1699",
-          "decimals": 0,
-          "format": "short",
-          "label": "Active",
-          "logBase": 1,
-          "max": null,
-          "min": "0",
-          "show": true
-        },
-        {
-          "$$hashKey": "object:1700",
-          "decimals": 0,
-          "format": "short",
-          "label": "Sleeping",
-          "logBase": 10,
-          "max": null,
-          "min": "0",
-          "show": false
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
     },
     {
       "collapsed": true,
@@ -2483,7 +2484,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 63
+        "y": 34
       },
       "id": 187,
       "panels": [
@@ -2499,7 +2500,7 @@
             "h": 5,
             "w": 24,
             "x": 0,
-            "y": 35
+            "y": 7
           },
           "id": 259,
           "options": {
@@ -2543,7 +2544,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 40
+            "y": 12
           },
           "hiddenSeries": false,
           "id": 258,
@@ -2703,7 +2704,7 @@
             "h": 11,
             "w": 24,
             "x": 0,
-            "y": 46
+            "y": 18
           },
           "id": 43,
           "options": {
@@ -2749,7 +2750,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 57
+            "y": 29
           },
           "hiddenSeries": false,
           "id": 231,
@@ -2890,7 +2891,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 64
+            "y": 36
           },
           "hiddenSeries": false,
           "hideTimeOverride": false,
@@ -2985,7 +2986,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 71
+            "y": 43
           },
           "id": 109,
           "options": {
@@ -3029,7 +3030,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 77
+            "y": 49
           },
           "hiddenSeries": false,
           "id": 6,
@@ -3176,7 +3177,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 84
+            "y": 56
           },
           "id": 110,
           "options": {
@@ -3225,7 +3226,7 @@
             "h": 11,
             "w": 24,
             "x": 0,
-            "y": 90
+            "y": 62
           },
           "hiddenSeries": false,
           "id": 232,
@@ -3346,7 +3347,7 @@
             "h": 2,
             "w": 24,
             "x": 0,
-            "y": 101
+            "y": 73
           },
           "id": 192,
           "options": {
@@ -3391,7 +3392,7 @@
             "h": 5,
             "w": 24,
             "x": 0,
-            "y": 103
+            "y": 75
           },
           "hiddenSeries": false,
           "id": 191,
@@ -3583,7 +3584,7 @@
             "h": 5,
             "w": 24,
             "x": 0,
-            "y": 108
+            "y": 80
           },
           "id": 194,
           "links": [
@@ -3652,7 +3653,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 64
+        "y": 35
       },
       "id": 208,
       "panels": [
@@ -4353,7 +4354,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 65
+        "y": 36
       },
       "id": 185,
       "panels": [
@@ -5096,7 +5097,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 66
+        "y": 37
       },
       "id": 183,
       "panels": [
@@ -6947,7 +6948,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 67
+        "y": 38
       },
       "id": 181,
       "panels": [
@@ -7306,7 +7307,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 68
+        "y": 39
       },
       "id": 179,
       "panels": [
@@ -8464,7 +8465,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 69
+        "y": 40
       },
       "id": 177,
       "panels": [
@@ -9090,7 +9091,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 70
+        "y": 41
       },
       "id": 175,
       "panels": [
@@ -9247,7 +9248,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 71
+        "y": 42
       },
       "id": 234,
       "panels": [
@@ -9808,405 +9809,404 @@
       "type": "row"
     },
     {
-      "collapsed": true,
+      "collapsed": false,
       "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 72
+        "y": 43
       },
       "id": 220,
-      "panels": [
-        {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$DataSource",
-          "description": "0 - OK\n1 - WARNING\n2 - CRITICAL\n3 - CHECK ERROR",
-          "fieldConfig": {
-            "defaults": {
-              "color": {},
-              "custom": {},
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              }
-            },
-            "overrides": []
-          },
-          "fill": 1,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 9,
-            "w": 24,
-            "x": 0,
-            "y": 14
-          },
-          "hiddenSeries": false,
-          "id": 251,
-          "legend": {
-            "alignAsTable": true,
-            "avg": true,
-            "current": true,
-            "max": true,
-            "min": true,
-            "show": true,
-            "sort": "current",
-            "sortDesc": true,
-            "total": false,
-            "values": true
-          },
-          "lines": false,
-          "linewidth": 1,
-          "nullPointMode": "null",
-          "options": {
-            "alertThreshold": true
-          },
-          "percentage": false,
-          "pluginVersion": "7.4.2",
-          "pointradius": 2,
-          "points": true,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "alias": "",
-              "format": "time_series",
-              "hide": false,
-              "rawSql": "SELECT  [metric] = replace([check_name],' failure count','')\n        ,value = CASE [check_status] \n        WHEN 'CRITICAL' THEN 2\n        WHEN 'WARNING' THEN 1\n        WHEN 'OK' THEN 0\n        ELSE 3 END\n        ,time=[snapshot_time]\n  FROM [dbo].[vw_sqlwatch_report_fact_check] with (nolock)\n  WHERE  [sql_instance] = '$sql_instance'\n  --AND check_enabled = 1\n  AND $__timeFilter([snapshot_time])\n  AND check_status <> 'OK'\n  --AND last_check_status IN ($Status)\n  order by time asc",
-              "refId": "A"
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeRegions": [],
-          "timeShift": null,
-          "title": "Check Failure History",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "transformations": [],
-          "transparent": true,
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            },
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
-        },
-        {
-          "datasource": "$DataSource",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {
-                "align": null,
-                "displayMode": "color-background",
-                "filterable": true
-              },
-              "links": [],
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "rgba(115, 191, 105, 0)",
-                    "value": null
-                  }
-                ]
-              }
-            },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "status"
-                },
-                "properties": [
-                  {
-                    "id": "mappings",
-                    "value": [
-                      {
-                        "from": "",
-                        "id": 0,
-                        "operator": "",
-                        "text": "CRITICAL",
-                        "to": "",
-                        "type": 1,
-                        "value": "2"
-                      },
-                      {
-                        "from": "",
-                        "id": 1,
-                        "operator": "",
-                        "text": "WARNING",
-                        "to": "",
-                        "type": 1,
-                        "value": "1"
-                      },
-                      {
-                        "from": "",
-                        "id": 2,
-                        "operator": "",
-                        "text": "OK",
-                        "to": "",
-                        "type": 1,
-                        "value": "0"
-                      },
-                      {
-                        "from": "",
-                        "id": 3,
-                        "operator": "",
-                        "text": "CHECK ERROR",
-                        "to": "",
-                        "type": 1,
-                        "value": "3"
-                      }
-                    ]
-                  },
-                  {
-                    "id": "thresholds",
-                    "value": {
-                      "mode": "absolute",
-                      "steps": [
-                        {
-                          "color": "purple",
-                          "value": null
-                        },
-                        {
-                          "color": "green",
-                          "value": 0
-                        },
-                        {
-                          "color": "orange",
-                          "value": 1
-                        },
-                        {
-                          "color": "red",
-                          "value": 2
-                        },
-                        {
-                          "color": "purple",
-                          "value": 3
-                        }
-                      ]
-                    }
-                  },
-                  {
-                    "id": "custom.width",
-                    "value": 200
-                  },
-                  {
-                    "id": "displayName",
-                    "value": "Status"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "last_check_value"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 100
-                  },
-                  {
-                    "id": "custom.displayMode",
-                    "value": "auto"
-                  },
-                  {
-                    "id": "displayName",
-                    "value": "Value"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "check_description"
-                },
-                "properties": [
-                  {
-                    "id": "custom.displayMode",
-                    "value": "json-view"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "check_name"
-                },
-                "properties": [
-                  {
-                    "id": "links",
-                    "value": []
-                  },
-                  {
-                    "id": "displayName",
-                    "value": "Name"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Name"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 375
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Description"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 1002
-                  },
-                  {
-                    "id": "custom.displayMode",
-                    "value": "json-view"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Check Date"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 232
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Value"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 0
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Status"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 115
-                  }
-                ]
-              }
-            ]
-          },
-          "gridPos": {
-            "h": 15,
-            "w": 24,
-            "x": 0,
-            "y": 23
-          },
-          "id": 252,
-          "options": {
-            "showHeader": true,
-            "sortBy": [
-              {
-                "desc": true,
-                "displayName": "Status"
-              }
-            ]
-          },
-          "pluginVersion": "7.4.2",
-          "targets": [
-            {
-              "alias": "",
-              "format": "table",
-              "hide": false,
-              "rawSql": "SELECT  [check_name] = replace([check_name],' failure count','')\n        , check_description\n        ,[last_check_value] = convert(varchar(max),[last_check_value])\n        ,status = CASE [last_check_status] \n        WHEN 'CRITICAL' THEN 2\n        WHEN 'WARNING' THEN 1\n        WHEN 'OK' THEN 0\n        ELSE 3 END\n        ,last_check_date\n  FROM [dbo].[vw_sqlwatch_report_dim_check] with (nolock)\n  WHERE  [sql_instance] = '$sql_instance'\n  AND check_enabled = 1\n  --AND $__timeFilter(last_check_date)\n  --AND last_check_status IN ($Status)\n  order by case when last_check_status = 'OK' then dateadd(month,-1,last_check_date) else last_check_date end desc",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Checks",
-          "transformations": [
-            {
-              "id": "filterFieldsByName",
-              "options": {}
-            },
-            {
-              "id": "organize",
-              "options": {
-                "excludeByName": {},
-                "indexByName": {
-                  "check_description": 1,
-                  "check_name": 0,
-                  "last_check_value": 3,
-                  "status": 2
-                },
-                "renameByName": {
-                  "check_description": "Description",
-                  "check_name": "",
-                  "last_check_date": "Check Date",
-                  "last_check_value": "",
-                  "status": ""
-                }
-              }
-            }
-          ],
-          "transparent": true,
-          "type": "table"
-        }
-      ],
+      "panels": [],
       "title": "$sql_instance: Checks",
       "type": "row"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$DataSource",
+      "description": "0 - OK\n1 - WARNING\n2 - CRITICAL\n3 - CHECK ERROR",
+      "fieldConfig": {
+        "defaults": {
+          "color": {},
+          "custom": {},
+          "thresholds": {
+            "mode": "absolute",
+            "steps": []
+          }
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 44
+      },
+      "hiddenSeries": false,
+      "id": 251,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": true,
+        "show": true,
+        "sort": "current",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": false,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.4.2",
+      "pointradius": 2,
+      "points": true,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "",
+          "format": "time_series",
+          "hide": false,
+          "rawSql": "SELECT  [metric] = replace([check_name],' failure count','')\n        ,value = CASE [check_status] \n        WHEN 'CRITICAL' THEN 2\n        WHEN 'WARNING' THEN 1\n        WHEN 'OK' THEN 0\n        ELSE 3 END\n        ,time=[snapshot_time]\n  FROM [dbo].[vw_sqlwatch_report_fact_check] with (nolock)\n  WHERE  [sql_instance] = '$sql_instance'\n  --AND check_enabled = 1\n  AND $__timeFilter([snapshot_time])\n  AND check_status <> 'OK'\n  --AND last_check_status IN ($Status)\n  order by time asc",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Check Failure History",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "transformations": [],
+      "transparent": true,
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "datasource": "$DataSource",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": null,
+            "displayMode": "color-background",
+            "filterable": true
+          },
+          "links": [],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "rgba(115, 191, 105, 0)",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "status"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "from": "",
+                    "id": 0,
+                    "operator": "",
+                    "text": "CRITICAL",
+                    "to": "",
+                    "type": 1,
+                    "value": "2"
+                  },
+                  {
+                    "from": "",
+                    "id": 1,
+                    "operator": "",
+                    "text": "WARNING",
+                    "to": "",
+                    "type": 1,
+                    "value": "1"
+                  },
+                  {
+                    "from": "",
+                    "id": 2,
+                    "operator": "",
+                    "text": "OK",
+                    "to": "",
+                    "type": 1,
+                    "value": "0"
+                  },
+                  {
+                    "from": "",
+                    "id": 3,
+                    "operator": "",
+                    "text": "CHECK ERROR",
+                    "to": "",
+                    "type": 1,
+                    "value": "3"
+                  }
+                ]
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "purple",
+                      "value": null
+                    },
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "orange",
+                      "value": 1
+                    },
+                    {
+                      "color": "red",
+                      "value": 2
+                    },
+                    {
+                      "color": "purple",
+                      "value": 3
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.width",
+                "value": 200
+              },
+              {
+                "id": "displayName",
+                "value": "Status"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "last_check_value"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 100
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "auto"
+              },
+              {
+                "id": "displayName",
+                "value": "Value"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "check_description"
+            },
+            "properties": [
+              {
+                "id": "custom.displayMode",
+                "value": "json-view"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "check_name"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": []
+              },
+              {
+                "id": "displayName",
+                "value": "Name"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Name"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 375
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Description"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 1002
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "json-view"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Check Date"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 232
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Value"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Status"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 115
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 15,
+        "w": 24,
+        "x": 0,
+        "y": 53
+      },
+      "id": 252,
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Status"
+          }
+        ]
+      },
+      "pluginVersion": "7.4.2",
+      "targets": [
+        {
+          "alias": "",
+          "format": "table",
+          "hide": false,
+          "rawSql": "SELECT  [check_name] = replace([check_name],' failure count','')\n        , check_description\n        ,[last_check_value] = convert(varchar(max),[last_check_value])\n        ,status = CASE [last_check_status] \n        WHEN 'CRITICAL' THEN 2\n        WHEN 'WARNING' THEN 1\n        WHEN 'OK' THEN 0\n        ELSE 3 END\n        ,last_check_date\n  FROM [dbo].[vw_sqlwatch_report_dim_check] with (nolock)\n  WHERE  [sql_instance] = '$sql_instance'\n  AND check_enabled = 1\n  --AND $__timeFilter(last_check_date)\n  --AND last_check_status IN ($Status)\n  order by case when last_check_status = 'OK' then dateadd(month,-1,last_check_date) else last_check_date end desc",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Checks",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {
+              "check_description": 1,
+              "check_name": 0,
+              "last_check_value": 3,
+              "status": 2
+            },
+            "renameByName": {
+              "check_description": "Description",
+              "check_name": "",
+              "last_check_date": "Check Date",
+              "last_check_value": "",
+              "status": ""
+            }
+          }
+        }
+      ],
+      "transparent": true,
+      "type": "table"
     }
   ],
   "refresh": "5s",
@@ -10271,7 +10271,7 @@
         "auto_count": 100,
         "auto_min": "1s",
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "auto",
           "value": "$__auto_interval_aggregation"
         },
@@ -10541,5 +10541,5 @@
   "timezone": "utc",
   "title": "SQL Instance Overview",
   "uid": "sqlwatch-instance-overview",
-  "version": 250
+  "version": 263
 }
