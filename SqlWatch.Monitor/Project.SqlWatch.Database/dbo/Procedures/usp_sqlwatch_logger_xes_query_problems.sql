@@ -79,7 +79,7 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 					insert into dbo.[sqlwatch_logger_xes_query_problems] (
 						  [event_time], event_name, username
 						, client_hostname, client_app_name
-						, snapshot_time, snapshot_type_id, sql_instance, [problem_details], [event_hashbytes], occurence)
+						, snapshot_time, snapshot_type_id, sql_instance, [problem_details], [event_hash], occurence)
 
 					select 
 						  tx.[event_time], tx.event_name, tx.username
@@ -94,7 +94,7 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 
 					-- do not load queries that we arleady have
 					left join dbo.[sqlwatch_logger_xes_query_problems] x
-						on x.[event_hashbytes] = tx.[event_hashbytes]
+						on x.[event_hash] = tx.[event_hashbytes]
 						and x.event_time = tx.event_time
 						and x.event_name = tx.event_name
 
@@ -105,7 +105,7 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 					) o
 
 					where tx.occurence = 1 
-					and x.[event_hashbytes] is null
+					and x.[event_hash] is null
 
 				commit tran					
 			end

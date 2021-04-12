@@ -2667,4 +2667,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="waiting_tasks_wait_duration_ms" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="890d8d79-ddea-41c3-8e83-af17fba44704" ChangeDateTime="04/12/2021 21:35:26">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_logger_xes_query_problems].[event_hashbytes]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_logger_xes_query_problems]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[event_hash]" />
+  </Operation>
 </Operations>
