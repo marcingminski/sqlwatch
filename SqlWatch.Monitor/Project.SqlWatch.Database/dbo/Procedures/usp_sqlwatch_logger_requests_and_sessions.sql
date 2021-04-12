@@ -41,10 +41,10 @@ as
 		select wait_duration_ms=sum(wait_duration_ms), sessions=count(session_id)
 		from sys.dm_os_waiting_tasks t (nolock)
 		where t.session_id = r.session_id
-		and wait_type not in (
-			select wait_type
+		and wait_type collate database_default not in (
+			select wait_type 
 			from dbo.sqlwatch_config_exclude_wait_stats (nolock)
-			)
+			) 
 		) tc
 	group by case when r.session_id > 50 then 1 else 0 end
 	option (keep plan);
