@@ -16,8 +16,10 @@ as
 		, runnable
 		, sleeping
 		, suspended
+		, wait_time
+		, cpu_time
 		, waiting_tasks
-		, wait_duration_ms
+		, waiting_tasks_wait_duration_ms
 		, snapshot_time
 		, snapshot_type_id
 		, sql_instance
@@ -31,21 +33,29 @@ as
 		, 'runnable' = sum(case status when 'Runnable' then 1 else 0 end)
 		, 'sleeping' = sum(case status when 'Sleeping' then 1 else 0 end)
 		, 'suspended' = sum(case status when 'Suspended' then 1 else 0 end)
-		, 'waiting_tasks' = sum(sessions)
-		, 'wait_duration_ms' = isnull(sum(tc.wait_duration_ms),0)
+		, 'wait_time' = sum(convert(real,wait_time))
+		, 'cpu_time' = sum(convert(real,cpu_time))
+		, 'waiting_tasks' = isnull(sum(waiting_tasks),0)
+		, 'waiting_tasks_wait_duration_ms' = isnull(sum(wait_duration_ms),0)
 		, snapshot_time = @snapshot_time
 		, snapshot_type_id = @snapshot_type_id
 		, sql_instance = @sql_instance
 	from sys.dm_exec_requests r (nolock)
-	cross apply (
-		select wait_duration_ms=sum(wait_duration_ms), sessions=count(session_id)
+	left join (
+		-- get waiting tasks
+		select type = case when t.session_id > 50 then 1 else 0 end
+			, waiting_tasks = count(*)
+			, wait_duration_ms = sum(wait_duration_ms)
 		from sys.dm_os_waiting_tasks t (nolock)
-		where t.session_id = r.session_id
-		and wait_type collate database_default not in (
+		where wait_type collate database_default not in (
 			select wait_type 
 			from dbo.sqlwatch_config_exclude_wait_stats (nolock)
 			) 
-		) tc
+		and session_id is not null 
+		group by case when t.session_id > 50 then 1 else 0 end
+	
+	) t
+	on t.type = case when r.session_id > 50 then 1 else 0 end
 	group by case when r.session_id > 50 then 1 else 0 end
 	option (keep plan);
 
@@ -70,9 +80,9 @@ as
 		,'sleeping' = sum(case status when 'Sleeping' then 1 else 0 end)
 		,'dormant' = sum(case status when 'Dormant' then 1 else 0 end)
 		,'preconnect' = sum(case status when 'Preconnect' then 1 else 0 end)
-		,'cpu_time' = avg(cpu_time)
-		,'reads' = avg(reads)
-		,'writes' = avg(writes)
+		,'cpu_time' = sum(convert(real,cpu_time))
+		,'reads' = sum(convert(real,reads))
+		,'writes' = sum(convert(real,writes))
 		, snapshot_time = @snapshot_time
 		, snapshot_type_id = @snapshot_type_id
 		, sql_instance = @sql_instance
