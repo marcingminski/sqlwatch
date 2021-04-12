@@ -9,26 +9,10 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 
 		declare @execution_count bigint = 0,
 				@session_name nvarchar(64) = 'SQLWATCH_Blockers',
-				@address varbinary(8),
 				@snapshot_time datetime,
 				@snapshot_type_id tinyint = 9,
 				@filename varchar(8000),
 				@sql_instance varchar(32) = dbo.ufn_sqlwatch_get_servername();
-
-		--we're getting session address in a separate batch
-		--becuase when we join xe_sessions with xe_session_targets
-		--the execution goes up to 500ms. two batches run in 4 ms.
-		select @address = address 
-		from sys.dm_xe_sessions
-		where name = @session_name
-		option (keepfixed plan)
-
-		select @execution_count = isnull(execution_count,0)
-		from sys.dm_xe_session_targets t
-		where event_session_address = @address
-		and target_name = 'event_file'
-		option (keepfixed plan)
-
 
 		-- even though we may not collect any xes data
 		-- we are still going to create a snapshot becausae it makes it easier to then show data on the dashboard as 0 rathern than "No Data"
@@ -38,17 +22,14 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 			@snapshot_type_id = @snapshot_type_id
 
 		--if the session has not triggered since last run there will not be any new records so we may not bother querying it
-		if @execution_count > (
-			select execution_count
-			from [dbo].[sqlwatch_stage_xes_exec_count]
-			where session_name = @session_name
-			)
+		set @execution_count = [dbo].[ufn_sqlwatch_get_xes_exec_count] ( @session_name, 0 )
+		if  @execution_count > [dbo].[ufn_sqlwatch_get_xes_exec_count] ( @session_name, 1 )
 			begin
 				--update execution count
-				update [dbo].[sqlwatch_stage_xes_exec_count]
-				set  execution_count = @execution_count
-					,last_updated = getutcdate()
-				where session_name = @session_name;
+				exec [dbo].[usp_sqlwatch_internal_update_xes_query_count] 
+					  @session_name = @session_name
+					, @execution_count = @execution_count
+
 
 				/*  For this to work you must enable blocked process monitor */
 
