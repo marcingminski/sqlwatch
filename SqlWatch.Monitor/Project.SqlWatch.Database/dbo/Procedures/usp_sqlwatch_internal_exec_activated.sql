@@ -52,7 +52,18 @@ begin
                             begin
                                 
                                 /* this could be a generic worker that we pass group id into and it works out what to run based on some meta data.
-                                   for now however this will be hardcoded in batches */
+                                   for now however this will be hardcoded in batches 
+                                   
+                                   This code will execute procedures synchronously as sometimes dependencies are required.
+                                   For example, we first want to collect database before we collect tables
+                                        exec dbo.usp_sqlwatch_internal_add_database;
+                                        exec dbo.usp_sqlwatch_internal_add_table;
+
+                                   But we can also enqueue procedure to run asynchronously using:
+                                   exec [dbo].[usp_sqlwatch_internal_exec_activated_async] @procedure_name = 'dbo.usp_sqlwatch_logger_xes_blockers'
+
+                                 */
+
 
                                 -- 5 seconds batch
 			                    if @conversation_group_id = 'B273076A-5D10-4527-909F-955707905890'
