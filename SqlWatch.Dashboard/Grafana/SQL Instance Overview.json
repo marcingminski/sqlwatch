@@ -12,11 +12,11 @@
       }
     ]
   },
-  "editable": true,
+  "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
   "id": 32,
-  "iteration": 1618067162620,
+  "iteration": 1618246226531,
   "links": [
     {
       "asDropdown": true,
@@ -403,9 +403,11 @@
           },
           "custom": {},
           "decimals": 0,
+          "displayName": "Blocked",
           "links": [],
           "mappings": [],
           "min": 0,
+          "noValue": "0",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -414,7 +416,7 @@
                 "value": null
               },
               {
-                "color": "orange",
+                "color": "red",
                 "value": 0.1
               },
               {
@@ -454,13 +456,14 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT time = h.snapshot_time\r\n      ,[Blocked] = sum(case when isnull(blocking_session_id,0) > 0 then 1 else 0 end)\r\n  FROM sqlwatch_logger_snapshot_header h\r\n  left join [dbo].[sqlwatch_logger_dm_exec_requests] r1\r\n  on h.snapshot_time = r1.snapshot_time\r\n  and h.snapshot_type_id = r1.snapshot_type_id\r\n  and h.sql_instance = r1.sql_instance\r\n  and blocking_session_id > 0\r\n\twhere $__timeFilter(h.snapshot_time)\r\n    and h.snapshot_time >= dateadd(minute,-15,getutcdate())\r\n  and h.sql_instance = '$sql_instance'\r\n  group by h.snapshot_time\r\n  order by time asc",
+          "rawSql": "SELECT time = isnull(x.event_time,h.snapshot_time)\r\n      ,[Blocked] = sum(case when isnull(blocking_session_id,0) > 0 then 1 else 0 end)\r\n  --xes only collects data when the event happens so it will return null if no events\r\n  --this will make grafana show \"No Data\" rather than default to zero as we're nog going to have a serie either.\r\n  --we have to fudge it a bit\r\n  \r\n  from dbo.sqlwatch_logger_snapshot_header h\r\n  left join [dbo].[ufn_sqlwatch_get_blocking_chains] ($__timeFrom(), $__timeTo(),'$sql_instance') x\r\n  on h.snapshot_time = x.snapshot_time\r\n  and h.snapshot_type_id = x.snapshot_type_id\r\n  and h.sql_instance = x.sql_instance\r\n  where h.sql_instance = '$sql_instance'\r\n  and h.snapshot_type_id = 9\r\n  and $__timeFilter(h.snapshot_time)\r\n  group by isnull(x.event_time,h.snapshot_time)\r\n  order by time asc",
           "refId": "A"
         }
       ],
       "timeFrom": null,
       "timeShift": null,
       "title": "",
+      "transformations": [],
       "transparent": true,
       "type": "stat"
     },
@@ -1712,188 +1715,7 @@
           },
           "id": 159,
           "options": {
-            "content": "# SQL Server Blocking Chains\r\n*****\r\nBlocking chains happen when one query is holding back other queries. This happens when poorly written query is holding excessive and exclusive locks on tables. Relational databases are written with ACID properties in mind, \r\nthis means that in order to retain data integrity, only one query at a time can modify the data. To achieve this, a lock is applied so no other queries can even read the data to avoid partially written data being displayed back to the client. When blocking chains happen for long period of time, you will have the impression that the database is slow, even though it isn't. It's just doing its job. It is important to undertand how locking works to avoid blocking chains.\r\n\r\nThese graphs come from sampling `sys.dm_exec_requests` every few seconds. In addition, blocking chains are also captured by Extended Events Session which is more reliable than sampling but more expensive to process. Make sure the extended events session captures blocking chains. You must enable blocked process monitor: `sp_configure 'blocked process threshold', 5 ; -- set desired value in seconds`",
-            "mode": "markdown"
-          },
-          "pluginVersion": "7.4.2",
-          "targets": [
-            {
-              "queryType": "randomWalk",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "",
-          "transparent": true,
-          "type": "text"
-        },
-        {
-          "cards": {
-            "cardPadding": null,
-            "cardRound": null
-          },
-          "color": {
-            "cardColor": "#F2495C",
-            "colorScale": "sqrt",
-            "colorScheme": "interpolateOranges",
-            "exponent": 0.5,
-            "mode": "opacity"
-          },
-          "dataFormat": "tsbuckets",
-          "datasource": "$DataSource",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {},
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              }
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 6,
-            "w": 24,
-            "x": 0,
-            "y": 39
-          },
-          "heatmap": {},
-          "hideZeroBuckets": false,
-          "highlightCards": true,
-          "id": 101,
-          "legend": {
-            "show": false
-          },
-          "pluginVersion": "7.4.2",
-          "reverseYBuckets": false,
-          "targets": [
-            {
-              "alias": "",
-              "format": "time_series",
-              "hide": false,
-              "rawSql": "SELECT time = $__timeGroup(r1.snapshot_time, $aggregation)\r\n      ,[value] = sum(case when isnull(blocking_session_id,0) > 0 then 1 else 0 end)\r\n      ,[metric] = 'SPID: ' + convert(varchar(10),session_id)\r\n  FROM [dbo].[sqlwatch_logger_dm_exec_requests] r1\r\n\twhere $__timeFilter(r1.snapshot_time)\r\n  and r1.sql_instance = '$sql_instance'\r\n  and blocking_session_id > 0\r\n  group by $__timeGroup(r1.snapshot_time, $aggregation), 'SPID: ' + convert(varchar(10),session_id)\r\n  order by time asc",
-              "refId": "2"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Blockers",
-          "tooltip": {
-            "show": true,
-            "showHistogram": false
-          },
-          "transformations": [
-            {
-              "id": "seriesToColumns",
-              "options": {
-                "byField": "Time"
-              }
-            },
-            {
-              "id": "organize",
-              "options": {
-                "excludeByName": {},
-                "indexByName": {
-                  "Time": 0,
-                  "max": 3,
-                  "min": 4,
-                  "sql": 2,
-                  "system": 1
-                },
-                "renameByName": {}
-              }
-            }
-          ],
-          "transparent": true,
-          "type": "heatmap",
-          "xAxis": {
-            "show": true
-          },
-          "xBucketNumber": null,
-          "xBucketSize": null,
-          "yAxis": {
-            "decimals": null,
-            "format": "short",
-            "logBase": 1,
-            "max": null,
-            "min": null,
-            "show": true,
-            "splitFactor": null
-          },
-          "yBucketBound": "middle",
-          "yBucketNumber": null,
-          "yBucketSize": null
-        },
-        {
-          "datasource": "${DataSource}",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 10,
-            "w": 24,
-            "x": 0,
-            "y": 45
-          },
-          "id": 255,
-          "options": {
-            "showLabels": false,
-            "showTime": false,
-            "sortOrder": "Descending",
-            "wrapLogMessage": false
-          },
-          "pluginVersion": "7.4.2",
-          "targets": [
-            {
-              "alias": "",
-              "format": "table",
-              "queryType": "randomWalk",
-              "rawSql": ";with cte_blocking as (\r\n   select \r\n          r1.session_id \r\n        , r1.blocking_session_id\r\n\t\t, blocking_chain_id = ROW_NUMBER() over (partition by snapshot_time  order by snapshot_time)\r\n\t\t--the visual tree inspired by https://blog.sqlauthority.com/2015/07/07/sql-server-identifying-blocking-chain-using-sql-scripts/\r\n\t\t, blocking_level = cast (replicate ( '0', 4 - len(cast(r1.session_id as varchar(10)))) + cast (r1.session_id as varchar(10)) as varchar(max))\r\n\t\t, r1.database_name\r\n\t\t, r1.snapshot_time\r\n\t\t, r1.text\r\n\t\t, is_first = 1\r\n\t\t, r1.sql_instance\r\n    from [dbo].[sqlwatch_logger_dm_exec_requests] r1 (nolock)\r\n\r\n\twhere $__timeFilter(r1.snapshot_time)\r\n\tand r1.sql_instance = '$sql_instance'\r\n\tand r1.blocking_session_id = 0\r\n\t\r\n\tand exists (\r\n\t\tselect *\r\n\t\tfrom [dbo].[sqlwatch_logger_dm_exec_requests] b2 (nolock)\r\n\t\twhere b2.blocking_session_id = r1.session_id \r\n\t\tand b2.blocking_session_id <> b2.session_id\r\n\t\tand b2.snapshot_time = r1.snapshot_time\r\n\t\tand b2.sql_instance = r1.sql_instance\r\n\t\tand b2.snapshot_type_id = r1.snapshot_type_id\r\n\t\t)\t\r\n\r\n\t/*where r1.snapshot_time = (\r\n\t\t\tselect max(snapshot_time) \r\n\t\t\tfrom sqlwatch_logger_snapshot_header\r\n\t\t\twhere snapshot_type_id = 30\r\n\t\t\tand sql_instance = @@SERVERNAME\r\n\t\t\tand snapshot_time >= $__timeFrom()\r\n\t\t\tand snapshot_time <= $__timeTo()\r\n\t)*/\r\n\r\n\tunion all\r\n\r\n    select\r\n          r.session_id\r\n        , r.blocking_session_id \r\n        , c.blocking_chain_id\r\n        , blocking_level = cast (c.blocking_level + right (cast ((1000 + r.session_id) as varchar(100)), 4) as varchar (max))\r\n        , r.database_name \r\n\t\t, r.snapshot_time\r\n\t\t, r.text\r\n\t\t, is_first = 0\r\n\t\t, r.sql_instance\r\n    FROM [dbo].[sqlwatch_logger_dm_exec_requests] r (nolock)\r\n    \r\n\tinner join cte_blocking c\r\n\t\ton r.blocking_session_id = c.session_id\r\n    and r.snapshot_time = c.snapshot_time\r\n    and r.sql_instance = c.sql_instance\r\n    \r\n\twhere r.blocking_session_id > 0\r\n\tand r.blocking_session_id <> r.session_id\r\n\r\n)\r\n\r\n  select display=0, blocking_level, time=snapshot_time, blocking_tree = N'    ' + char (160) + char (160) + replicate (N'|         ', len (blocking_level)/4 - 1) +\r\n  '   ' \r\n  from cte_blocking\r\n  where is_first = 1 and blocking_chain_id = 1\r\n  \r\n  union all\r\n  \r\n  select display=1, blocking_level, time=snapshot_time, blocking_tree = N'    ' + char (160) + char (160) + replicate (N'|         ', len (blocking_level)/4 - 1) +\r\n  '====================== BLOCKING CHAIN AT : ' + convert(varchar(23),snapshot_time,121) + ': ' \r\n  from cte_blocking\r\n  where is_first = 1 and blocking_chain_id = 1\r\n  \r\n  union all\r\n  \r\n  select display=2, blocking_level, time=snapshot_time, blocking_tree = N'    ' + char (160) + char (160) + replicate (N'|         ', len (blocking_level)/4 - 1) +\r\n  case when (len(blocking_level)/4 - 1) = 0\r\n  then 'HEAD BLOCKER -->  '\r\n  else '|------->  ' end\r\n  + 'SPID: '+ cast (session_id as nvarchar(10)) + N' ' + '(DB: ' + database_name + ') SQL: ' + isnull(text,'') + char(10) \r\n  from cte_blocking\r\n  order by time,display,blocking_level\r\n\r\n",
-              "refId": "Blocking Chains"
-            }
-          ],
-          "title": "Blocking Chains",
-          "transparent": true,
-          "type": "logs"
-        }
-      ],
-      "title": "$sql_instance: SQL Server Blocking Chains",
-      "type": "row"
-    },
-    {
-      "collapsed": true,
-      "datasource": null,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 33
-      },
-      "id": 263,
-      "panels": [
-        {
-          "datasource": null,
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 8,
-            "w": 24,
-            "x": 0,
-            "y": 34
-          },
-          "id": 265,
-          "options": {
-            "content": "# SQL Server Requests\r\n*****\r\nList of current requests sampled from `dm_exec_requests`.\r\n\r\n**Runnable** - The session has been assigned a worker thread but it is waiting for CPU to become available.\r\nMany runnable threads would indicate CPU bottleneck.\r\n\r\n**Pending** - The session is awaiting a worker thread to be assigned. Unitil a workthread is assigned the session will not run even if the CPU is available.\r\nIn most cases, the worker will not be assigned due to CPU bottlenecks but in some cases, you may encounter a thread exhaustion.\r\nThis is a scenerio where SQL Server ran out of threads to allocate.\r\n\r\n**Suspended** - The session was running but has been put on hold due to lack of resources. Suspended session will likely have `wait_type` assigned to them.\r\n\r\n**Sleeping** - Sessions that SQL Server has put \"to sleep\" as they are not doing anything or could have ended recently but the connetion is still open. \r\nThis may be often observed with .NET Connection pooling. ",
+            "content": "# SQL Server Blocking Chains\r\n*****\r\nBlocking chains happen when one query is holding back other queries. This happens when poorly written query is holding excessive and exclusive locks on tables. Relational databases are written with ACID properties in mind, \r\nthis means that in order to retain data integrity, only one query at a time can modify the data. To achieve this, a lock is applied so no other queries can even read the data to avoid partially written data being displayed back to the client. When blocking chains happen for long period of time, you will have the impression that the database is slow, even though it isn't. It's just doing its job. It is important to undertand how locking works to avoid blocking chains.\r\n\r\nThese graphs come from data recorded in the Extended Events Session. For this to work, you must enable blocked process monitor: `sp_configure 'blocked process threshold', 5 ; -- set desired value in seconds`",
             "mode": "markdown"
           },
           "pluginVersion": "7.4.2",
@@ -1915,6 +1737,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "$DataSource",
+          "decimals": 0,
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -1932,19 +1755,18 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 42
+            "y": 39
           },
           "hiddenSeries": false,
-          "id": 264,
+          "id": 101,
           "legend": {
-            "alignAsTable": false,
-            "avg": true,
-            "current": true,
-            "max": true,
-            "min": true,
-            "show": true,
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": false,
             "total": false,
-            "values": true
+            "values": false
           },
           "lines": true,
           "linewidth": 1,
@@ -1954,23 +1776,13 @@
           },
           "percentage": false,
           "pluginVersion": "7.4.2",
-          "pointradius": 2,
+          "pointradius": 3,
           "points": false,
           "renderer": "flot",
           "seriesOverrides": [
             {
-              "$$hashKey": "object:2019",
-              "alias": "running",
-              "color": "#37872D"
-            },
-            {
-              "$$hashKey": "object:2027",
-              "alias": "suspended",
-              "color": "#FFB357"
-            },
-            {
-              "$$hashKey": "object:2035",
-              "alias": "runnable",
+              "$$hashKey": "object:1355",
+              "alias": "Blocking Session Count",
               "color": "#F2495C"
             }
           ],
@@ -1982,7 +1794,7 @@
               "alias": "",
               "format": "time_series",
               "hide": false,
-              "rawSql": "SELECT time = $__timeGroup(r1.snapshot_time, $aggregation)\r\n      ,[value] = count(*)\r\n      ,[metric] = status\r\n  FROM [dbo].[sqlwatch_logger_dm_exec_requests] r1\r\n\twhere $__timeFilter(r1.snapshot_time)\r\n  and r1.sql_instance = '$sql_instance'\r\n  group by $__timeGroup(r1.snapshot_time, $aggregation), status\r\n  order by time asc",
+              "rawSql": "SELECT time = $__timeGroup(h.snapshot_time, $aggregation, previous)\r\n      ,[Blocking Session Count] = count(session_id)\r\n  FROM dbo.sqlwatch_logger_snapshot_header h\r\n  left join [dbo].[ufn_sqlwatch_get_blocking_chains] ($__timeFrom(), $__timeTo(),'$sql_instance') r1\r\n  on h.snapshot_time = r1.snapshot_time\r\n  and h.snapshot_type_id = r1.snapshot_type_id\r\n  and h.sql_instance = r1.sql_instance\r\n  and blocking_session_id is null -- header only  \r\n  where $__timeFilter(h.snapshot_time)\r\n  and h.snapshot_type_id = 9\r\n  group by $__timeGroup(h.snapshot_time, $aggregation, previous), convert(varchar(10),session_id)\r\n \r\n  order by time asc",
               "refId": "2"
             }
           ],
@@ -1990,9 +1802,9 @@
           "timeFrom": null,
           "timeRegions": [],
           "timeShift": null,
-          "title": "Requests by Status",
+          "title": "Blocking Sessions Count",
           "tooltip": {
-            "shared": true,
+            "shared": false,
             "sort": 0,
             "value_type": "individual"
           },
@@ -2029,159 +1841,17 @@
           },
           "yaxes": [
             {
-              "$$hashKey": "object:1699",
+              "$$hashKey": "object:1165",
+              "decimals": 0,
               "format": "short",
               "label": null,
               "logBase": 1,
               "max": null,
-              "min": null,
+              "min": "0",
               "show": true
             },
             {
-              "$$hashKey": "object:1700",
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
-        },
-        {
-          "aliasColors": {},
-          "bars": true,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$DataSource",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {},
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              }
-            },
-            "overrides": []
-          },
-          "fill": 1,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 9,
-            "w": 24,
-            "x": 0,
-            "y": 48
-          },
-          "hiddenSeries": false,
-          "id": 267,
-          "legend": {
-            "alignAsTable": true,
-            "avg": true,
-            "current": true,
-            "max": true,
-            "min": true,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": false,
-          "linewidth": 1,
-          "nullPointMode": "null as zero",
-          "options": {
-            "alertThreshold": true
-          },
-          "percentage": false,
-          "pluginVersion": "7.4.2",
-          "pointradius": 2,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [
-            {
-              "$$hashKey": "object:2019",
-              "alias": "running",
-              "color": "#37872D"
-            },
-            {
-              "$$hashKey": "object:2027",
-              "alias": "suspended",
-              "color": "#FFB357"
-            },
-            {
-              "$$hashKey": "object:2035",
-              "alias": "runnable",
-              "color": "#F2495C"
-            }
-          ],
-          "spaceLength": 10,
-          "stack": true,
-          "steppedLine": false,
-          "targets": [
-            {
-              "alias": "",
-              "format": "time_series",
-              "hide": false,
-              "rawSql": "SELECT time = $__timeGroup(r1.snapshot_time, $aggregation)\r\n      ,[value] = sum(wait_time)\r\n      ,[metric] = case when '$Waits' = 'Category' then ws.wait_category else r1.wait_type end\r\n  FROM [dbo].[sqlwatch_logger_dm_exec_requests] r1\r\n  left join [dbo].[vw_sqlwatch_meta_wait_stats_category] ws\r\n  on ws.wait_type = r1.wait_type\r\n  and ws.sql_instance = r1.sql_instance\r\n\twhere $__timeFilter(r1.snapshot_time)\r\n\tand r1.wait_type is not null\r\n  and r1.sql_instance = '$sql_instance'\r\n  group by $__timeGroup(r1.snapshot_time, $aggregation), case when '$Waits' = 'Category' then ws.wait_category else r1.wait_type end\r\n  order by time asc",
-              "refId": "2"
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeRegions": [],
-          "timeShift": null,
-          "title": "Requests by Wait",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "transformations": [
-            {
-              "id": "seriesToColumns",
-              "options": {
-                "byField": "Time"
-              }
-            },
-            {
-              "id": "organize",
-              "options": {
-                "excludeByName": {},
-                "indexByName": {
-                  "Time": 0,
-                  "max": 3,
-                  "min": 4,
-                  "sql": 2,
-                  "system": 1
-                },
-                "renameByName": {}
-              }
-            }
-          ],
-          "transparent": true,
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "$$hashKey": "object:1699",
-              "format": "ms",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            },
-            {
-              "$$hashKey": "object:1700",
+              "$$hashKey": "object:1166",
               "format": "short",
               "label": null,
               "logBase": 1,
@@ -2207,11 +1877,11 @@
             "h": 2,
             "w": 24,
             "x": 0,
-            "y": 57
+            "y": 45
           },
-          "id": 266,
+          "id": 276,
           "options": {
-            "content": "Note that the below will show all requests as captured during the Time Period specified in this dashboard.\r\nTo see the most recent (current) requests only set the `Requests=Current` parameter on top of the dashboard.\r\nTo see what was running in the past, set the `Requests=All`",
+            "content": "The Extended Events Session captures blocking chains according to the time set for the Blocking Process Monitor `select * from sys.configurations where name like 'blocked process threshold%`.\r\nFor example, if the monitor is set to 5 seconds and we have a blocking chain lasting 21 seconds, it will record it 4 times, every 5 seconds. All four occurences will be shown below.",
             "mode": "markdown"
           },
           "pluginVersion": "7.4.2",
@@ -2229,66 +1899,7 @@
         },
         {
           "datasource": "${DataSource}",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "custom": {
-                "align": null,
-                "filterable": true
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              }
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 10,
-            "w": 24,
-            "x": 0,
-            "y": 59
-          },
-          "id": 261,
-          "options": {
-            "showHeader": true,
-            "sortBy": [
-              {
-                "desc": true,
-                "displayName": "start_time"
-              }
-            ]
-          },
-          "pluginVersion": "7.4.2",
-          "targets": [
-            {
-              "alias": "",
-              "format": "table",
-              "queryType": "randomWalk",
-              "rawSql": "SELECT is_current = case when t.snapshot_time = r1.snapshot_time then 1 else 0 end, *\r\n  FROM [dbo].[sqlwatch_logger_dm_exec_requests] r1\r\n  outer apply (\r\n    select snapshot_time=max(snapshot_time)\r\n    from dbo.sqlwatch_logger_snapshot_header \r\n    where $__timeFilter(r1.snapshot_time)\r\n    and snapshot_type_id = r1.snapshot_type_id\r\n    and sql_instance = r1.sql_instance\r\n    ) t\r\n\twhere $__timeFilter(r1.snapshot_time)\r\n\tand r1.snapshot_time = case when '$currentrequests' = 'Current' then t.snapshot_time else r1.snapshot_time end\r\n  and r1.sql_instance = '$sql_instance'\r\n  order by r1.snapshot_time desc, session_id asc",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Requests",
-          "transparent": true,
-          "type": "table"
-        },
-        {
-          "datasource": null,
+          "description": "",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -2296,220 +1907,17 @@
             "overrides": []
           },
           "gridPos": {
-            "h": 3,
-            "w": 24,
-            "x": 0,
-            "y": 69
-          },
-          "id": 272,
-          "options": {
-            "content": "# SQL Server Sessions\r\n*****\r\nList of current sessions sampled from `dm_exec_sessions`.\r\n",
-            "mode": "markdown"
-          },
-          "pluginVersion": "7.4.2",
-          "targets": [
-            {
-              "queryType": "randomWalk",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "",
-          "transparent": true,
-          "type": "text"
-        },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$DataSource",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {},
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              }
-            },
-            "overrides": []
-          },
-          "fill": 1,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 6,
-            "w": 24,
-            "x": 0,
-            "y": 72
-          },
-          "hiddenSeries": false,
-          "id": 271,
-          "legend": {
-            "alignAsTable": false,
-            "avg": true,
-            "current": true,
-            "max": true,
-            "min": true,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 1,
-          "nullPointMode": "null",
-          "options": {
-            "alertThreshold": true
-          },
-          "percentage": false,
-          "pluginVersion": "7.4.2",
-          "pointradius": 2,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [
-            {
-              "$$hashKey": "object:2019",
-              "alias": "running",
-              "color": "#37872D"
-            },
-            {
-              "$$hashKey": "object:2027",
-              "alias": "suspended",
-              "color": "#FFB357"
-            },
-            {
-              "$$hashKey": "object:2035",
-              "alias": "runnable",
-              "color": "#F2495C"
-            },
-            {
-              "$$hashKey": "object:1755",
-              "alias": "sleeping",
-              "color": "#1F60C4"
-            }
-          ],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "alias": "",
-              "format": "time_series",
-              "hide": false,
-              "rawSql": "SELECT time = $__timeGroup(r1.snapshot_time, $aggregation)\r\n      ,[value] = count(*)\r\n      ,[metric] = status\r\n  FROM [dbo].[sqlwatch_logger_dm_exec_sessions] r1\r\n\twhere $__timeFilter(r1.snapshot_time)\r\n  and r1.sql_instance = '$sql_instance'\r\n  group by $__timeGroup(r1.snapshot_time, $aggregation), status\r\n  order by time asc",
-              "refId": "2"
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeRegions": [],
-          "timeShift": null,
-          "title": "Sessions by Status",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "transformations": [
-            {
-              "id": "seriesToColumns",
-              "options": {
-                "byField": "Time"
-              }
-            },
-            {
-              "id": "organize",
-              "options": {
-                "excludeByName": {},
-                "indexByName": {
-                  "Time": 0,
-                  "max": 3,
-                  "min": 4,
-                  "sql": 2,
-                  "system": 1
-                },
-                "renameByName": {}
-              }
-            }
-          ],
-          "transparent": true,
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "$$hashKey": "object:1699",
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            },
-            {
-              "$$hashKey": "object:1700",
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
-        },
-        {
-          "datasource": "${DataSource}",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "custom": {
-                "align": null,
-                "filterable": true
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              }
-            },
-            "overrides": []
-          },
-          "gridPos": {
             "h": 10,
             "w": 24,
             "x": 0,
-            "y": 78
+            "y": 47
           },
-          "id": 270,
+          "id": 255,
           "options": {
-            "showHeader": true,
-            "sortBy": [
-              {
-                "desc": true,
-                "displayName": "start_time"
-              }
-            ]
+            "showLabels": false,
+            "showTime": true,
+            "sortOrder": "Descending",
+            "wrapLogMessage": false
           },
           "pluginVersion": "7.4.2",
           "targets": [
@@ -2517,19 +1925,556 @@
               "alias": "",
               "format": "table",
               "queryType": "randomWalk",
-              "rawSql": "SELECT is_current = case when t.snapshot_time = r1.snapshot_time then 1 else 0 end, *\r\n  FROM [dbo].[sqlwatch_logger_dm_exec_sessions] r1\r\n  outer apply (\r\n    select snapshot_time=max(snapshot_time)\r\n    from dbo.sqlwatch_logger_snapshot_header \r\n    where $__timeFilter(r1.snapshot_time)\r\n    and snapshot_type_id = r1.snapshot_type_id\r\n    and sql_instance = r1.sql_instance\r\n    ) t\r\n\twhere $__timeFilter(r1.snapshot_time)\r\n\tand r1.snapshot_time = case when '$currentrequests' = 'Current' then t.snapshot_time else r1.snapshot_time end\r\n  and r1.sql_instance = '$sql_instance'\r\n  order by r1.snapshot_time desc, session_id asc",
-              "refId": "A"
+              "rawSql": "select time=x.event_time, blocking_tree + ' (' + isnull(x.appname,'') + '; ' + isnull(x.hostname,'') + ') SQL: ' + isnull(x.sql_text,'') \nfrom [dbo].[ufn_sqlwatch_get_blocking_chains] ($__timeFrom(), $__timeTo(),'$sql_instance') x\n\norder by time",
+              "refId": "Blocking Chains"
             }
           ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Sessions",
+          "title": "Blocking Chains",
           "transparent": true,
-          "type": "table"
+          "type": "logs"
         }
       ],
+      "title": "$sql_instance: SQL Server Blocking",
+      "type": "row"
+    },
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 33
+      },
+      "id": 263,
+      "panels": [],
       "title": "$sql_instance: SQL Server Requests and Sessions",
       "type": "row"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 34
+      },
+      "id": 265,
+      "options": {
+        "content": "# SQL Server Requests\r\n*****\r\nList of current requests sampled from `dm_exec_requests`.\r\n\r\n**Runnable** - The session has been assigned a worker thread but it is waiting for CPU to become available.\r\nMany runnable threads would indicate CPU bottleneck.\r\n\r\n**Pending** - The session is awaiting a worker thread to be assigned. Unitil a workthread is assigned the session will not run even if the CPU is available.\r\nIn most cases, the worker will not be assigned due to CPU bottlenecks but in some cases, you may encounter a thread exhaustion.\r\nThis is a scenerio where SQL Server ran out of threads to allocate.\r\n\r\n**Suspended** - The session was running but has been put on hold due to lack of resources. Suspended session will likely have `wait_type` assigned to them.\r\n\r\n**Sleeping** - Sessions that SQL Server has put \"to sleep\" as they are not doing anything or could have ended recently but the connetion is still open. \r\nThis may be often observed with .NET Connection pooling. ",
+        "mode": "markdown"
+      },
+      "pluginVersion": "7.4.2",
+      "targets": [
+        {
+          "queryType": "randomWalk",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "aliasColors": {},
+      "bars": true,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$DataSource",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "thresholds": {
+            "mode": "absolute",
+            "steps": []
+          }
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 42
+      },
+      "hiddenSeries": false,
+      "id": 264,
+      "legend": {
+        "alignAsTable": false,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": true,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": false,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.4.2",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "$$hashKey": "object:2019",
+          "alias": "running",
+          "color": "#37872D"
+        },
+        {
+          "$$hashKey": "object:2027",
+          "alias": "suspended",
+          "color": "#FFB357"
+        },
+        {
+          "$$hashKey": "object:2035",
+          "alias": "runnable",
+          "color": "#F2495C"
+        },
+        {
+          "$$hashKey": "object:636",
+          "alias": "sleeping",
+          "color": "#1F60C4"
+        },
+        {
+          "$$hashKey": "object:644",
+          "alias": "waiting_tasks",
+          "color": "#8F3BB8"
+        }
+      ],
+      "spaceLength": 10,
+      "stack": true,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "",
+          "format": "time_series",
+          "hide": false,
+          "rawSql": "SELECT time = $__timeGroup(r1.snapshot_time, $aggregation)\r\n      ,  background\t= avg(background)\r\n      ,  running = avg(running)\t\r\n      ,  runnable = avg(runnable)\t\r\n      ,  sleeping\t = avg(sleeping)\r\n      ,  suspended\t = avg(suspended)\r\n      ,  waiting_tasks\t = avg(waiting_tasks)\r\n     -- ,  wait_duration_ms = avg(wait_duration_ms)\r\n      ,  type = case when type = 1 then 'User' else 'System' end\r\n  FROM [sqlwatch_logger_dm_exec_requests_stats] r1 (nolock)\r\n\twhere $__timeFilter(r1.snapshot_time)\r\n  and r1.sql_instance = '$sql_instance'\r\n  and type = 1\r\n  group by $__timeGroup(r1.snapshot_time, $aggregation), case when type = 1 then 'User' else 'System' end\r\n  order by time asc",
+          "refId": "2"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "User Requests by Status",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "transformations": [
+        {
+          "id": "seriesToColumns",
+          "options": {
+            "byField": "Time"
+          }
+        },
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "(^User.)",
+            "renamePattern": ""
+          }
+        },
+        {
+          "id": "organize",
+          "options": {}
+        }
+      ],
+      "transparent": true,
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:1699",
+          "decimals": 0,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:1700",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 48
+      },
+      "id": 272,
+      "options": {
+        "content": "# SQL Server Sessions\r\n*****\r\nList of current sessions sampled from `dm_exec_sessions`.\r\n",
+        "mode": "markdown"
+      },
+      "pluginVersion": "7.4.2",
+      "targets": [
+        {
+          "queryType": "randomWalk",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "",
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$DataSource",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "thresholds": {
+            "mode": "absolute",
+            "steps": []
+          }
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 51
+      },
+      "hiddenSeries": false,
+      "id": 271,
+      "legend": {
+        "alignAsTable": false,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": true,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "connected",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.4.2",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "$$hashKey": "object:2019",
+          "alias": "running",
+          "color": "#37872D"
+        },
+        {
+          "$$hashKey": "object:2027",
+          "alias": "sleeping",
+          "color": "#1F60C4",
+          "fill": 0,
+          "yaxis": 2
+        },
+        {
+          "$$hashKey": "object:2035",
+          "alias": "dormant",
+          "color": "#3274D9"
+        },
+        {
+          "$$hashKey": "object:596",
+          "alias": "preconnect",
+          "color": "#8AB8FF"
+        }
+      ],
+      "spaceLength": 10,
+      "stack": true,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "",
+          "format": "time_series",
+          "hide": false,
+          "rawSql": "SELECT time = $__timeGroup(r1.snapshot_time, $aggregation)\r\n      ,[running] = avg(running)\r\n      ,[sleeping] = avg(sleeping)\r\n      ,[dormant] = avg(dormant)\r\n      ,[preconnect] = avg(preconnect)\r\n      ,[cpu_time] = avg(cpu_time)\r\n      ,[reads] = avg(reads)\r\n      ,[writes] = avg(writes)\r\n      ,  type = case when type = 1 then 'User' else 'System' end\r\n  FROM [sqlwatch_logger_dm_exec_sessions_stats] r1 (nolock)\r\n\twhere $__timeFilter(r1.snapshot_time)\r\n  and r1.sql_instance = '$sql_instance'\r\n  and type = 1\r\n  group by $__timeGroup(r1.snapshot_time, $aggregation), case when type = 1 then 'User' else 'System' end\r\n  order by time asc",
+          "refId": "2"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "User Sessions by Status",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "transformations": [
+        {
+          "id": "seriesToColumns",
+          "options": {
+            "byField": "Time"
+          }
+        },
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "(^User.)",
+            "renamePattern": ""
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "User cpu_time": true,
+              "User reads": true,
+              "User writes": true,
+              "cpu_time": true,
+              "reads": true,
+              "writes": true
+            },
+            "indexByName": {
+              "Time": 0,
+              "max": 3,
+              "min": 4,
+              "sql": 2,
+              "system": 1
+            },
+            "renameByName": {}
+          }
+        }
+      ],
+      "transparent": true,
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:1699",
+          "decimals": 0,
+          "format": "short",
+          "label": "Active",
+          "logBase": 2,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:1700",
+          "decimals": 0,
+          "format": "short",
+          "label": "Sleeping",
+          "logBase": 10,
+          "max": null,
+          "min": "0",
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "-- Dashboard --",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "thresholds": {
+            "mode": "absolute",
+            "steps": []
+          }
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 57
+      },
+      "hiddenSeries": false,
+      "id": 277,
+      "legend": {
+        "alignAsTable": false,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": true,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "connected",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.4.2",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": true,
+      "steppedLine": false,
+      "targets": [
+        {
+          "panelId": 271,
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "User Sessions by Resource",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "transformations": [
+        {
+          "id": "seriesToColumns",
+          "options": {
+            "byField": "Time"
+          }
+        },
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "(^User.)",
+            "renamePattern": ""
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "User cpu_time": true,
+              "User reads": true,
+              "User writes": true,
+              "cpu_time": false,
+              "dormant": true,
+              "preconnect": true,
+              "reads": false,
+              "running": true,
+              "sleeping": true,
+              "writes": false
+            },
+            "indexByName": {
+              "Time": 0,
+              "max": 3,
+              "min": 4,
+              "sql": 2,
+              "system": 1
+            },
+            "renameByName": {}
+          }
+        }
+      ],
+      "transparent": true,
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:1699",
+          "decimals": 0,
+          "format": "short",
+          "label": "Active",
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:1700",
+          "decimals": 0,
+          "format": "short",
+          "label": "Sleeping",
+          "logBase": 10,
+          "max": null,
+          "min": "0",
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
     },
     {
       "collapsed": true,
@@ -2538,7 +2483,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 34
+        "y": 63
       },
       "id": 187,
       "panels": [
@@ -2554,7 +2499,7 @@
             "h": 5,
             "w": 24,
             "x": 0,
-            "y": 92
+            "y": 35
           },
           "id": 259,
           "options": {
@@ -2598,7 +2543,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 97
+            "y": 40
           },
           "hiddenSeries": false,
           "id": 258,
@@ -2758,7 +2703,7 @@
             "h": 11,
             "w": 24,
             "x": 0,
-            "y": 103
+            "y": 46
           },
           "id": 43,
           "options": {
@@ -2804,7 +2749,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 114
+            "y": 57
           },
           "hiddenSeries": false,
           "id": 231,
@@ -2945,7 +2890,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 121
+            "y": 64
           },
           "hiddenSeries": false,
           "hideTimeOverride": false,
@@ -3040,7 +2985,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 128
+            "y": 71
           },
           "id": 109,
           "options": {
@@ -3084,7 +3029,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 134
+            "y": 77
           },
           "hiddenSeries": false,
           "id": 6,
@@ -3231,7 +3176,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 141
+            "y": 84
           },
           "id": 110,
           "options": {
@@ -3280,7 +3225,7 @@
             "h": 11,
             "w": 24,
             "x": 0,
-            "y": 147
+            "y": 90
           },
           "hiddenSeries": false,
           "id": 232,
@@ -3401,7 +3346,7 @@
             "h": 2,
             "w": 24,
             "x": 0,
-            "y": 158
+            "y": 101
           },
           "id": 192,
           "options": {
@@ -3446,7 +3391,7 @@
             "h": 5,
             "w": 24,
             "x": 0,
-            "y": 160
+            "y": 103
           },
           "hiddenSeries": false,
           "id": 191,
@@ -3638,7 +3583,7 @@
             "h": 5,
             "w": 24,
             "x": 0,
-            "y": 165
+            "y": 108
           },
           "id": 194,
           "links": [
@@ -3707,7 +3652,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 35
+        "y": 64
       },
       "id": 208,
       "panels": [
@@ -4408,7 +4353,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 36
+        "y": 65
       },
       "id": 185,
       "panels": [
@@ -5151,7 +5096,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 37
+        "y": 66
       },
       "id": 183,
       "panels": [
@@ -7002,7 +6947,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 38
+        "y": 67
       },
       "id": 181,
       "panels": [
@@ -7361,7 +7306,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 39
+        "y": 68
       },
       "id": 179,
       "panels": [
@@ -8519,7 +8464,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 40
+        "y": 69
       },
       "id": 177,
       "panels": [
@@ -9145,7 +9090,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 41
+        "y": 70
       },
       "id": 175,
       "panels": [
@@ -9302,7 +9247,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 42
+        "y": 71
       },
       "id": 234,
       "panels": [
@@ -9869,7 +9814,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 43
+        "y": 72
       },
       "id": 220,
       "panels": [
@@ -10326,7 +10271,7 @@
         "auto_count": 100,
         "auto_min": "1s",
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "auto",
           "value": "$__auto_interval_aggregation"
         },
@@ -10553,24 +10498,24 @@
         "allValue": null,
         "current": {
           "selected": false,
-          "text": "Current",
-          "value": "Current"
+          "text": "All",
+          "value": "All"
         },
         "description": "Whether we should only show currently running requests and sessions (as of very last capture) or all requests captured within the dashboard time period.",
         "error": null,
-        "hide": 0,
+        "hide": 2,
         "includeAll": false,
         "label": "Requests",
         "multi": false,
         "name": "currentrequests",
         "options": [
           {
-            "selected": true,
+            "selected": false,
             "text": "Current",
             "value": "Current"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "All",
             "value": "All"
           }
@@ -10596,5 +10541,5 @@
   "timezone": "utc",
   "title": "SQL Instance Overview",
   "uid": "sqlwatch-instance-overview",
-  "version": 183
+  "version": 250
 }
