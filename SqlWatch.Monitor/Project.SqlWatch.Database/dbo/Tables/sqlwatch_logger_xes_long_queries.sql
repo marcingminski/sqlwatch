@@ -23,7 +23,7 @@
 	[client_hostname] [varchar](255) NULL,
 	[client_app_name] [varchar](255) NULL,
 	[duration_ms] [bigint] NULL,
-	[wait_type] [varchar](255) NULL,
+	--[wait_type] [varchar](255) NULL,
 	--[blocking_report] [xml] NULL,
 	--[deadlock_report] [xml] NULL,
 	[snapshot_time] datetime2(0) not null,
@@ -31,6 +31,7 @@
 	[sql_instance] varchar(32) not null constraint df_sqlwatch_logger_xes_long_queries_sql_instance default (@@SERVERNAME),
 
 	[query_plan] xml null,
+	attach_activity_id varchar(40),
 
 	constraint fk_logger_perf_xes_long_queries foreign key ([snapshot_time],[sql_instance],[snapshot_type_id]) references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time],[sql_instance],[snapshot_type_id]) on delete cascade  on update cascade,
 	constraint pk_logger_perf_xes_long_queries primary key nonclustered (

@@ -92,19 +92,20 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 						, cpu_time, physical_reads, logical_reads, writes, spills
 						, offset, offset_end, statement, username, sql_text
 						, object_name, client_hostname, client_app_name
-						, duration_ms, wait_type
-						, snapshot_time, snapshot_type_id, sql_instance, [query_plan])
+						, duration_ms
+						, snapshot_time, snapshot_type_id, sql_instance, [query_plan], attach_activity_id)
 
 					select 
 						  tx.[event_time], tx.event_name, tx.session_id, tx.database_name
 						, tx.cpu_time, tx.physical_reads, tx.logical_reads, tx.writes, tx.spills
 						, tx.offset, tx.offset_end, tx.statement, tx.username, tx.sql_text
 						, tx.object_name, tx.client_hostname, tx.client_app_name
-						, tx.duration_ms, tx.wait_type
+						, tx.duration_ms
 						,[snapshot_time] = @snapshot_time
 						,[snapshot_type_id] = @snapshot_type_id
 						,sql_instance = @sql_instance
 						,p.query_plan
+						,tx.attach_activity_id
 					from #t_queries tx
 
 					-- get saved plans

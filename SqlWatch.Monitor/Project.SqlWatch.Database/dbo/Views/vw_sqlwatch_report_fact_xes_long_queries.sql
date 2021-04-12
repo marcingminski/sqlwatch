@@ -20,7 +20,7 @@ SELECT
       ,[client_hostname]
       ,[client_app_name]
       ,[duration_ms]
-      ,[wait_type]
+      --,[wait_type]
       ,report_time
       ,d.[sql_instance]
       ,[long_query_id]
