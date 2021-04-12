@@ -17,6 +17,8 @@
 	constraint pk_sqlwatch_logger_xes_query_problems 
 		--although the hash is done on the entire event so will take time and name into account.
 		--I am going to make these fields part PK for improvement performance when reading data. I may change it later depending on performance
+
+		--actually, this will fragment the index as hell. it needs a better design
 		primary key nonclustered ([snapshot_time], [snapshot_type_id], [event_time], [event_name], [event_hash]),
 	
 	constraint fk_sqlwatch_logger_xes_query_problems_header 
