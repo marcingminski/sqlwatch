@@ -2660,4 +2660,11 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[sqlwatch_logger_dm_exec_sessions_stats]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="5d6b828d-e02f-4e37-89f3-5b7157a4073c" ChangeDateTime="04/12/2021 14:59:21">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_logger_dm_exec_requests_stats].[waiting_tasks]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_logger_dm_exec_requests_stats]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="waiting_tasks_wait_duration_ms" />
+  </Operation>
 </Operations>

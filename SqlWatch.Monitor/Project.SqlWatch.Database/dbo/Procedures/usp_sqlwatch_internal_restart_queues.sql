@@ -20,6 +20,7 @@ select @sql = @sql + '
 end conversation ''' + convert(varchar(max),conversation_handle) + ''' WITH CLEANUP;'
 from sys.conversation_endpoints
 where far_service like 'sqlwatch%'
+and state_desc <> 'CLOSED' -- these will be cleaned up by SQL Server
 
 exec (@sql)
 
