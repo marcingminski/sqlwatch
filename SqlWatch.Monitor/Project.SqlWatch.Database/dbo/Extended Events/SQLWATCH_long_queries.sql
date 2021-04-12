@@ -24,6 +24,9 @@ ADD EVENT sqlserver.sql_statement_completed(
     ACTION(sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.database_name,sqlserver.plan_handle,sqlserver.session_id,sqlserver.session_nt_username,sqlserver.sql_text,sqlserver.tsql_stack,sqlserver.username)
     WHERE ([package0].[greater_than_int64]([duration],(5000000)) AND ([package0].[greater_than_uint64]([cpu_time],(0)) OR [package0].[greater_than_uint64]([logical_reads],(0)) OR [package0].[greater_than_uint64]([physical_reads],(0)) OR [package0].[greater_than_uint64]([writes],(0))) AND [sqlserver].[is_system]=(0))),
 
+--we could use the plan_handle and get execution plan from sys.dm_exec_query_plan when we load it into a table
+--but I found a high percentage of "plan not found" or "incorrect plan handle" errors so I'm collecting execution plan as part of the XES
+--this will increase the size of the xel file but will have to do until I find a better approach to get exec plans
 ADD EVENT sqlserver.query_post_execution_showplan(SET collect_database_name=(1)
     ACTION(sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.database_name,sqlserver.session_id,sqlserver.session_nt_username,sqlserver.sql_text,sqlserver.tsql_stack,sqlserver.username)
     WHERE ([package0].[greater_than_uint64]([duration],(5000000))))
