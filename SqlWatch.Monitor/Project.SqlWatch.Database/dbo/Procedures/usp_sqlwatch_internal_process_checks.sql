@@ -31,7 +31,8 @@ declare @check_name nvarchar(100),
 		@i_len tinyint,
 		@check_critical_threshold_baseline varchar(100),
 		@check_baseline_variance smallint = [dbo].[ufn_sqlwatch_get_config_value] ( 17, null ),
-		@check_variance smallint = [dbo].[ufn_sqlwatch_get_config_value] ( 18, null )
+		@check_variance smallint = [dbo].[ufn_sqlwatch_get_config_value] ( 18, null ),
+		@target_sql_intance varchar(32);
 
 declare @check_status varchar(50),
 		@check_value decimal(28,5),
@@ -101,6 +102,7 @@ select
 	, mc.last_check_status
 	, cc.[ignore_flapping]
 	, cc.use_baseline
+	, target_sql_instance
 from [dbo].[sqlwatch_config_check] cc
 
 inner join [dbo].[sqlwatch_meta_check] mc
@@ -121,7 +123,7 @@ open cur_rules
   
 fetch next from cur_rules 
 into @check_id, @check_name, @check_description , @check_query, @check_warning_threshold, @check_critical_threshold
-	, @previous_check_date, @previous_check_value, @previous_check_status, @ignore_flapping, @use_baseline
+	, @previous_check_date, @previous_check_value, @previous_check_status, @ignore_flapping, @use_baseline, @target_sql_intance
 
 
 while @@FETCH_STATUS = 0  

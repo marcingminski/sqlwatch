@@ -6,149 +6,198 @@ begin
 
 	declare @check_name varchar(255),
 			@expand_by varchar(50),
-			@check_template_id smallint;
+			@check_template_id smallint,
+			@sql_instance varchar(32);
 
-	declare cur_expand_check cursor LOCAL FAST_FORWARD for
-	select check_name, expand_by, check_template_id
-	from [dbo].[sqlwatch_config_check_template]
-	where template_enabled = 1
+	declare cur_expand_by_server cursor for
+	select [sql_instance]
+	from dbo.sqlwatch_config_sql_instance
 
-	open cur_expand_check 
-	
-	fetch next from cur_expand_check 
-		into @check_name, @expand_by , @check_template_id
-	
-	while @@FETCH_STATUS = 0 
+	open cur_expand_by_server
+
+	fetch next from cur_expand_by_server
+		into @sql_instance
+
+	while @@FETCH_STATUS = 0
 	begin
 
-		declare @checks table (	
-			[check_template_id] smallint,
-			[check_name] [nvarchar](255) NOT NULL,
-			[check_description] [nvarchar](2048) NULL,
-			[check_query] [nvarchar](max) NOT NULL,
-			[check_frequency_minutes] [smallint] NULL,
-			[check_threshold_warning] [varchar](100) NULL,
-			[check_threshold_critical] [varchar](100) NOT NULL,
-			[check_enabled] [bit] NOT NULL,
-			[ignore_flapping] [bit] NOT NULL
-		)
+		declare cur_expand_check cursor LOCAL FAST_FORWARD for
+		select check_name, expand_by, check_template_id
+		from [dbo].[sqlwatch_config_check_template]
+		where template_enabled = 1
 
-		if @expand_by is null
-			begin
-				insert into @checks (
-						[check_name],[check_description],[check_query],[check_frequency_minutes],[check_threshold_warning]
-					   ,[check_threshold_critical],[check_enabled],[ignore_flapping],[check_template_id]
-				)
-
-				select 
-				    [check_name]
-				   ,[check_description]
-				   ,[check_query]
-				   ,[check_frequency_minutes]
-				   ,[check_threshold_warning]
-				   ,[check_threshold_critical]
-				   ,[check_enabled]
-				   ,[ignore_flapping]
-				   ,[check_template_id]
-				from [dbo].[sqlwatch_config_check_template] c
-				where c.check_name = @check_name
-			end
-
-		if @expand_by = 'Disk'
-			begin
-				insert into @checks (
-						[check_name],[check_description],[check_query],[check_frequency_minutes],[check_threshold_warning]
-					   ,[check_threshold_critical],[check_enabled],[ignore_flapping],[check_template_id]
-				)
-
-				select 
-				   [check_name]=case 
-							when c.check_name like '%{Disk}%' then replace(c.check_name,'{Disk}',d.[volume_name]) 
-							else c.check_name + ' (' + d.[volume_name] + ')' end 
-				   ,[check_description]=case when [check_description] like '%{Disk}%'
-											then replace([check_description],'{Disk}',d.[volume_name])
-											else [check_description] end
-				   ,[check_query]=replace([check_query],'{Disk}',d.[volume_name])
-				   ,[check_frequency_minutes]
-				   ,[check_threshold_warning]
-				   ,[check_threshold_critical]
-				   ,[check_enabled]
-				   ,[ignore_flapping]
-				   ,[check_template_id]
-				from [dbo].[sqlwatch_config_check_template] c
-				cross apply [dbo].[sqlwatch_meta_os_volume] d
-				where c.check_name = @check_name
-				and c.expand_by = @expand_by
-				and d.sql_instance = dbo.ufn_sqlwatch_get_servername()
-			end
-
-		if @expand_by = 'Job'
-			begin
-				insert into @checks (
-						[check_name],[check_description],[check_query],[check_frequency_minutes],[check_threshold_warning]
-					   ,[check_threshold_critical],[check_enabled],[ignore_flapping],[check_template_id]
-				)
-
-				select 
-				   [check_name]=case 
-							when c.check_name like '%{JOB}%' then replace(c.check_name,'{JOB}',d.[name] collate database_default) 
-							else c.check_name + ' (' + d.[name] collate database_default + ')' end 
-				   ,[check_description]=case when [check_description] like '%{JOB}%'
-											then replace([check_description],'{JOB}',d.[name] collate database_default)
-											else [check_description] end
-				   ,[check_query]=replace([check_query],'{JOB}',d.[name] collate database_default)
-				   ,[check_frequency_minutes]
-				   ,[check_threshold_warning]
-				   ,[check_threshold_critical]
-				   ,[check_enabled]
-				   ,[ignore_flapping]
-				   ,[check_template_id]
-				from [dbo].[sqlwatch_config_check_template] c
-				cross apply msdb.dbo.sysjobs d
-				where c.check_name = @check_name
-				and c.expand_by = @expand_by
-			end
-
-		if @expand_by = 'Database'
-			begin
-
-				insert into @checks (
-						[check_name],[check_description],[check_query],[check_frequency_minutes],[check_threshold_warning]
-					   ,[check_threshold_critical],[check_enabled],[ignore_flapping],[check_template_id]
-				)
-
-				select 
-				   [check_name]=case 
-							when c.check_name like '%{DATABASE}%' then replace(c.check_name,'{DATABASE}',d.[name] collate database_default) 
-							else c.check_name + ' (' + d.[name] collate database_default + ')' end
-				   ,[check_description]=case when [check_description] like '%{DATABASE}%'
-											then replace([check_description],'{DATABASE}',d.[name] collate database_default)
-											else [check_description] end
-				   ,[check_query]=replace([check_query],'{DATABASE}',d.[name] collate database_default)
-				   ,[check_frequency_minutes]
-				   ,[check_threshold_warning]
-				   ,[check_threshold_critical]
-				   ,[check_enabled]
-				   ,[ignore_flapping]
-				   ,[check_template_id]
-				from [dbo].[sqlwatch_config_check_template] c
-				cross apply dbo.vw_sqlwatch_sys_databases d
-				where c.check_name = @check_name
-				and c.expand_by = @expand_by
-				and d.sql_instance = dbo.ufn_sqlwatch_get_servername()
-			end
-
+		open cur_expand_check 
+	
 		fetch next from cur_expand_check 
-			into @check_name, @expand_by, @check_template_id
+			into @check_name, @expand_by , @check_template_id
+	
+		while @@FETCH_STATUS = 0 
+		begin
+
+			declare @checks table (	
+				[check_template_id] smallint,
+				[check_name] [nvarchar](255) NOT NULL,
+				[check_description] [nvarchar](2048) NULL,
+				[check_query] [nvarchar](max) NOT NULL,
+				[check_frequency_minutes] [smallint] NULL,
+				[check_threshold_warning] [varchar](100) NULL,
+				[check_threshold_critical] [varchar](100) NOT NULL,
+				[check_enabled] [bit] NOT NULL,
+				[ignore_flapping] [bit] NOT NULL,
+				[object_type] varchar(50),
+				[object_name] nvarchar(128),
+				[target_sql_instance] varchar(32)
+			)
+
+			if @expand_by is null
+				begin
+					insert into @checks (
+							[check_name],[check_description],[check_query],[check_frequency_minutes],[check_threshold_warning]
+						   ,[check_threshold_critical],[check_enabled],[ignore_flapping],[check_template_id], [target_sql_instance]
+					)
+
+					select 
+						[check_name]
+					   ,[check_description]
+					   ,[check_query]=replace(check_query,'{SQL_INSTANCE}',@sql_instance)
+					   ,[check_frequency_minutes]
+					   ,[check_threshold_warning]
+					   ,[check_threshold_critical]
+					   ,[check_enabled]
+					   ,[ignore_flapping]
+					   ,[check_template_id]
+					   ,@sql_instance
+					from [dbo].[sqlwatch_config_check_template] c
+					where c.check_name = @check_name
+				end
+
+			if @expand_by = 'Disk'
+				begin
+					insert into @checks (
+							[check_name],[check_description],[check_query],[check_frequency_minutes],[check_threshold_warning]
+						   ,[check_threshold_critical],[check_enabled],[ignore_flapping],[check_template_id], [object_type], [object_name], [target_sql_instance]
+					)
+
+					select 
+					   [check_name]=case 
+								when c.check_name like '%{Disk}%' then replace(c.check_name,'{Disk}',d.[volume_name]) 
+								else c.check_name + ' (' + d.[volume_name] + ')' end 
+					   ,[check_description]=case when [check_description] like '%{Disk}%'
+												then replace([check_description],'{Disk}',d.[volume_name])
+												else [check_description] end
+					   ,[check_query]= replace(replace([check_query],'{Disk}',d.[volume_name]),'{SQL_INSTANCE}',@sql_instance)
+					   ,[check_frequency_minutes]
+					   ,[check_threshold_warning]
+					   ,[check_threshold_critical]
+					   ,[check_enabled]
+					   ,[ignore_flapping]
+					   ,[check_template_id]
+					   ,[object_type] = @expand_by
+					   ,[object_name] = d.[volume_name]
+					   ,@sql_instance 
+					from [dbo].[sqlwatch_config_check_template] c
+					cross apply (
+						select *
+						from [dbo].[sqlwatch_meta_os_volume]
+						where sql_instance = @sql_instance
+						) d
+					where c.check_name = @check_name
+					and c.expand_by = @expand_by
+					and d.sql_instance = dbo.ufn_sqlwatch_get_servername()
+				end
+
+			if @expand_by = 'Job'
+				begin
+					insert into @checks (
+							[check_name],[check_description],[check_query],[check_frequency_minutes],[check_threshold_warning]
+						   ,[check_threshold_critical],[check_enabled],[ignore_flapping],[check_template_id], [object_type], [object_name], [target_sql_instance]
+					)
+
+					--this use to point to sysjobs hence the collate, I don't think we need collate anymore as within the db scope.
+					select 
+					   [check_name]=case 
+								when c.check_name like '%{JOB}%' then replace(c.check_name,'{JOB}',d.[job_name] collate database_default) 
+								else c.check_name + ' (' + d.[job_name] collate database_default + ')' end 
+					   ,[check_description]=case when [check_description] like '%{JOB}%'
+												then replace([check_description],'{JOB}',d.[job_name] collate database_default)
+												else [check_description] end
+					   ,[check_query]=replace(replace([check_query],'{JOB}',d.[job_name] collate database_default),'{SQL_INSTANCE}',@sql_instance)
+					   ,[check_frequency_minutes]
+					   ,[check_threshold_warning]
+					   ,[check_threshold_critical]
+					   ,[check_enabled]
+					   ,[ignore_flapping]
+					   ,[check_template_id]
+					   ,[object_type] = @expand_by
+					   ,[object_name] = d.[job_name]
+					   ,@sql_instance
+					from [dbo].[sqlwatch_config_check_template] c
+					cross apply (
+						select *
+						from [dbo].[vw_sqlwatch_report_dim_aget_job]
+						where sql_instance = @sql_instance
+						) d
+					where c.check_name = @check_name
+					and c.expand_by = @expand_by
+				end
+
+			if @expand_by = 'Database'
+				begin
+
+					insert into @checks (
+							[check_name],[check_description],[check_query],[check_frequency_minutes],[check_threshold_warning]
+						   ,[check_threshold_critical],[check_enabled],[ignore_flapping],[check_template_id], [object_type], [object_name], [target_sql_instance]
+					)
+
+					--this use to point to sys.databases hence the collate, I don't think we need collate anymore as within the db scope.
+					select 
+					   [check_name]=case 
+								when c.check_name like '%{DATABASE}%' then replace(c.check_name,'{DATABASE}',d.[database_name] collate database_default) 
+								else c.check_name + ' (' + d.[database_name] collate database_default + ')' end
+					   ,[check_description]=case when [check_description] like '%{DATABASE}%'
+												then replace([check_description],'{DATABASE}',d.[database_name] collate database_default)
+												else [check_description] end
+					   ,[check_query]=replace(replace([check_query],'{DATABASE}',d.[database_name] collate database_default),'{SQL_INSTANCE}',@sql_instance)
+					   ,[check_frequency_minutes]
+					   ,[check_threshold_warning]
+					   ,[check_threshold_critical]
+					   ,[check_enabled]
+					   ,[ignore_flapping]
+					   ,[check_template_id]
+					   ,[object_type] = @expand_by
+					   ,[object_name] = d.[database_name]
+					   ,@sql_instance
+					from [dbo].[sqlwatch_config_check_template] c
+					cross apply (
+						select *
+						from [dbo].[sqlwatch_meta_database]
+						where sql_instance = @sql_instance
+						and is_current = 1
+					) d
+					where c.check_name = @check_name
+					and c.expand_by = @expand_by
+					and d.sql_instance = dbo.ufn_sqlwatch_get_servername()
+				end
+
+			fetch next from cur_expand_check 
+				into @check_name, @expand_by, @check_template_id
+		end
+
+		close cur_expand_check
+		deallocate cur_expand_check;
+
+		fetch next from cur_expand_by_server
+			into @sql_instance
 	end
 
-	close cur_expand_check
-	deallocate cur_expand_check;
+	close cur_expand_by_server
+	deallocate cur_expand_by_server;
 
 
 	;merge [dbo].[sqlwatch_config_check] as target 
 	using @checks as source
 	on target.check_name = source.check_name
+	and target.[target_sql_instance] = source.[target_sql_instance]
 
 	when not matched by target then
 		insert (
@@ -163,6 +212,10 @@ begin
 				,[date_updated]
 				,[ignore_flapping]
 				,[check_template_id]
+				,[base_object_type]
+				,[base_object_name]
+				,[base_object_date_last_seen]
+				,[target_sql_instance]
 				)
 		values ( 
 				 [check_name]
@@ -176,6 +229,10 @@ begin
 				,getutcdate()
 				,[ignore_flapping]
 				,[check_template_id]
+				,[object_type]
+				,[object_name]
+				,getutcdate()
+				,[target_sql_instance]
 				)
 
 		when not matched by source 
@@ -192,9 +249,12 @@ begin
 				,[check_threshold_critical] = source.[check_threshold_critical]
 				,[check_enabled] = source.[check_enabled]
 				,[date_updated] = getutcdate()
-				,[ignore_flapping] = source.[ignore_flapping];
+				,[ignore_flapping] = source.[ignore_flapping]
+				,[base_object_type] = source.[object_type]
+				,[base_object_name] = source.[object_name]
+				,[base_object_date_last_seen] = case when source.[object_name] is not null then getutcdate() else [base_object_date_last_seen] end
 
-
+		;
 
 		-- load action templates:
 		merge [dbo].[sqlwatch_config_check_action] as target

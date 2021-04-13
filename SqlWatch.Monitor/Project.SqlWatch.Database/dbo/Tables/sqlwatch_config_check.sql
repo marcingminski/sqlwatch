@@ -14,6 +14,10 @@
 	[ignore_flapping] bit not null constraint df_sqlwatch_config_check_flapping default (0),
 	[check_template_id] smallint,
 	[user_modified] bit,
+	[base_object_type] varchar(50) null constraint chk_sqlwatch_config_check_object_type check ([base_object_type] in ('Database','Job','Disk')),
+	[base_object_name] nvarchar(128) null,
+	[base_object_date_last_seen] datetime2(0) null,
+	[target_sql_instance] varchar(32) not null constraint df_sqlwatch_config_check_target_sql_instace default (@@SERVERNAME),
 
 	/* primary key */
 	constraint pk_sqlwatch_config_check primary key clustered ([check_id])

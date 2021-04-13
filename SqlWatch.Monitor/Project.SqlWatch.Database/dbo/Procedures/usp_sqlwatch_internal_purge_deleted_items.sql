@@ -11,14 +11,15 @@ set @sql = 'declare @rows_affected bigint'
 select @sql = @sql + '
 delete top (' + convert(varchar(10),@row_batch_size) + ') from ' + TABLE_SCHEMA + '.' + TABLE_NAME + '
 where ' + COLUMN_NAME + ' < dateadd(day,-' + convert(varchar(10),@purge_after_days) +',getutcdate())
+and ' + COLUMN_NAME + ' is not null
 set @rows_affected = @@ROWCOUNT
 
 Print ''Purged '' + convert(varchar(10),@rows_affected) + '' rows from ' + TABLE_SCHEMA + '.' + TABLE_NAME + ' ''
 '
  from INFORMATION_SCHEMA.COLUMNS
 /*	I should have been more careful when naming columns, I ended up having all these variations.
-	Yes, I know....*/
-WHERE COLUMN_NAME in ('deleted_when', 'date_deleted', 'last_seen','last_seen_date','date_last_seen')
+	The exception is base_object_date_last_seen which is different to date_last_seen as it referes to a parent object rather than row in the actual table */
+WHERE COLUMN_NAME in ('deleted_when', 'date_deleted', 'last_seen','last_seen_date','date_last_seen','base_object_date_last_seen')
 AND TABLE_NAME LIKE 'sqlwatch_meta%'
 
 set nocount on

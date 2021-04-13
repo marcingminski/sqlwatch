@@ -2674,4 +2674,18 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="[event_hash]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="cf18fe80-d017-4276-8ac9-6410c7167223" ChangeDateTime="04/13/2021 14:24:30">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_config_check].[object_type]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_config_check]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[base_object_type]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="7ac58715-187f-488c-96cf-659d25159306" ChangeDateTime="04/13/2021 14:24:39">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_config_check].[object_name]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_config_check]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[base_object_name]" />
+  </Operation>
 </Operations>

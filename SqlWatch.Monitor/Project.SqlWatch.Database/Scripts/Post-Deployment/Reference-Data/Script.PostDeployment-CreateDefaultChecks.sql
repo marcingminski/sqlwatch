@@ -44,7 +44,7 @@ insert into @check_template
 		,'select @output = is_auto_close_on
 	from [dbo].[sqlwatch_meta_database]
 	where database_name = ''{DATABASE}''
-	and sql_instance = @@SERVERNAME'
+	and sql_instance = ''{SQL_INSTANCE}'''
 	
 		, 1440 --[check_frequency_minutes]
 		, null --[check_threshold_warning]
@@ -72,7 +72,7 @@ https://docs.microsoft.com/en-us/sql/relational-databases/policy-based-managemen
 		,'select @output = page_verify_option
 from [dbo].[sqlwatch_meta_database] 
 where database_name = ''{DATABASE}''
-and sql_instance = @@SERVERNAME'
+and sql_instance = ''{SQL_INSTANCE}'''
 	
 		, 1440 --[check_frequency_minutes]
 		, null --[check_threshold_warning]
@@ -106,7 +106,7 @@ where is_auto_shrink_on = 1</code>'
 		--[check_query]
 		,'select @output = is_auto_shrink_on
 from [dbo].[sqlwatch_meta_database] 
-where sql_instance = @@SERVERNAME
+where sql_instance = ''{SQL_INSTANCE}''
 and database_name = ''{DATABASE}'''
 	
 		, 1440 --[check_frequency_minutes]
@@ -139,7 +139,7 @@ and database_name = ''{DATABASE}'''
 		--[check_query]
 		,'select @output = state
 from [dbo].[sqlwatch_meta_database]
-where sql_instance = @@SERVERNAME
+where sql_instance = ''{SQL_INSTANCE}''
 and database_name = ''{DATABASE}'''
 	
 		, 60 --[check_frequency_minutes]
@@ -168,7 +168,7 @@ user_access setting:
 		--[check_query]
 		,'select @output = user_access
 from [dbo].[sqlwatch_meta_database]
-where sql_instance = @@SERVERNAME
+where sql_instance = ''{SQL_INSTANCE}''
 and database_name = ''{DATABASE}'''
 	
 		, 60 --[check_frequency_minutes]
@@ -190,14 +190,16 @@ Becuase we are checking for failure every few minutes, a frequent jobs may fail 
 It would not be enough to just check the last outcome, we have to check the history.'
 
 		--[check_query]
-		,'select @output = count(*)
-from msdb.dbo.sysjobhistory sh
-inner join msdb.dbo.sysjobs sj
-	on sj.job_id = sh.job_id
-where DATEADD(second, DATEDIFF(second, GETDATE(), GETUTCDATE()), msdb.dbo.agent_datetime(sh.run_date, sh.run_time)) >= dateadd(second,-1,''{LAST_CHECK_DATE}'') 
-and sh.run_status = 0
-and sh.step_id <> 0
-and sj.name = ''{JOB}''
+		,'select @output = count(distinct l.sqlwatch_job_id) 
+  from [dbo].[sqlwatch_logger_agent_job_history] l
+  inner join sqlwatch_meta_agent_job m
+  on m.sql_instance = l.sql_instance
+  and m.sqlwatch_job_id = l.sqlwatch_job_id
+  where l.run_date_utc >= dateadd(second,-1,''{LAST_CHECK_DATE}'') 
+	and l.run_status not in (1,2,4)
+	and l.step_id > 0
+	and m.job_name = ''{JOB}''
+	and m.sql_instance = ''{SQL_INSTANCE}''
 '
 	
 		, 10 --[check_frequency_minutes]
@@ -220,7 +222,7 @@ This does not mean that the disk will be full soon as it may not grow much. Plea
 		--[check_query]
 		,'select @output=free_space_percentage
 from dbo.vw_sqlwatch_report_dim_os_volume
-where sql_instance = @@SERVERNAME
+where sql_instance = ''{SQL_INSTANCE}''
 and volume_name = ''{DISK}''
 and free_space_percentage is not null
 '
@@ -245,7 +247,7 @@ and free_space_percentage is not null
 		--[check_query]
 		,'select @output=days_until_full
 from dbo.vw_sqlwatch_report_dim_os_volume
-where sql_instance = @@SERVERNAME
+where sql_instance = ''{SQL_INSTANCE}''
 and days_until_full is not null
 and volume_name = ''{DISK}''
 '
