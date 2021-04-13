@@ -73,8 +73,27 @@ begin
                                         
                                         set @timestart = SYSDATETIME();
 
-                                        exec dbo.usp_sqlwatch_logger_performance;
-                                        exec dbo.[usp_sqlwatch_logger_requests_and_sessions];
+                                        begin try
+
+                                            exec dbo.usp_sqlwatch_logger_performance;
+                                            exec dbo.[usp_sqlwatch_logger_requests_and_sessions];
+                                        
+                                        end try
+                                        begin catch
+                                            if @@TRANCOUNT > 0
+                                                rollback transaction
+
+                                            set @process_message = 'Activated procedure failed.'
+                                            exec [dbo].[usp_sqlwatch_internal_log]
+					                            @proc_id = @@PROCID,
+					                            @process_stage = '130C078A-2AB2-4F07-AA5B-EA810388A553',
+					                            @process_message = @process_message,
+					                            @process_message_type = 'ERROR'
+
+                                            Print @process_message + ' Please check application log for details.'
+                                        end catch
+
+                                        -- run async procedures now as they have their own error handler
                                         exec [dbo].[usp_sqlwatch_internal_exec_activated_async] @procedure_name = 'dbo.usp_sqlwatch_logger_xes_blockers';
 
                                         set @process_message = 'Message Type: ' + convert(varchar(4000),@message_type_name) + '; Timer: ' + convert(varchar(5),@timer) + '; Time Taken: ' + convert(varchar(100),datediff(ms,@timestart,SYSDATETIME()))  + 'ms'
@@ -93,11 +112,26 @@ begin
                                         exec [dbo].[usp_sqlwatch_internal_exec_activated_async] @procedure_name = 'dbo.usp_sqlwatch_internal_process_checks';
                                         exec [dbo].[usp_sqlwatch_internal_exec_activated_async] @procedure_name = 'dbo.usp_sqlwatch_logger_hadr_database_replica_states';
 
-                                        -- execute in sequence:
-                                        exec dbo.usp_sqlwatch_logger_xes_waits
-                                        exec dbo.usp_sqlwatch_logger_xes_diagnostics
-                                        exec dbo.usp_sqlwatch_logger_xes_long_queries
-                                        exec dbo.usp_sqlwatch_logger_xes_query_problems
+                                        begin try
+                                            -- execute in sequence:
+                                            exec dbo.usp_sqlwatch_logger_xes_waits
+                                            exec dbo.usp_sqlwatch_logger_xes_diagnostics
+                                            exec dbo.usp_sqlwatch_logger_xes_long_queries
+                                            exec dbo.usp_sqlwatch_logger_xes_query_problems
+                                        end try
+                                        begin catch
+                                            if @@TRANCOUNT > 0
+                                                rollback transaction
+
+                                            set @process_message = 'Activated procedure failed.'
+                                            exec [dbo].[usp_sqlwatch_internal_log]
+					                            @proc_id = @@PROCID,
+					                            @process_stage = '34D2EFC9-5128-4117-AD11-2849828CFF6E',
+					                            @process_message = @process_message,
+					                            @process_message_type = 'ERROR'
+
+                                            Print @process_message + ' Please check application log for details.'
+                                        end catch
 
                                         set @process_message = 'Message Type: ' + convert(varchar(4000),@message_type_name) + '; Timer: ' + convert(varchar(5),@timer) + '; Time Taken: ' + convert(varchar(100),datediff(ms,@timestart,SYSDATETIME()))  + 'ms'
 
@@ -111,8 +145,23 @@ begin
 
                                         set @timestart = SYSDATETIME();
 
-                                        exec dbo.usp_sqlwatch_logger_agent_job_history
-                                        exec dbo.usp_sqlwatch_logger_procedure_stats;
+                                        begin try
+                                            exec dbo.usp_sqlwatch_logger_agent_job_history
+                                            exec dbo.usp_sqlwatch_logger_procedure_stats;
+                                        end try
+                                        begin catch
+                                            if @@TRANCOUNT > 0
+                                                rollback transaction
+
+                                            set @process_message = 'Activated procedure failed.'
+                                            exec [dbo].[usp_sqlwatch_internal_log]
+					                            @proc_id = @@PROCID,
+					                            @process_stage = '0C1A3576-0B40-4871-8D4E-7490F5B91910',
+					                            @process_message = @process_message,
+					                            @process_message_type = 'ERROR'
+
+                                            Print @process_message + ' Please check application log for details.'
+                                        end catch
 
                                         set @process_message = 'Message Type: ' + convert(varchar(4000),@message_type_name) + '; Timer: ' + convert(varchar(5),@timer) + '; Time Taken: ' + convert(varchar(100),datediff(ms,@timestart,SYSDATETIME()))  + 'ms'
 
@@ -126,29 +175,44 @@ begin
 
                                         set @timestart = SYSDATETIME();
 
+                                        begin try
+
+                                            --execute in sequence:
+                                            exec dbo.usp_sqlwatch_internal_add_database;
+                                            exec dbo.usp_sqlwatch_internal_add_master_file;
+                                            exec dbo.usp_sqlwatch_internal_add_table;
+                                            exec dbo.usp_sqlwatch_internal_add_job;
+                                            exec dbo.usp_sqlwatch_internal_add_performance_counter;
+                                            exec dbo.usp_sqlwatch_internal_add_memory_clerk;
+                                            exec dbo.usp_sqlwatch_internal_add_wait_type;
+                                            exec dbo.usp_sqlwatch_internal_add_index;
+
+                                            --exec dbo.usp_sqlwatch_logger_disk_utilisation;
+
+                                            --trends:
+                                            exec dbo.usp_sqlwatch_trend_perf_os_performance_counters @interval_minutes = 1, @valid_days = 7
+                                            exec dbo.usp_sqlwatch_trend_perf_os_performance_counters @interval_minutes = 5, @valid_days = 90
+                                            exec dbo.usp_sqlwatch_trend_perf_os_performance_counters @interval_minutes = 60, @valid_days = 720;
+                                        end try
+                                        begin catch
+                                            if @@TRANCOUNT > 0
+                                                rollback transaction
+
+                                            set @process_message = 'Activated procedure failed.'
+                                            exec [dbo].[usp_sqlwatch_internal_log]
+					                            @proc_id = @@PROCID,
+					                            @process_stage = '441D488C-5872-4602-99E0-9C8080041DE9',
+					                            @process_message = @process_message,
+					                            @process_message_type = 'ERROR'
+
+                                            Print @process_message + ' Please check application log for details.'
+                                        end catch
+
                                         --execute async via broker:
                                         exec [dbo].[usp_sqlwatch_internal_exec_activated_async] @procedure_name = 'dbo.usp_sqlwatch_internal_retention';
                                         exec [dbo].[usp_sqlwatch_internal_exec_activated_async] @procedure_name = 'dbo.usp_sqlwatch_internal_purge_deleted_items';
                                         exec [dbo].[usp_sqlwatch_internal_exec_activated_async] @procedure_name = 'dbo.usp_sqlwatch_internal_expand_checks';
-
-                                        --execute in sequence:
-                                        exec dbo.usp_sqlwatch_internal_add_database;
-                                        exec dbo.usp_sqlwatch_internal_add_master_file;
-                                        exec dbo.usp_sqlwatch_internal_add_table;
-                                        exec dbo.usp_sqlwatch_internal_add_job;
-                                        exec dbo.usp_sqlwatch_internal_add_performance_counter;
-                                        exec dbo.usp_sqlwatch_internal_add_memory_clerk;
-                                        exec dbo.usp_sqlwatch_internal_add_wait_type;
-
-                                        exec dbo.usp_sqlwatch_internal_add_index;
                                         exec [dbo].[usp_sqlwatch_internal_exec_activated_async] @procedure_name = 'dbo.usp_sqlwatch_internal_add_index_missing';
-
-                                        --exec dbo.usp_sqlwatch_logger_disk_utilisation;
-
-                                        --trends:
-                                        exec dbo.usp_sqlwatch_trend_perf_os_performance_counters @interval_minutes = 1, @valid_days = 7
-                                        exec dbo.usp_sqlwatch_trend_perf_os_performance_counters @interval_minutes = 5, @valid_days = 90
-                                        exec dbo.usp_sqlwatch_trend_perf_os_performance_counters @interval_minutes = 60, @valid_days = 720;
 
                                         set @process_message = 'Message Type: ' + convert(varchar(4000),@message_type_name) + '; Timer: ' + convert(varchar(5),@timer) + '; Time Taken: ' + convert(varchar(100),datediff(ms,@timestart,SYSDATETIME()))  + 'ms'
 
