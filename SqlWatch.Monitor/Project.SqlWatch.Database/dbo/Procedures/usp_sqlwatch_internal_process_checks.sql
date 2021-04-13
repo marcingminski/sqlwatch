@@ -32,7 +32,7 @@ declare @check_name nvarchar(100),
 		@check_critical_threshold_baseline varchar(100),
 		@check_baseline_variance smallint = [dbo].[ufn_sqlwatch_get_config_value] ( 17, null ),
 		@check_variance smallint = [dbo].[ufn_sqlwatch_get_config_value] ( 18, null ),
-		@target_sql_intance varchar(32);
+		@target_sql_instance varchar(32);
 
 declare @check_status varchar(50),
 		@check_value decimal(28,5),
@@ -97,12 +97,15 @@ select
 			then replace(cc.[check_threshold_critical],'{LAST_CHECK_VALUE}',mc.last_check_value) 
 			else cc.[check_threshold_critical] 
 		end
-	, last_check_date = isnull(mc.last_check_date,'1970-01-01')
+	-- this used to be isnull(mc.last_check_date,dateadd(day,-1,'1970-01-01'))
+	-- but this meant that if we ever recreated checks after few months, the first would run evaluate ALL of the data.
+	-- we are going to limit this to only last day
+	, last_check_date = isnull(mc.last_check_date,dateadd(day,-1,getutcdate()))
 	, mc.last_check_value
 	, mc.last_check_status
 	, cc.[ignore_flapping]
 	, cc.use_baseline
-	, target_sql_instance
+	, cc.target_sql_instance
 from [dbo].[sqlwatch_config_check] cc
 
 inner join [dbo].[sqlwatch_meta_check] mc
@@ -123,7 +126,7 @@ open cur_rules
   
 fetch next from cur_rules 
 into @check_id, @check_name, @check_description , @check_query, @check_warning_threshold, @check_critical_threshold
-	, @previous_check_date, @previous_check_value, @previous_check_status, @ignore_flapping, @use_baseline, @target_sql_intance
+	, @previous_check_date, @previous_check_value, @previous_check_status, @ignore_flapping, @use_baseline, @target_sql_instance
 
 
 while @@FETCH_STATUS = 0  
@@ -301,13 +304,13 @@ SET ANSI_WARNINGS OFF
 	select @check_status = case 
 
 			-- baseline checks
-			when @use_baseline = 1 
+			when @use_baseline = 1 and len (@check_critical_threshold_baseline)>0
 
 				-- if strict baselining, only compare baseline check
 				and dbo.ufn_sqlwatch_get_config_value ( 16, null ) = 1 
 				and [dbo].[ufn_sqlwatch_get_check_status] ( @check_critical_threshold_baseline, @check_value, @check_baseline_variance ) = 1 then 'CRITICAL'
 
-			when @use_baseline = 1 
+			when @use_baseline = 1 and len (@check_critical_threshold_baseline)>0
 
 				-- if relaxed baselining, check both and pick more optimistic value.
 				and dbo.ufn_sqlwatch_get_config_value ( 16, null ) = 0
@@ -338,6 +341,7 @@ SET ANSI_WARNINGS OFF
 			when [dbo].[ufn_sqlwatch_get_check_status] ( @check_critical_threshold, @check_value, @check_variance ) = 1 then 'CRITICAL'
 			when @check_warning_threshold is not null and [dbo].[ufn_sqlwatch_get_check_status] ( @check_warning_threshold, @check_value, @check_variance ) = 1 then 'WARNING'
 			else 'OK' end
+
 
 	----if @check_status is still null then check if its warning, but we may not have warning so need to account for that:
 	--select @check_status = case when @check_status is null 
@@ -446,7 +450,7 @@ SET ANSI_WARNINGS OFF
 
 	fetch next from cur_rules 
 	into @check_id, @check_name, @check_description , @check_query, @check_warning_threshold, @check_critical_threshold
-		, @previous_check_date, @previous_check_value, @previous_check_status, @ignore_flapping, @use_baseline
+		, @previous_check_date, @previous_check_value, @previous_check_status, @ignore_flapping, @use_baseline, @target_sql_instance
 	
 end
 

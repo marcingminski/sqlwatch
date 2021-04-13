@@ -20,6 +20,11 @@
 	[check_enabled] bit not null default 1,
 	[use_baseline] bit not null default 1,
 
+	[base_object_type] varchar(50) null,
+	[base_object_name] nvarchar(128) null,
+	[base_object_date_last_seen] datetime2(0) null,
+	[target_sql_instance] varchar(32) null,
+
 	/*	primary key */
 	constraint pk_sqlwatch_meta_alert primary key clustered ([sql_instance], [check_id]),
 
@@ -39,6 +44,9 @@
 go
 
 create nonclustered index idx_sqlwatch_meta_check_1 on [dbo].[sqlwatch_meta_check] ([date_updated])
+go
+
+create nonclustered index idx_sqlwatch_meta_check_2 on [dbo].[sqlwatch_meta_check] ([target_sql_instance]) include (check_id)
 go
 
 create trigger trg_sqlwatch_meta_last_updated

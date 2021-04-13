@@ -8,6 +8,7 @@
 
 		, t.total_checks_executed
 		, ma.check_enabled
+		, ma.target_sql_instance
 	from [dbo].[sqlwatch_meta_check] ma
 
 	--get average exec time for each check

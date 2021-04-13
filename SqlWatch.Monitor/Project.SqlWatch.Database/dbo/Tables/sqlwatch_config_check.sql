@@ -61,9 +61,13 @@ create trigger dbo.trg_sqlwatch_config_check_meta_IU
 		when not matched 
 			then insert (
 			  [sql_instance], [check_id], [check_name], [check_description], [check_query]
-			, [check_frequency_minutes], [check_threshold_warning], [check_threshold_critical], [check_enabled], [use_baseline])
+			, [check_frequency_minutes], [check_threshold_warning], [check_threshold_critical], [check_enabled], [use_baseline]
+			, [base_object_type], [base_object_name], [base_object_date_last_seen], [target_sql_instance]
+			)
 			values (@@SERVERNAME, source.[check_id], source.[check_name], source.[check_description], source.[check_query]
-			, source.[check_frequency_minutes], source.[check_threshold_warning], source.[check_threshold_critical], source.[check_enabled], source.[use_baseline])
+			, source.[check_frequency_minutes], source.[check_threshold_warning], source.[check_threshold_critical], source.[check_enabled], source.[use_baseline]
+			, source.[base_object_type], source.[base_object_name], source.[base_object_date_last_seen], source.[target_sql_instance]
+			)
 
 		when matched
 			then update
@@ -76,6 +80,10 @@ create trigger dbo.trg_sqlwatch_config_check_meta_IU
 				, [check_threshold_critical] = source.[check_threshold_critical]
 				, [check_enabled] = source.[check_enabled]
 				, [use_baseline] = source.[use_baseline]
+				, [base_object_type] = source.[base_object_type]
+				, [base_object_name] = source.[base_object_name]
+				, [base_object_date_last_seen] = source.[base_object_date_last_seen]
+				, [target_sql_instance] = source.[target_sql_instance]
 				
 		;
 	end
