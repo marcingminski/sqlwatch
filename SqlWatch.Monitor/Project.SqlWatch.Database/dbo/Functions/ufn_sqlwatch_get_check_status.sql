@@ -4,50 +4,68 @@
 	@value decimal(28,5),
 	@variance_percent smallint
 )
-RETURNS bit
+RETURNS bit with schemabinding
 AS
 BEGIN
-	declare @variance_percent_dec_max decimal(10,2) = @variance_percent * 0.01 + 1,
-			@variance_percent_dec_min decimal(10,2) = @variance_percent * 0.01
+	--1: MATCH, 0: NOT MATCH
+	declare @variance_percent_dec_max decimal(10,2) = (1+(@variance_percent * 1.0 / 100)),
+			@variance_percent_dec_min decimal(10,2) = (1-(@variance_percent * 1.0 / 100)),
+			@return bit = 0,
+			@threshold_value decimal(28,5) = [dbo].[ufn_sqlwatch_get_threshold_value](@threshold),
+			@threshold_comparator varchar(2) = [dbo].[ufn_sqlwatch_get_threshold_comparator](@threshold)
 
-	RETURN (
-		select 
-			case
-				-- less or equal
-				when left(@threshold,2) = '<=' then
-					case
-						when @value <= convert(decimal(28,5),replace(@threshold,'<=','')) * @variance_percent_dec_min
-						then 1 else 0 end
-					
-				-- greater or equal
-				when left(@threshold,2) = '>=' then
-					case 
-						when @value >= convert(decimal(28,5),replace(@threshold,'>=','')) * @variance_percent_dec_max
-						then 1 else 0 end
-				
-				-- exact mismatch -- no variance
-				when left(@threshold,2) = '<>' then
-					case when @value <> convert(decimal(28,5),replace(@threshold,'<>','')) then 1 else 0 end
+	if @threshold_comparator = '<='
+		begin
+			if @value  <= @threshold_value * @variance_percent_dec_min
+				begin
+					set @return = 1
+				end
+		end
+	else if @threshold_comparator = '>='
+		begin
+			if @value >= @threshold_value * @variance_percent_dec_max
+				begin
+					set @return = 1
+				end
+		end
+	else if @threshold_comparator = '<>'
+		begin
+			if @value <> @threshold_value
+				begin
+					set @return = 1
+				end
+		end
+	else if @threshold_comparator = '<'
+		begin
+			if @value < @threshold_value * @variance_percent_dec_min
+				begin
+					set @return = 1
+				end
+		end
+	else if @threshold_comparator = '>'
+		begin
+			if @value > @threshold_value * @variance_percent_dec_max
+				begin
+					set @return = 1
+				end
+		end
+	else if @threshold_comparator = '='
+		begin
+			if @value = @threshold_value
+				begin
+					set @return = 1
+				end
+		end
+	else if @value = @threshold_value
+		begin
+				begin
+					set @return = 1
+				end
+		end
+	else
+		begin
+			set @return = 0
+		end
 
-				-- less than
-				when left(@threshold,1) = '<' then
-					case 
-						when @value < convert(decimal(28,5),replace(@threshold,'<','')) * @variance_percent_dec_min
-						then 1 else 0 end
-
-				-- greater than
-				when left(@threshold,1) = '>' then
-					case 
-						when @value > convert(decimal(28,5),replace(@threshold,'>','')) * @variance_percent_dec_max
-						then 1 else 0 end
-		
-				-- exact match -- no variance
-				when left(@threshold,1) = '=' then
-					case when @value = convert(decimal(28,5),replace(@threshold,'=','')) then 1 else 0 end
-			else
-				-- exact match -- no variance
-				case when @value = convert(decimal(28,5),replace(@threshold,'=','')) then 1 else 0 end
-			end
-
-	)
+	return @return
 END

@@ -88,12 +88,16 @@ values
 	/* Baseline variance percentage.
 	   When setting baseline, we have to allow for some flex, for example, baseline may say 20 Readahead pages/sec.
 	   With 20% variance we will not raise alert when the counter hits 24. */
-	,(17	,'Baseline Checks Variance %' ,20)
+	,(17	,'Baseline Check Threshold Deviation %' ,20)
 
 	/* Check variance percentage.
 	   Same as above but for normal checks with no baseline. */
-	,(18	,'Checks Variance %' ,10)
+	,(18	,'Default Check Threshold Deviation %' ,10)
 
+	/* This will allow to create checks for each SQL Instance in the central repository as in 
+		https://github.com/marcingminski/sqlwatch/issues/250 
+		By default, this is disabled. To enable, change to 1 and re-run the "expand checks" procedure or wait 1 hour */
+	,(19	,'Expand Checks by SQL Instance' ,0)
 ;
 
 merge dbo.sqlwatch_config as target

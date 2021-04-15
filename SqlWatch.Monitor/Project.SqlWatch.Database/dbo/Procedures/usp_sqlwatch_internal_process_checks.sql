@@ -51,7 +51,14 @@ declare @check_status varchar(50),
 		@trigger_current_count smallint,
 		@error_message_single nvarchar(max) = '',
 		@error_message_xml xml,
-		@has_errors bit = 0
+		@has_errors bit = 0,
+		-- Where I say variant, I mean deviation. Bit of a brain fart.
+		@actual_variance_check decimal(28,5),
+		@actial_variance_check_baseline decimal(28,5),
+		@deviation_from_default_threshold real,
+		@deviation_from_baseline_threshold real,
+		@deviatoin_from_value_default real,
+		@deviation_from_value_baseline real
 
 declare @email_subject nvarchar(255),
 		@email_body nvarchar(4000),
@@ -257,40 +264,140 @@ SET ANSI_WARNINGS OFF
 	--In such situation the threshold cannot be compared to and we have to return an OK (as we dont know if the value is out of bounds). 
 	--The second iteration should then be able to compare to the previous value and return the desired status
 	--If we have {LAST_CHECK_VALUE} value at this point, it means there is no previous check value.
-	--The baseline will take precedence over values in [check_threshold_warning] and [check_threshold_critical].
-	if @check_critical_threshold like '%{LAST_CHECK_VALUE}%' or @check_warning_threshold like '%{LAST_CHECK_VALUE}%' 
-		begin
-			set @check_status =	'OK'  
-		end
-	else if @use_baseline = 1 
-		begin
-			-- If we are asked to use the baseline and if have a default baseline, get value from the baseline data 
-			-- (in this case, the baseline data means the check that had previously run and has been baselined:
-			-- when using baseline, we're going to set it as critical. in the future we will also set warning based on % of baseline or even based on another baseline
-			select @baseline_id = baseline_id 
-			from [dbo].[sqlwatch_meta_baseline]
-			where is_default = 1
-			and sql_instance = @sql_instance				
+	begin try
 
-			if @baseline_id is not null
-				begin
-					select @check_baseline = null 
+		if @check_critical_threshold like '%{LAST_CHECK_VALUE}%' or @check_warning_threshold like '%{LAST_CHECK_VALUE}%' 
+			begin
+				set @check_status =	'OK'  
+			end
+		else
+			begin
+				set @error_message = FORMATMESSAGE('Determining @check_status for %s (id: %i).', @check_name,@check_id)
+				--The baseline will take precedence over values in [check_threshold_warning] and [check_threshold_critical].
+				if @use_baseline = 1 
+					begin
+						set @error_message = @error_message + ' We will try to use baseline data.'
+						-- If we are asked to use the baseline and if have a default baseline, get value from the baseline data 
+						-- (in this case, the baseline data means the check that had previously run and has been baselined:
+						-- when using baseline, we're going to set it as critical. in the future we will also set warning based on % of baseline or even based on another baseline
+						select @check_baseline=[dbo].[ufn_sqlwatch_get_check_baseline](
+							@check_id
+							,null --get default baseline
+							,@sql_instance)		
 
-					select @check_baseline=avg(check_value)
-					from [dbo].[sqlwatch_logger_check] lc
+						if @check_baseline is not null
+							begin
+								set @error_message = @error_message + FORMATMESSAGE(' We have got a baseline value of %s.'
+									,convert(varchar(50),@check_baseline)
+									)
 
-					inner join [dbo].[sqlwatch_meta_snapshot_header_baseline] b
-						on b.snapshot_time = lc.snapshot_time
-						and b.sql_instance = lc.sql_instance
-						and b.snapshot_type_id = lc.snapshot_type_id
+								select @check_critical_threshold_baseline = left(@check_critical_threshold,patindex('%[0-9]%',@check_critical_threshold)-1)+convert(varchar(50),@check_baseline)
+							end
+						else
+							begin
+								set @error_message = @error_message + FORMATMESSAGE(' We have NOT got any baseline data.')
+							end
 
-					where b.baseline_id = @baseline_id
-						and lc.check_id = @check_id
+						if @check_critical_threshold_baseline is not null
+							begin
 
-					--replace numbers only in the original check threshold:
-					select @check_critical_threshold_baseline = left(@check_critical_threshold,patindex('%[0-9]%',@check_critical_threshold)-1)+convert(varchar(10),@check_baseline)
+								set @error_message = @error_message + FORMATMESSAGE(' We have set the critical threshold from baseline value of %s.'
+									,@check_critical_threshold_baseline
+									)
 
-					set @error_message = 'Check (Id: ' + convert(varchar(10),@check_id) + ') baseline value (' + @check_critical_threshold + ')'
+								if dbo.ufn_sqlwatch_get_config_value ( 16, null ) = 1
+									begin
+										set @error_message = @error_message + FORMATMESSAGE(' We are running strict baselining. The check value is %s, and the threshold from the baseline is %s'
+											,convert(varchar(50),@check_value)
+											,@check_critical_threshold_baseline
+											)
+
+										-- if strict baselining, only compare baseline check with no variance:
+										if [dbo].[ufn_sqlwatch_get_check_status] ( @check_critical_threshold_baseline, @check_value, 1 ) = 1
+											begin
+												set @error_message = @error_message + FORMATMESSAGE(' Setting @check_status to CRITICAL.')
+												set @check_status = 'CRITICAL'
+											end
+										else
+											begin
+												set @error_message = @error_message + FORMATMESSAGE(' Setting @check_status to OK.')
+												set @check_status = 'OK'
+											end
+									end
+								else
+									begin
+										set @actual_variance_check = null
+										set @actial_variance_check_baseline = null
+
+										select @actual_variance_check = [dbo].[ufn_sqlwatch_get_threshold_deviation](	@check_critical_threshold,	@check_variance )
+										select @actial_variance_check_baseline = [dbo].[ufn_sqlwatch_get_threshold_deviation](	@check_critical_threshold_baseline,	@check_baseline_variance )
+
+										set @error_message = @error_message + 
+										FORMATMESSAGE(' We are running relaxed baselining. We are going to compare against either the baseline threshold or the default threshold. The result will be OK if either returns OK. 
+The check value is %s, the baseline threshold is %s, and the default threshold is %s. The baseline variance of %s%% and default variance of %s%% set the threshold to %s%s and %s%s respectively.
+If the check satisfies either of these thresholds we are going to set the check result to OK.'
+											,convert(varchar(50),@check_value)
+											,@check_critical_threshold_baseline
+											,@check_critical_threshold
+											,convert(varchar(50),@check_baseline_variance)
+											,convert(varchar(50),@check_variance)
+											,[dbo].[ufn_sqlwatch_get_threshold_comparator](@check_critical_threshold_baseline)
+											,convert(varchar(50),@actial_variance_check_baseline)
+											,[dbo].[ufn_sqlwatch_get_threshold_comparator](@check_critical_threshold)
+											,convert(varchar(50),@actual_variance_check)
+											)
+
+										-- if relaxed baselining, check both and pick more optimistic value.
+										if [dbo].[ufn_sqlwatch_get_check_status] ( @check_critical_threshold_baseline, @check_value, @check_baseline_variance ) = 0
+										or [dbo].[ufn_sqlwatch_get_check_status] ( @check_critical_threshold, @check_value, @check_variance ) = 0
+											begin
+												set @error_message = @error_message + FORMATMESSAGE(' Either the baseline or the default check has returned OK.')
+												set @check_status = 'OK'
+											end
+										else
+											begin
+												set @error_message = @error_message + FORMATMESSAGE(' Neither the baseline nor the default check has returned OK so setting CRITICAL.')
+												set  @check_status =  'CRITICAL'
+											end
+									end
+							end
+					end --@use_baseline = 1 
+				else
+					begin
+						set @error_message = @error_message + FORMATMESSAGE(' We are NOT using baseline data for this check.')
+					end
+
+					--if @check_status is still null, it means the baseline based comparison has not set it.
+					--it could be because we told it to use baseline but there was no baseline.
+					if @check_status is null
+						begin
+							set @error_message = @error_message + 
+							FORMATMESSAGE(' The @check_status is null. The check value is %s, the warning threshold is %s, and critical threshold is %s. The variance is 1.'
+								,convert(varchar(50),@check_value)
+								,@check_warning_threshold
+								,@check_critical_threshold
+								)
+
+							if [dbo].[ufn_sqlwatch_get_check_status] ( @check_critical_threshold, @check_value, 1 ) = 1
+								begin
+									set @error_message = @error_message + FORMATMESSAGE(' The final result is CRITICAL.')
+									set @check_status =  'CRITICAL'
+								end
+							else if [dbo].[ufn_sqlwatch_get_check_status] ( @check_warning_threshold, @check_value, 1 ) = 1
+								begin
+									set @error_message = @error_message + FORMATMESSAGE(' The final result is WARNING.')
+									set @check_status =  'WARNING'
+								end
+							else
+								begin
+									set @error_message = @error_message + FORMATMESSAGE(' The final result is OK.')
+									set @check_status =  'OK'
+								end
+						end
+
+
+					--we have baseline, use it
+					--set @error_message = 'Check (Id: ' + convert(varchar(10),@check_id) + ') baseline value (' + @check_critical_threshold_baseline + ')'
 					exec [dbo].[usp_sqlwatch_internal_log]
 							@proc_id = @@PROCID,
 							@process_stage = '55C51822-5204-42B0-97A6-039608B9ACB8',
@@ -298,49 +405,41 @@ SET ANSI_WARNINGS OFF
 							@process_message_type = 'INFO'
 
 				end
-		end
-	
-	--we must either have critical value or warning and critical. constraints dissalow the critical warning to be null and previous check ensured check_value is not null:
-	select @check_status = case 
+	end try
+	begin catch
 
-			-- baseline checks
-			when @use_baseline = 1 and len (@check_critical_threshold_baseline)>0
+		set @has_errors = 1				
+		set @error_message = FORMATMESSAGE('Errors when setting check_status for for Check (Id: %i)
+The parameters were:
+dbo.ufn_sqlwatch_get_config_value ( 16, null ): %i
+@check_value: %s
+@use_baseline: %i
+@check_critical_threshold_baseline: %s
+@check_baseline_variance: %i
+@check_critical_threshold: %s
+@check_variance: %i
+@check_warning_threshold: %s
+'
+			,@check_id
+			,dbo.ufn_sqlwatch_get_config_value ( 16, null )
+			,convert(varchar(50),@check_value)
+			,convert(int,@use_baseline)
+			,@check_critical_threshold_baseline
+			,@check_baseline_variance
+			,@check_critical_threshold
+			,@check_variance
+			,@check_warning_threshold
+		)
 
-				-- if strict baselining, only compare baseline check
-				and dbo.ufn_sqlwatch_get_config_value ( 16, null ) = 1 
-				and [dbo].[ufn_sqlwatch_get_check_status] ( @check_critical_threshold_baseline, @check_value, @check_baseline_variance ) = 1 then 'CRITICAL'
+		exec [dbo].[usp_sqlwatch_internal_log]
+			@proc_id = @@PROCID,
+			@process_stage = 'D17BF7E2-55FC-4B96-ABE3-8BD299924B6B',
+			@process_message = @error_message,
+			@process_message_type = 'ERROR'
 
-			when @use_baseline = 1 and len (@check_critical_threshold_baseline)>0
+			goto ProcessNextCheck
 
-				-- if relaxed baselining, check both and pick more optimistic value.
-				and dbo.ufn_sqlwatch_get_config_value ( 16, null ) = 0
-				then
-					case	
-						-- if both return OK then OK
-						when [dbo].[ufn_sqlwatch_get_check_status] ( @check_critical_threshold_baseline, @check_value, @check_baseline_variance ) = 0
-						and	[dbo].[ufn_sqlwatch_get_check_status] ( @check_critical_threshold, @check_value, @check_variance ) = 0
-						then 'OK'
-
-						-- if baseline fails but default is OK then OK
-						when [dbo].[ufn_sqlwatch_get_check_status] ( @check_critical_threshold_baseline, @check_value, @check_baseline_variance ) = 1
-						and [dbo].[ufn_sqlwatch_get_check_status] ( @check_critical_threshold, @check_value, @check_variance ) = 0
-						then 'OK'
-
-						-- if baseline OK but default fails then OK
-						when [dbo].[ufn_sqlwatch_get_check_status] ( @check_critical_threshold_baseline, @check_value, @check_baseline_variance ) = 0
-						and [dbo].[ufn_sqlwatch_get_check_status] ( @check_critical_threshold, @check_value, @check_variance ) = 1
-						then 'OK'
-
-						-- if both fail then FAIL
-						when [dbo].[ufn_sqlwatch_get_check_status] ( @check_critical_threshold_baseline, @check_value, @check_baseline_variance ) = 1
-						and [dbo].[ufn_sqlwatch_get_check_status] ( @check_critical_threshold, @check_value, @check_variance ) = 1
-						then 'CRITICAL'
-					end
-
-			-- no baseline checks				
-			when [dbo].[ufn_sqlwatch_get_check_status] ( @check_critical_threshold, @check_value, @check_variance ) = 1 then 'CRITICAL'
-			when @check_warning_threshold is not null and [dbo].[ufn_sqlwatch_get_check_status] ( @check_warning_threshold, @check_value, @check_variance ) = 1 then 'WARNING'
-			else 'OK' end
+	end catch
 
 
 	----if @check_status is still null then check if its warning, but we may not have warning so need to account for that:
@@ -356,11 +455,15 @@ SET ANSI_WARNINGS OFF
 	-- log check results:
 	-------------------------------------------------------------------------------------------------------------------
 	insert into [dbo].[sqlwatch_logger_check] (sql_instance, snapshot_time, snapshot_type_id, check_id, 
-		[check_value], [check_status], check_exec_time_ms, [status_change], [is_flapping])
+		[check_value], [check_status], check_exec_time_ms, [status_change], [is_flapping]
+		, baseline_threshold
+		)
 	values (@sql_instance, @snapshot_time, @snapshot_type_id, @check_id, @check_value, @check_status, @check_exec_time_ms, 
-		case when isnull(@check_status,'') <> isnull(@previous_check_status,'') then 1 else 0 end,
-		@is_flapping )
-
+		case when isnull(@check_status,'') <> isnull(@previous_check_status,'') then 1 else 0 end
+		, @is_flapping 
+		, convert(real,dbo.ufn_sqlwatch_get_threshold_value(@check_critical_threshold_baseline))
+		)
+		
 	-------------------------------------------------------------------------------------------------------------------
 	-- process any actions for this check but only if status not OK or previous status was not OK (so we can process recovery)
 	-- if current and previous status was OK we wouldnt have any actions anyway so there is no point calling the proc.

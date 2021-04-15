@@ -1,4 +1,5 @@
-﻿CREATE VIEW [dbo].[vw_sqlwatch_report_fact_check]
+﻿CREATE VIEW [dbo].[vw_sqlwatch_report_fact_check] 
+with schemabinding
 	AS 
 
 select 
@@ -13,6 +14,7 @@ select
 	, [d].status_change
 	, d.snapshot_type_id
 	, c.check_description
+	, c.target_sql_instance
 from dbo.sqlwatch_logger_check d
   	inner join dbo.sqlwatch_logger_snapshot_header h
 		on  h.snapshot_time = d.[snapshot_time]

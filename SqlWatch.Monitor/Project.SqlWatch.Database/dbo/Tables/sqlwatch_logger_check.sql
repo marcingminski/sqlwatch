@@ -10,7 +10,8 @@
 	[check_exec_time_ms] real null,
 	[status_change] bit,
 	[is_flapping] bit,
-	
+	[baseline_threshold] real, 
+
 	/*	primary key */
 	constraint pk_sqlwatch_logger_check primary key clustered (snapshot_time, sql_instance, check_id, snapshot_type_id),
 

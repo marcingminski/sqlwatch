@@ -11,7 +11,9 @@
 	[ignore_flapping] bit not null constraint df_sqlwatch_config_check_template_flapping default (0),
 	[expand_by] varchar(50) null constraint chk_sqlwatch_config_check_template_expand_by check ([expand_by] in ('Database','Job','Disk')),
 	[user_modified] bit not null,
-	[template_enabled] bit
+	[template_enabled] bit,
+	[use_baseline] bit,
 
 	constraint pk_sqlwatch_config_check_template primary key clustered ([check_name])
 )
+go

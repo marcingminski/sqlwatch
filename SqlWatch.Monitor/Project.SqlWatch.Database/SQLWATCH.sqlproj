@@ -355,6 +355,10 @@
     <Build Include="dbo\Extended Events\SQLWATCH_query_problems.sql" />
     <Build Include="dbo\Tables\sqlwatch_logger_xes_query_problems.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_logger_xes_query_problems.sql" />
+    <Build Include="dbo\Functions\ufn_sqlwatch_get_check_baseline.sql" />
+    <Build Include="dbo\Functions\ufn_sqlwatch_get_threshold_value.sql" />
+    <Build Include="dbo\Functions\ufn_sqlwatch_get_threshold_comparator.sql" />
+    <Build Include="dbo\Functions\ufn_sqlwatch_get_threshold_deviation.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />

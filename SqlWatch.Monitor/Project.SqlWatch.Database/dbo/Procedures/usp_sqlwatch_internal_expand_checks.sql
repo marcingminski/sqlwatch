@@ -12,6 +12,11 @@ begin
 	declare cur_expand_by_server cursor for
 	select [sql_instance]
 	from dbo.sqlwatch_config_sql_instance
+	--only expand by all instances if set in the config, otherwise just expand by local instance
+	where sql_instance = case when dbo.ufn_sqlwatch_get_config_value (19, null) = 1 
+		then sql_instance 
+		else dbo.ufn_sqlwatch_get_servername()
+		end;
 
 	open cur_expand_by_server
 
@@ -46,7 +51,8 @@ begin
 				[ignore_flapping] [bit] NOT NULL,
 				[object_type] varchar(50),
 				[object_name] nvarchar(128),
-				[target_sql_instance] varchar(32)
+				[target_sql_instance] varchar(32),
+				[use_baseline] bit
 			)
 
 			if @expand_by is null
@@ -54,6 +60,7 @@ begin
 					insert into @checks (
 							[check_name],[check_description],[check_query],[check_frequency_minutes],[check_threshold_warning]
 						   ,[check_threshold_critical],[check_enabled],[ignore_flapping],[check_template_id], [target_sql_instance]
+						   ,[use_baseline]
 					)
 
 					select 
@@ -67,6 +74,7 @@ begin
 					   ,[ignore_flapping]
 					   ,[check_template_id]
 					   ,@sql_instance
+					   ,[use_baseline]
 					from [dbo].[sqlwatch_config_check_template] c
 					where c.check_name = @check_name
 				end
@@ -75,7 +83,9 @@ begin
 				begin
 					insert into @checks (
 							[check_name],[check_description],[check_query],[check_frequency_minutes],[check_threshold_warning]
-						   ,[check_threshold_critical],[check_enabled],[ignore_flapping],[check_template_id], [object_type], [object_name], [target_sql_instance]
+						   ,[check_threshold_critical],[check_enabled],[ignore_flapping],[check_template_id], [object_type], [object_name]
+						   ,[target_sql_instance]
+						   ,[use_baseline]
 					)
 
 					select 
@@ -95,6 +105,7 @@ begin
 					   ,[object_type] = @expand_by
 					   ,[object_name] = d.[volume_name]
 					   ,@sql_instance 
+					   ,[use_baseline]
 					from [dbo].[sqlwatch_config_check_template] c
 					cross apply (
 						select *
@@ -110,7 +121,9 @@ begin
 				begin
 					insert into @checks (
 							[check_name],[check_description],[check_query],[check_frequency_minutes],[check_threshold_warning]
-						   ,[check_threshold_critical],[check_enabled],[ignore_flapping],[check_template_id], [object_type], [object_name], [target_sql_instance]
+						   ,[check_threshold_critical],[check_enabled],[ignore_flapping],[check_template_id], [object_type], [object_name]
+						   ,[target_sql_instance]
+						   ,[use_baseline]
 					)
 
 					--this use to point to sysjobs hence the collate, I don't think we need collate anymore as within the db scope.
@@ -131,6 +144,7 @@ begin
 					   ,[object_type] = @expand_by
 					   ,[object_name] = d.[job_name]
 					   ,@sql_instance
+					   ,[use_baseline]
 					from [dbo].[sqlwatch_config_check_template] c
 					cross apply (
 						select *
@@ -146,7 +160,9 @@ begin
 
 					insert into @checks (
 							[check_name],[check_description],[check_query],[check_frequency_minutes],[check_threshold_warning]
-						   ,[check_threshold_critical],[check_enabled],[ignore_flapping],[check_template_id], [object_type], [object_name], [target_sql_instance]
+						   ,[check_threshold_critical],[check_enabled],[ignore_flapping],[check_template_id], [object_type], [object_name]
+						   ,[target_sql_instance]
+						   ,[use_baseline]
 					)
 
 					--this use to point to sys.databases hence the collate, I don't think we need collate anymore as within the db scope.
@@ -167,6 +183,7 @@ begin
 					   ,[object_type] = @expand_by
 					   ,[object_name] = d.[database_name]
 					   ,@sql_instance
+					   ,[use_baseline]
 					from [dbo].[sqlwatch_config_check_template] c
 					cross apply (
 						select *
@@ -216,6 +233,7 @@ begin
 				,[base_object_name]
 				,[base_object_date_last_seen]
 				,[target_sql_instance]
+				,[use_baseline]
 				)
 		values ( 
 				 [check_name]
@@ -233,6 +251,7 @@ begin
 				,[object_name]
 				,getutcdate()
 				,[target_sql_instance]
+				,[use_baseline]
 				)
 
 		when not matched by source 
@@ -253,7 +272,7 @@ begin
 				,[base_object_type] = source.[object_type]
 				,[base_object_name] = source.[object_name]
 				,[base_object_date_last_seen] = case when source.[object_name] is not null then getutcdate() else [base_object_date_last_seen] end
-
+				,[use_baseline] = source.[use_baseline]
 		;
 
 		-- load action templates:

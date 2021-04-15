@@ -2688,4 +2688,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="[base_object_name]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="66e8a57f-42c4-47a6-b140-dae1beefad00" ChangeDateTime="04/14/2021 21:15:03">
+    <Property Name="ElementName" Value="[dbo].[ufn_sqlwatch_get_threshold_variance]" />
+    <Property Name="ElementType" Value="SqlScalarFunction" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[ufn_sqlwatch_get_threshold_deviation]" />
+  </Operation>
 </Operations>
