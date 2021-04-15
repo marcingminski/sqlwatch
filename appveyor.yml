@@ -36,17 +36,8 @@ dotnet_csproj:
 # 2017  
 test_script:
   - sqlpackage.exe /a:Publish /sf:C:\projects\sqlwatch\SqlWatch.Monitor\Project.SqlWatch.Database\bin\Output\SQLWATCH.dacpac /tdn:SQLWATCH /tsn:localhost\SQL2017
-
-# 2016
-test_script:
   - sqlpackage.exe /a:Publish /sf:C:\projects\sqlwatch\SqlWatch.Monitor\Project.SqlWatch.Database\bin\Output\SQLWATCH.dacpac /tdn:SQLWATCH /tsn:localhost\SQL2016
-
-# 2014
-test_script:
   - sqlpackage.exe /a:Publish /sf:C:\projects\sqlwatch\SqlWatch.Monitor\Project.SqlWatch.Database\bin\Output\SQLWATCH.dacpac /tdn:SQLWATCH /tsn:localhost\SQL2014
-
-# 2012
-test_script:
   - sqlpackage.exe /a:Publish /sf:C:\projects\sqlwatch\SqlWatch.Monitor\Project.SqlWatch.Database\bin\Output\SQLWATCH.dacpac /tdn:SQLWATCH /tsn:localhost\SQL2012SP1
 
 
