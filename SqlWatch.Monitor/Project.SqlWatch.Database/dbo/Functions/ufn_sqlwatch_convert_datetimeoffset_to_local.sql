@@ -7,5 +7,5 @@ returns datetime2(0)
 with schemabinding
 as
 begin
-	return convert(datetime, switchoffset(convert(datetime, @datetimeoffset), datename(TzOffset, @datetimeoffset)))
+	return convert(datetime, switchoffset(@datetimeoffset, datename(TzOffset, @datetimeoffset)))
 end
