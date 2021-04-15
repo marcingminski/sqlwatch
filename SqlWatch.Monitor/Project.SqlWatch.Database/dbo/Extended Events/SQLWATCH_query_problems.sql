@@ -19,42 +19,42 @@ ADD EVENT sqlserver.sp_cache_miss(
         and ([sqlserver].[client_app_name]<>N'DacFx Deploy')    
     ) ,
 ADD EVENT sqlserver.additional_memory_grant(
-    ACTION(sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.nt_username,sqlserver.plan_handle,sqlserver.sql_text,sqlserver.username)
+    ACTION(sqlserver.database_name,sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.nt_username,sqlserver.plan_handle,sqlserver.sql_text,sqlserver.username)
     WHERE ([sqlserver].[is_system]=(0)) 
         and ([sqlserver].[client_app_name]<>N'Microsoft SQL Server Management Studio')
         and ([sqlserver].[client_app_name]<>N'SQLServerCEIP')
         and ([sqlserver].[client_app_name]<>N'DacFx Deploy')    
     ) ,
 ADD EVENT sqlserver.exchange_spill(
-    ACTION(sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.nt_username,sqlserver.plan_handle,sqlserver.sql_text,sqlserver.username)
+    ACTION(sqlserver.database_name,sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.nt_username,sqlserver.plan_handle,sqlserver.sql_text,sqlserver.username)
     WHERE ([sqlserver].[is_system]=(0)) 
         and ([sqlserver].[client_app_name]<>N'Microsoft SQL Server Management Studio')
         and ([sqlserver].[client_app_name]<>N'SQLServerCEIP')
         and ([sqlserver].[client_app_name]<>N'DacFx Deploy')    
     ) ,
 ADD EVENT sqlserver.execution_warning(
-    ACTION(sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.nt_username,sqlserver.plan_handle,sqlserver.sql_text,sqlserver.username)
+    ACTION(sqlserver.database_name,sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.nt_username,sqlserver.plan_handle,sqlserver.sql_text,sqlserver.username)
     WHERE ([sqlserver].[is_system]=(0)) 
         and ([sqlserver].[client_app_name]<>N'Microsoft SQL Server Management Studio')
         and ([sqlserver].[client_app_name]<>N'SQLServerCEIP')
         and ([sqlserver].[client_app_name]<>N'DacFx Deploy')    
     ) ,
 ADD EVENT sqlserver.hash_spill_details(
-    ACTION(sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.nt_username,sqlserver.plan_handle,sqlserver.sql_text,sqlserver.username)
+    ACTION(sqlserver.database_name,sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.nt_username,sqlserver.plan_handle,sqlserver.sql_text,sqlserver.username)
     WHERE ([sqlserver].[is_system]=(0)) 
         and ([sqlserver].[client_app_name]<>N'Microsoft SQL Server Management Studio')
         and ([sqlserver].[client_app_name]<>N'SQLServerCEIP')
         and ([sqlserver].[client_app_name]<>N'DacFx Deploy')    
     ) ,
 ADD EVENT sqlserver.hash_warning(
-    ACTION(sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.nt_username,sqlserver.plan_handle,sqlserver.sql_text,sqlserver.username)
+    ACTION(sqlserver.database_name,sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.nt_username,sqlserver.plan_handle,sqlserver.sql_text,sqlserver.username)
     WHERE ([sqlserver].[is_system]=(0)) 
         and ([sqlserver].[client_app_name]<>N'Microsoft SQL Server Management Studio')
         and ([sqlserver].[client_app_name]<>N'SQLServerCEIP')
         and ([sqlserver].[client_app_name]<>N'DacFx Deploy')    
     ) ,
 ADD EVENT sqlserver.long_io_detected(
-    ACTION(sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.nt_username,sqlserver.plan_handle,sqlserver.sql_text,sqlserver.username)
+    ACTION(sqlserver.database_name,sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.nt_username,sqlserver.plan_handle,sqlserver.sql_text,sqlserver.username)
     WHERE ([sqlserver].[is_system]=(0)) 
         and ([sqlserver].[client_app_name]<>N'Microsoft SQL Server Management Studio')
         and ([sqlserver].[client_app_name]<>N'SQLServerCEIP')
@@ -63,7 +63,7 @@ ADD EVENT sqlserver.long_io_detected(
 
 ADD EVENT sqlserver.missing_column_statistics(
     SET collect_column_list=(1)
-    ACTION(sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.nt_username,sqlserver.plan_handle,sqlserver.sql_text,sqlserver.username)
+    ACTION(sqlserver.database_name,sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.nt_username,sqlserver.plan_handle,sqlserver.sql_text,sqlserver.username)
     WHERE ([sqlserver].[is_system]=(0) 
         and [sqlserver].[client_app_name]<>N'Microsoft SQL Server Management Studio' 
         and [sqlserver].[client_app_name]<>N'SQLServerCEIP' 
@@ -71,35 +71,35 @@ ADD EVENT sqlserver.missing_column_statistics(
     ) ,
 
 ADD EVENT sqlserver.missing_join_predicate(
-    ACTION(sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.nt_username,sqlserver.plan_handle,sqlserver.sql_text,sqlserver.username)
+    ACTION(sqlserver.database_name,sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.nt_username,sqlserver.plan_handle,sqlserver.sql_text,sqlserver.username)
       WHERE ([sqlserver].[is_system]=(0)) 
         and ([sqlserver].[client_app_name]<>N'Microsoft SQL Server Management Studio')
         and ([sqlserver].[client_app_name]<>N'SQLServerCEIP')
         and ([sqlserver].[client_app_name]<>N'DacFx Deploy')    
     ) ,
 ADD EVENT sqlserver.optimizer_timeout(
-    ACTION(sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.nt_username,sqlserver.plan_handle,sqlserver.sql_text,sqlserver.username)
+    ACTION(sqlserver.database_name,sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.nt_username,sqlserver.plan_handle,sqlserver.sql_text,sqlserver.username)
       WHERE ([sqlserver].[is_system]=(0)) 
         and ([sqlserver].[client_app_name]<>N'Microsoft SQL Server Management Studio')
         and ([sqlserver].[client_app_name]<>N'SQLServerCEIP')
         and ([sqlserver].[client_app_name]<>N'DacFx Deploy')    
     ) ,
 ADD EVENT sqlserver.plan_affecting_convert(
-    ACTION(sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.nt_username,sqlserver.plan_handle,sqlserver.sql_text,sqlserver.username)
+    ACTION(sqlserver.database_name,sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.nt_username,sqlserver.plan_handle,sqlserver.sql_text,sqlserver.username)
      WHERE ([sqlserver].[is_system]=(0)) 
         and ([sqlserver].[client_app_name]<>N'Microsoft SQL Server Management Studio')
         and ([sqlserver].[client_app_name]<>N'SQLServerCEIP')
         and ([sqlserver].[client_app_name]<>N'DacFx Deploy')    
     ) ,
 ADD EVENT sqlserver.sort_warning(
-    ACTION(sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.nt_username,sqlserver.plan_handle,sqlserver.sql_text,sqlserver.username)
+    ACTION(sqlserver.database_name,sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.nt_username,sqlserver.plan_handle,sqlserver.sql_text,sqlserver.username)
     WHERE ([sqlserver].[is_system]=(0)) 
         and ([sqlserver].[client_app_name]<>N'Microsoft SQL Server Management Studio')
         and ([sqlserver].[client_app_name]<>N'SQLServerCEIP')
         and ([sqlserver].[client_app_name]<>N'DacFx Deploy')    
     ) ,
 ADD EVENT sqlserver.unmatched_filtered_indexes(
-    ACTION(sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.nt_username,sqlserver.plan_handle,sqlserver.sql_text,sqlserver.username)
+    ACTION(sqlserver.database_name,sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.nt_username,sqlserver.plan_handle,sqlserver.sql_text,sqlserver.username)
     WHERE ([sqlserver].[is_system]=(0)) 
         and ([sqlserver].[client_app_name]<>N'Microsoft SQL Server Management Studio')
         and ([sqlserver].[client_app_name]<>N'SQLServerCEIP')

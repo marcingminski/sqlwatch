@@ -1,5 +1,6 @@
 ﻿CREATE TABLE [dbo].[sqlwatch_logger_xes_query_problems]
 (
+	[event_id] int identity(1,1) not null,
 	[event_time] [datetime] not null,
 	[event_name] [varchar](255) not null,
 	[database_name] [varchar](255) NULL,
@@ -19,7 +20,7 @@
 		--I am going to make these fields part PK for improvement performance when reading data. I may change it later depending on performance
 
 		--actually, this will fragment the index as hell. it needs a better design
-		primary key nonclustered ([snapshot_time], [snapshot_type_id], [event_time], [event_name], [event_hash]),
+		primary key nonclustered ([snapshot_time], [sql_instance], [snapshot_type_id], [event_id]),
 	
 	constraint fk_sqlwatch_logger_xes_query_problems_header 
 		foreign key ([snapshot_time],[sql_instance],[snapshot_type_id]) 
@@ -31,3 +32,8 @@
 		references [dbo].[sqlwatch_meta_server] ([servername]) 
 		on delete cascade
 )
+go
+
+create unique nonclustered index idx_sqlwatch_logger_xes_query_problems_1
+	on [dbo].[sqlwatch_logger_xes_query_problems] ([event_time], [event_name], [event_hash], [occurence])
+go
