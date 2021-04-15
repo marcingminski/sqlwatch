@@ -1,0 +1,55 @@
+version: 3.1.{build}
+
+branches:
+  only:
+    - 3.x
+skip_tags: true
+
+max_jobs: 1
+
+image: Visual Studio 2015
+
+init:
+  - Get-ChildItem -Path 'HKLM:\SOFTWARE\Microsoft\Microsoft SQL Server\' |
+    Where-Object {
+        $_.Name -imatch 'MSSQL[_\d]+\.SQL.*'
+    } |
+    ForEach-Object {
+
+        Write-Host "Setting $((Get-ItemProperty $_.PSPath).'(default)') to dynamic ports"
+        Set-ItemProperty (Join-Path $_.PSPath 'mssqlserver\supersocketnetlib\tcp\ipall') -Name TcpDynamicPorts -Value '0'
+        Set-ItemProperty (Join-Path $_.PSPath 'mssqlserver\supersocketnetlib\tcp\ipall') -Name TcpPort -Value ([string]::Empty)
+    }
+
+clone_depth: 5
+
+services:
+  - mssql2017
+  - mssql2016
+  - mssql2014        
+  - mssql2012sp1
+
+dotnet_csproj:
+  file: 'SqlWatch.Monitor\Project.SqlWatch.Database\SQLWATCH.sqlproj'
+
+
+# 2017  
+test_script:
+  - sqlpackage.exe /a:Publish /sf:C:\projects\sqlwatch\SqlWatch.Monitor\Project.SqlWatch.Database\bin\Output\SQLWATCH.dacpac /tdn:SQLWATCH /tsn:localhost\SQL2017
+
+# 2016
+test_script:
+  - sqlpackage.exe /a:Publish /sf:C:\projects\sqlwatch\SqlWatch.Monitor\Project.SqlWatch.Database\bin\Output\SQLWATCH.dacpac /tdn:SQLWATCH /tsn:localhost\SQL2016
+
+# 2014
+test_script:
+  - sqlpackage.exe /a:Publish /sf:C:\projects\sqlwatch\SqlWatch.Monitor\Project.SqlWatch.Database\bin\Output\SQLWATCH.dacpac /tdn:SQLWATCH /tsn:localhost\SQL2014
+
+# 2012
+test_script:
+  - sqlpackage.exe /a:Publish /sf:C:\projects\sqlwatch\SqlWatch.Monitor\Project.SqlWatch.Database\bin\Output\SQLWATCH.dacpac /tdn:SQLWATCH /tsn:localhost\SQL2012SP1
+
+
+
+
+
