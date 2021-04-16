@@ -359,6 +359,7 @@
     <Build Include="dbo\Functions\ufn_sqlwatch_get_threshold_value.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_get_threshold_comparator.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_get_threshold_deviation.sql" />
+    <Build Include="dbo\Functions\ufn_sqlwatch_get_sql_version.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />

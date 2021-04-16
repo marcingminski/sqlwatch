@@ -2695,4 +2695,11 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[ufn_sqlwatch_get_threshold_deviation]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="d5da59c2-b7ef-4987-8ceb-1934cf4955d8" ChangeDateTime="04/16/2021 12:24:53">
+    <Property Name="ElementName" Value="[dbo].[ufn_sqlwatch_get_sql_edition]" />
+    <Property Name="ElementType" Value="SqlScalarFunction" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[ufn_sqlwatch_sql_has_enterprise_features]" />
+  </Operation>
 </Operations>
