@@ -98,6 +98,26 @@ values
 		https://github.com/marcingminski/sqlwatch/issues/250 
 		By default, this is disabled. To enable, change to 1 and re-run the "expand checks" procedure or wait 1 hour */
 	,(19	,'Expand Checks by SQL Instance' ,0)
+
+	/*	This is similar to Last Seen Items (date_last_seen) retention days
+	    but it looks at the [is_record_deletd] flag and removes anything
+		with the flag set to 1 and date last seen older than the hours below. 
+		The difference is that the last seen is non deterministic - the object
+		may exist but we have not checked for it yet. 
+		The deleted flag is deterministic and it means we have checked and the 
+		object does not exist for sure.
+
+		** THIS IS NOT YET USED BECUASE IT WILL NOT WORK WITH CENTRAL REPOSITORY
+		   IF WE DELETE THE RECORD IN SOURCE, THE CENTRAL REPO WILL STILL HAVE IT
+		   UNTIL WE RUN A FULL MERGE LOAD WHICH WE WOULD HAVE TO DO PERIODICALLY
+		   WHICH IS ALSO QUITE RESOURCE HEAVY AND WOULD REQUIRE LOTS OF .NET CHANGES 
+		   IT IS EASIER TO JUST LET THE RECORDS DROP OFF AFTER PERIOD OF LAST_SEEN_DATE 
+		   INSTEAD, WE COULD CHANGE THE Last Seen Items (date_last_seen) retention days TO HOURS
+		   AND HAVE RECORDS DROP OFF AFTER 1 HOUR OF NOT BEING SEEN - ALTHOUGH THERE'S A RISK THAT IF
+		   THE OBJECT EXISTS BUT WE FAIL TO COLLECT IT, OR IF THE CENTRAL REPO IMPORT RUNS RARELY, 
+		   THE LAST SEEN WILL NOT BE UPDATED AND MAY BE DELETED PREMATURELY.
+		   *** */
+	---,(20	,'Purge deleted items after x hours'	,1)
 ;
 
 merge dbo.sqlwatch_config as target
