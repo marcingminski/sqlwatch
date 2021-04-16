@@ -1,3 +1,48 @@
+version: build-{build}
 only_commits:
   files:
     - SqlWatch.Monitor/Project.SqlWatch.Database/*
+pull_requests:
+  do_not_increment_build_number: true
+skip_branch_with_pr: true
+max_jobs: 1
+image: Visual Studio 2015
+platform: x64
+init:
+- ps: >-
+    <#
+        .SYNOPSIS
+            Set all installed instances of SQL server to dynamic ports
+    #>
+
+    Get-ChildItem -Path 'HKLM:\SOFTWARE\Microsoft\Microsoft SQL Server\' |
+        Where-Object {
+            $_.Name -imatch 'MSSQL[_\d]+\.SQL.*'
+        } |
+        ForEach-Object {
+
+            Write-Host "Setting $((Get-ItemProperty $_.PSPath).'(default)') to dynamic ports"
+            Set-ItemProperty (Join-Path $_.PSPath 'mssqlserver\supersocketnetlib\tcp\ipall') -Name TcpDynamicPorts -Value '0'
+            Set-ItemProperty (Join-Path $_.PSPath 'mssqlserver\supersocketnetlib\tcp\ipall') -Name TcpPort -Value ([string]::Empty)
+        }
+services:
+- mssql2012sp1
+- mssql2008r2sp2
+- mssql2014
+- mssql2016
+- mssql2017
+build:
+  project: C:\projects\sqlwatch\SqlWatch.Monitor\Project.SqlWatch.Database\SQLWATCH.sqlproj
+  verbosity: minimal
+test_script:
+- cmd: >-
+    sqlpackage.exe /a:Publish /sf:C:\projects\sqlwatch\SqlWatch.Monitor\Project.SqlWatch.Database\bin\Output\SQLWATCH.dacpac /tdn:SQLWATCH /tsn:localhost\SQL2017
+
+    sqlpackage.exe /a:Publish /sf:C:\projects\sqlwatch\SqlWatch.Monitor\Project.SqlWatch.Database\bin\Output\SQLWATCH.dacpac /tdn:SQLWATCH /tsn:localhost\SQL2016
+
+    sqlpackage.exe /a:Publish /sf:C:\projects\sqlwatch\SqlWatch.Monitor\Project.SqlWatch.Database\bin\Output\SQLWATCH.dacpac /tdn:SQLWATCH /tsn:localhost\SQL2014
+
+    sqlpackage.exe /a:Publish /sf:C:\projects\sqlwatch\SqlWatch.Monitor\Project.SqlWatch.Database\bin\Output\SQLWATCH.dacpac /tdn:SQLWATCH /tsn:localhost\SQL2012SP1
+deploy: off
+on_failure:
+- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))    
