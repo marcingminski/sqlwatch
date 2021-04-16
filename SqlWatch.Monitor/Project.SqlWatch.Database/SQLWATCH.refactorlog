@@ -2702,4 +2702,11 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[ufn_sqlwatch_sql_has_enterprise_features]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="27a46cce-682b-42e9-b639-60070ea38269" ChangeDateTime="04/16/2021 20:45:29">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_stage_performance_counters_collection]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[sqlwatch_stage_performance_counters_to_collect]" />
+  </Operation>
 </Operations>
