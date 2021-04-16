@@ -1,0 +1,3 @@
+only_commits:
+  files:
+    - SqlWatch.Monitor/Project.SqlWatch.Database/*
