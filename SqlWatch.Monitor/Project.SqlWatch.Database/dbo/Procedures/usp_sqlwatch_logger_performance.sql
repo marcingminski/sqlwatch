@@ -117,7 +117,7 @@ declare @sql nvarchar(4000)
 		)
 
 		--load OS counters via CLR if enabled:
-		if [dbo].[ufn_sqlwatch_get_clr_status]() = 1
+		if dbo.ufn_sqlwatch_get_clr_collector_status() = 1
 			begin
 				insert into #t with (tablock)
 				select

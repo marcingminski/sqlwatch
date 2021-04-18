@@ -118,6 +118,9 @@ values
 		   THE LAST SEEN WILL NOT BE UPDATED AND MAY BE DELETED PREMATURELY.
 		   *** */
 	---,(20	,'Purge deleted items after x hours'	,1)
+
+	/* use CLR to collect performance counters. Experimental */
+	,(19	,'Use CLR to collect performance counters. This is experimental.' ,0)
 ;
 
 merge dbo.sqlwatch_config as target

@@ -33,7 +33,7 @@ select
 
 
 -- get non SQL counters via CLR if enabled:
-if dbo.ufn_sqlwatch_get_clr_status() = 1
+if dbo.ufn_sqlwatch_get_clr_collector_status() = 1
 	begin
 		select distinct *
 		into #c
@@ -83,7 +83,7 @@ when not matched then
 	values (source.[sql_instance],source.[object_name],source.[counter_name],source.[cntr_type],source.[is_sql_counter]);
 
 
-if dbo.ufn_sqlwatch_get_clr_status() = 1
+if dbo.ufn_sqlwatch_get_clr_collector_status() = 1
 	begin
 		---- while we're here, build distinct counter instances... this is currently only used to feed into the CLR function.
 		---- in the future it will be used for all counters to reduce size of the counters logger

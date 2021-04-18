@@ -365,6 +365,7 @@
     <Build Include="dbo\Functions\ufn_sqlwatch_get_sql_version.sql" />
     <Build Include="dbo\Tables\sqlwatch_meta_performance_counter_instance.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_get_clr_status.sql" />
+    <Build Include="dbo\Functions\ufn_sqlwatch_get_clr_collector_status.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
