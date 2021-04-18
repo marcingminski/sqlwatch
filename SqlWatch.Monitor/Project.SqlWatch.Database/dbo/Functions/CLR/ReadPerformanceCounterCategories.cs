@@ -22,28 +22,24 @@ public partial class UserDefinedFunctions
         }
     }
 
-
-
     [Microsoft.SqlServer.Server.SqlFunction(
          FillRowMethodName = "GetCounters",
          TableDefinition = "object_name nvarchar(128), counter_name nvarchar(128), instance_name nvarchar(128)")]
     public static IEnumerable ReadPerformanceCounterCategories()
     {
 
-        try
+        PerformanceCounterCategory[] categories = PerformanceCounterCategory.GetCategories();
+        ArrayList performanceCounterCollection = new ArrayList();
+
+        foreach (PerformanceCounterCategory category in categories)
         {
-
-            PerformanceCounterCategory[] categories = PerformanceCounterCategory.GetCategories();
-
-            ArrayList performanceCounterCollection = new ArrayList();
-
-            foreach (PerformanceCounterCategory category in categories)
+            string[] instanceNames = category.GetInstanceNames();
+            if (instanceNames.Length > 0)
             {
-                string[] instanceNames = category.GetInstanceNames();
-                if (instanceNames.Length > 0)
+                // MultiInstance counters
+                foreach (string instanceName in instanceNames)
                 {
-                    // MultiInstance counters
-                    foreach (string instanceName in instanceNames)
+                    try
                     {
                         PerformanceCounter[] counters = category.GetCounters(instanceName);
                         foreach (PerformanceCounter counter in counters)
@@ -51,28 +47,25 @@ public partial class UserDefinedFunctions
                             performanceCounterCollection.Add(new CounterProperties(category.CategoryName, counter.CounterName, instanceName));
                         }
                     }
-
-                }
-                else
-                {
-                    PerformanceCounter[] counters = category.GetCounters();
-                    foreach (PerformanceCounter counter in counters)
+                    catch
                     {
-                        performanceCounterCollection.Add(new CounterProperties(category.CategoryName, counter.CounterName, string.Empty));
+                        //so we simply skip that instnace if there's an issue
                     }
-
                 }
+
             }
+            else
+            {
+                PerformanceCounter[] counters = category.GetCounters();
+                foreach (PerformanceCounter counter in counters)
+                {
+                    performanceCounterCollection.Add(new CounterProperties(category.CategoryName, counter.CounterName, string.Empty));
+                }
 
-            return performanceCounterCollection;
-
+            }
         }
 
-        catch
-        {
-            return null;
-        }
-
+        return performanceCounterCollection;
 
     }
 

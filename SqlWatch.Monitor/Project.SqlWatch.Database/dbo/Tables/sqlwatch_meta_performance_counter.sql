@@ -6,6 +6,8 @@
 	[cntr_type] int not null,
 	[performance_counter_id] smallint identity(1,1),
 	[date_updated] datetime not null constraint df_sqlwatch_meta_performance_counter_updated default (getutcdate()),
+	[is_sql_counter] bit --1 for counters in dmv, -- for OS counters via CLR, this will be automatically set. if a counter exists in DMV it will be used over CLR
+
 	constraint pk_sqlwatch_meta_performance_counter primary key (
 		[sql_instance], [performance_counter_id]
 		),

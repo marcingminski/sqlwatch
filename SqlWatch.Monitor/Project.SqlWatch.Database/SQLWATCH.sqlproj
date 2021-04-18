@@ -92,6 +92,7 @@
     <Folder Include="dbo\Services" />
     <Folder Include="dbo\Messages" />
     <Folder Include="dbo\Functions\CLR" />
+    <Folder Include="dbo\Procedures\CLR" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\sqlwatch_logger_snapshot_header.sql" />
@@ -362,7 +363,8 @@
     <Build Include="dbo\Functions\ufn_sqlwatch_get_threshold_comparator.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_get_threshold_deviation.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_get_sql_version.sql" />
-    <Build Include="dbo\Tables\sqlwatch_stage_performance_counters_to_collect.sql" />
+    <Build Include="dbo\Tables\sqlwatch_meta_performance_counter_instance.sql" />
+    <Build Include="dbo\Functions\ufn_sqlwatch_get_clr_status.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
@@ -383,6 +385,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="dbo\Functions\CLR\ReadPerformanceCounterFormatted.cs" />
     <Compile Include="dbo\Functions\CLR\ReadPerformanceCounterCategories.cs" />
+    <Compile Include="dbo\Functions\CLR\GetPerformanceCounterData.cs" />
+    <Compile Include="dbo\Procedures\CLR\StreamPerformanceCounters.cs" />
+    <Compile Include="dbo\Functions\CLR\ReadWMI.cs" />
   </ItemGroup>
   <ItemGroup>
     <PreDeploy Include="Script.PreDeployment2.sql" />

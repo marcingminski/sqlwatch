@@ -2709,4 +2709,11 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[sqlwatch_stage_performance_counters_to_collect]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="4198014f-5967-488c-b40d-4e1a0af4a7d9" ChangeDateTime="04/17/2021 21:25:05">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_stage_performance_counters_to_collect]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[sqlwatch_meta_performance_counter_instance]" />
+  </Operation>
 </Operations>
