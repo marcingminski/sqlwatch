@@ -223,7 +223,7 @@ declare @sql nvarchar(4000)
 						[object_name] = 'Win32_PerfFormattedData_PerfOS_Processor'
 					,[counter_name] = 'Processor Time %'
 					,[instance_name] = 'sql'
-					,[cntr_value] = 1
+					,[cntr_value] = @percent_processor_time
 					,[cntr_type] = 65792
 					,base_counter_name = null
 					,base_cntr_value = null
@@ -233,7 +233,7 @@ declare @sql nvarchar(4000)
 						[object_name] = 'Win32_PerfFormattedData_PerfOS_Processor'
 					,[counter_name] = 'Idle Time %'
 					,[instance_name] = '_Total                                                                                                                          '
-					,[cntr_value] = 2
+					,[cntr_value] = @percent_idle_time
 					,[cntr_type] = 65792
 					,base_counter_name = null
 					,base_cntr_value = null
@@ -243,7 +243,7 @@ declare @sql nvarchar(4000)
 						[object_name] = 'Win32_PerfFormattedData_PerfOS_Processor'
 					,[counter_name] = 'Processor Time %'
 					,[instance_name] = 'system'
-					,[cntr_value] = 3
+					,[cntr_value] = (100-@percent_idle_time-@percent_processor_time)
 					,[cntr_type] = 65792
 					,base_counter_name = null
 					,base_cntr_value = null
