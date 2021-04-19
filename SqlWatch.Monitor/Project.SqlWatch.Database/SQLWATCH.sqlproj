@@ -193,7 +193,7 @@
     <Build Include="dbo\Views\vw_sqlwatch_report_dim_index_missing.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_config_enable_compression_sqlwatch_indexes.sql" />
     <Build Include="dbo\Tables\sqlwatch_meta_sql_query.sql" />
-    <Build Include="dbo\Views\vw_sqlwatch_report_fact_xes_waits_stats.sql" />
+    <Build Include="dbo\Views\vw_sqlwatch_report_fact_xes_wait_events.sql" />
     <Build Include="dbo\Tables\sqlwatch_config_wait_stats.sql" />
     <Build Include="dbo\Tables\sqlwatch_stage_perf_os_wait_stats.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_get_time_group.sql" />
