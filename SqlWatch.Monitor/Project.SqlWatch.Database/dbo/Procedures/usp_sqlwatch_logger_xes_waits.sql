@@ -103,6 +103,8 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 				, sql_instance
 				, snapshot_time
 				, snapshot_type_id
+				, activity_id
+				, sql_text
 				)
 			select 
 					w.event_time
@@ -122,6 +124,10 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 				, w.sql_instance
 				, @snapshot_time
 				, @snapshot_type_id
+				, w.activity_id
+				--failback in case we did not obtain sql text from plan_handle, we will dump sql_text from xes here
+				--this should not happen often:
+				, sql_text = case when qp.sqlwatch_query_id is null then w.[sql_text] else null end
 			from #w w
 			
 			inner join dbo.sqlwatch_meta_wait_stats s
@@ -133,7 +139,7 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 				and db.is_current = 1
 				and db.sql_instance = w.sql_instance
 
-			inner join dbo.sqlwatch_meta_query_plan qp
+			left join dbo.sqlwatch_meta_query_plan qp
 				on qp.plan_handle = w.plan_handle
 				and qp.sql_instance = w.sql_instance
 			
@@ -147,8 +153,6 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 				and s.wait_type = w.wait_type
 			where t.event_time is null
 		end
-
-
 	end
 else
 	print 'Product version must be 11 or higher'
