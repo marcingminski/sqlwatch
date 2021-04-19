@@ -93,6 +93,7 @@
     <Folder Include="dbo\Messages" />
     <Folder Include="dbo\Functions\CLR" />
     <Folder Include="dbo\Procedures\CLR" />
+    <Folder Include="dbo\Types" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\sqlwatch_logger_snapshot_header.sql" />
@@ -320,8 +321,8 @@
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_add_procedure.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_logger_procedure_stats.sql" />
     <Build Include="dbo\Tables\sqlwatch_logger_perf_procedure_stats.sql" />
-    <Build Include="dbo\Tables\sqlwatch_logger_meta_sql_handle.sql" />
-    <Build Include="dbo\Tables\sqlwatch_meta_plan_handle.sql" />
+    <Build Include="dbo\Tables\sqlwatch_meta_query_text.sql" />
+    <Build Include="dbo\Tables\sqlwatch_meta_query_plan.sql" />
     <Build Include="dbo\Tables\sqlwatch_logger_perf_query_stats.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_logger_query_stats.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_get_time_utc.sql" />
@@ -366,6 +367,10 @@
     <Build Include="dbo\Tables\sqlwatch_meta_performance_counter_instance.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_get_clr_status.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_get_clr_collector_status.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_tester.sql" />
+    <Build Include="dbo\Types\utype_plan_handle.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_normalise_query_text.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_normalise_plan_handle.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />

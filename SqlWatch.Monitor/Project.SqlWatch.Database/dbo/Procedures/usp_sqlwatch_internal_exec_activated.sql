@@ -117,7 +117,7 @@ begin
                                             exec dbo.usp_sqlwatch_logger_xes_waits
                                             exec dbo.usp_sqlwatch_logger_xes_diagnostics
                                             exec dbo.usp_sqlwatch_logger_xes_long_queries
-                                            exec dbo.usp_sqlwatch_logger_xes_query_problems
+                                           -- exec dbo.usp_sqlwatch_logger_xes_query_problems
                                         end try
                                         begin catch
                                             if @@TRANCOUNT > 0

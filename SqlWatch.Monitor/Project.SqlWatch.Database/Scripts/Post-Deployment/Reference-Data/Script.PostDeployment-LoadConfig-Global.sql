@@ -120,7 +120,11 @@ values
 	---,(20	,'Purge deleted items after x hours'	,1)
 
 	/* use CLR to collect performance counters. Experimental */
-	,(19	,'Use CLR to collect performance counters. This is experimental.' ,0)
+	,(21	,'Use CLR to collect performance counters. This is experimental.' ,0)
+
+	/* Whether to collect execution plans into [dbo].[sqlwatch_meta_plan_handle].
+		If enabled execution plans will be pulled as xml into the table */
+	,(22	,'Collect Execution Plans and SQL text' ,1)
 ;
 
 merge dbo.sqlwatch_config as target

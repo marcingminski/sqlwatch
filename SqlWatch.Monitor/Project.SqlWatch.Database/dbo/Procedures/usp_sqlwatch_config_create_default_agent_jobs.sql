@@ -108,29 +108,31 @@ insert into ##sqlwatch_jobs
 */
 
 insert into ##sqlwatch_steps
-			/* step name								step_id,	job_name							subsystem,	command */
-	values	('dbo.usp_sqlwatch_logger_whoisactive',		1,			'SQLWATCH-LOGGER-WHOISACTIVE',		'TSQL',		'exec dbo.usp_sqlwatch_logger_whoisactive'),
+			/* step name											step_id,	job_name							subsystem,	command */
+	values	('dbo.usp_sqlwatch_logger_whoisactive',					1,			'SQLWATCH-LOGGER-WHOISACTIVE',		'TSQL',		'exec dbo.usp_sqlwatch_logger_whoisactive'),
 
-			('dbo.usp_sqlwatch_logger_performance',		1,			'SQLWATCH-LOGGER-PERFORMANCE',		'TSQL',		'exec dbo.usp_sqlwatch_logger_performance'),
-			('dbo.usp_sqlwatch_logger_xes_waits',		1,			'SQLWATCH-LOGGER-XES',				'TSQL',		'exec dbo.usp_sqlwatch_logger_xes_waits'),
-			('dbo.usp_sqlwatch_logger_xes_blockers',	2,			'SQLWATCH-LOGGER-XES',				'TSQL',		'exec dbo.usp_sqlwatch_logger_xes_blockers'),
-			('dbo.usp_sqlwatch_logger_xes_diagnostics',	3,			'SQLWATCH-LOGGER-XES',				'TSQL',		'exec dbo.usp_sqlwatch_logger_xes_diagnostics'),
-			('dbo.usp_sqlwatch_logger_xes_long_queries',4,			'SQLWATCH-LOGGER-XES',				'TSQL',		'exec dbo.usp_sqlwatch_logger_xes_long_queries'),
+			('dbo.usp_sqlwatch_logger_performance',					1,			'SQLWATCH-LOGGER-PERFORMANCE',		'TSQL',		'exec dbo.usp_sqlwatch_logger_performance'),
+			('dbo.usp_sqlwatch_logger_requests_and_sessions',		2,			'SQLWATCH-LOGGER-PERFORMANCE',		'TSQL',		'exec dbo.usp_sqlwatch_logger_requests_and_sessions'),
+			('dbo.usp_sqlwatch_logger_xes_blockers',				3,			'SQLWATCH-LOGGER-PERFORMANCE',		'TSQL',		'exec dbo.usp_sqlwatch_logger_xes_blockers'),
+			
+			('dbo.usp_sqlwatch_logger_xes_waits',					1,			'SQLWATCH-LOGGER-XES',				'TSQL',		'exec dbo.usp_sqlwatch_logger_xes_waits'),
+			('dbo.usp_sqlwatch_logger_xes_diagnostics',				2,			'SQLWATCH-LOGGER-XES',				'TSQL',		'exec dbo.usp_sqlwatch_logger_xes_diagnostics'),
+			('dbo.usp_sqlwatch_logger_xes_long_queries',			3,			'SQLWATCH-LOGGER-XES',				'TSQL',		'exec dbo.usp_sqlwatch_logger_xes_long_queries'),
 
 			('dbo.usp_sqlwatch_logger_hadr_database_replica_states',1,			'SQLWATCH-LOGGER-AG',				'TSQL',		'exec dbo.usp_sqlwatch_logger_hadr_database_replica_states'),
 
 
-			('1 minute trend',1,'SQLWATCH-INTERNAL-TRENDS',			'TSQL',		'exec dbo.usp_sqlwatch_trend_perf_os_performance_counters @interval_minutes = 1, @valid_days = 7'),
-			('5 minutes trend',2,'SQLWATCH-INTERNAL-TRENDS',		'TSQL',		'exec dbo.usp_sqlwatch_trend_perf_os_performance_counters @interval_minutes = 5, @valid_days = 90'),
-			('60 minutes trend',3,'SQLWATCH-INTERNAL-TRENDS',		'TSQL',		'exec dbo.usp_sqlwatch_trend_perf_os_performance_counters @interval_minutes = 60, @valid_days = 720'),
+			('1 minute trend',										1,			'SQLWATCH-INTERNAL-TRENDS',			'TSQL',		'exec dbo.usp_sqlwatch_trend_perf_os_performance_counters @interval_minutes = 1, @valid_days = 7'),
+			('5 minutes trend',										2,			'SQLWATCH-INTERNAL-TRENDS',			'TSQL',		'exec dbo.usp_sqlwatch_trend_perf_os_performance_counters @interval_minutes = 5, @valid_days = 90'),
+			('60 minutes trend',									3,			'SQLWATCH-INTERNAL-TRENDS',			'TSQL',		'exec dbo.usp_sqlwatch_trend_perf_os_performance_counters @interval_minutes = 60, @valid_days = 720'),
 
 			--('dbo.usp_sqlwatch_internal_process_reports',1,			'SQLWATCH-USER-REPORTS',			'TSQL',		'exec dbo.usp_sqlwatch_internal_process_reports @report_batch_id = 1'),
 
-			('dbo.usp_sqlwatch_internal_process_checks',1,			'SQLWATCH-INTERNAL-CHECKS',			'TSQL',		'exec dbo.usp_sqlwatch_internal_process_checks'),
-			('dbo.usp_sqlwatch_internal_process_reports',1,			'SQLWATCH-REPORT-AZMONITOR',		'TSQL',		'exec dbo.usp_sqlwatch_internal_process_reports @report_batch_id = ''AzureLogMonitor-1'''),
+			('dbo.usp_sqlwatch_internal_process_checks',			1,			'SQLWATCH-INTERNAL-CHECKS',			'TSQL',		'exec dbo.usp_sqlwatch_internal_process_checks'),
+			('dbo.usp_sqlwatch_internal_process_reports',			1,			'SQLWATCH-REPORT-AZMONITOR',		'TSQL',		'exec dbo.usp_sqlwatch_internal_process_reports @report_batch_id = ''AzureLogMonitor-1'''),
 
 
-			('Process Actions',							1,			'SQLWATCH-INTERNAL-ACTIONS',		'PowerShell','
+			('Process Actions',										1,			'SQLWATCH-INTERNAL-ACTIONS',		'PowerShell','
 $output = "x"
 while ($output -ne $null) { 
 	$output = Invoke-SqlCmd -ServerInstance "' + @server + '" -Database ' + '$(DatabaseName)' + ' -MaxCharLength 2147483647 -Query "exec [dbo].[usp_sqlwatch_internal_action_queue_get_next]"

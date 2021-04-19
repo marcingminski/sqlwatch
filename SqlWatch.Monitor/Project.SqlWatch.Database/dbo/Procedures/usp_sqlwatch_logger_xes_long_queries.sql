@@ -63,54 +63,68 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 						,[spills]=xed.event_data.value('(data[@name="spills"]/value)[1]', 'bigint')
 						,[offset]=xed.event_data.value('(data[@name="offset"]/value)[1]', 'bigint')
 						,[offset_end]=xed.event_data.value('(data[@name="offset_end"]/value)[1]', 'bigint')
-						,[statement]=xed.event_data.value('(data[@name="statement"]/value)[1]', 'varchar(max)')
 						,[username]=xed.event_data.value('(action[@name="username"]/value)[1]', 'varchar(255)')
-						,[sql_text]=xed.event_data.value('(action[@name="sql_text"]/value)[1]', 'varchar(max)')
 						,[object_name]=nullif(xed.event_data.value('(data[@name="object_name"]/value)[1]', 'varchar(max)'),'')
 						,[client_hostname]=xed.event_data.value('(action[@name="client_hostname"]/value)[1]', 'varchar(255)')
 						,[client_app_name]=xed.event_data.value('(action[@name="client_app_name"]/value)[1]', 'varchar(255)')
 						,[duration_ms]=xed.event_data.value('(data[@name="duration"]/value)[1]', 'bigint')/1000
 						,[wait_type]=xed.event_data.value('(data[@name="wait_type"]/text )[1]', 'varchar(255)')
+						,[plan_handle] = convert(varbinary(64),'0x' + xed.event_data.value('(action[@name="plan_handle"]/value)[1]', 'varchar(max)'),1)
 					into #t_queries
 					from @event_data t
 						cross apply t.event_data.nodes('event') as xed (event_data)
 						where xed.event_data.value('(@name)[1]', 'varchar(255)') <> 'query_post_execution_showplan'
 
-					select
-						  attach_activity_id=left(xed.event_data.value('(action[@name="attach_activity_id"]/value )[1]', 'varchar(255)'),36)
-					     ,query_plan = x.xml_fragment.query('.')
+					;
+					--normalise query text
+					declare @plan_handle_table utype_plan_handle
+					insert into @plan_handle_table
+					select distinct plan_handle 
+					from #t_queries
 
-					into #t_plans
-					from @event_data t
-						cross apply t.event_data.nodes('event') as xed (event_data)
-						cross apply t.event_data.nodes(N'/event/data[@name="showplan_xml"]/value/*') as x(xml_fragment)
-						where xed.event_data.value('(@name)[1]', 'varchar(255)') = 'query_post_execution_showplan'
+					exec [dbo].[usp_sqlwatch_internal_normalise_query_text]
+						@plan_handle = @plan_handle_table, 
+						@sql_instance = @sql_instance
+					;
 
-	
+					exec [dbo].[usp_sqlwatch_internal_normalise_plan_handle]
+						@plan_handle = @plan_handle_table, 
+						@sql_instance = @sql_instance
+					;
+		
 					insert into dbo.[sqlwatch_logger_xes_long_queries] (
 						  [event_time], event_name, session_id, database_name
 						, cpu_time, physical_reads, logical_reads, writes, spills
-						, offset, offset_end, statement, username, sql_text
+						, offset, offset_end, username
 						, object_name, client_hostname, client_app_name
 						, duration_ms
-						, snapshot_time, snapshot_type_id, sql_instance, [query_plan], attach_activity_id)
+						, snapshot_time, snapshot_type_id, sql_instance 
+						, sqlwatch_query_plan_id, sqlwatch_query_id
+						, attach_activity_id
+						)
 
 					select 
 						  tx.[event_time], tx.event_name, tx.session_id, tx.database_name
 						, tx.cpu_time, tx.physical_reads, tx.logical_reads, tx.writes, tx.spills
-						, tx.offset, tx.offset_end, tx.statement, tx.username, tx.sql_text
+						, tx.offset, tx.offset_end, tx.username
 						, tx.object_name, tx.client_hostname, tx.client_app_name
 						, tx.duration_ms
 						,[snapshot_time] = @snapshot_time
 						,[snapshot_type_id] = @snapshot_type_id
 						,sql_instance = @sql_instance
-						,p.query_plan
+						,qp.sqlwatch_query_plan_id
+						,qp.sqlwatch_query_id
 						,tx.attach_activity_id
 					from #t_queries tx
 
-					-- get saved plans
-					left join #t_plans p
-					on p.attach_activity_id = tx.attach_activity_id
+					--get plan ids
+					left join dbo.sqlwatch_meta_query_plan qp
+						on qp.sql_instance = @sql_instance
+						and qp.plan_handle = tx.plan_handle
+
+					left join dbo.sqlwatch_meta_query_text qt
+						on qt.sql_instance = @sql_instance
+						and qt.sqlwatch_query_id = qp.sqlwatch_query_id
 
 					-- do not load queries that we arleady have
 					left join dbo.[sqlwatch_logger_xes_long_queries] x
@@ -120,8 +134,7 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 
 					-- exclude queries containing text that we do not want to collect or coming from an excluded host or an application
 					left join [dbo].[sqlwatch_config_exclude_xes_long_query] ex
-						on case when ex.statement is not null then tx.statement else '%' end like isnull(ex.statement,'%')
-						and case when ex.sql_text is not null then tx.sql_text else '%' end like isnull(ex.sql_text,'%')
+						on case when qt.sql_text is not null then qt.sql_text else '%' end like isnull(qt.sql_text,'%')
 						and case when ex.client_app_name is not null then tx.client_app_name else '%' end like isnull(ex.client_app_name,'%')
 						and case when ex.client_hostname is not null then tx.client_hostname else '%' end like isnull(ex.client_hostname,'%')
 						and case when ex.username is not null then tx.username else '%' end like isnull(ex.username,'%')

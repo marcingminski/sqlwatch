@@ -155,7 +155,7 @@ begin
 	)
 
 	---get sql text:
-	;merge [dbo].[sqlwatch_meta_sql_handle] as target
+	;merge [dbo].[sqlwatch_meta_query_text] as target
 	using (
 		select distinct 
 			ps.sql_handle
@@ -177,7 +177,7 @@ begin
 		values (source.sql_instance, source.[sql_handle], source.text, getutcdate(), getutcdate());
 
 	--get query plans:
-	;merge [dbo].[sqlwatch_meta_plan_handle] as target
+	;merge [dbo].[sqlwatch_meta_query_plan] as target
 	using (
 		select
 			ps.plan_handle

@@ -2,8 +2,8 @@
 (
 	event_time datetime not null,
 	wait_type_id smallint not null,
-	activity_id uniqueidentifier not null,
-	activity_id_sequence bigint not null,
+	--activity_id uniqueidentifier not null,
+	--activity_id_sequence bigint not null,
 	duration bigint not null,
 	signal_duration bigint not null,
 	session_id int,
@@ -11,13 +11,15 @@
 	client_hostname nvarchar(255),
 	client_app_name nvarchar(255),
 	sqlwatch_database_id smallint,
-	sqlwatch_query_hash varbinary(16),
+	query_hash decimal(20,0) null,
+	sqlwatch_query_plan_id int null,
+	sqlwatch_query_id int,
 	sql_instance varchar(32) not null,
 	snapshot_time datetime2(0) not null,
 	snapshot_type_id tinyint not null,
 	
 	constraint pk_sqlwatch_logger_xes_wait_stat_event primary key clustered (
-		event_time, activity_id, activity_id_sequence, [sql_instance], [snapshot_time], [snapshot_type_id] 
+		event_time, wait_type_id, session_id, [sql_instance], [snapshot_time], [snapshot_type_id] 
 	),
 
 	constraint fk_sqlwatch_logger_xes_wait_stat_event_snapshot_header foreign key ([snapshot_time],[sql_instance],[snapshot_type_id]) 

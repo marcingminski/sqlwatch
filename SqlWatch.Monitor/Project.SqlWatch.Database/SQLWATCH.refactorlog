@@ -2716,4 +2716,74 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[sqlwatch_meta_performance_counter_instance]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="16415c20-b44b-4eb1-8db3-f16d0c343ff1" ChangeDateTime="04/19/2021 11:31:37">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_test]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_internal_tester]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="96af4b56-a455-41fb-b98b-6995d66a5df3" ChangeDateTime="04/19/2021 15:34:03">
+    <Property Name="ElementName" Value="[dbo].[ufn_sqlwatch_convert_query_hash]" />
+    <Property Name="ElementType" Value="SqlScalarFunction" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[ufn_sqlwatch_convert_xe_query_hash]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="55b506a6-dc80-4724-9a91-adb8f5cc76c0" ChangeDateTime="04/19/2021 17:47:31">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_meta_plan_handle]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[sqlwatch_meta_query_plan]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="0f74a4e3-2a4a-4b4f-9e87-a7601618e013" ChangeDateTime="04/19/2021 18:23:45">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_meta_sql_handle]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[sqlwatch_meta_query_text]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="aeeb2ec1-85f9-4ecc-b6d8-2ec06312e7dd" ChangeDateTime="04/19/2021 19:45:52">
+    <Property Name="ElementName" Value="[dbo].[utt_sql_handle]" />
+    <Property Name="ElementType" Value="SqlTableType" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[utype_sql_handle]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="3d81f464-30f3-452b-9fb8-3eacae4dcaf8" ChangeDateTime="04/19/2021 19:48:05">
+    <Property Name="ElementName" Value="[dbo].[utt_plan_handle]" />
+    <Property Name="ElementType" Value="SqlTableType" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[utype_plan_handle]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="2a0e77a9-9f8f-49d0-ad2d-b1dcb4b007a1" ChangeDateTime="04/19/2021 19:51:38">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_normalise_query_text]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_normalise_query_text_from_plan_handles]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="26da6a99-2ea5-49e5-850e-a227af7414cf" ChangeDateTime="04/19/2021 19:54:01">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_normalise_query_text_from_plan_handles]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_normalise_query_text]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="8adace1f-7383-471e-887c-e7de79b04a67" ChangeDateTime="04/19/2021 19:55:02">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_normalise_plan_handle]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_internal_normalise_plan_handle]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="2252dc9e-de9c-4b58-bc16-ffb078781bad" ChangeDateTime="04/19/2021 19:55:19">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_normalise_query_text]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_internal_normalise_query_text]" />
+  </Operation>
 </Operations>
