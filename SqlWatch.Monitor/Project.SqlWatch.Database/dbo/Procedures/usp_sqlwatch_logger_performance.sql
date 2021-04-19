@@ -119,7 +119,9 @@ declare @sql nvarchar(4000)
 		--load OS counters via CLR if enabled:
 		if dbo.ufn_sqlwatch_get_clr_collector_status() = 1
 			begin
+				-- this has to be dynamic otherwise if we have CLR disabled it will error even though it may never get here due to the global config
 				insert into #t with (tablock)
+				exec sp_executesql '
 				select
 					[object_name]=rtrim(pc2.[object_name])
 					, counter_name=rtrim(pc2.[counter_name])
@@ -138,13 +140,13 @@ declare @sql nvarchar(4000)
 				cross apply dbo.GetPerformnaceCounterData (pc2.object_name,pc2.counter_name,pc1.instance_name, null) x
 
 				inner join dbo.[sqlwatch_config_performance_counters] sc with (nolock)
-					on rtrim(pc2.[object_name]) like '%' + sc.[object_name] collate database_default
+					on rtrim(pc2.[object_name]) like ''%'' + sc.[object_name] collate database_default
 					and rtrim(pc2.counter_name) = sc.counter_name collate database_default
 					and (
 						rtrim(pc1.instance_name) = sc.instance_name collate database_default
 						or	(
-							sc.instance_name = '<* !_Total>' collate database_default
-							and rtrim(pc1.instance_name) <> '_Total' collate database_default
+							sc.instance_name = ''<* !_Total>'' collate database_default
+							and rtrim(pc1.instance_name) <> ''_Total'' collate database_default
 							)
 						)
 
@@ -168,6 +170,7 @@ declare @sql nvarchar(4000)
 				and pc2.is_sql_counter = 0
 
 				option (maxdop 1, keep plan)
+				'
 			end
 
 			--always load SQL counters from DMV:

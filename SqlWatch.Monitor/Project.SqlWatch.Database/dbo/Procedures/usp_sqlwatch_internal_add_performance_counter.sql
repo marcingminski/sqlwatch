@@ -35,9 +35,17 @@ select
 -- get non SQL counters via CLR if enabled:
 if dbo.ufn_sqlwatch_get_clr_collector_status() = 1
 	begin
+		create table #c (
+			object_name nvarchar(128),
+			counter_name nvarchar(128),
+			instance_name nvarchar(128)
+		)
+
+		insert into #c
+		exec sp_executesql '
 		select distinct *
-		into #c
 		from dbo.ReadPerformanceCounterCategories()
+		'
 
 		create unique clustered index idx_tmp_c on #c ([object_name], [counter_name], instance_name)
 		
