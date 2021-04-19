@@ -54,7 +54,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 4
+            "y": 1
           },
           "id": 59,
           "options": {
@@ -86,7 +86,7 @@
             "h": 3,
             "w": 22,
             "x": 1,
-            "y": 10
+            "y": 7
           },
           "id": 248,
           "options": {
@@ -145,7 +145,7 @@
             "h": 4,
             "w": 4,
             "x": 1,
-            "y": 13
+            "y": 10
           },
           "id": 268,
           "options": {
@@ -250,7 +250,7 @@
             "h": 4,
             "w": 3,
             "x": 5,
-            "y": 13
+            "y": 10
           },
           "id": 198,
           "options": {
@@ -322,7 +322,7 @@
             "h": 4,
             "w": 2,
             "x": 8,
-            "y": 13
+            "y": 10
           },
           "id": 217,
           "options": {
@@ -396,7 +396,7 @@
             "h": 4,
             "w": 2,
             "x": 10,
-            "y": 13
+            "y": 10
           },
           "id": 218,
           "options": {
@@ -520,7 +520,7 @@
             "h": 4,
             "w": 5,
             "x": 12,
-            "y": 13
+            "y": 10
           },
           "id": 199,
           "options": {
@@ -592,7 +592,7 @@
             "h": 4,
             "w": 3,
             "x": 17,
-            "y": 13
+            "y": 10
           },
           "id": 230,
           "options": {
@@ -771,7 +771,7 @@
             "h": 4,
             "w": 3,
             "x": 20,
-            "y": 13
+            "y": 10
           },
           "id": 246,
           "links": [],
@@ -935,7 +935,7 @@
             "h": 12,
             "w": 4,
             "x": 1,
-            "y": 17
+            "y": 14
           },
           "id": 269,
           "options": {
@@ -1040,7 +1040,7 @@
             "h": 12,
             "w": 3,
             "x": 5,
-            "y": 17
+            "y": 14
           },
           "id": 102,
           "links": [],
@@ -1116,7 +1116,7 @@
             "h": 12,
             "w": 3,
             "x": 8,
-            "y": 17
+            "y": 14
           },
           "id": 15,
           "options": {
@@ -1200,7 +1200,7 @@
             "h": 12,
             "w": 3,
             "x": 11,
-            "y": 17
+            "y": 14
           },
           "id": 253,
           "options": {
@@ -1281,7 +1281,7 @@
             "h": 12,
             "w": 3,
             "x": 14,
-            "y": 17
+            "y": 14
           },
           "id": 168,
           "options": {
@@ -1388,7 +1388,7 @@
             "h": 4,
             "w": 3,
             "x": 17,
-            "y": 17
+            "y": 14
           },
           "id": 225,
           "options": {
@@ -1506,7 +1506,7 @@
             "h": 12,
             "w": 3,
             "x": 20,
-            "y": 17
+            "y": 14
           },
           "id": 224,
           "options": {
@@ -1604,7 +1604,7 @@
             "h": 8,
             "w": 3,
             "x": 17,
-            "y": 21
+            "y": 18
           },
           "id": 212,
           "options": {
@@ -1648,7 +1648,7 @@
             "h": 3,
             "w": 22,
             "x": 1,
-            "y": 29
+            "y": 26
           },
           "id": 250,
           "options": {
@@ -1696,7 +1696,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 10
+            "y": 30
           },
           "id": 159,
           "options": {
@@ -1740,7 +1740,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 16
+            "y": 36
           },
           "hiddenSeries": false,
           "id": 101,
@@ -1862,7 +1862,7 @@
             "h": 2,
             "w": 24,
             "x": 0,
-            "y": 22
+            "y": 42
           },
           "id": 276,
           "options": {
@@ -1895,7 +1895,7 @@
             "h": 10,
             "w": 24,
             "x": 0,
-            "y": 24
+            "y": 44
           },
           "id": 255,
           "options": {
@@ -1945,7 +1945,7 @@
             "h": 9,
             "w": 24,
             "x": 0,
-            "y": 6
+            "y": 31
           },
           "id": 265,
           "options": {
@@ -1988,7 +1988,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 15
+            "y": 40
           },
           "hiddenSeries": false,
           "id": 264,
@@ -2128,7 +2128,7 @@
             "h": 3,
             "w": 24,
             "x": 0,
-            "y": 21
+            "y": 46
           },
           "id": 272,
           "options": {
@@ -2171,7 +2171,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 24
+            "y": 49
           },
           "hiddenSeries": false,
           "id": 271,
@@ -2337,7 +2337,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 30
+            "y": 55
           },
           "hiddenSeries": false,
           "id": 277,
@@ -2485,7 +2485,7 @@
             "h": 5,
             "w": 24,
             "x": 0,
-            "y": 7
+            "y": 4
           },
           "id": 259,
           "options": {
@@ -2529,7 +2529,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 12
+            "y": 9
           },
           "hiddenSeries": false,
           "id": 258,
@@ -2687,7 +2687,7 @@
             "h": 11,
             "w": 24,
             "x": 0,
-            "y": 18
+            "y": 15
           },
           "id": 43,
           "options": {
@@ -2733,7 +2733,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 29
+            "y": 26
           },
           "hiddenSeries": false,
           "id": 231,
@@ -2874,7 +2874,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 36
+            "y": 33
           },
           "hiddenSeries": false,
           "hideTimeOverride": false,
@@ -2969,7 +2969,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 43
+            "y": 40
           },
           "id": 109,
           "options": {
@@ -3013,7 +3013,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 49
+            "y": 46
           },
           "hiddenSeries": false,
           "id": 6,
@@ -3160,7 +3160,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 56
+            "y": 53
           },
           "id": 110,
           "options": {
@@ -3209,7 +3209,7 @@
             "h": 11,
             "w": 24,
             "x": 0,
-            "y": 62
+            "y": 59
           },
           "hiddenSeries": false,
           "id": 232,
@@ -3330,7 +3330,7 @@
             "h": 3,
             "w": 24,
             "x": 0,
-            "y": 73
+            "y": 70
           },
           "id": 192,
           "options": {
@@ -3375,7 +3375,7 @@
             "h": 5,
             "w": 24,
             "x": 0,
-            "y": 76
+            "y": 73
           },
           "hiddenSeries": false,
           "id": 191,
@@ -3567,7 +3567,7 @@
             "h": 5,
             "w": 24,
             "x": 0,
-            "y": 81
+            "y": 78
           },
           "id": 194,
           "links": [
@@ -3652,7 +3652,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 87
+            "y": 33
           },
           "id": 112,
           "options": {
@@ -3696,7 +3696,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 93
+            "y": 39
           },
           "hiddenSeries": false,
           "id": 12,
@@ -3810,7 +3810,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 100
+            "y": 46
           },
           "hiddenSeries": false,
           "id": 206,
@@ -3912,7 +3912,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 106
+            "y": 52
           },
           "id": 108,
           "options": {
@@ -3958,7 +3958,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 112
+            "y": 58
           },
           "hiddenSeries": false,
           "id": 209,
@@ -4054,7 +4054,7 @@
             "h": 4,
             "w": 24,
             "x": 0,
-            "y": 118
+            "y": 64
           },
           "id": 210,
           "options": {
@@ -4099,7 +4099,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 122
+            "y": 68
           },
           "hiddenSeries": false,
           "id": 87,
@@ -4198,7 +4198,7 @@
             "h": 4,
             "w": 24,
             "x": 0,
-            "y": 128
+            "y": 74
           },
           "id": 111,
           "options": {
@@ -4241,7 +4241,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 132
+            "y": 78
           },
           "hiddenSeries": false,
           "id": 9,
@@ -5096,7 +5096,7 @@
             "h": 3,
             "w": 24,
             "x": 0,
-            "y": 10
+            "y": 7
           },
           "id": 77,
           "options": {
@@ -5140,7 +5140,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 13
+            "y": 10
           },
           "hiddenSeries": false,
           "id": 104,
@@ -5166,20 +5166,24 @@
           "renderer": "flot",
           "seriesOverrides": [
             {
+              "$$hashKey": "object:2809",
               "alias": "Physical Memory in use",
               "color": "#F2495C",
               "fillGradient": 8
             },
             {
+              "$$hashKey": "object:2810",
               "alias": "Available Commit limit",
               "color": "#73BF69"
             },
             {
+              "$$hashKey": "object:2811",
               "alias": "Physical Memory Low Indicator",
               "bars": true,
               "yaxis": 2
             },
             {
+              "$$hashKey": "object:2812",
               "alias": "Virtual Memory Low Indicator",
               "bars": true,
               "yaxis": 2
@@ -5265,7 +5269,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 20
+            "y": 17
           },
           "hiddenSeries": false,
           "id": 34,
@@ -5299,7 +5303,7 @@
               "alias": "",
               "format": "time_series",
               "hide": false,
-              "rawSql": "SELECT \n      [time] = $__timeGroup([snapshot_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 0\n  AND $__timeFilter(snapshot_time)\n  AND counter_name IN ('Connection Memory (KB)','Optimizer Memory (KB)','SQL Cache Memory (KB)')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+              "rawSql": "SELECT \n      [time] = $__timeGroup([snapshot_time], $aggregation) \n      --this chart\n      ,'Connection Memory (KB)' = avg(case when counter_name = 'Connection Memory (KB)' then [cntr_value_calculated] else null end)\n      ,'Optimizer Memory (KB)' = avg(case when counter_name = 'Optimizer Memory (KB)' then [cntr_value_calculated] else null end)\n      ,'SQL Cache Memory (KB)' = avg(case when counter_name = 'SQL Cache Memory (KB)' then [cntr_value_calculated] else null end)\n      --other charts\n      ,'Total Server Memory (KB)' = avg(case when counter_name = 'Total Server Memory (KB)' then [cntr_value_calculated] else null end)\n      ,'Stolen Server Memory (KB)' = avg(case when counter_name = 'Stolen Server Memory (KB)' then [cntr_value_calculated] else null end)\n      ,'Target Server Memory (KB)' = avg(case when counter_name = 'Target Server Memory (KB)' then [cntr_value_calculated] else null end)\n      --\n      ,'Memory Grants Outstanding' = avg(case when counter_name = 'Memory Grants Outstanding' then [cntr_value_calculated] else null end)\n      ,'Memory Grants Pending' = avg(case when counter_name = 'Memory Grants Pending' then [cntr_value_calculated] else null end)\n      --\n      ,'Free list stalls/sec' = avg(case when counter_name = 'Free list stalls/sec' then [cntr_value_calculated] else null end)\n      --\n      ,'Page Lookups/sec' = avg(case when counter_name = 'Page Lookups/sec' then [cntr_value_calculated] else null end)\n      ,'Batch Requests/sec' = avg(case when counter_name = 'Batch Requests/sec' then [cntr_value_calculated] else null end)\n      --\n      ,'Page reads/sec' = avg(case when counter_name = 'Page reads/sec' then [cntr_value_calculated] else null end)\n      ,'Page writes/sec' = avg(case when counter_name = 'Page writes/sec' then [cntr_value_calculated] else null end)\n      --\n      ,'Readahead pages/sec' = avg(case when counter_name = 'Readahead pages/sec' then [cntr_value_calculated] else null end)\n      ,'Page reads/sec' = avg(case when counter_name = 'Page reads/sec' then [cntr_value_calculated] else null end)\n      --\n      ,'Checkpoint pages/sec' = avg(case when counter_name = 'Checkpoint pages/sec' then [cntr_value_calculated] else null end)\n      --\n      ,'Lazy writes/sec' = avg(case when counter_name = 'Lazy writes/sec' then [cntr_value_calculated] else null end)\n      --\n      ,'Page life Expectancy'  = avg(case when counter_name = 'Page life Expectancy' then [cntr_value_calculated] else null end)\n      --\n      ,'Buffer cache hit ratio'  = avg(case when counter_name = 'Buffer cache hit ratio' then [cntr_value_calculated] else null end)\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 0\n  AND $__timeFilter(snapshot_time)\n  AND counter_name IN ('Connection Memory (KB)','Optimizer Memory (KB)','SQL Cache Memory (KB)'\n                      ,'Total Server Memory (KB)','Stolen Server Memory (KB)', 'Target Server Memory (KB)'\n                      ,'Memory Grants Outstanding','Memory Grants Pending'\n                      ,'Free list stalls/sec'\n                      ,'Page Lookups/sec','Batch Requests/sec'\n                      ,'Page reads/sec','Page writes/sec'\n                      ,'Readahead pages/sec','Page reads/sec'\n                      ,'Checkpoint pages/sec'\n                      ,'Lazy writes/sec'\n                      ,'Page life Expectancy'\n                      ,'Buffer cache hit ratio'\n                      )\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY $__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
               "refId": "A"
             }
           ],
@@ -5313,6 +5317,21 @@
             "sort": 0,
             "value_type": "individual"
           },
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "Time",
+                    "Connection Memory (KB)",
+                    "Optimizer Memory (KB)",
+                    "SQL Cache Memory (KB)"
+                  ]
+                }
+              }
+            }
+          ],
           "transparent": true,
           "type": "graph",
           "xaxis": {
@@ -5351,7 +5370,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$DataSource",
+          "datasource": "-- Dashboard --",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -5370,7 +5389,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 27
+            "y": 24
           },
           "hiddenSeries": false,
           "id": 8,
@@ -5400,10 +5419,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "alias": "",
-              "format": "time_series",
-              "hide": false,
-              "rawSql": "SELECT \n      [time] = $__timeGroup([snapshot_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 0\n  AND $__timeFilter(snapshot_time)\n  AND counter_name IN ('Total Server Memory (KB)','Stolen Server Memory (KB)', 'Target Server Memory (KB)')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+              "panelId": 34,
               "refId": "A"
             }
           ],
@@ -5419,20 +5435,16 @@
           },
           "transformations": [
             {
-              "id": "seriesToColumns",
-              "options": {}
-            },
-            {
-              "id": "organize",
+              "id": "filterFieldsByName",
               "options": {
-                "excludeByName": {},
-                "indexByName": {
-                  "Stolen Server Memory (KB)": 2,
-                  "Target Server Memory (KB)": 1,
-                  "Time": 0,
-                  "Total Server Memory (KB)": 3
-                },
-                "renameByName": {}
+                "include": {
+                  "names": [
+                    "Time",
+                    "Total Server Memory (KB)",
+                    "Stolen Server Memory (KB)",
+                    "Target Server Memory (KB)"
+                  ]
+                }
               }
             }
           ],
@@ -5493,7 +5505,7 @@
             "h": 9,
             "w": 24,
             "x": 0,
-            "y": 33
+            "y": 30
           },
           "hiddenSeries": false,
           "id": 40,
@@ -5586,7 +5598,7 @@
             "h": 3,
             "w": 24,
             "x": 0,
-            "y": 42
+            "y": 39
           },
           "id": 55,
           "options": {
@@ -5611,7 +5623,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$DataSource",
+          "datasource": "-- Dashboard --",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -5630,7 +5642,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 45
+            "y": 42
           },
           "hiddenSeries": false,
           "id": 38,
@@ -5656,6 +5668,7 @@
           "renderer": "flot",
           "seriesOverrides": [
             {
+              "$$hashKey": "object:2962",
               "alias": "Memory Grants Pending",
               "color": "#F2495C"
             }
@@ -5665,10 +5678,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "alias": "",
-              "format": "time_series",
-              "hide": false,
-              "rawSql": "SELECT \n      [time] = $__timeGroup([snapshot_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 0\n  AND $__timeFilter(snapshot_time)\n  AND counter_name IN ('Memory Grants Outstanding','Memory Grants Pending')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+              "panelId": 34,
               "refId": "A"
             }
           ],
@@ -5682,6 +5692,20 @@
             "sort": 0,
             "value_type": "individual"
           },
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "Time",
+                    "Memory Grants Outstanding",
+                    "Memory Grants Pending"
+                  ]
+                }
+              }
+            }
+          ],
           "transparent": true,
           "type": "graph",
           "xaxis": {
@@ -5727,7 +5751,7 @@
             "h": 2,
             "w": 24,
             "x": 0,
-            "y": 51
+            "y": 48
           },
           "id": 138,
           "options": {
@@ -5752,7 +5776,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$DataSource",
+          "datasource": "-- Dashboard --",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -5771,7 +5795,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 53
+            "y": 50
           },
           "hiddenSeries": false,
           "id": 137,
@@ -5801,10 +5825,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "alias": "",
-              "format": "time_series",
-              "hide": false,
-              "rawSql": "SELECT \n      [time] = $__timeGroup([snapshot_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 0\n  AND $__timeFilter(snapshot_time)\n  AND counter_name IN ('Free list stalls/sec')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+              "panelId": 34,
               "refId": "A"
             }
           ],
@@ -5827,6 +5848,19 @@
             "sort": 0,
             "value_type": "individual"
           },
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "Time",
+                    "Free list stalls/sec"
+                  ]
+                }
+              }
+            }
+          ],
           "transparent": true,
           "type": "graph",
           "xaxis": {
@@ -5872,7 +5906,7 @@
             "h": 2,
             "w": 24,
             "x": 0,
-            "y": 59
+            "y": 56
           },
           "id": 56,
           "options": {
@@ -5897,7 +5931,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$DataSource",
+          "datasource": "-- Dashboard --",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -5916,7 +5950,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 61
+            "y": 58
           },
           "hiddenSeries": false,
           "id": 21,
@@ -5942,6 +5976,7 @@
           "renderer": "flot",
           "seriesOverrides": [
             {
+              "$$hashKey": "object:3530",
               "alias": "Page lookups rate",
               "color": "#F2495C"
             }
@@ -5951,10 +5986,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "alias": "",
-              "format": "time_series",
-              "hide": false,
-              "rawSql": "SELECT \n      [time] = $__timeGroup([snapshot_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 0\n  AND $__timeFilter(snapshot_time)\n  AND counter_name IN ('Page Lookups/sec','Batch Requests/sec')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+              "panelId": 34,
               "refId": "A"
             }
           ],
@@ -5972,9 +6004,9 @@
             {
               "id": "calculateField",
               "options": {
-                "alias": "Page lookups rate",
+                "alias": "Page Lookup Rate",
                 "binary": {
-                  "left": "Page lookups/sec",
+                  "left": "Page Lookups/sec",
                   "operator": "/",
                   "reducer": "sum",
                   "right": "Batch Requests/sec"
@@ -5984,6 +6016,17 @@
                   "reducer": "sum"
                 },
                 "replaceFields": true
+              }
+            },
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "Time",
+                    "Page Lookup Rate"
+                  ]
+                }
               }
             }
           ],
@@ -6032,7 +6075,7 @@
             "h": 4,
             "w": 24,
             "x": 0,
-            "y": 67
+            "y": 64
           },
           "id": 156,
           "options": {
@@ -6057,7 +6100,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$DataSource",
+          "datasource": "-- Dashboard --",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -6076,7 +6119,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 71
+            "y": 68
           },
           "hiddenSeries": false,
           "id": 155,
@@ -6106,10 +6149,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "alias": "",
-              "format": "time_series",
-              "hide": false,
-              "rawSql": "SELECT \n      [time] = $__timeGroup([snapshot_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 0\n  AND $__timeFilter(snapshot_time)\n  AND counter_name IN ('Page reads/sec','Page writes/sec')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+              "panelId": 34,
               "refId": "A"
             }
           ],
@@ -6132,6 +6172,20 @@
             "sort": 0,
             "value_type": "individual"
           },
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "Time",
+                    "Page reads/sec",
+                    "Page writes/sec"
+                  ]
+                }
+              }
+            }
+          ],
           "transparent": true,
           "type": "graph",
           "xaxis": {
@@ -6178,7 +6232,7 @@
             "h": 2,
             "w": 24,
             "x": 0,
-            "y": 77
+            "y": 74
           },
           "id": 146,
           "options": {
@@ -6203,7 +6257,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$DataSource",
+          "datasource": "-- Dashboard --",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -6235,7 +6289,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 79
+            "y": 76
           },
           "hiddenSeries": false,
           "id": 145,
@@ -6261,6 +6315,7 @@
           "renderer": "flot",
           "seriesOverrides": [
             {
+              "$$hashKey": "object:4413",
               "alias": "Readahead rate",
               "color": "#F2495C",
               "fillGradient": 1,
@@ -6273,10 +6328,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "alias": "",
-              "format": "time_series",
-              "hide": false,
-              "rawSql": "SELECT \n      [time] = $__timeGroup([snapshot_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 0\n  AND $__timeFilter(snapshot_time)\n  AND counter_name IN ('Readahead pages/sec','Page reads/sec')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+              "panelId": 34,
               "refId": "A"
             }
           ],
@@ -6308,13 +6360,15 @@
               }
             },
             {
-              "id": "organize",
+              "id": "filterFieldsByName",
               "options": {
-                "excludeByName": {
-                  "Page reads/sec": true
-                },
-                "indexByName": {},
-                "renameByName": {}
+                "include": {
+                  "names": [
+                    "Time",
+                    "Readahead pages/sec",
+                    "Readahead rate"
+                  ]
+                }
               }
             }
           ],
@@ -6364,7 +6418,7 @@
             "h": 2,
             "w": 24,
             "x": 0,
-            "y": 85
+            "y": 82
           },
           "id": 114,
           "options": {
@@ -6389,7 +6443,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$DataSource",
+          "datasource": "-- Dashboard --",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -6408,7 +6462,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 87
+            "y": 84
           },
           "hiddenSeries": false,
           "id": 204,
@@ -6438,10 +6492,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "alias": "",
-              "format": "time_series",
-              "hide": false,
-              "rawSql": "SELECT \n      [time] = $__timeGroup([snapshot_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 0\n  AND $__timeFilter(snapshot_time)\n  AND counter_name IN ('Checkpoint pages/sec')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+              "panelId": 34,
               "refId": "A"
             }
           ],
@@ -6464,6 +6515,19 @@
             "sort": 0,
             "value_type": "individual"
           },
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "Time",
+                    "Checkpoint pages/sec"
+                  ]
+                }
+              }
+            }
+          ],
           "transparent": true,
           "type": "graph",
           "xaxis": {
@@ -6509,7 +6573,7 @@
             "h": 2,
             "w": 24,
             "x": 0,
-            "y": 93
+            "y": 90
           },
           "id": 205,
           "options": {
@@ -6534,7 +6598,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$DataSource",
+          "datasource": "-- Dashboard --",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -6553,7 +6617,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 95
+            "y": 92
           },
           "hiddenSeries": false,
           "id": 42,
@@ -6579,6 +6643,7 @@
           "renderer": "flot",
           "seriesOverrides": [
             {
+              "$$hashKey": "object:4691",
               "alias": "Lazy writes/sec",
               "color": "#F2495C"
             }
@@ -6588,10 +6653,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "alias": "",
-              "format": "time_series",
-              "hide": false,
-              "rawSql": "SELECT \n      [time] = $__timeGroup([snapshot_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 0\n  AND $__timeFilter(snapshot_time)\n  AND counter_name IN ('Lazy writes/sec')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+              "panelId": 34,
               "refId": "A"
             }
           ],
@@ -6614,6 +6676,19 @@
             "sort": 0,
             "value_type": "individual"
           },
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "Time",
+                    "Lazy writes/sec"
+                  ]
+                }
+              }
+            }
+          ],
           "transparent": true,
           "type": "graph",
           "xaxis": {
@@ -6659,7 +6734,7 @@
             "h": 3,
             "w": 24,
             "x": 0,
-            "y": 101
+            "y": 98
           },
           "id": 115,
           "options": {
@@ -6684,7 +6759,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$DataSource",
+          "datasource": "-- Dashboard --",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -6704,7 +6779,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 104
+            "y": 101
           },
           "hiddenSeries": false,
           "id": 19,
@@ -6734,10 +6809,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "alias": "",
-              "format": "time_series",
-              "hide": false,
-              "rawSql": "SELECT \n      [time] = $__timeGroup([snapshot_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 0\n  AND $__timeFilter(snapshot_time)\n  AND counter_name IN ('Page life Expectancy')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+              "panelId": 34,
               "refId": "A"
             }
           ],
@@ -6751,6 +6823,19 @@
             "sort": 0,
             "value_type": "individual"
           },
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "Time",
+                    "Page life Expectancy"
+                  ]
+                }
+              }
+            }
+          ],
           "transparent": true,
           "type": "graph",
           "xaxis": {
@@ -6796,7 +6881,7 @@
             "h": 3,
             "w": 24,
             "x": 0,
-            "y": 110
+            "y": 107
           },
           "id": 116,
           "options": {
@@ -6821,7 +6906,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$DataSource",
+          "datasource": "-- Dashboard --",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -6840,7 +6925,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 113
+            "y": 110
           },
           "hiddenSeries": false,
           "id": 103,
@@ -6870,10 +6955,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "alias": "",
-              "format": "time_series",
-              "hide": false,
-              "rawSql": "SELECT \n      [time] = $__timeGroup([snapshot_time], $aggregation) \n      ,metric = [counter_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 0\n  AND $__timeFilter(snapshot_time)\n  AND counter_name IN ('Buffer cache hit ratio')\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [counter_name]\n      ,$__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+              "panelId": 34,
               "refId": "A"
             }
           ],
@@ -6887,6 +6969,19 @@
             "sort": 0,
             "value_type": "individual"
           },
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "Time",
+                    "Buffer cache hit ratio"
+                  ]
+                }
+              }
+            }
+          ],
           "transparent": true,
           "type": "graph",
           "xaxis": {
@@ -8475,7 +8570,7 @@
             "h": 3,
             "w": 24,
             "x": 0,
-            "y": 10
+            "y": 38
           },
           "id": 286,
           "options": {
@@ -8513,7 +8608,7 @@
             "h": 5,
             "w": 24,
             "x": 0,
-            "y": 13
+            "y": 41
           },
           "hiddenSeries": false,
           "id": 282,
@@ -8658,7 +8753,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 18
+            "y": 46
           },
           "id": 285,
           "options": {
@@ -8693,7 +8788,7 @@
             "h": 3,
             "w": 24,
             "x": 0,
-            "y": 24
+            "y": 52
           },
           "id": 241,
           "options": {
@@ -10615,7 +10710,7 @@
       "type": "row"
     }
   ],
-  "refresh": "",
+  "refresh": "5s",
   "schemaVersion": 27,
   "style": "dark",
   "tags": [
@@ -10934,7 +11029,7 @@
     ]
   },
   "time": {
-    "from": "now-3h",
+    "from": "now-5m",
     "to": "now"
   },
   "timepicker": {
@@ -10947,5 +11042,5 @@
   "timezone": "utc",
   "title": "SQL Instance Overview",
   "uid": "sqlwatch-instance-overview",
-  "version": 320
+  "version": 335
 }
