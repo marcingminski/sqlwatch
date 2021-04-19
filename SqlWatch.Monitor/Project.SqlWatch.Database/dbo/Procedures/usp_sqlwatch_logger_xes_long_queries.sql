@@ -70,6 +70,7 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 						,[duration_ms]=xed.event_data.value('(data[@name="duration"]/value)[1]', 'bigint')/1000
 						,[wait_type]=xed.event_data.value('(data[@name="wait_type"]/text )[1]', 'varchar(255)')
 						,[plan_handle] = convert(varbinary(64),'0x' + xed.event_data.value('(action[@name="plan_handle"]/value)[1]', 'varchar(max)'),1)
+						,[sql_text] = xed.event_data.value('(action[@name="sql_text"]/value)[1]', 'varchar(max)')
 					into #t_queries
 					from @event_data t
 						cross apply t.event_data.nodes('event') as xed (event_data)
@@ -101,6 +102,7 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 						, snapshot_time, snapshot_type_id, sql_instance 
 						, sqlwatch_query_plan_id, sqlwatch_query_id
 						, attach_activity_id
+						, [sql_text]
 						)
 
 					select 
@@ -115,6 +117,8 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 						,qp.sqlwatch_query_plan_id
 						,qp.sqlwatch_query_id
 						,tx.attach_activity_id
+						--failback to sql_text logged by xe if we were not able to get query from plan handle:
+						,case when qp.sqlwatch_query_id is null then tx.[sql_text] else null end
 					from #t_queries tx
 
 					--get plan ids

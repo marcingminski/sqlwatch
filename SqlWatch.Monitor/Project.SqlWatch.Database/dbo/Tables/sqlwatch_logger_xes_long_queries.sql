@@ -29,8 +29,9 @@
 	[snapshot_time] datetime2(0) not null,
 	[snapshot_type_id] tinyint not null constraint df_sqlwatch_logger_xes_long_queries_type default (7),
 	[sql_instance] varchar(32) not null constraint df_sqlwatch_logger_xes_long_queries_sql_instance default (@@SERVERNAME),
-	[sqlwatch_query_plan_id] int not null,
-	[sqlwatch_query_id] int not null,
+	[sqlwatch_query_plan_id] int null,
+	[sqlwatch_query_id] int null,
+	[sql_text] nvarchar(max) null, --failback if we cannot get sql text from plan_handle 
 
 	attach_activity_id varchar(40),
 

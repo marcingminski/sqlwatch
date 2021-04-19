@@ -9,7 +9,7 @@
 
 ---Remove when targeting SQL2008	*/
 ADD EVENT sqlserver.module_end(SET collect_statement=(0)
-    ACTION(sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.database_name,sqlserver.plan_handle,sqlserver.session_id,sqlserver.session_nt_username,sqlserver.tsql_stack,sqlserver.username)
+    ACTION(sqlserver.sql_text, sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.database_name,sqlserver.plan_handle,sqlserver.session_id,sqlserver.session_nt_username,sqlserver.tsql_stack,sqlserver.username)
     WHERE (
             [package0].[greater_than_uint64]([duration],(5000000)) 
         AND [sqlserver].[is_system]=(0)
@@ -18,7 +18,7 @@ ADD EVENT sqlserver.module_end(SET collect_statement=(0)
         )),
 
 ADD EVENT sqlserver.rpc_completed(SET collect_statement=(0)
-    ACTION(sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.database_name,sqlserver.plan_handle,sqlserver.session_id,sqlserver.session_nt_username,sqlserver.tsql_stack,sqlserver.username)
+    ACTION(sqlserver.sql_text, sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.database_name,sqlserver.plan_handle,sqlserver.session_id,sqlserver.session_nt_username,sqlserver.tsql_stack,sqlserver.username)
     WHERE (
             [package0].[greater_than_uint64]([duration],(5000000)) 
             AND (
@@ -33,7 +33,7 @@ ADD EVENT sqlserver.rpc_completed(SET collect_statement=(0)
             ),
 
 ADD EVENT sqlserver.sp_statement_completed(SET collect_statement=(0)
-    ACTION(sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.database_name,sqlserver.plan_handle,sqlserver.session_id,sqlserver.session_nt_username,sqlserver.tsql_stack,sqlserver.username)
+    ACTION(sqlserver.sql_text, sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.database_name,sqlserver.plan_handle,sqlserver.session_id,sqlserver.session_nt_username,sqlserver.tsql_stack,sqlserver.username)
     WHERE (
             [package0].[greater_than_int64]([duration],(5000000)) 
             AND (
@@ -47,7 +47,7 @@ ADD EVENT sqlserver.sp_statement_completed(SET collect_statement=(0)
             ),
 
 ADD EVENT sqlserver.sql_statement_completed(SET collect_statement=(0)
-    ACTION(sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.database_name,sqlserver.plan_handle,sqlserver.session_id,sqlserver.session_nt_username,sqlserver.tsql_stack,sqlserver.username)
+    ACTION(sqlserver.sql_text, sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.database_name,sqlserver.plan_handle,sqlserver.session_id,sqlserver.session_nt_username,sqlserver.tsql_stack,sqlserver.username)
     WHERE (
             [package0].[greater_than_int64]([duration],(5000000)) 
             AND (
