@@ -21,7 +21,7 @@ select sql_instance=@@SERVERNAME, mj.[sqlwatch_job_id], js.sqlwatch_job_step_id,
  jh.run_status,
  snapshot_time = @snapshot_time, 
  snapshot_type_id = @snapshot_type_id,
- [run_date_utc] = dateadd(minute,(datepart(TZOFFSET,SYSDATETIMEOFFSET())),msdb.dbo.agent_datetime(jh.run_date, jh.run_time))
+ [run_date_utc] = dateadd(minute,(datepart(TZOFFSET,SYSDATETIMEOFFSET()))*-1,msdb.dbo.agent_datetime(jh.run_date, jh.run_time))
 from msdb.dbo.sysjobhistory jh
 
 	inner join msdb.dbo.sysjobs sj
