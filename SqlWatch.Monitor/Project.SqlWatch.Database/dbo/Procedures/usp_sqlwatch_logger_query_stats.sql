@@ -1,6 +1,7 @@
 ﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_logger_query_stats]
 as
 
+--this needs reviewing
 begin
 	set nocount on;
 	set xact_abort on;
