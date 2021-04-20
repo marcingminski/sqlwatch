@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": 32,
-  "iteration": 1618948476553,
+  "iteration": 1618955610546,
   "links": [
     {
       "asDropdown": true,
@@ -1792,7 +1792,7 @@
         {
           "id": "renameByRegex",
           "options": {
-            "regex": "(.Latency$)",
+            "regex": "(.Latency)",
             "renamePattern": ""
           }
         }
@@ -2440,7 +2440,7 @@
             "h": 9,
             "w": 24,
             "x": 0,
-            "y": 57
+            "y": 3
           },
           "id": 265,
           "options": {
@@ -2480,15 +2480,15 @@
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
-            "h": 6,
+            "h": 7,
             "w": 24,
             "x": 0,
-            "y": 66
+            "y": 12
           },
           "hiddenSeries": false,
           "id": 264,
           "legend": {
-            "alignAsTable": false,
+            "alignAsTable": true,
             "avg": true,
             "current": true,
             "max": true,
@@ -2623,7 +2623,7 @@
             "h": 3,
             "w": 24,
             "x": 0,
-            "y": 72
+            "y": 19
           },
           "id": 272,
           "options": {
@@ -2663,15 +2663,15 @@
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
-            "h": 6,
+            "h": 7,
             "w": 24,
             "x": 0,
-            "y": 75
+            "y": 22
           },
           "hiddenSeries": false,
           "id": 271,
           "legend": {
-            "alignAsTable": false,
+            "alignAsTable": true,
             "avg": true,
             "current": true,
             "max": true,
@@ -2832,17 +2832,17 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 81
+            "y": 29
           },
           "hiddenSeries": false,
           "id": 277,
           "legend": {
-            "alignAsTable": false,
+            "alignAsTable": true,
             "avg": true,
             "current": true,
             "max": true,
             "min": true,
-            "show": true,
+            "show": false,
             "total": false,
             "values": true
           },
@@ -3033,7 +3033,7 @@
             "current": true,
             "max": true,
             "min": true,
-            "show": true,
+            "show": false,
             "total": false,
             "values": true
           },
@@ -3241,7 +3241,7 @@
             "max": true,
             "min": true,
             "rightSide": false,
-            "show": true,
+            "show": false,
             "total": false,
             "values": true
           },
@@ -3379,7 +3379,7 @@
             "current": true,
             "max": true,
             "min": true,
-            "show": true,
+            "show": false,
             "total": false,
             "values": true
           },
@@ -3517,7 +3517,7 @@
             "current": true,
             "max": true,
             "min": true,
-            "show": true,
+            "show": false,
             "total": false,
             "values": true
           },
@@ -5676,7 +5676,7 @@
             "h": 3,
             "w": 24,
             "x": 0,
-            "y": 7
+            "y": 37
           },
           "id": 77,
           "options": {
@@ -5720,7 +5720,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 10
+            "y": 40
           },
           "hiddenSeries": false,
           "id": 104,
@@ -5849,7 +5849,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 17
+            "y": 47
           },
           "hiddenSeries": false,
           "id": 34,
@@ -5969,7 +5969,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 24
+            "y": 54
           },
           "hiddenSeries": false,
           "id": 8,
@@ -6085,7 +6085,7 @@
             "h": 9,
             "w": 24,
             "x": 0,
-            "y": 30
+            "y": 60
           },
           "hiddenSeries": false,
           "id": 40,
@@ -6096,6 +6096,8 @@
             "max": true,
             "min": true,
             "show": true,
+            "sort": "avg",
+            "sortDesc": true,
             "total": false,
             "values": true
           },
@@ -6178,7 +6180,7 @@
             "h": 3,
             "w": 24,
             "x": 0,
-            "y": 39
+            "y": 69
           },
           "id": 55,
           "options": {
@@ -6222,7 +6224,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 42
+            "y": 72
           },
           "hiddenSeries": false,
           "id": 38,
@@ -6331,7 +6333,7 @@
             "h": 2,
             "w": 24,
             "x": 0,
-            "y": 48
+            "y": 78
           },
           "id": 138,
           "options": {
@@ -6375,7 +6377,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 50
+            "y": 80
           },
           "hiddenSeries": false,
           "id": 137,
@@ -6486,7 +6488,7 @@
             "h": 2,
             "w": 24,
             "x": 0,
-            "y": 56
+            "y": 86
           },
           "id": 56,
           "options": {
@@ -6530,7 +6532,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 58
+            "y": 88
           },
           "hiddenSeries": false,
           "id": 21,
@@ -6655,7 +6657,7 @@
             "h": 4,
             "w": 24,
             "x": 0,
-            "y": 64
+            "y": 94
           },
           "id": 156,
           "options": {
@@ -6699,7 +6701,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 68
+            "y": 98
           },
           "hiddenSeries": false,
           "id": 155,
@@ -6812,7 +6814,7 @@
             "h": 2,
             "w": 24,
             "x": 0,
-            "y": 74
+            "y": 104
           },
           "id": 146,
           "options": {
@@ -6869,7 +6871,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 76
+            "y": 106
           },
           "hiddenSeries": false,
           "id": 145,
@@ -6998,7 +7000,7 @@
             "h": 2,
             "w": 24,
             "x": 0,
-            "y": 82
+            "y": 112
           },
           "id": 114,
           "options": {
@@ -7042,7 +7044,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 84
+            "y": 114
           },
           "hiddenSeries": false,
           "id": 204,
@@ -7153,7 +7155,7 @@
             "h": 2,
             "w": 24,
             "x": 0,
-            "y": 90
+            "y": 120
           },
           "id": 205,
           "options": {
@@ -7197,7 +7199,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 92
+            "y": 122
           },
           "hiddenSeries": false,
           "id": 42,
@@ -7314,7 +7316,7 @@
             "h": 3,
             "w": 24,
             "x": 0,
-            "y": 98
+            "y": 128
           },
           "id": 115,
           "options": {
@@ -7359,7 +7361,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 101
+            "y": 131
           },
           "hiddenSeries": false,
           "id": 19,
@@ -7461,7 +7463,7 @@
             "h": 3,
             "w": 24,
             "x": 0,
-            "y": 107
+            "y": 137
           },
           "id": 116,
           "options": {
@@ -7505,7 +7507,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 110
+            "y": 140
           },
           "hiddenSeries": false,
           "id": 103,
@@ -11799,7 +11801,7 @@
       "type": "row"
     }
   ],
-  "refresh": "",
+  "refresh": "5s",
   "schemaVersion": 27,
   "style": "dark",
   "tags": [
@@ -12131,5 +12133,5 @@
   "timezone": "utc",
   "title": "SQL Instance Overview",
   "uid": "sqlwatch-instance-overview",
-  "version": 530
+  "version": 537
 }
