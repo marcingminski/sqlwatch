@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": 32,
-  "iteration": 1618955610546,
+  "iteration": 1618955610548,
   "links": [
     {
       "asDropdown": true,
@@ -232,7 +232,7 @@
       "type": "stat"
     },
     {
-      "datasource": "$DataSource",
+      "datasource": "-- Dashboard --",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -241,6 +241,7 @@
           },
           "custom": {},
           "decimals": 0,
+          "displayName": "Wait Time",
           "links": [],
           "mappings": [],
           "min": 0,
@@ -271,7 +272,7 @@
         "x": 3,
         "y": 9
       },
-      "id": 198,
+      "id": 310,
       "options": {
         "colorMode": "background",
         "graphMode": "area",
@@ -279,7 +280,7 @@
         "orientation": "vertical",
         "reduceOptions": {
           "calcs": [
-            "lastNotNull"
+            "last"
           ],
           "fields": "",
           "values": false
@@ -290,10 +291,7 @@
       "pluginVersion": "7.4.2",
       "targets": [
         {
-          "alias": "",
-          "format": "time_series",
-          "hide": false,
-          "rawSql": "SELECT \n      [time] =snapshot_time --$__timeGroup([snapshot_time], $aggregation)\n\n      ,[Wait Time] = sum([wait_time_ms_per_second])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_wait_stats]\n  WHERE 1=1\n  AND $__timeFilter(snapshot_time)\n  and snapshot_time >= dateadd(minute,-15,getutcdate())\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY snapshot_time --$__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+          "panelId": 102,
           "refId": "A"
         }
       ],
@@ -305,10 +303,16 @@
           "id": "filterFieldsByName",
           "options": {
             "include": {
-              "names": [
-                "Wait Time"
-              ]
+              "pattern": "/Total$/"
             }
+          }
+        },
+        {
+          "id": "reduce",
+          "options": {
+            "reducers": [
+              "mean"
+            ]
           }
         }
       ],
@@ -777,16 +781,12 @@
           }
         },
         {
-          "id": "filterByValue",
-          "options": {
-            "filters": [],
-            "match": "any",
-            "type": "include"
-          }
-        },
-        {
           "id": "reduce",
-          "options": {}
+          "options": {
+            "reducers": [
+              "lastNotNull"
+            ]
+          }
         }
       ],
       "type": "stat"
@@ -1242,14 +1242,30 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT TOP 15\n      [time] = snapshot_time --$__timeGroup([snapshot_time], $aggregation) \n      ,metric = case when len([wait])>19 then left([wait],19) + '...' else [wait] end\n      ,[wait_time_ms_per_second] = avg([wait_time_ms_per_second]) \n  FROM (SELECT wait_time_ms_per_second, wait= case when '$Waits' = 'Category' then [wait_category] else LOWER([wait_type]) end, snapshot_time, RN=ROW_NUMBER() over (partition by wait_category order by wait_time_ms_per_second desc)\n    FROM [dbo].[vw_sqlwatch_report_fact_perf_os_wait_stats] \n      WHERE 1=1\n      AND $__timeFilter(snapshot_time)\n        and snapshot_time >= dateadd(minute,-15,getutcdate())\n      AND [sql_instance] = '$sql_instance'\n  ) t\n  WHERE t.RN = 1\n  GROUP BY case when len([wait])>19 then left([wait],19) + '...' else [wait] end\n      ,snapshot_time --$__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  wait_time_ms_per_second desc\n  \n  ",
+          "rawSql": "SELECT \n      [time] = snapshot_time --$__timeGroup([snapshot_time], $aggregation) \n      ,metric = case when len([wait])>19 then left([wait],19) + '...' else [wait] end\n      ,[Wait Time] = sum([wait_time_ms_per_second]) \n      ,[Total] = sum([wait_time_ms_per_second]) over (partition by snapshot_time)\n  FROM (SELECT wait_time_ms_per_second, wait= case when '$Waits' = 'Category' then [wait_category] else LOWER([wait_type]) end, snapshot_time, RN=ROW_NUMBER() over (partition by wait_category order by wait_time_ms_per_second desc)\n    FROM [dbo].[vw_sqlwatch_report_fact_perf_os_wait_stats] \n      WHERE 1=1\n      AND $__timeFilter(snapshot_time)\n        and snapshot_time >= dateadd(minute,-15,getutcdate())\n      AND [sql_instance] = '$sql_instance'\n  ) t\n  WHERE t.RN = 1\n  GROUP BY case when len([wait])>19 then left([wait],19) + '...' else [wait] end\n      ,snapshot_time --$__timeGroup([snapshot_time], $aggregation) \n      ,([wait_time_ms_per_second]) \nORDER BY\n  wait_time_ms_per_second desc\n  \n  ",
           "refId": "A"
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top Waits by avg Time",
-      "transformations": [],
+      "title": "Top Waits by Total Time",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "pattern": "/Wait Time|Time/"
+            }
+          }
+        },
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "(.Wait Time)",
+            "renamePattern": ""
+          }
+        }
+      ],
       "type": "stat"
     },
     {
@@ -1430,29 +1446,17 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT time = r1.snapshot_time\r\n      ,  Background\t= background\r\n      ,  Running = running\r\n      ,  Runnable = runnable\r\n      ,  Sleeping\t = sleeping\r\n      ,  Suspended\t = suspended\r\n      ,  Waiting\t = waiting_tasks\r\n  FROM [sqlwatch_logger_dm_exec_requests_stats] r1 (nolock)\r\n\twhere $__timeFilter(r1.snapshot_time)\r\n\tand r1.snapshot_time > dateadd(minute,-15,getutcdate())\r\n  and r1.sql_instance = '$sql_instance'\r\n  and type = 1\r\n  order by time asc",
+          "rawSql": "SELECT time = r1.snapshot_time\r\n      ,  Background\t= background\r\n      ,  Running = running\r\n      ,  Runnable = runnable\r\n      ,  Sleeping\t = sleeping\r\n      ,  Suspended\t = suspended\r\n      ,  Waiting\t = waiting_tasks\r\n  FROM [sqlwatch_logger_dm_exec_requests_stats] r1 (nolock)\r\n\twhere $__timeFilter(r1.snapshot_time)\r\n\tand type = 1\r\n\tand r1.snapshot_time > dateadd(minute,-15,getutcdate())\r\n  and r1.sql_instance = '$sql_instance'\r\n    order by time asc",
           "refId": "A"
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Requests",
+      "title": "User Requests",
       "transformations": [
         {
           "id": "filterFieldsByName",
-          "options": {
-            "include": {
-              "names": [
-                "Time",
-                "Background",
-                "Running",
-                "Runnable",
-                "Sleeping",
-                "Suspended",
-                "Waiting"
-              ]
-            }
-          }
+          "options": {}
         }
       ],
       "type": "bargauge"
@@ -1766,7 +1770,7 @@
           "alias": "",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT \n      [time] = snapshot_time \n      ,[Latency Reads] = MAX(fs.[io_latency_read])\n      ,[Latency Writes] = MAX(fs.[io_latency_write])\n  \t  ,[Reads IO] = AVG(fs.bytes_read_per_second)\n  \t  ,[Writes IO] = AVG(fs.bytes_written_per_second)\n      ,[Disk] = left(upper([file_physical_name]),2) + ' ' + isnull(v.label,'')\n      ,[Max Latency] = max(case when fs.[io_latency_read] > fs.[io_latency_write] then fs.[io_latency_read] else fs.[io_latency_write] end)\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_file_stats] fs\n  outer apply (\n    select top 1 label \n    from [dbo].[sqlwatch_meta_os_volume] v\n\t  where v.volume_name = left(fs.file_physical_name,3)) v\n  WHERE 1 = 1\n  AND $__timeFilter(fs.snapshot_time)\n    and snapshot_time >= dateadd(minute,-15,getutcdate())\n  AND [sql_instance] = '$sql_instance'\n  AND database_name IN ($database)\n  GROUP BY fs.snapshot_time \n  , left(upper([file_physical_name]),2) + ' ' + isnull(v.label,'')\nORDER BY\n  time ASC",
+          "rawSql": "SELECT \n      [time] = snapshot_time \n      ,[Latency Reads] = MAX(fs.[io_latency_read])\n      ,[Latency Writes] = MAX(fs.[io_latency_write])\n  \t  ,[Reads IO] = AVG(fs.bytes_read_per_second)\n  \t  ,[Writes IO] = AVG(fs.bytes_written_per_second)\n      ,[Disk] = left(upper([file_physical_name]),2) + ' ' + isnull(v.label,'')\n      ,[Max Latency] = max(case when fs.[io_latency_read] > fs.[io_latency_write] then fs.[io_latency_read] else fs.[io_latency_write] end) over (partition by snapshot_time )\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_file_stats] fs\n  outer apply (\n    select top 1 label \n    from [dbo].[sqlwatch_meta_os_volume] v\n\t  where v.volume_name = left(fs.file_physical_name,3)) v\n  WHERE 1 = 1\n  AND $__timeFilter(fs.snapshot_time)\n    and snapshot_time >= dateadd(minute,-15,getutcdate())\n  AND [sql_instance] = '$sql_instance'\n  AND database_name IN ($database)\n  GROUP BY fs.snapshot_time \n  , left(upper([file_physical_name]),2) + ' ' + isnull(v.label,'')\n  ,case when fs.[io_latency_read] > fs.[io_latency_write] then fs.[io_latency_read] else fs.[io_latency_write] end\nORDER BY\n  time ASC",
           "refId": "File Stats"
         }
       ],
@@ -2980,7 +2984,7 @@
             "h": 5,
             "w": 24,
             "x": 0,
-            "y": 4
+            "y": 5
           },
           "id": 259,
           "options": {
@@ -3024,7 +3028,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 9
+            "y": 10
           },
           "hiddenSeries": false,
           "id": 258,
@@ -3180,10 +3184,42 @@
             "overrides": []
           },
           "gridPos": {
+            "h": 3,
+            "w": 24,
+            "x": 0,
+            "y": 17
+          },
+          "id": 192,
+          "options": {
+            "content": "# Captured Wait Events\r\nWait events longer than 1 second captured by extended events session.\r\n[See captured queries and transactions that have contributed to the wait](/d/sqlwatch-wait-events/wait-events?${__url_time_range}&var-DataSource=${DataSource}&var-sql_instance=${sql_instance})",
+            "mode": "markdown"
+          },
+          "pluginVersion": "7.4.2",
+          "targets": [
+            {
+              "queryType": "randomWalk",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "",
+          "transparent": true,
+          "type": "text"
+        },
+        {
+          "datasource": null,
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "gridPos": {
             "h": 11,
             "w": 24,
             "x": 0,
-            "y": 16
+            "y": 20
           },
           "id": 43,
           "options": {
@@ -3229,7 +3265,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 27
+            "y": 31
           },
           "hiddenSeries": false,
           "id": 231,
@@ -3370,7 +3406,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 34
+            "y": 38
           },
           "hiddenSeries": false,
           "hideTimeOverride": false,
@@ -3466,7 +3502,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 41
+            "y": 45
           },
           "id": 109,
           "options": {
@@ -3510,7 +3546,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 47
+            "y": 51
           },
           "hiddenSeries": false,
           "id": 6,
@@ -3645,7 +3681,22 @@
             "align": false,
             "alignLevel": null
           }
-        },
+        }
+      ],
+      "title": "$sql_instance: SQL Server Activity",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 34
+      },
+      "id": 309,
+      "panels": [
         {
           "datasource": null,
           "fieldConfig": {
@@ -3655,15 +3706,15 @@
             "overrides": []
           },
           "gridPos": {
-            "h": 6,
+            "h": 4,
             "w": 24,
             "x": 0,
-            "y": 54
+            "y": 1
           },
           "id": 110,
           "options": {
-            "content": "<br><br><h2 id=\"wait\">Wait Times</h2>\r\n\r\n<p>If a particular resource is not available, SQL Server will have to wait before it can process the query. For example, if the storage is too slow, SQL Server will have to wait for the disk \"to deliver\" the data. Analogically, if the CPU is too busy, SQL Server will have to wait for it to become available.\r\nAll this means, that if SQL is waiting too much, our queries do not get executed straight away but are put in a queue which makes the system feel slow. This chart is critical in understanding what SQL Server is waiting on. The SQLSkills website is a great resource to learn about waits: <a href=\"https://www.sqlskills.com/help/waits/\">https://www.sqlskills.com/help/waits/</a></p> \r\n<p>You can change how the wait types are grouped, either by Type or Category, using the filter on top or link in the chart.</p>",
-            "mode": "html"
+            "content": "# Wait Times\r\n\r\nIf a particular resource is not available, SQL Server will have to wait before it can process the query. For example, if the storage is too slow, SQL Server will have to wait for the disk \"to deliver\" the data. Analogically, if the CPU is too busy, SQL Server will have to wait for it to become available.\r\nAll this means, that if SQL is waiting too much, our queries do not get executed straight away but are put in a queue which makes the system feel slow. This chart is critical in understanding what SQL Server is waiting on. The SQLSkills website is a great resource to learn about waits:\r\n[https://www.sqlskills.com/help/waits/](https://www.sqlskills.com/help/waits/). You can change how the wait types are grouped, either by Type or Category, using the filter on top or link in the chart.",
+            "mode": "markdown"
           },
           "pluginVersion": "7.4.2",
           "targets": [
@@ -3707,7 +3758,7 @@
             "h": 11,
             "w": 24,
             "x": 0,
-            "y": 60
+            "y": 5
           },
           "hiddenSeries": false,
           "id": 232,
@@ -3817,38 +3868,6 @@
           }
         },
         {
-          "datasource": null,
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 3,
-            "w": 24,
-            "x": 0,
-            "y": 71
-          },
-          "id": 192,
-          "options": {
-            "content": "# Captured Wait Events\r\nWait events longer than 1 second captured by extended events session.\r\n[See captured queries and transactions that have contributed to the wait](/d/sqlwatch-wait-events/wait-events?${__url_time_range}&var-DataSource=${DataSource}&var-sql_instance=${sql_instance})",
-            "mode": "markdown"
-          },
-          "pluginVersion": "7.4.2",
-          "targets": [
-            {
-              "queryType": "randomWalk",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "",
-          "transparent": true,
-          "type": "text"
-        },
-        {
           "aliasColors": {},
           "bars": false,
           "dashLength": 10,
@@ -3873,7 +3892,7 @@
             "h": 5,
             "w": 24,
             "x": 0,
-            "y": 74
+            "y": 16
           },
           "hiddenSeries": false,
           "id": 191,
@@ -4065,7 +4084,7 @@
             "h": 5,
             "w": 24,
             "x": 0,
-            "y": 79
+            "y": 21
           },
           "id": 194,
           "links": [
@@ -4124,7 +4143,7 @@
           "type": "table"
         }
       ],
-      "title": "$sql_instance: SQL Server Activity",
+      "title": "$sql_instance: SQL Server Waits",
       "type": "row"
     },
     {
@@ -4134,7 +4153,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 34
+        "y": 35
       },
       "id": 208,
       "panels": [
@@ -4868,7 +4887,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 35
+        "y": 36
       },
       "id": 185,
       "panels": [
@@ -5663,7 +5682,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 36
+        "y": 37
       },
       "id": 183,
       "panels": [
@@ -7611,7 +7630,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 37
+        "y": 38
       },
       "id": 181,
       "panels": [
@@ -8003,7 +8022,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 38
+        "y": 39
       },
       "id": 179,
       "panels": [
@@ -9172,7 +9191,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 39
+        "y": 40
       },
       "id": 284,
       "panels": [
@@ -9437,7 +9456,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 40
+        "y": 41
       },
       "id": 177,
       "panels": [
@@ -10124,7 +10143,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 41
+        "y": 42
       },
       "id": 175,
       "panels": [
@@ -10281,7 +10300,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 42
+        "y": 43
       },
       "id": 234,
       "panels": [
@@ -10848,7 +10867,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 43
+        "y": 44
       },
       "id": 220,
       "panels": [
@@ -10876,7 +10895,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 42
+            "y": 44
           },
           "hiddenSeries": false,
           "id": 251,
@@ -11188,7 +11207,7 @@
             "h": 15,
             "w": 24,
             "x": 0,
-            "y": 49
+            "y": 51
           },
           "id": 252,
           "options": {
@@ -11253,7 +11272,7 @@
             "h": 3,
             "w": 24,
             "x": 0,
-            "y": 64
+            "y": 66
           },
           "id": 280,
           "options": {
@@ -11298,7 +11317,7 @@
             "h": 8,
             "w": 24,
             "x": 0,
-            "y": 67
+            "y": 69
           },
           "hiddenSeries": false,
           "id": 278,
@@ -11395,7 +11414,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 44
+        "y": 45
       },
       "id": 304,
       "panels": [
@@ -11411,7 +11430,7 @@
             "h": 3,
             "w": 24,
             "x": 0,
-            "y": 15
+            "y": 45
           },
           "id": 292,
           "options": {
@@ -11457,7 +11476,7 @@
             "h": 12,
             "w": 3,
             "x": 6,
-            "y": 18
+            "y": 48
           },
           "id": 302,
           "options": {
@@ -11584,7 +11603,7 @@
             "h": 12,
             "w": 3,
             "x": 9,
-            "y": 18
+            "y": 48
           },
           "id": 301,
           "options": {
@@ -11710,7 +11729,7 @@
             "h": 12,
             "w": 3,
             "x": 12,
-            "y": 18
+            "y": 48
           },
           "id": 289,
           "options": {
@@ -11830,7 +11849,7 @@
             "h": 12,
             "w": 3,
             "x": 15,
-            "y": 18
+            "y": 48
           },
           "id": 306,
           "options": {
@@ -11915,7 +11934,7 @@
             "h": 12,
             "w": 3,
             "x": 18,
-            "y": 18
+            "y": 48
           },
           "id": 307,
           "options": {
@@ -12309,5 +12328,5 @@
   "timezone": "utc",
   "title": "SQL Instance Overview",
   "uid": "sqlwatch-instance-overview",
-  "version": 550
+  "version": 579
 }
