@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": 32,
-  "iteration": 1618948476551,
+  "iteration": 1618948476553,
   "links": [
     {
       "asDropdown": true,
@@ -1374,7 +1374,7 @@
           {
             "matcher": {
               "id": "byRegexp",
-              "options": "Waiting|Suspended"
+              "options": "Waiting|Suspended|Runnable"
             },
             "properties": [
               {
@@ -1387,8 +1387,12 @@
                       "value": null
                     },
                     {
-                      "color": "red",
+                      "color": "light-orange",
                       "value": 1
+                    },
+                    {
+                      "color": "red",
+                      "value": 2
                     }
                   ]
                 }
@@ -1528,9 +1532,11 @@
         "x": 12,
         "y": 13
       },
-      "id": 289,
+      "id": 300,
       "options": {
-        "displayMode": "basic",
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
         "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
@@ -1539,11 +1545,10 @@
           "fields": "",
           "values": false
         },
-        "showUnfilled": false,
         "text": {
-          "titleSize": 12,
-          "valueSize": 16
-        }
+          "titleSize": 12
+        },
+        "textMode": "auto"
       },
       "pluginVersion": "7.4.2",
       "targets": [
@@ -1613,7 +1618,7 @@
           }
         }
       ],
-      "type": "bargauge"
+      "type": "stat"
     },
     {
       "datasource": "-- Dashboard --",
@@ -1946,7 +1951,7 @@
         "x": 0,
         "y": 25
       },
-      "id": 292,
+      "id": 297,
       "options": {
         "content": " ",
         "mode": "html"
@@ -2145,7 +2150,7 @@
         "x": 0,
         "y": 30
       },
-      "id": 297,
+      "id": 305,
       "options": {
         "content": " ",
         "mode": "html"
@@ -2186,7 +2191,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 30
+            "y": 32
           },
           "id": 159,
           "options": {
@@ -2230,7 +2235,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 36
+            "y": 38
           },
           "hiddenSeries": false,
           "id": 101,
@@ -2352,7 +2357,7 @@
             "h": 2,
             "w": 24,
             "x": 0,
-            "y": 42
+            "y": 44
           },
           "id": 276,
           "options": {
@@ -2385,7 +2390,7 @@
             "h": 10,
             "w": 24,
             "x": 0,
-            "y": 44
+            "y": 46
           },
           "id": 255,
           "options": {
@@ -2435,7 +2440,7 @@
             "h": 9,
             "w": 24,
             "x": 0,
-            "y": 33
+            "y": 57
           },
           "id": 265,
           "options": {
@@ -2478,7 +2483,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 42
+            "y": 66
           },
           "hiddenSeries": false,
           "id": 264,
@@ -2618,7 +2623,7 @@
             "h": 3,
             "w": 24,
             "x": 0,
-            "y": 48
+            "y": 72
           },
           "id": 272,
           "options": {
@@ -2661,7 +2666,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 51
+            "y": 75
           },
           "hiddenSeries": false,
           "id": 271,
@@ -2827,7 +2832,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 57
+            "y": 81
           },
           "hiddenSeries": false,
           "id": 277,
@@ -2953,7 +2958,7 @@
       "type": "row"
     },
     {
-      "collapsed": false,
+      "collapsed": true,
       "datasource": null,
       "gridPos": {
         "h": 1,
@@ -2962,1161 +2967,1162 @@
         "y": 33
       },
       "id": 187,
-      "panels": [],
-      "title": "$sql_instance: SQL Server Activity",
-      "type": "row"
-    },
-    {
-      "datasource": null,
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 24,
-        "x": 0,
-        "y": 34
-      },
-      "id": 259,
-      "options": {
-        "content": "# SQL Server Activity and Workload\r\n*****\r\n## CPU\r\nThe CPU chart is split into System (OS) and SQL Server. In an ideal scenario, all of the utilistaison should be allocated to SQL Server and only very small amount to system. SQL Server is also licensed per core, the more CPU cores the most expensive the license. You do not want to be paying a lot of money and not use it. [See Long Queries captured during this period](/d/sqlwatch-long-queries/long-queries?${__url_time_range}&var-DataSource=${DataSource}&var-sql_instance=${sql_instance})\r\nIf you are seeing a lot of OS Utilisation but not a lot of SQL Server utilistaion it means there is something else in the OS that uses CPU. It could be that you are running multiple SQL Instances?",
-        "mode": "markdown"
-      },
-      "pluginVersion": "7.4.2",
-      "targets": [
+      "panels": [
         {
-          "queryType": "randomWalk",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "",
-      "transparent": true,
-      "type": "text"
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$DataSource",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {},
-          "links": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": []
-          }
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 1,
-      "gridPos": {
-        "h": 6,
-        "w": 24,
-        "x": 0,
-        "y": 39
-      },
-      "hiddenSeries": false,
-      "id": 258,
-      "legend": {
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": true,
-        "show": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "7.4.2",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "$$hashKey": "object:801",
-          "alias": "OS",
-          "color": "#F2495C",
-          "fill": 3,
-          "fillGradient": 0,
-          "lines": true
-        },
-        {
-          "$$hashKey": "object:802",
-          "alias": "SQL Server",
-          "color": "#73BF69",
-          "fill": 0,
-          "fillGradient": 2
-        },
-        {
-          "$$hashKey": "object:803",
-          "alias": "max",
-          "color": "#8F3BB8",
-          "fillBelowTo": "min",
-          "legend": false,
-          "lines": false,
-          "stack": false,
-          "zindex": -1
-        },
-        {
-          "$$hashKey": "object:804",
-          "alias": "min",
-          "color": "#8F3BB8",
-          "legend": false,
-          "lines": false,
-          "stack": false,
-          "zindex": -1
-        }
-      ],
-      "spaceLength": 10,
-      "stack": true,
-      "steppedLine": false,
-      "targets": [
-        {
-          "alias": "",
-          "format": "time_series",
-          "hide": false,
-          "rawSql": "SELECT \n      [time] = $__timeGroup([snapshot_time], $aggregation, previous)\n      ,[min] = min([cntr_value_calculated])\n      ,[max] = max([cntr_value_calculated])\n  FROM (\n    select snapshot_time, [cntr_value_calculated]=sum([cntr_value_calculated])\n    from [dbo].[sqlwatch_logger_perf_os_performance_counters] pc (readpast)\n\t\tinner join [dbo].[sqlwatch_meta_performance_counter] mpc  (readpast)\n\t\t\ton pc.sql_instance = mpc.sql_instance\n\t\t\tand pc.performance_counter_id = mpc.performance_counter_id      \n    WHERE $__timeFilter(pc.snapshot_time)\n  AND mpc.counter_name =  'Processor Time %' --case when serverproperty('EngineEdition') = 3 then 'CPU usage %' else 'Processor Time %' end\n  --and pc.instance_name NOT IN ('internal')\n  AND pc.[sql_instance] = '$sql_instance'    \n    group by snapshot_time\n  ) t\n  GROUP BY $__timeGroup([snapshot_time], $aggregation)\nORDER BY\n  time ASC\n\n  ",
-          "refId": "B"
-        },
-        {
-          "alias": "",
-          "format": "time_series",
-          "hide": false,
-          "rawSql": "SELECT \n      [time] = $__timeGroup(pc.[snapshot_time], $aggregation, previous)\n      ,metric = case when instance_name = 'system' then 'OS' else 'SQL Server' end\n      ,[value] = avg(pc.[cntr_value_calculated])\n  FROM [dbo].[sqlwatch_logger_perf_os_performance_counters] pc\n\t\tinner join [dbo].[sqlwatch_meta_performance_counter] mpc\n\t\t\ton pc.sql_instance = mpc.sql_instance\n\t\t\tand pc.performance_counter_id = mpc.performance_counter_id  \n  WHERE $__timeFilter(pc.snapshot_time)\n  AND mpc.counter_name IN ('Processor Time %')\n  and pc.instance_name IN ('sql','system')\n  AND pc.[sql_instance] = '$sql_instance'\n  GROUP BY $__timeGroup(pc.[snapshot_time], $aggregation) , case when instance_name = 'system' then 'OS' else 'SQL Server' end\nORDER BY\n  time ASC\n  \n  ",
-          "refId": "1"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Processor Utilisation",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "transformations": [
-        {
-          "id": "seriesToColumns",
-          "options": {
-            "byField": "Time"
-          }
-        },
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {},
-            "indexByName": {
-              "Time": 0,
-              "max": 3,
-              "min": 4,
-              "sql": 2,
-              "system": 1
+          "datasource": null,
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
             },
-            "renameByName": {}
-          }
-        }
-      ],
-      "transparent": true,
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:191",
-          "decimals": 0,
-          "format": "percent",
-          "label": "",
-          "logBase": 1,
-          "max": "100",
-          "min": "0",
-          "show": true
-        },
-        {
-          "$$hashKey": "object:192",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "datasource": null,
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 11,
-        "w": 24,
-        "x": 0,
-        "y": 45
-      },
-      "id": 43,
-      "options": {
-        "content": "   \r\n\r\n## Activity  \r\n\r\n**Batch Requests/sec**: The number of batch requests received per second and is a good general indicator for the activity level of the SQL Server. This counter is highly dependent on the hardware and quality of code running on the server. The more powerful the hardware, the higher this number can be, even on poorly coded applications. A value of 1000 batch requests/sec is easily attainable, though a typical 100Mbs NIC can only handle about 3000 batch requests/sec. Many other counter thresholds depend upon batch requests/sec while, in some cases, a low (or high) number does not point to poor processing power. You should frequently use this counter in combination with other counters, such as processor utilization or user connections. In version 2000, \"Transactions/ sec\" was the counter most often used to measure overall activity, while versions 2005 and later use \"Batch Requests/sec\". Versions 2005 before SP2, measure this counter differently and may lead to some misunderstandings. Read the footnote for more details.\r\n\r\n**SQL Compilations/sec**: Number of times that Transact-SQL compilations occurred, per second (including recompiles). The lower this value is the better. High values often indicate excessive ad-hoc querying and should be as low as possible. If excessive ad-hoc querying is happening, try rewriting the queries as procedures or invoke the queries using sp_executeSQL. When rewriting isn’t possible, consider using a plan guide or setting the database to parameterization forced mode.\r\n\r\n**SQL Re-Compilations/sec**: The number of times, per second, that Transact-SQL objects attempted to be executed but had to be recompiled before completion. This number should be at or near zero since recompiles can cause deadlocks and exclusive compile locks. This counter’s value should follow in proportion to \"Batch Requests/sec\" and \"SQL Compilations/ sec\". This needs to be nil in your system as much as possible.\r\n\r\n**Logins/sec**: *You want < 2* The number of user logins per second. Any value over 2 may indicate insufficient connection pooling.\r\n\r\nUser Connections: The number of users currently connected to the SQL Server. This counter should roughly track with \"Batch Requests/Sec\". They should generally rise and fall together. For example, blocking problems could be revealed by rising user connections, lock waits and lock wait time coupled with declining batch requests/sec.\r\n\r\n**Transactions/sec**: Number of transactions started for the database per second.",
-        "mode": "markdown"
-      },
-      "pluginVersion": "7.4.2",
-      "targets": [
-        {
-          "queryType": "randomWalk",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "",
-      "transparent": true,
-      "type": "text"
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$DataSource",
-      "decimals": null,
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {},
-          "custom": {},
-          "thresholds": {
-            "mode": "absolute",
-            "steps": []
+            "overrides": []
           },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 1,
-      "gridPos": {
-        "h": 7,
-        "w": 24,
-        "x": 0,
-        "y": 56
-      },
-      "hiddenSeries": false,
-      "id": 231,
-      "legend": {
-        "alignAsTable": false,
-        "avg": true,
-        "current": true,
-        "hideEmpty": false,
-        "hideZero": false,
-        "max": true,
-        "min": true,
-        "rightSide": false,
-        "show": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": false
-      },
-      "percentage": false,
-      "pluginVersion": "7.4.2",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "alias": "",
-          "format": "time_series",
-          "hide": false,
-          "rawSql": "select t.*\n\t  --rate calcs\n\t  ,[SQL Compilations Rate] = case when [Batch Requests/sec] > 0 then [SQL Compilations/sec] / [Batch Requests/sec] else 0 end\n\t  ,[SQL Re-Compilations Rate] = case when [SQL Compilations/sec] > 0 then [SQL Re-Compilations/sec]  / [SQL Compilations/sec] else 0 end\nfrom (\n  SELECT \n        [time] = $__timeGroup([snapshot_time], $aggregation) \n  \t\t  ,'SQL Compilations/sec' = AVG(case when counter_name = 'SQL Compilations/sec' then [cntr_value_calculated] else null end)\n  \t\t  ,'SQL Re-Compilations/sec' = AVG(case when counter_name = 'SQL Compilations/sec' then [cntr_value_calculated] else null end)\n  \t\t  ,'Batch Requests/sec' = AVG(case when counter_name = 'Batch Requests/sec' then [cntr_value_calculated] else null end)\n  \t\t  ,'Logins/sec' = AVG(case when counter_name = 'Logins/sec' then [cntr_value_calculated] else null end)\n  \t\t  ,'Transactions/sec' = AVG(case when counter_name = 'Transactions/sec' then [cntr_value_calculated] else null end)\n  \t\t  ,'User Connections' = AVG(case when counter_name = 'User Connections' then [cntr_value_calculated] else null end)\n    FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n    WHERE [aggregation_interval_minutes] = 0\n    AND $__timeFilter(snapshot_time)\n    AND counter_name IN (\n  \t\t'SQL Compilations/sec'\n  \t\t,'SQL Re-Compilations/sec'\n  \t\t,'Batch Requests/sec'\n  \t\t,'Logins/sec'\n  \t\t,'Transactions/sec'\n  \t\t,'User Connections'\n  \t\t,'SQL Compilations/sec'\n  \t\t,'SQL Re-Compilations/sec')\n    AND [sql_instance] = '$sql_instance'\n    GROUP BY $__timeGroup([snapshot_time], $aggregation)\n  ) t\nORDER BY\n  time ASC\noption (keep plan)",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Activity",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "transformations": [
-        {
-          "id": "seriesToColumns",
+          "gridPos": {
+            "h": 5,
+            "w": 24,
+            "x": 0,
+            "y": 34
+          },
+          "id": 259,
           "options": {
-            "byField": "Time"
-          }
-        },
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {
-              "SQL Compilations Rate": true,
-              "SQL Compilations/sec": false,
-              "SQL Re-Compilations Rate": true,
-              "SQL Re-Compilations/sec": false
-            },
-            "indexByName": {
-              "Batch Requests/sec": 1,
-              "Logins/sec": 2,
-              "SQL Compilations Rate": 7,
-              "SQL Compilations/sec": 5,
-              "SQL Re-Compilations Rate": 8,
-              "SQL Re-Compilations/sec": 6,
-              "Time": 0,
-              "Transactions/sec": 3,
-              "User Connections": 4
-            },
-            "renameByName": {}
-          }
-        }
-      ],
-      "transparent": true,
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:1758",
-          "decimals": null,
-          "format": "short",
-          "label": "",
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "$$hashKey": "object:1759",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": false
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$DataSource",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {},
-          "links": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": []
-          }
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 5,
-      "gridPos": {
-        "h": 7,
-        "w": 24,
-        "x": 0,
-        "y": 63
-      },
-      "hiddenSeries": false,
-      "hideTimeOverride": false,
-      "id": 65,
-      "legend": {
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": true,
-        "show": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "7.4.2",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "alias": "",
-          "format": "time_series",
-          "hide": false,
-          "rawSql": "SELECT \n      [time] = $__timeGroup([snapshot_time], $aggregation) \n      ,metric = [instance_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 0\n  AND $__timeFilter(snapshot_time)\n  AND counter_name IN ('Transactions/sec')\n  AND instance_name IN ($database)\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [instance_name]\n      ,$__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  option (keep plan)\n  ",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Database Transactions /sec",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "transparent": true,
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:1840",
-          "decimals": 0,
-          "format": "short",
-          "label": "",
-          "logBase": 1,
-          "max": null,
-          "min": "0",
-          "show": true
-        },
-        {
-          "$$hashKey": "object:1841",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "datasource": null,
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 24,
-        "x": 0,
-        "y": 70
-      },
-      "id": 109,
-      "options": {
-        "content": "<br><br><h2 id=\"compilations\">SQL Compilations</h2>\r\n\r\n<p><b>SQL Compilations/sec</b>:  You want it to be < 10% (of the number of Batch Requests/Sec). Number of times that Transact-SQL compilations occurred, per second (including recompiles). The lower this value is the better. High values often indicate excessive ad-hoc querying and should be as low as possible. If excessive ad-hoc querying is happening, try rewriting the queries as procedures or invoke the queries using sp_executeSQL. When rewriting isn’t possible, consider using a plan guide or setting the database to parameterization forced mode.</p>\r\n\r\n<p><b>SQL Re-Compilations/sec</b>: You want it to be < 10% (of the number of SQL Compilations/sec). The number of times, per second, that Transact-SQL objects attempted to be executed but had to be recompiled before completion. This number should be at or near zero since recompiles can cause deadlocks and exclusive compile locks. This counter’s value should follow in proportion to \"Batch Requests/sec\" and \"SQL Compilations/ sec\". This needs to be nil in your system as much as possible.</p>\r\n",
-        "mode": "html"
-      },
-      "pluginVersion": "7.4.2",
-      "targets": [
-        {
-          "queryType": "randomWalk",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "",
-      "transparent": true,
-      "type": "text"
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "-- Dashboard --",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {},
-          "links": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": []
-          }
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 4,
-      "gridPos": {
-        "h": 7,
-        "w": 24,
-        "x": 0,
-        "y": 76
-      },
-      "hiddenSeries": false,
-      "id": 6,
-      "legend": {
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": true,
-        "show": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "7.4.2",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "$$hashKey": "object:281",
-          "alias": "SQL Compilation Rate",
-          "color": "#5794F2"
-        },
-        {
-          "$$hashKey": "object:282",
-          "alias": "SQL Re-Compilation Rate",
-          "color": "#FADE2A"
-        }
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "panelId": 231,
-          "refId": "A"
-        }
-      ],
-      "thresholds": [
-        {
-          "$$hashKey": "object:1230",
-          "colorMode": "warning",
-          "fill": true,
-          "line": false,
-          "op": "gt",
-          "value": 0.1,
-          "yaxis": "left"
-        },
-        {
-          "$$hashKey": "object:1231",
-          "colorMode": "critical",
-          "fill": true,
-          "line": false,
-          "op": "gt",
-          "value": 0.2,
-          "yaxis": "left"
-        }
-      ],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Compilation Rate",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "transformations": [
-        {
-          "id": "seriesToColumns",
-          "options": {
-            "byField": "Time"
-          }
-        },
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {
-              "Batch Requests/sec": true,
-              "Logins/sec": true,
-              "SQL Compilations/sec": true,
-              "SQL Re-Compilations/sec": true,
-              "Transactions/sec": true,
-              "User Connections": true
-            },
-            "indexByName": {},
-            "renameByName": {
-              "SQL Compilations Rate": "SQL Compilation Rate",
-              "SQL Re-Compilations Rate": "SQL Re-Compilation Rate"
-            }
-          }
-        }
-      ],
-      "transparent": true,
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:1202",
-          "decimals": 0,
-          "format": "percentunit",
-          "label": "",
-          "logBase": 1,
-          "max": null,
-          "min": "0",
-          "show": true
-        },
-        {
-          "$$hashKey": "object:1203",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "datasource": null,
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 24,
-        "x": 0,
-        "y": 83
-      },
-      "id": 110,
-      "options": {
-        "content": "<br><br><h2 id=\"wait\">Wait Times</h2>\r\n\r\n<p>If a particular resource is not available, SQL Server will have to wait before it can process the query. For example, if the storage is too slow, SQL Server will have to wait for the disk \"to deliver\" the data. Analogically, if the CPU is too busy, SQL Server will have to wait for it to become available.\r\nAll this means, that if SQL is waiting too much, our queries do not get executed straight away but are put in a queue which makes the system feel slow. This chart is critical in understanding what SQL Server is waiting on. The SQLSkills website is a great resource to learn about waits: <a href=\"https://www.sqlskills.com/help/waits/\">https://www.sqlskills.com/help/waits/</a></p> \r\n<p>You can change how the wait types are grouped, either by Type or Category, using the filter on top or link in the chart.</p>",
-        "mode": "html"
-      },
-      "pluginVersion": "7.4.2",
-      "targets": [
-        {
-          "queryType": "randomWalk",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "",
-      "transparent": true,
-      "type": "text"
-    },
-    {
-      "aliasColors": {},
-      "bars": true,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$DataSource",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {},
-          "links": [
+            "content": "# SQL Server Activity and Workload\r\n*****\r\n## CPU\r\nThe CPU chart is split into System (OS) and SQL Server. In an ideal scenario, all of the utilistaison should be allocated to SQL Server and only very small amount to system. SQL Server is also licensed per core, the more CPU cores the most expensive the license. You do not want to be paying a lot of money and not use it. [See Long Queries captured during this period](/d/sqlwatch-long-queries/long-queries?${__url_time_range}&var-DataSource=${DataSource}&var-sql_instance=${sql_instance})\r\nIf you are seeing a lot of OS Utilisation but not a lot of SQL Server utilistaion it means there is something else in the OS that uses CPU. It could be that you are running multiple SQL Instances?",
+            "mode": "markdown"
+          },
+          "pluginVersion": "7.4.2",
+          "targets": [
             {
-              "title": "Wait Events",
-              "url": "/d/sqlwatchwaits/wait-events?${__url_time_range}"
+              "queryType": "randomWalk",
+              "refId": "A"
             }
           ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": []
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "",
+          "transparent": true,
+          "type": "text"
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$DataSource",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {},
+              "links": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": []
+              }
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 1,
+          "gridPos": {
+            "h": 6,
+            "w": 24,
+            "x": 0,
+            "y": 39
+          },
+          "hiddenSeries": false,
+          "id": 258,
+          "legend": {
+            "avg": true,
+            "current": true,
+            "max": true,
+            "min": true,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "7.4.2",
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "$$hashKey": "object:801",
+              "alias": "OS",
+              "color": "#F2495C",
+              "fill": 3,
+              "fillGradient": 0,
+              "lines": true
+            },
+            {
+              "$$hashKey": "object:802",
+              "alias": "SQL Server",
+              "color": "#73BF69",
+              "fill": 0,
+              "fillGradient": 2
+            },
+            {
+              "$$hashKey": "object:803",
+              "alias": "max",
+              "color": "#8F3BB8",
+              "fillBelowTo": "min",
+              "legend": false,
+              "lines": false,
+              "stack": false,
+              "zindex": -1
+            },
+            {
+              "$$hashKey": "object:804",
+              "alias": "min",
+              "color": "#8F3BB8",
+              "legend": false,
+              "lines": false,
+              "stack": false,
+              "zindex": -1
+            }
+          ],
+          "spaceLength": 10,
+          "stack": true,
+          "steppedLine": false,
+          "targets": [
+            {
+              "alias": "",
+              "format": "time_series",
+              "hide": false,
+              "rawSql": "SELECT \n      [time] = $__timeGroup([snapshot_time], $aggregation, previous)\n      ,[min] = min([cntr_value_calculated])\n      ,[max] = max([cntr_value_calculated])\n  FROM (\n    select snapshot_time, [cntr_value_calculated]=sum([cntr_value_calculated])\n    from [dbo].[sqlwatch_logger_perf_os_performance_counters] pc (readpast)\n\t\tinner join [dbo].[sqlwatch_meta_performance_counter] mpc  (readpast)\n\t\t\ton pc.sql_instance = mpc.sql_instance\n\t\t\tand pc.performance_counter_id = mpc.performance_counter_id      \n    WHERE $__timeFilter(pc.snapshot_time)\n  AND mpc.counter_name =  'Processor Time %' --case when serverproperty('EngineEdition') = 3 then 'CPU usage %' else 'Processor Time %' end\n  --and pc.instance_name NOT IN ('internal')\n  AND pc.[sql_instance] = '$sql_instance'    \n    group by snapshot_time\n  ) t\n  GROUP BY $__timeGroup([snapshot_time], $aggregation)\nORDER BY\n  time ASC\n\n  ",
+              "refId": "B"
+            },
+            {
+              "alias": "",
+              "format": "time_series",
+              "hide": false,
+              "rawSql": "SELECT \n      [time] = $__timeGroup(pc.[snapshot_time], $aggregation, previous)\n      ,metric = case when instance_name = 'system' then 'OS' else 'SQL Server' end\n      ,[value] = avg(pc.[cntr_value_calculated])\n  FROM [dbo].[sqlwatch_logger_perf_os_performance_counters] pc\n\t\tinner join [dbo].[sqlwatch_meta_performance_counter] mpc\n\t\t\ton pc.sql_instance = mpc.sql_instance\n\t\t\tand pc.performance_counter_id = mpc.performance_counter_id  \n  WHERE $__timeFilter(pc.snapshot_time)\n  AND mpc.counter_name IN ('Processor Time %')\n  and pc.instance_name IN ('sql','system')\n  AND pc.[sql_instance] = '$sql_instance'\n  GROUP BY $__timeGroup(pc.[snapshot_time], $aggregation) , case when instance_name = 'system' then 'OS' else 'SQL Server' end\nORDER BY\n  time ASC\n  \n  ",
+              "refId": "1"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Processor Utilisation",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "transformations": [
+            {
+              "id": "seriesToColumns",
+              "options": {
+                "byField": "Time"
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {
+                  "Time": 0,
+                  "max": 3,
+                  "min": 4,
+                  "sql": 2,
+                  "system": 1
+                },
+                "renameByName": {}
+              }
+            }
+          ],
+          "transparent": true,
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "$$hashKey": "object:191",
+              "decimals": 0,
+              "format": "percent",
+              "label": "",
+              "logBase": 1,
+              "max": "100",
+              "min": "0",
+              "show": true
+            },
+            {
+              "$$hashKey": "object:192",
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
           }
         },
-        "overrides": []
-      },
-      "fill": 5,
-      "fillGradient": 4,
-      "gridPos": {
-        "h": 11,
-        "w": 24,
-        "x": 0,
-        "y": 89
-      },
-      "hiddenSeries": false,
-      "id": 232,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": true,
-        "show": true,
-        "sort": "total",
-        "sortDesc": true,
-        "total": true,
-        "values": true
-      },
-      "lines": false,
-      "linewidth": 1,
-      "links": [
         {
-          "title": "by Category",
-          "url": "/d/sqlwatch-instance-overview/sql-instance-performance-overview?orgId=1&${__url_time_range}&${DataSource:queryparam}&${sql_instance:queryparam}&${aggregation:queryparam}&var-Waits=Category&${WaitCalc:queryparam}&${ShowChecksOK:queryparam}"
+          "datasource": null,
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 11,
+            "w": 24,
+            "x": 0,
+            "y": 45
+          },
+          "id": 43,
+          "options": {
+            "content": "   \r\n\r\n## Activity  \r\n\r\n**Batch Requests/sec**: The number of batch requests received per second and is a good general indicator for the activity level of the SQL Server. This counter is highly dependent on the hardware and quality of code running on the server. The more powerful the hardware, the higher this number can be, even on poorly coded applications. A value of 1000 batch requests/sec is easily attainable, though a typical 100Mbs NIC can only handle about 3000 batch requests/sec. Many other counter thresholds depend upon batch requests/sec while, in some cases, a low (or high) number does not point to poor processing power. You should frequently use this counter in combination with other counters, such as processor utilization or user connections. In version 2000, \"Transactions/ sec\" was the counter most often used to measure overall activity, while versions 2005 and later use \"Batch Requests/sec\". Versions 2005 before SP2, measure this counter differently and may lead to some misunderstandings. Read the footnote for more details.\r\n\r\n**SQL Compilations/sec**: Number of times that Transact-SQL compilations occurred, per second (including recompiles). The lower this value is the better. High values often indicate excessive ad-hoc querying and should be as low as possible. If excessive ad-hoc querying is happening, try rewriting the queries as procedures or invoke the queries using sp_executeSQL. When rewriting isn’t possible, consider using a plan guide or setting the database to parameterization forced mode.\r\n\r\n**SQL Re-Compilations/sec**: The number of times, per second, that Transact-SQL objects attempted to be executed but had to be recompiled before completion. This number should be at or near zero since recompiles can cause deadlocks and exclusive compile locks. This counter’s value should follow in proportion to \"Batch Requests/sec\" and \"SQL Compilations/ sec\". This needs to be nil in your system as much as possible.\r\n\r\n**Logins/sec**: *You want < 2* The number of user logins per second. Any value over 2 may indicate insufficient connection pooling.\r\n\r\nUser Connections: The number of users currently connected to the SQL Server. This counter should roughly track with \"Batch Requests/Sec\". They should generally rise and fall together. For example, blocking problems could be revealed by rising user connections, lock waits and lock wait time coupled with declining batch requests/sec.\r\n\r\n**Transactions/sec**: Number of transactions started for the database per second.",
+            "mode": "markdown"
+          },
+          "pluginVersion": "7.4.2",
+          "targets": [
+            {
+              "queryType": "randomWalk",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "",
+          "transparent": true,
+          "type": "text"
         },
         {
-          "title": "by Type",
-          "url": "/d/sqlwatch-instance-overview/sql-instance-performance-overview?orgId=1&${__url_time_range}&${DataSource:queryparam}&${sql_instance:queryparam}&${aggregation:queryparam}&var-Waits=Type&${WaitCalc:queryparam}&${ShowChecksOK:queryparam}"
-        }
-      ],
-      "nullPointMode": "null as zero",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "7.4.2",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "alias": "Captured Wait Events",
+          "aliasColors": {},
           "bars": false,
-          "color": "rgb(255, 255, 255)",
-          "fillGradient": 5,
-          "legend": false,
-          "lines": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$DataSource",
+          "decimals": null,
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {},
+              "custom": {},
+              "thresholds": {
+                "mode": "absolute",
+                "steps": []
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 1,
+          "gridPos": {
+            "h": 7,
+            "w": 24,
+            "x": 0,
+            "y": 56
+          },
+          "hiddenSeries": false,
+          "id": 231,
+          "legend": {
+            "alignAsTable": false,
+            "avg": true,
+            "current": true,
+            "hideEmpty": false,
+            "hideZero": false,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "options": {
+            "alertThreshold": false
+          },
+          "percentage": false,
+          "pluginVersion": "7.4.2",
           "pointradius": 2,
-          "points": true,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
           "stack": false,
-          "yaxis": 1
-        }
-      ],
-      "spaceLength": 10,
-      "stack": true,
-      "steppedLine": false,
-      "targets": [
-        {
-          "alias": "",
-          "format": "time_series",
-          "hide": false,
-          "rawSql": "SELECT \n      [time] = $__timeGroup([snapshot_time], $aggregation) \n      ,metric = case when '$Waits' = 'Category' then [wait_category] else [wait_type] end\n      ,[value] = case when '$WaitCalc' = 'ms/sec' then avg([wait_time_ms_per_second]) else avg(wait_time_ms_delta) end\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_wait_stats]\n  WHERE 1=1\n  AND $__timeFilter(snapshot_time)\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY case when '$Waits' = 'Category' then [wait_category] else [wait_type] end\n      ,$__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  option (keep plan)\n  ",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Wait Time $WaitCalc by Wait $Waits",
-      "tooltip": {
-        "shared": false,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "transformations": [],
-      "transparent": true,
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:2016",
-          "decimals": 0,
-          "format": "ms",
-          "label": "",
-          "logBase": 1,
-          "max": null,
-          "min": "0",
-          "show": true
-        },
-        {
-          "$$hashKey": "object:2017",
-          "format": "ms",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": "0",
-          "show": false
-        }
-      ],
-      "yaxis": {
-        "align": true,
-        "alignLevel": null
-      }
-    },
-    {
-      "datasource": null,
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 24,
-        "x": 0,
-        "y": 100
-      },
-      "id": 192,
-      "options": {
-        "content": "# Captured Wait Events\r\nWait events longer than 1 second captured by extended events session.\r\n[See captured queries and transactions that have contributed to the wait](/d/sqlwatch-wait-events/wait-events?${__url_time_range}&var-DataSource=${DataSource}&var-sql_instance=${sql_instance})",
-        "mode": "markdown"
-      },
-      "pluginVersion": "7.4.2",
-      "targets": [
-        {
-          "queryType": "randomWalk",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "",
-      "transparent": true,
-      "type": "text"
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$DataSource",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {},
-          "custom": {},
-          "thresholds": {
-            "mode": "absolute",
-            "steps": []
+          "steppedLine": false,
+          "targets": [
+            {
+              "alias": "",
+              "format": "time_series",
+              "hide": false,
+              "rawSql": "select t.*\n\t  --rate calcs\n\t  ,[SQL Compilations Rate] = case when [Batch Requests/sec] > 0 then [SQL Compilations/sec] / [Batch Requests/sec] else 0 end\n\t  ,[SQL Re-Compilations Rate] = case when [SQL Compilations/sec] > 0 then [SQL Re-Compilations/sec]  / [SQL Compilations/sec] else 0 end\nfrom (\n  SELECT \n        [time] = $__timeGroup([snapshot_time], $aggregation) \n  \t\t  ,'SQL Compilations/sec' = AVG(case when counter_name = 'SQL Compilations/sec' then [cntr_value_calculated] else null end)\n  \t\t  ,'SQL Re-Compilations/sec' = AVG(case when counter_name = 'SQL Compilations/sec' then [cntr_value_calculated] else null end)\n  \t\t  ,'Batch Requests/sec' = AVG(case when counter_name = 'Batch Requests/sec' then [cntr_value_calculated] else null end)\n  \t\t  ,'Logins/sec' = AVG(case when counter_name = 'Logins/sec' then [cntr_value_calculated] else null end)\n  \t\t  ,'Transactions/sec' = AVG(case when counter_name = 'Transactions/sec' then [cntr_value_calculated] else null end)\n  \t\t  ,'User Connections' = AVG(case when counter_name = 'User Connections' then [cntr_value_calculated] else null end)\n    FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n    WHERE [aggregation_interval_minutes] = 0\n    AND $__timeFilter(snapshot_time)\n    AND counter_name IN (\n  \t\t'SQL Compilations/sec'\n  \t\t,'SQL Re-Compilations/sec'\n  \t\t,'Batch Requests/sec'\n  \t\t,'Logins/sec'\n  \t\t,'Transactions/sec'\n  \t\t,'User Connections'\n  \t\t,'SQL Compilations/sec'\n  \t\t,'SQL Re-Compilations/sec')\n    AND [sql_instance] = '$sql_instance'\n    GROUP BY $__timeGroup([snapshot_time], $aggregation)\n  ) t\nORDER BY\n  time ASC\noption (keep plan)",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Activity",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
           },
-          "unit": "ms"
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 5,
-        "w": 24,
-        "x": 0,
-        "y": 103
-      },
-      "hiddenSeries": false,
-      "id": 191,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": false
-      },
-      "lines": false,
-      "linewidth": 1,
-      "links": [
-        {
-          "targetBlank": true,
-          "title": "Details",
-          "url": "/d/sqlwatch-wait-events/wait-events?${__url_time_range}&var-DataSource=${DataSource}&var-sql_instance=${sql_instance}"
-        }
-      ],
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "7.4.2",
-      "pointradius": 3,
-      "points": true,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "alias": "",
-          "format": "time_series",
-          "rawSql": "SELECT \n      [time]= event_time\n      ,[Wait Type] = case when '$Waits' = 'Category' then [wait_category] else [wait_type] end\n      ,[Wait Duration] = sum([duration])\n  FROM [vw_sqlwatch_report_fact_xes_wait_events]\n    \n  WHERE $__timeFilter(event_time)\n  AND [sql_instance] = '$sql_instance'\n\n  group by event_time,case when '$Waits' = 'Category' then [wait_category] else [wait_type] end\nORDER BY\n  time ASC\n  option (keep plan)",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Wait Events",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "transformations": [],
-      "transparent": true,
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:2096",
-          "format": "ms",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "$$hashKey": "object:2097",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "datasource": "$DataSource",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": null,
-            "displayMode": "auto",
-            "filterable": false
+          "transformations": [
+            {
+              "id": "seriesToColumns",
+              "options": {
+                "byField": "Time"
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "SQL Compilations Rate": true,
+                  "SQL Compilations/sec": false,
+                  "SQL Re-Compilations Rate": true,
+                  "SQL Re-Compilations/sec": false
+                },
+                "indexByName": {
+                  "Batch Requests/sec": 1,
+                  "Logins/sec": 2,
+                  "SQL Compilations Rate": 7,
+                  "SQL Compilations/sec": 5,
+                  "SQL Re-Compilations Rate": 8,
+                  "SQL Re-Compilations/sec": 6,
+                  "Time": 0,
+                  "Transactions/sec": 3,
+                  "User Connections": 4
+                },
+                "renameByName": {}
+              }
+            }
+          ],
+          "transparent": true,
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
           },
-          "links": [],
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
+          "yaxes": [
+            {
+              "$$hashKey": "object:1758",
+              "decimals": null,
+              "format": "short",
+              "label": "",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "$$hashKey": "object:1759",
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": false
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$DataSource",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {},
+              "links": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": []
+              }
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 5,
+          "gridPos": {
+            "h": 7,
+            "w": 24,
+            "x": 0,
+            "y": 63
+          },
+          "hiddenSeries": false,
+          "hideTimeOverride": false,
+          "id": 65,
+          "legend": {
+            "avg": true,
+            "current": true,
+            "max": true,
+            "min": true,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "7.4.2",
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "alias": "",
+              "format": "time_series",
+              "hide": false,
+              "rawSql": "SELECT \n      [time] = $__timeGroup([snapshot_time], $aggregation) \n      ,metric = [instance_name]\n      ,[value] = AVG([cntr_value_calculated])\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 0\n  AND $__timeFilter(snapshot_time)\n  AND counter_name IN ('Transactions/sec')\n  AND instance_name IN ($database)\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY [instance_name]\n      ,$__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  option (keep plan)\n  ",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Database Transactions /sec",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "transparent": true,
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "$$hashKey": "object:1840",
+              "decimals": 0,
+              "format": "short",
+              "label": "",
+              "logBase": 1,
+              "max": null,
+              "min": "0",
+              "show": true
+            },
+            {
+              "$$hashKey": "object:1841",
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "datasource": null,
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 6,
+            "w": 24,
+            "x": 0,
+            "y": 70
+          },
+          "id": 109,
+          "options": {
+            "content": "<br><br><h2 id=\"compilations\">SQL Compilations</h2>\r\n\r\n<p><b>SQL Compilations/sec</b>:  You want it to be < 10% (of the number of Batch Requests/Sec). Number of times that Transact-SQL compilations occurred, per second (including recompiles). The lower this value is the better. High values often indicate excessive ad-hoc querying and should be as low as possible. If excessive ad-hoc querying is happening, try rewriting the queries as procedures or invoke the queries using sp_executeSQL. When rewriting isn’t possible, consider using a plan guide or setting the database to parameterization forced mode.</p>\r\n\r\n<p><b>SQL Re-Compilations/sec</b>: You want it to be < 10% (of the number of SQL Compilations/sec). The number of times, per second, that Transact-SQL objects attempted to be executed but had to be recompiled before completion. This number should be at or near zero since recompiles can cause deadlocks and exclusive compile locks. This counter’s value should follow in proportion to \"Batch Requests/sec\" and \"SQL Compilations/ sec\". This needs to be nil in your system as much as possible.</p>\r\n",
+            "mode": "html"
+          },
+          "pluginVersion": "7.4.2",
+          "targets": [
+            {
+              "queryType": "randomWalk",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "",
+          "transparent": true,
+          "type": "text"
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "-- Dashboard --",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {},
+              "links": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": []
+              }
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 4,
+          "gridPos": {
+            "h": 7,
+            "w": 24,
+            "x": 0,
+            "y": 76
+          },
+          "hiddenSeries": false,
+          "id": 6,
+          "legend": {
+            "avg": true,
+            "current": true,
+            "max": true,
+            "min": true,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "7.4.2",
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "$$hashKey": "object:281",
+              "alias": "SQL Compilation Rate",
+              "color": "#5794F2"
+            },
+            {
+              "$$hashKey": "object:282",
+              "alias": "SQL Re-Compilation Rate",
+              "color": "#FADE2A"
+            }
+          ],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "panelId": 231,
+              "refId": "A"
+            }
+          ],
+          "thresholds": [
+            {
+              "$$hashKey": "object:1230",
+              "colorMode": "warning",
+              "fill": true,
+              "line": false,
+              "op": "gt",
+              "value": 0.1,
+              "yaxis": "left"
+            },
+            {
+              "$$hashKey": "object:1231",
+              "colorMode": "critical",
+              "fill": true,
+              "line": false,
+              "op": "gt",
+              "value": 0.2,
+              "yaxis": "left"
+            }
+          ],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Compilation Rate",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "transformations": [
+            {
+              "id": "seriesToColumns",
+              "options": {
+                "byField": "Time"
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Batch Requests/sec": true,
+                  "Logins/sec": true,
+                  "SQL Compilations/sec": true,
+                  "SQL Re-Compilations/sec": true,
+                  "Transactions/sec": true,
+                  "User Connections": true
+                },
+                "indexByName": {},
+                "renameByName": {
+                  "SQL Compilations Rate": "SQL Compilation Rate",
+                  "SQL Re-Compilations Rate": "SQL Re-Compilation Rate"
+                }
+              }
+            }
+          ],
+          "transparent": true,
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "$$hashKey": "object:1202",
+              "decimals": 0,
+              "format": "percentunit",
+              "label": "",
+              "logBase": 1,
+              "max": null,
+              "min": "0",
+              "show": true
+            },
+            {
+              "$$hashKey": "object:1203",
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "datasource": null,
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 6,
+            "w": 24,
+            "x": 0,
+            "y": 83
+          },
+          "id": 110,
+          "options": {
+            "content": "<br><br><h2 id=\"wait\">Wait Times</h2>\r\n\r\n<p>If a particular resource is not available, SQL Server will have to wait before it can process the query. For example, if the storage is too slow, SQL Server will have to wait for the disk \"to deliver\" the data. Analogically, if the CPU is too busy, SQL Server will have to wait for it to become available.\r\nAll this means, that if SQL is waiting too much, our queries do not get executed straight away but are put in a queue which makes the system feel slow. This chart is critical in understanding what SQL Server is waiting on. The SQLSkills website is a great resource to learn about waits: <a href=\"https://www.sqlskills.com/help/waits/\">https://www.sqlskills.com/help/waits/</a></p> \r\n<p>You can change how the wait types are grouped, either by Type or Category, using the filter on top or link in the chart.</p>",
+            "mode": "html"
+          },
+          "pluginVersion": "7.4.2",
+          "targets": [
+            {
+              "queryType": "randomWalk",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "",
+          "transparent": true,
+          "type": "text"
+        },
+        {
+          "aliasColors": {},
+          "bars": true,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$DataSource",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {},
+              "links": [
+                {
+                  "title": "Wait Events",
+                  "url": "/d/sqlwatchwaits/wait-events?${__url_time_range}"
+                }
+              ],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": []
+              }
+            },
+            "overrides": []
+          },
+          "fill": 5,
+          "fillGradient": 4,
+          "gridPos": {
+            "h": 11,
+            "w": 24,
+            "x": 0,
+            "y": 89
+          },
+          "hiddenSeries": false,
+          "id": 232,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "max": true,
+            "min": true,
+            "show": true,
+            "sort": "total",
+            "sortDesc": true,
+            "total": true,
+            "values": true
+          },
+          "lines": false,
+          "linewidth": 1,
+          "links": [
+            {
+              "title": "by Category",
+              "url": "/d/sqlwatch-instance-overview/sql-instance-performance-overview?orgId=1&${__url_time_range}&${DataSource:queryparam}&${sql_instance:queryparam}&${aggregation:queryparam}&var-Waits=Category&${WaitCalc:queryparam}&${ShowChecksOK:queryparam}"
+            },
+            {
+              "title": "by Type",
+              "url": "/d/sqlwatch-instance-overview/sql-instance-performance-overview?orgId=1&${__url_time_range}&${DataSource:queryparam}&${sql_instance:queryparam}&${aggregation:queryparam}&var-Waits=Type&${WaitCalc:queryparam}&${ShowChecksOK:queryparam}"
+            }
+          ],
+          "nullPointMode": "null as zero",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "7.4.2",
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "Captured Wait Events",
+              "bars": false,
+              "color": "rgb(255, 255, 255)",
+              "fillGradient": 5,
+              "legend": false,
+              "lines": false,
+              "pointradius": 2,
+              "points": true,
+              "stack": false,
+              "yaxis": 1
+            }
+          ],
+          "spaceLength": 10,
+          "stack": true,
+          "steppedLine": false,
+          "targets": [
+            {
+              "alias": "",
+              "format": "time_series",
+              "hide": false,
+              "rawSql": "SELECT \n      [time] = $__timeGroup([snapshot_time], $aggregation) \n      ,metric = case when '$Waits' = 'Category' then [wait_category] else [wait_type] end\n      ,[value] = case when '$WaitCalc' = 'ms/sec' then avg([wait_time_ms_per_second]) else avg(wait_time_ms_delta) end\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_wait_stats]\n  WHERE 1=1\n  AND $__timeFilter(snapshot_time)\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY case when '$Waits' = 'Category' then [wait_category] else [wait_type] end\n      ,$__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  option (keep plan)\n  ",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Wait Time $WaitCalc by Wait $Waits",
+          "tooltip": {
+            "shared": false,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "transformations": [],
+          "transparent": true,
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "$$hashKey": "object:2016",
+              "decimals": 0,
+              "format": "ms",
+              "label": "",
+              "logBase": 1,
+              "max": null,
+              "min": "0",
+              "show": true
+            },
+            {
+              "$$hashKey": "object:2017",
+              "format": "ms",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": "0",
+              "show": false
+            }
+          ],
+          "yaxis": {
+            "align": true,
+            "alignLevel": null
+          }
+        },
+        {
+          "datasource": null,
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 3,
+            "w": 24,
+            "x": 0,
+            "y": 100
+          },
+          "id": 192,
+          "options": {
+            "content": "# Captured Wait Events\r\nWait events longer than 1 second captured by extended events session.\r\n[See captured queries and transactions that have contributed to the wait](/d/sqlwatch-wait-events/wait-events?${__url_time_range}&var-DataSource=${DataSource}&var-sql_instance=${sql_instance})",
+            "mode": "markdown"
+          },
+          "pluginVersion": "7.4.2",
+          "targets": [
+            {
+              "queryType": "randomWalk",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "",
+          "transparent": true,
+          "type": "text"
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$DataSource",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {},
+              "custom": {},
+              "thresholds": {
+                "mode": "absolute",
+                "steps": []
+              },
+              "unit": "ms"
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 5,
+            "w": 24,
+            "x": 0,
+            "y": 103
+          },
+          "hiddenSeries": false,
+          "id": 191,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": false,
+          "linewidth": 1,
+          "links": [
+            {
+              "targetBlank": true,
+              "title": "Details",
+              "url": "/d/sqlwatch-wait-events/wait-events?${__url_time_range}&var-DataSource=${DataSource}&var-sql_instance=${sql_instance}"
+            }
+          ],
+          "nullPointMode": "null",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "7.4.2",
+          "pointradius": 3,
+          "points": true,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "alias": "",
+              "format": "time_series",
+              "rawSql": "SELECT \n      [time]= event_time\n      ,[Wait Type] = case when '$Waits' = 'Category' then [wait_category] else [wait_type] end\n      ,[Wait Duration] = sum([duration])\n  FROM [vw_sqlwatch_report_fact_xes_wait_events]\n    \n  WHERE $__timeFilter(event_time)\n  AND [sql_instance] = '$sql_instance'\n\n  group by event_time,case when '$Waits' = 'Category' then [wait_category] else [wait_type] end\nORDER BY\n  time ASC\n  option (keep plan)",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Wait Events",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "transformations": [],
+          "transparent": true,
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "$$hashKey": "object:2096",
+              "format": "ms",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "$$hashKey": "object:2097",
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "datasource": "$DataSource",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": null,
+                "displayMode": "auto",
+                "filterable": false
+              },
+              "links": [],
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": [
               {
-                "color": "green",
-                "value": null
+                "matcher": {
+                  "id": "byName",
+                  "options": "duration"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 96
+                  }
+                ]
               },
               {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "duration"
-            },
-            "properties": [
+                "matcher": {
+                  "id": "byName",
+                  "options": "wait_type"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 102
+                  }
+                ]
+              },
               {
-                "id": "custom.width",
-                "value": 96
+                "matcher": {
+                  "id": "byName",
+                  "options": "wait_category"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 124
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "database_name"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 155
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "session_id"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 116
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "signal_duration"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 147
+                  }
+                ]
               }
             ]
           },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "wait_type"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 102
-              }
-            ]
+          "gridPos": {
+            "h": 5,
+            "w": 24,
+            "x": 0,
+            "y": 108
           },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "wait_category"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 124
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "database_name"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 155
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "session_id"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 116
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "signal_duration"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 147
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 24,
-        "x": 0,
-        "y": 108
-      },
-      "id": 194,
-      "links": [
-        {
-          "targetBlank": true,
-          "title": "Details",
-          "url": "/d/sqlwatch-wait-events/wait-events?${__url_time_range}&var-DataSource=${DataSource}&var-sql_instance=${sql_instance}"
-        }
-      ],
-      "options": {
-        "showHeader": true,
-        "sortBy": [
-          {
-            "desc": true,
-            "displayName": "duration"
-          }
-        ]
-      },
-      "pluginVersion": "7.4.2",
-      "targets": [
-        {
-          "alias": "",
-          "format": "table",
-          "rawSql": "select \t event_time\t\n\t,wait_type\t\n\t,wait_category\t\n\t--,activity_id = convert(varchar(36),activity_id)\t\n\t--,activity_id_sequence\t\n\t,duration\t\n\t---,signal_duration\t\n\t,session_id\t\n\t,username\t\n\t,client_hostname\t\n\t,client_app_name\t\n\t,database_name\t\n\t--,sql_instance\t\n\t--,snapshot_time\t\n\t--,snapshot_type_id\n\t--,sqlwatch_query_hash = '--0x'+convert(varchar(max),sqlwatch_query_hash,2)\nfrom [dbo].[vw_sqlwatch_report_fact_xes_wait_events] \nWHERE [sql_instance] = '$sql_instance'\nAND $__timeFilter(event_time)",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Queries",
-      "transformations": [
-        {
-          "id": "organize",
+          "id": 194,
+          "links": [
+            {
+              "targetBlank": true,
+              "title": "Details",
+              "url": "/d/sqlwatch-wait-events/wait-events?${__url_time_range}&var-DataSource=${DataSource}&var-sql_instance=${sql_instance}"
+            }
+          ],
           "options": {
-            "excludeByName": {
-              "RN": true,
-              "detail": true,
-              "sqlwatch_activity_id": false
-            },
-            "indexByName": {
-              "client_app_name": 6,
-              "client_hostname": 5,
-              "database_name": 4,
-              "duration": 3,
-              "event_time": 0,
-              "session_id": 8,
-              "username": 7,
-              "wait_category": 2,
-              "wait_type": 1
-            },
-            "renameByName": {}
-          }
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": true,
+                "displayName": "duration"
+              }
+            ]
+          },
+          "pluginVersion": "7.4.2",
+          "targets": [
+            {
+              "alias": "",
+              "format": "table",
+              "rawSql": "select \t event_time\t\n\t,wait_type\t\n\t,wait_category\t\n\t--,activity_id = convert(varchar(36),activity_id)\t\n\t--,activity_id_sequence\t\n\t,duration\t\n\t---,signal_duration\t\n\t,session_id\t\n\t,username\t\n\t,client_hostname\t\n\t,client_app_name\t\n\t,database_name\t\n\t--,sql_instance\t\n\t--,snapshot_time\t\n\t--,snapshot_type_id\n\t--,sqlwatch_query_hash = '--0x'+convert(varchar(max),sqlwatch_query_hash,2)\nfrom [dbo].[vw_sqlwatch_report_fact_xes_wait_events] \nWHERE [sql_instance] = '$sql_instance'\nAND $__timeFilter(event_time)",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Queries",
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "RN": true,
+                  "detail": true,
+                  "sqlwatch_activity_id": false
+                },
+                "indexByName": {
+                  "client_app_name": 6,
+                  "client_hostname": 5,
+                  "database_name": 4,
+                  "duration": 3,
+                  "event_time": 0,
+                  "session_id": 8,
+                  "username": 7,
+                  "wait_category": 2,
+                  "wait_type": 1
+                },
+                "renameByName": {}
+              }
+            }
+          ],
+          "transparent": true,
+          "type": "table"
         }
       ],
-      "transparent": true,
-      "type": "table"
+      "title": "$sql_instance: SQL Server Activity",
+      "type": "row"
     },
     {
       "collapsed": true,
@@ -4125,7 +4131,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 113
+        "y": 34
       },
       "id": 208,
       "panels": [
@@ -4859,7 +4865,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 114
+        "y": 35
       },
       "id": 185,
       "panels": [
@@ -5654,7 +5660,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 115
+        "y": 36
       },
       "id": 183,
       "panels": [
@@ -7600,7 +7606,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 116
+        "y": 37
       },
       "id": 181,
       "panels": [
@@ -7992,7 +7998,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 117
+        "y": 38
       },
       "id": 179,
       "panels": [
@@ -9161,7 +9167,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 118
+        "y": 39
       },
       "id": 284,
       "panels": [
@@ -9426,7 +9432,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 119
+        "y": 40
       },
       "id": 177,
       "panels": [
@@ -10113,7 +10119,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 120
+        "y": 41
       },
       "id": 175,
       "panels": [
@@ -10270,7 +10276,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 121
+        "y": 42
       },
       "id": 234,
       "panels": [
@@ -10837,7 +10843,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 122
+        "y": 43
       },
       "id": 220,
       "panels": [
@@ -11376,9 +11382,424 @@
       ],
       "title": "$sql_instance: Checks",
       "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 44
+      },
+      "id": 304,
+      "panels": [
+        {
+          "datasource": null,
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 3,
+            "w": 24,
+            "x": 0,
+            "y": 1
+          },
+          "id": 292,
+          "options": {
+            "content": " ## Altenarnative charts for the Overview panel\r\n Some data is best presented as timeline and some as bar chart.\r\n Bar charts provide a way of comparison so we can see which ones stand our but sparklines provide a bit of history os we can see how the metric was doing in the last few minutes.\r\n I am giving you an option to pick whichever module you want, just drag and drop and delete those you do not need.\r\n The beauty of Grafana is that you can build your own dashboards!",
+            "mode": "markdown"
+          },
+          "pluginVersion": "7.4.2",
+          "targets": [
+            {
+              "queryType": "randomWalk",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "",
+          "transparent": true,
+          "type": "text"
+        },
+        {
+          "datasource": "$DataSource",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {},
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "dark-green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 3,
+            "x": 6,
+            "y": 4
+          },
+          "id": 302,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {
+              "titleSize": 12
+            },
+            "textMode": "auto"
+          },
+          "pluginVersion": "7.4.2",
+          "targets": [
+            {
+              "alias": "",
+              "format": "time_series",
+              "hide": false,
+              "rawSql": "SELECT time = r1.snapshot_time\r\n      ,[running] = avg(running)\r\n      ,[sleeping] = avg(sleeping)\r\n      ,[dormant] = avg(dormant)\r\n      --,[preconnect] = avg(preconnect)\r\n      ,[cpu_time] = avg(cpu_time)\r\n      ,[reads] = avg(reads)\r\n      ,[writes] = avg(writes)\r\n      ,  type = case when type = 1 then 'User' else 'System' end\r\n  FROM [sqlwatch_logger_dm_exec_sessions_stats] r1 (nolock)\r\n\twhere $__timeFilter(r1.snapshot_time)\r\n  and snapshot_time > dateadd(minute,-15,GETUTCDATE())\t\r\n  and r1.sql_instance = '$sql_instance'\r\n  group by r1.snapshot_time, case when type = 1 then 'User' else 'System' end\r\n  order by time asc",
+              "refId": "2"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Sessions",
+          "transformations": [
+            {
+              "id": "seriesToColumns",
+              "options": {
+                "byField": "Time"
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "System cpu_time": true,
+                  "System reads": true,
+                  "System writes": true,
+                  "User cpu_time": true,
+                  "User reads": true,
+                  "User writes": true,
+                  "cpu_time": true,
+                  "reads": true,
+                  "writes": true
+                },
+                "indexByName": {
+                  "Time": 0,
+                  "max": 3,
+                  "min": 4,
+                  "sql": 2,
+                  "system": 1
+                },
+                "renameByName": {}
+              }
+            }
+          ],
+          "type": "stat"
+        },
+        {
+          "datasource": "$DataSource",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "dark-green",
+                "mode": "thresholds"
+              },
+              "custom": {},
+              "decimals": 0,
+              "links": [],
+              "mappings": [],
+              "min": 0,
+              "noValue": "0",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "dark-green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byRegexp",
+                  "options": "Waiting|Suspended|Runnable"
+                },
+                "properties": [
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "dark-green",
+                          "value": null
+                        },
+                        {
+                          "color": "light-orange",
+                          "value": 1
+                        },
+                        {
+                          "color": "red",
+                          "value": 2
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 3,
+            "x": 9,
+            "y": 4
+          },
+          "id": 301,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {
+              "valueSize": 16
+            },
+            "textMode": "auto"
+          },
+          "pluginVersion": "7.4.2",
+          "targets": [
+            {
+              "alias": "",
+              "format": "time_series",
+              "hide": false,
+              "rawSql": "SELECT time = r1.snapshot_time\r\n      ,  Background\t= background\r\n      ,  Running = running\r\n      ,  Runnable = runnable\r\n      ,  Sleeping\t = sleeping\r\n      ,  Suspended\t = suspended\r\n      ,  Waiting\t = waiting_tasks\r\n  FROM [sqlwatch_logger_dm_exec_requests_stats] r1 (nolock)\r\n\twhere $__timeFilter(r1.snapshot_time)\r\n\tand r1.snapshot_time > dateadd(minute,-15,getutcdate())\r\n  and r1.sql_instance = '$sql_instance'\r\n  and type = 1\r\n  order by time asc",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Requests",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "Time",
+                    "Background",
+                    "Running",
+                    "Runnable",
+                    "Sleeping",
+                    "Suspended",
+                    "Waiting"
+                  ]
+                }
+              }
+            }
+          ],
+          "type": "stat"
+        },
+        {
+          "datasource": "-- Dashboard --",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "green",
+                "mode": "thresholds"
+              },
+              "custom": {},
+              "decimals": 0,
+              "links": [],
+              "mappings": [],
+              "min": 0,
+              "noValue": "0",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "dark-green",
+                    "value": null
+                  },
+                  {
+                    "color": "dark-green",
+                    "value": 1
+                  }
+                ]
+              },
+              "unit": "deckbytes"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Memory Deficit"
+                },
+                "properties": [
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "dark-green",
+                          "value": null
+                        },
+                        {
+                          "color": "red",
+                          "value": 1
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "from": "-99999999",
+                        "id": 1,
+                        "text": "0",
+                        "to": "0",
+                        "type": 2
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 3,
+            "x": 12,
+            "y": 4
+          },
+          "id": 289,
+          "options": {
+            "displayMode": "basic",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": false,
+            "text": {
+              "titleSize": 12,
+              "valueSize": 16
+            }
+          },
+          "pluginVersion": "7.4.2",
+          "targets": [
+            {
+              "panelId": 269,
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "SQL Memory",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "Time",
+                    "Connection Memory (KB)",
+                    "Optimizer Memory (KB)",
+                    "SQL Cache Memory (KB)",
+                    "Total Server Memory (KB)",
+                    "Stolen Server Memory (KB)",
+                    "Target Server Memory (KB)"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "(\\(KB\\))",
+                "renamePattern": ""
+              }
+            },
+            {
+              "id": "calculateField",
+              "options": {
+                "alias": "Memory Deficit",
+                "binary": {
+                  "left": "Target Server Memory ",
+                  "operator": "-",
+                  "reducer": "sum",
+                  "right": "Total Server Memory "
+                },
+                "mode": "binary",
+                "reduce": {
+                  "reducer": "sum"
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {
+                  "Connection Memory ": 1,
+                  "Memory Requirement": 7,
+                  "Optimizer Memory ": 2,
+                  "SQL Cache Memory ": 3,
+                  "Stolen Server Memory ": 4,
+                  "Target Server Memory ": 6,
+                  "Time": 0,
+                  "Total Server Memory ": 5
+                },
+                "renameByName": {}
+              }
+            }
+          ],
+          "type": "bargauge"
+        }
+      ],
+      "title": "$sql_instance: SQL Server Overview - Alternative Graphs",
+      "type": "row"
     }
   ],
-  "refresh": "5s",
+  "refresh": "",
   "schemaVersion": 27,
   "style": "dark",
   "tags": [
@@ -11710,5 +12131,5 @@
   "timezone": "utc",
   "title": "SQL Instance Overview",
   "uid": "sqlwatch-instance-overview",
-  "version": 519
+  "version": 530
 }
