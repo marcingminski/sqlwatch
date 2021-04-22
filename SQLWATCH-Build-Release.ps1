@@ -6,15 +6,18 @@
 # Get root path of this script:
 $PSScriptRoot = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
 
+# Find MsBuild regardless of the Visual Studio version so we can run this on Appveyor:
+$MsBuild = Get-ChildItem -path "C:\Program Files (x86)\Microsoft Visual Studio" -Filter MSBuild.exe -Recurse | Where-Object {$_.FullName -notlike "*amd64*"}
+
 # Run Build and force Rebuild so we bump the build number for a clean state:
-cd "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin"
+cd "$($MsBuild.PSParentPath)"
 .\MSBuild.exe /t:Rebuild "$PSScriptRoot\SqlWatch.Monitor\Project.SqlWatch.Database\SQLWATCH.sqlproj"
 
 # Run Build again without rebuild so we dont bump the build number but include in the dacpac.
 # This is because the build number is pushed to the sql file whilst the project is being build, but that that time
 # That file is already included in the build so its a chicken and egg situation. If we now build it again, becuase
 # Nothing has changed since the last build, the build number will reman the same but it will now be included in the build itself.
-cd "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin"
+cd "$($MsBuild.PSParentPath)"
 .\MSBuild.exe "$PSScriptRoot\SqlWatch.Monitor\Project.SqlWatch.Database\SQLWATCH.sqlproj"
 
 
