@@ -1,4 +1,4 @@
-﻿# Create temp folder to store release files
+﻿# Create temp folder to store release files #
 # Copy dashboard files
 # Copy dacpacs
 # Copy executables
