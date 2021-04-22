@@ -129,7 +129,7 @@ outer apply (
 select has_identity = isnull(isnull(( 
 		select 1
 		from sys.identity_columns 
-		where OBJECT_NAME(OBJECT_ID) = parsename(d.TABLE_NAME,1)
+		where OBJECT_NAME(object_id) = parsename(d.TABLE_NAME,1)
 		),0),'')
 ) hasidentity
 

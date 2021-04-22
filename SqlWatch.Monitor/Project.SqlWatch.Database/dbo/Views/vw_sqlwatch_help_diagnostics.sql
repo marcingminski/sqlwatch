@@ -60,24 +60,24 @@ select sqlwatch_diagnostics = (
 
 		, sqlwatch_table_size = (
 			select 
-				table_name = t.NAME,
+				table_name = t.name,
 				row_count = p.rows,
 				total_space_MB = CAST(ROUND(((SUM(a.total_pages) * 8) / 1024.00), 2) AS NUMERIC(36, 2)),
 				used_space_MB = CAST(ROUND(((SUM(a.used_pages) * 8) / 1024.00), 2) AS NUMERIC(36, 2)), 
 				unused_space_MB = CAST(ROUND(((SUM(a.total_pages) - SUM(a.used_pages)) * 8) / 1024.00, 2) AS NUMERIC(36, 2)),
 				p.[data_compression_desc]
 			from sys.tables t
-			inner join sys.indexes i ON t.OBJECT_ID = i.object_id
-			inner join sys.partitions p ON i.object_id = p.OBJECT_ID AND i.index_id = p.index_id
+			inner join sys.indexes i ON t.object_id = i.object_id
+			inner join sys.partitions p ON i.object_id = p.object_id AND i.index_id = p.index_id
 			inner join sys.allocation_units a ON p.partition_id = a.container_id
 			left join sys.schemas s ON t.schema_id = s.schema_id
 			where 
-				t.NAME NOT LIKE 'dt%' 
+				t.name NOT LIKE 'dt%' 
 				AND t.is_ms_shipped = 0
-				AND i.OBJECT_ID > 255 
+				AND i.object_id > 255 
 				and t.name like '%sqlwatch%'
-			group by t.Name, s.Name, p.Rows, p.[data_compression_desc]
-			order by t.Name
+			group by t.name, s.name, p.rows, p.[data_compression_desc]
+			order by t.name
 			for xml raw, type
 		)
 

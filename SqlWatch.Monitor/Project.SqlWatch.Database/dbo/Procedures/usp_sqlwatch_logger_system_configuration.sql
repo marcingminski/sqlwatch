@@ -37,7 +37,7 @@ select @date_snapshot_previous = max([snapshot_time])
 		@snapshot_type_id = @snapshot_type_id
 
 
-INSERT INTO [dbo].[sqlwatch_logger_system_configuration] (sql_instance, sqlwatch_configuration_id, value, value_in_use, snapshot_time, snapshot_Type_id)
+INSERT INTO [dbo].[sqlwatch_logger_system_configuration] (sql_instance, sqlwatch_configuration_id, value, value_in_use, snapshot_time, snapshot_type_id)
 SELECT v.sql_instance, m.sqlwatch_configuration_id, v.value, v.value_in_use, @snapshot_time, @snapshot_type_id
   FROM dbo.vw_sqlwatch_sys_configurations v
  INNER JOIN dbo.[sqlwatch_meta_system_configuration] m
