@@ -128,8 +128,8 @@ declare @sql nvarchar(max),
 				/* check is table has identity */
 				select @has_identity = isnull(( 
 					select 1
-					from SYS.IDENTITY_COLUMNS 
-					where OBJECT_NAME(OBJECT_ID) = @table_name
+					from sys.identity_columns
+					where OBJECT_NAME(object_id) = @table_name
 					),0)
 
 
