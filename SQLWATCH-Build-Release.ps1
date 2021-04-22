@@ -43,7 +43,7 @@ MSBuild.exe "$PSScriptRoot\SqlWatch.Monitor\Project.SqlWatchImport\SqlWatchImpor
 [string]$Version = $Version.Trim()
 
 # Create TMP folder to store release files:
-$TmpFolder = "C:\TEMP\"
+$TmpFolder = "$PSScriptRoot\RELEASE\"
 $ReleaseFolderName = "SQLWATCH $Version $(get-date -f yyyyMMddHHmmss)"
 $ReleaseFolder = "$TmpFolder\$ReleaseFolderName"
 New-Item -Path $ReleaseFolder -ItemType Directory
