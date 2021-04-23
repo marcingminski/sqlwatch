@@ -15,8 +15,8 @@ select [sqlwatch_database_id], [sqlwatch_master_file_id]
 , [io_stall_read_ms_delta], [num_of_writes_delta], [num_of_bytes_written_delta], [io_stall_write_ms_delta], [size_on_disk_bytes_delta], [delta_seconds]
 , io_latency_read = case when num_of_reads_delta > 0 then [io_stall_read_ms_delta] / num_of_reads_delta else 0 end
 , io_latency_write = case when [num_of_writes_delta] > 0 then [io_stall_write_ms_delta] / [num_of_writes_delta] else 0 end
-, [bytes_written_per_second] = [num_of_bytes_written_delta] / [delta_seconds]
-, [bytes_read_per_second] = [num_of_bytes_read_delta] / [delta_seconds]
+, [bytes_written_per_second] = case when isnull([delta_seconds],0) > 0 then [num_of_bytes_written_delta] / [delta_seconds] else 0 end
+, [bytes_read_per_second] = case when isnull([delta_seconds],0) > 0 then [num_of_bytes_read_delta] / [delta_seconds] else 0 end
  --for backward compatibility with existing pbi, this column will become report_time as we could be aggregating many snapshots in a report_period
 , d.snapshot_time
 , d.snapshot_type_id
