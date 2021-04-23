@@ -7,7 +7,8 @@ declare @sql varchar(max) = '',
 
 select @sql = @sql  + ';' + char(10) + 'exec msdb.dbo.sp_delete_job @job_id=N'''+ convert(varchar(255),job_id) +''', @delete_unused_schedule=1' 
 from msdb.dbo.sysjobs
-where name like 'SQLWATCH-\[' + @database_name + '\]%' ESCAPE '\'
+where name like case when @database_name <> 'SQLWATCH' then 'SQLWATCH-\[' + @database_name + '\]%' else 'SQLWATCH-%' end  escape '\'
+  and name not like case when @database_name = 'SQLWATCH' then 'SQLWATCH-\[%' else '' end  escape '\'
 and name not like '%AZMONITOR'
 and name not like '%ACTIONS'
 and name not like '%DISK-UTILISATION'
