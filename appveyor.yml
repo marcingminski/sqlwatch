@@ -1,7 +1,4 @@
 version: build-{build}
-branches:
-  except:
-  - main
 skip_tags: true
 skip_branch_with_pr: true
 only_commits:
