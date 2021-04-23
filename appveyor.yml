@@ -1,13 +1,18 @@
 version: build-{build}
+branches:
+  except:
+  - main
+skip_tags: true
+skip_branch_with_pr: true
 only_commits:
   files:
-    - SqlWatch.Monitor/Project.SqlWatch.Database/*
+    - SqlWatch.Monitor/*
 pull_requests:
   do_not_increment_build_number: true
-skip_branch_with_pr: true
 max_jobs: 1
 image: Visual Studio 2015
 platform: x64
+clone_folder: C:\projects\sqlwatch\
 init:
 - ps: >-
     <#
@@ -26,23 +31,21 @@ init:
             Set-ItemProperty (Join-Path $_.PSPath 'mssqlserver\supersocketnetlib\tcp\ipall') -Name TcpPort -Value ([string]::Empty)
         }
 services:
+- mssql2008r2sp2
 - mssql2012sp1
 - mssql2008r2sp2
 - mssql2014
 - mssql2016
 - mssql2017
-build:
-  project: C:\projects\sqlwatch\SqlWatch.Monitor\Project.SqlWatch.Database\SQLWATCH.sqlproj
-  verbosity: minimal
+build_script:
+- ps: C:\projects\sqlwatch\SQLWATCH-Build-Release.ps1
 test_script:
 - cmd: >-
-    sqlpackage.exe /a:Publish /sf:C:\projects\sqlwatch\SqlWatch.Monitor\Project.SqlWatch.Database\bin\Output\SQLWATCH.dacpac /tdn:SQLWATCH /tsn:localhost\SQL2017
+    sqlpackage.exe /a:Publish /sf:C:\projects\sqlwatch\SqlWatch.Monitor\Project.SqlWatch.Database\bin\Debug\SQLWATCH.dacpac /tdn:SQLWATCH /tsn:localhost\SQL2017
 
-    sqlpackage.exe /a:Publish /sf:C:\projects\sqlwatch\SqlWatch.Monitor\Project.SqlWatch.Database\bin\Output\SQLWATCH.dacpac /tdn:SQLWATCH /tsn:localhost\SQL2016
+    sqlpackage.exe /a:Publish /sf:C:\projects\sqlwatch\SqlWatch.Monitor\Project.SqlWatch.Database\bin\Debug\SQLWATCH.dacpac /tdn:SQLWATCH /tsn:localhost\SQL2016
 
-    sqlpackage.exe /a:Publish /sf:C:\projects\sqlwatch\SqlWatch.Monitor\Project.SqlWatch.Database\bin\Output\SQLWATCH.dacpac /tdn:SQLWATCH /tsn:localhost\SQL2014
+    sqlpackage.exe /a:Publish /sf:C:\projects\sqlwatch\SqlWatch.Monitor\Project.SqlWatch.Database\bin\Debug\SQLWATCH.dacpac /tdn:SQLWATCH /tsn:localhost\SQL2014
 
-    sqlpackage.exe /a:Publish /sf:C:\projects\sqlwatch\SqlWatch.Monitor\Project.SqlWatch.Database\bin\Output\SQLWATCH.dacpac /tdn:SQLWATCH /tsn:localhost\SQL2012SP1
+    sqlpackage.exe /a:Publish /sf:C:\projects\sqlwatch\SqlWatch.Monitor\Project.SqlWatch.Database\bin\Debug\SQLWATCH.dacpac /tdn:SQLWATCH /tsn:localhost\SQL2012SP1
 deploy: off
-on_failure:
-- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))    
