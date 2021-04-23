@@ -5,7 +5,7 @@
 ![GitHub All Releases](https://img.shields.io/github/downloads/marcingminski/sqlwatch/total.svg)
 ![GitHub commits since latest release (by date)](https://img.shields.io/github/commits-since/marcingminski/sqlwatch/latest)
 ![AppVeyor](https://img.shields.io/appveyor/build/marcingminski/sqlwatch?label=branch%20build)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/3fe7bb6aa8dd49b4ac555aa5980fccde)](https://app.codacy.com/gh/marcingminski/sqlwatch?utm_source=github.com&utm_medium=referral&utm_content=marcingminski/sqlwatch&utm_campaign=Badge_Grade_Settings)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/c176e01274c649aeb4ee5f64d1aeddeb)](https://www.codacy.com/gh/marcingminski/sqlwatch/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=marcingminski/sqlwatch&amp;utm_campaign=Badge_Grade)
 
 SQLWATCH is a SQL Server Performance and capacity data collector with Power BI dashboard for data analysis. The idea behind is to provide community driven, standardised "interface" for SQL Server monitoring that can be consumed by various interfaces and integrate with availabilty monitoring platforms such as Nagios, Zabbix, PRTG
 
