@@ -2,6 +2,7 @@ autolabeler:
   - label: 'chore'
     files:
       - '*.md'
+      - '*.MD'
     branch:
       - '/docs{0,1}\/.+/'
   - label: 'bug'
