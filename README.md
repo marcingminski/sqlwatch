@@ -7,20 +7,21 @@
 ![AppVeyor](https://img.shields.io/appveyor/build/marcingminski/sqlwatch?label=branch%20build)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/c176e01274c649aeb4ee5f64d1aeddeb)](https://www.codacy.com/gh/marcingminski/sqlwatch/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=marcingminski/sqlwatch&amp;utm_campaign=Badge_Grade)
 
-SQLWATCH is decentralised, real to near-real time SQL Server Monitoring Solution. It is designed to provide comprehensive monitoring out of the box and to serve as a monitoring framework for your own projects or applications. It collects performance data in a local database with an option for centralised reporting for convinience.
+SQLWATCH is decentralised, real to near-real time SQL Server Monitoring Solution. It is designed to provide comprehensive monitoring out of the box and to serve as a monitoring framework for your own projects or applications. It collects performance data in a local database with an option for centralised reporting for convenience.
 
-# Features
 Server Overview:
 ![SQLWATCH Grafana Instance Overview](/.github/images/sqlwatch-grafana-instance-overview.gif?raw=true)
 
 Detailed charts:
 ![SQLWATCH Grafana Dashboard](/.github/images/sqlwatch-grafana-dashboard-animation.gif?raw=true)
 
+# Features
+
 * 5 second granularity to capture spikes in your workload.
 * Grafana for real-time dashboarding and Power BI for in depth analysis
 * Minimal performance impact (around 1% on a single core SQL Instance when using broker for invocation).
 * Out of the box collection with minimal configuration required to get it up and running.
-* Extensive configuration available for your convinience.
+* Extensive configuration available for your convenience.
 * Zero maintenance. It has been designed to maintain itself.
 * Unlimited scalability. As each instance monitors itself, you are not constraint by the capacity of the monitoring server.
 * Works with all supported SQL Servers (with some limitations on 2008R2)
