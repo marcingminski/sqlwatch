@@ -1,7 +1,7 @@
 # Contributing guidelines
 
 1. Create a fork of the repository. This will create a copy of the entire repository in your own GitHub account.
-1. Create a feature branch for your change in your fork. 
+1. Create a feature branch for your change in your fork. Please read 
 1. Make required changed to the code in your fork.
 1. Commit code into the feature branch in your fork.
 1. Push the commit from your local work station to the GitHub repository.
@@ -65,3 +65,5 @@ Different styles work for different people. I am not religious about formatting 
 
 The default brach is "main" and should always contain the most up to date code. There is a risk with SQL Project that when working on multiple features in separate branches, we may have a conflict of the `*.sqlproj` file as this file contains definition of all used objects.
 It should not happen often but we are going to have to deal with it when it happens. I have not found any way of dealing with this in a Git friendly manner. 
+
+Features branches should follow the naming standard described in the Pull Request Guidelines. For bug fixes, name your branch fix-xx where xx is the issue number. For new features, name your branch feature-xx where xx is the issue id describing new feature. Maintenance category will only apply to `*.MD` files or documentation.  
