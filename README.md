@@ -10,7 +10,7 @@
 SQLWATCH is decentralised, real to near-real time SQL Server Monitoring Solution. It is designed to provide comprehensive monitoring out of the box and to serve as a monitoring framework for your own projects or applications. It collects performance data in a local database with an option for centralised reporting for convinience.
 
 # Features
-![SQLWATCH Grafana Dashboard](../.github/images/sqlwatch-grafana-dashboard-animation.gif?raw=true)
+![SQLWATCH Grafana Dashboard](/.github/images/sqlwatch-grafana-dashboard-animation.gif?raw=true)
 
 * 5 second granularity to capture spikes in your workload.
 * Grafana for real-time dashboarding and Power BI for in depth analysis
