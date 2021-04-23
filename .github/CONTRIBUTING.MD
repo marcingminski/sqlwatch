@@ -11,7 +11,7 @@
 # Pull Requests guidelines
 
 1. Pull request must reference an existing issue. If you are developing a new feature, please create an issue first and explain what the new feature will entail. This way we can have a discussion before any development work starts.
-1. Pull request must indicate whether it's a bug fix, new feature or a maintenance change. This is to allow bots to create automated release notes and documentation so we can all focus on the code rather than paperwork. I am using the release-drafter bot that will attempt to auto-categorise pulls based on regex explained below.
+1. Pull request must indicate whether it's a bug fix, new feature or a maintenance change. This is to allow bots to create automated release notes and documentation so we can all focus on the code rather than paperwork. I am using the release-drafter bot that will attempt to auto-categorise pulls based on regex explained below. Alternatively you can assign label to the PR yourself when you create the Pull Request.
 1. Pull request must pass all code validations before it can be merged. If you believe some validations are pointless, please talk to me. There is a bunch of automated validations that sometimes may not make sense but let's have some consistency.
 1. Pull request must pass all automated builds and testing before it can be merged. This is unconditional and designed to make sure the code you are checking in will work across different configurations and editions of SQL Server.
 
