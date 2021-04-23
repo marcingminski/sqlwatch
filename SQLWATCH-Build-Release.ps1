@@ -17,25 +17,27 @@ $PSScriptRoot = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
 #Appveyor has MsBuild in the path
 
 # Run Build and force Rebuild so we bump the build number for a clean state:
-#cd "$($MsBuild.PSParentPath)"
-MSBuild.exe /t:Rebuild "$PSScriptRoot\SqlWatch.Monitor\Project.SqlWatch.Database\SQLWATCH.sqlproj"
+Write-Output "Run Database Build and force Rebuild so we bump the build number for a clean state..."
+MSBuild.exe -v:m /t:Rebuild "$PSScriptRoot\SqlWatch.Monitor\Project.SqlWatch.Database\SQLWATCH.sqlproj"
 
 # Run Build again without rebuild so we dont bump the build number but include in the dacpac.
 # This is because the build number is pushed to the sql file whilst the project is being build, but that that time
 # That file is already included in the build so its a chicken and egg situation. If we now build it again, becuase
 # Nothing has changed since the last build, the build number will reman the same but it will now be included in the build itself.
-#cd "$($MsBuild.PSParentPath)"
-
 # This time we can build the entire solution including all applications:
 # Restore external packages:
+
+Write-Output "We are about to build the entire solution including C# apps. Before we do that, we have to restore NuGet packages..."
 nuget restore "$PSScriptRoot\SqlWatch.Monitor\SqlWatch.Monitor.sln"
 
-MSBuild.exe "$PSScriptRoot\SqlWatch.Monitor\SqlWatch.Monitor.sln"
+Write-Output @"
+Run Build again without rebuild so we dont bump the build number but include in the dacpac.
+This is because the build number is pushed to the sql file whilst the project is being build, but that that time
+That file is already included in the build so its a chicken and egg situation. If we now build it again, becuase
+Nothing has changed since the last build, the build number will reman the same but it will now be included in the build itself.
+"@
+MSBuild.exe /m -v:m "$PSScriptRoot\SqlWatch.Monitor\SqlWatch.Monitor.sln"
 
-
-
-#Build Importer
-MSBuild.exe "$PSScriptRoot\SqlWatch.Monitor\Project.SqlWatchImport\SqlWatchImport.csproj"
 
 # Read SQLWATCH build version:
 
@@ -43,6 +45,8 @@ MSBuild.exe "$PSScriptRoot\SqlWatch.Monitor\Project.SqlWatchImport\SqlWatchImpor
 [string]$Version = $Version.Trim()
 
 # Create TMP folder to store release files:
+Write-Output "Create Release folder and copy all files for the release..."
+
 $TmpFolder = "$PSScriptRoot\RELEASE\"
 $ReleaseFolderName = "SQLWATCH $Version $(get-date -f yyyyMMddHHmmss)"
 $ReleaseFolder = "$TmpFolder\$ReleaseFolderName"
