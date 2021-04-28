@@ -1,23 +1,23 @@
 ﻿CREATE PROCEDURE [dbo].[usp_sqlwatch_logger_query_stats]
 as
 
---this needs reviewing
 begin
 	set nocount on;
 	set xact_abort on;
 
 	declare @snapshot_type_id smallint = 28,
 			@snapshot_time datetime2(0),
-			@date_snapshot_previous datetime2(0)
+			@date_snapshot_previous datetime2(0),
+			@sql_instance varchar(32) = [dbo].[ufn_sqlwatch_get_servername]()
 
 	select @date_snapshot_previous = max([snapshot_time])
 	from [dbo].[sqlwatch_logger_snapshot_header] (nolock) --so we dont get blocked by central repository. this is safe at this point.
 	where snapshot_type_id = @snapshot_type_id
-	and sql_instance = [dbo].[ufn_sqlwatch_get_servername]()
+	and sql_instance = @sql_instance 
 
 	select 
-		  sql_instance
-		, [sqlwatch_query_hash]
+		  [sql_instance]
+		, [sqlwatch_query_plan_id]
 		, total_worker_time
 		, total_physical_reads
 		, total_logical_writes
@@ -25,13 +25,14 @@ begin
 		, total_elapsed_time
 		, creation_time
 		, last_execution_time
+		, snapshot_time
 	into #t
 	from [dbo].[sqlwatch_logger_perf_query_stats]
-	where sql_instance = [dbo].[ufn_sqlwatch_get_servername]() 
+	where sql_instance = @sql_instance 
 	and snapshot_type_id = @snapshot_type_id
 	and snapshot_time = @date_snapshot_previous;
 
-	create unique clustered index icx_tmp_query_stats_prev on #t (sql_instance,sqlwatch_query_hash,creation_time);
+	create unique clustered index icx_tmp_query_stats_prev on #t ([sql_instance],[sqlwatch_query_plan_id],[creation_time]);
 
 	exec [dbo].[usp_sqlwatch_internal_insert_header] 
 		@snapshot_time_new = @snapshot_time OUTPUT,
@@ -40,18 +41,107 @@ begin
 	select qs.*
 	into #s
 	from sys.dm_exec_query_stats qs	
+
+	cross apply sys.dm_exec_text_query_plan([plan_handle], [statement_start_offset], [statement_end_offset]) qp
+
 	where last_execution_time > isnull((
 		select max(last_execution_time) from #t
 		),'1970-01-01')
 
-	select 
-		[sql_instance] = [dbo].[ufn_sqlwatch_get_servername](),
-		[sqlwatch_query_hash] = hashbytes('MD5',query_hash),
-		[snapshot_time] = @snapshot_time,
-		[snapshot_type_id] = @snapshot_type_id, 
+	--not stored procedures as we're collecting stored procedures elsewhere.
+	and qp.objectid is null 
 
-		 qs.[sql_handle]
-		,qs.plan_handle	
+	--normalise query text and plans
+	declare @plan_handle_table dbo.utype_plan_handle
+	insert into @plan_handle_table (plan_handle, statement_start_offset, statement_end_offset )
+	select distinct plan_handle,  statement_start_offset, statement_end_offset
+	from #s
+	;
+
+	declare @sqlwatch_plan_id dbo.utype_plan_id
+	insert into @sqlwatch_plan_id 
+	exec [dbo].[usp_sqlwatch_internal_get_query_plans]
+		@plan_handle = @plan_handle_table, 
+		@sql_instance = @sql_instance
+	;
+
+
+	insert into [dbo].[sqlwatch_logger_perf_query_stats] (
+		[sql_instance] ,
+		[snapshot_time] ,
+		[snapshot_type_id]
+
+		,sqlwatch_query_plan_id
+		,creation_time	
+		,last_execution_time	
+
+		,execution_count	
+		,total_worker_time	
+		,last_worker_time	
+		,min_worker_time	
+		,max_worker_time	
+		,total_physical_reads	
+		,last_physical_reads	
+		,min_physical_reads	
+		,max_physical_reads	
+		,total_logical_writes	
+		,last_logical_writes	
+		,min_logical_writes	
+		,max_logical_writes	
+		,total_logical_reads	
+		,last_logical_reads	
+		,min_logical_reads	
+		,max_logical_reads	
+		,total_clr_time	
+		,last_clr_time	
+		,min_clr_time	
+		,max_clr_time	
+		,total_elapsed_time	
+		,last_elapsed_time	
+		,min_elapsed_time	
+		,max_elapsed_time	
+		,total_rows	
+		,last_rows	
+		,min_rows	
+		,max_rows	
+		,total_dop	
+		,last_dop	
+		,min_dop	
+		,max_dop	
+		,total_grant_kb	
+		,last_grant_kb	
+		,min_grant_kb	
+		,max_grant_kb	
+		,total_used_grant_kb	
+		,last_used_grant_kb	
+		,min_used_grant_kb	
+		,max_used_grant_kb	
+		,total_ideal_grant_kb	
+		,last_ideal_grant_kb	
+		,min_ideal_grant_kb	
+		,max_ideal_grant_kb	
+		,total_reserved_threads	
+		,last_reserved_threads	
+		,min_reserved_threads	
+		,max_reserved_threads	
+		,total_used_threads	
+		,last_used_threads	
+		,min_used_threads	
+		,max_used_threads
+
+		,delta_worker_time 
+		,delta_physical_reads
+		,delta_logical_writes
+		,delta_logical_reads 
+		,delta_elapsed_time 
+		,delta_time_s
+	)
+	select 
+		[sql_instance] = @sql_instance ,
+		[snapshot_time] = @snapshot_time,
+		[snapshot_type_id] = @snapshot_type_id
+
+		,qp.sqlwatch_query_plan_id
 		,qs.creation_time	
 		,qs.last_execution_time	
 
@@ -80,8 +170,6 @@ begin
 		,qs.last_elapsed_time	
 		,qs.min_elapsed_time	
 		,qs.max_elapsed_time	
-		,qs.query_hash	
-		,qs.query_plan_hash	
 		,qs.total_rows	
 		,qs.last_rows	
 		,qs.min_rows	
@@ -111,23 +199,23 @@ begin
 		,qs.min_used_threads	
 		,qs.max_used_threads
 
-	from #s
+		, delta_worker_time = [dbo].[ufn_sqlwatch_get_delta_value](prev.total_worker_time, qs.total_worker_time)
+		, delta_physical_reads = [dbo].[ufn_sqlwatch_get_delta_value](prev.total_physical_reads, qs.total_physical_reads)
+		, delta_logical_writes = [dbo].[ufn_sqlwatch_get_delta_value](prev.total_logical_writes, qs.total_logical_writes)
+		, delta_logical_reads = [dbo].[ufn_sqlwatch_get_delta_value](prev.total_logical_reads, qs.total_logical_reads)
+		, delta_elapsed_time = [dbo].[ufn_sqlwatch_get_delta_value](prev.total_elapsed_time, qs.total_elapsed_time)
+		, delta_time_s = case when prev.snapshot_time is null then null else datediff(second, prev.snapshot_time,@snapshot_time) end
 
-	--;merge [dbo].[sqlwatch_meta_sql_query] as target
-	--using (
-	--	select distinct 		  
-	--		  t.text
-	--	from #s
-	--	cross apply sys.dm_exec_sql_text(s.sql_handle) t
-	--
-	--
-	--
-	--	from (
-	--		select distinct [sqlwatch_query_hash]
-	--		from [dbo].[sqlwatch_logger_perf_query_stats]
-	--		where snapshot_time = @snapshot_time
-	--		) s
-	--	cross apply sys.dm_exec_sql_text(s.sql_handle) t
-	--	where t.text is not null
-	--)
+	from #s qs
+
+	inner join dbo.sqlwatch_meta_query_plan qp
+		on qp.sql_instance = @sql_instance
+		and qp.plan_handle = qs.plan_handle
+		and qp.query_hash = qs.query_hash
+		and qp.query_plan_hash = qs.query_plan_hash
+		and qp.statement_start_offset = qs.statement_start_offset
+		and qp.statement_end_offset = qs.statement_end_offset
+
+	left join #t prev
+		on prev.sqlwatch_query_plan_id = qp.sqlwatch_query_plan_id
 end

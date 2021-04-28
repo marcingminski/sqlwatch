@@ -125,6 +125,7 @@ values
 	/* Whether to collect execution plans into [dbo].[sqlwatch_meta_plan_handle].
 		If enabled execution plans will be pulled as xml into the table */
 	,(22	,'Collect Execution Plans and SQL text' ,1)
+
 ;
 
 merge dbo.sqlwatch_config as target
