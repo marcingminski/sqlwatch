@@ -187,7 +187,7 @@
     <Build Include="dbo\Views\vw_sqlwatch_report_dim_table.sql" />
     <Build Include="dbo\Views\vw_sqlwatch_report_dim_index.sql" />
     <Build Include="dbo\Views\vw_sqlwatch_report_dim_master_file.sql" />
-    <Build Include="dbo\Views\vw_sqlwatch_report_dim_aget_job.sql" />
+    <Build Include="dbo\Views\vw_sqlwatch_report_dim_agent_job.sql" />
     <Build Include="dbo\Views\vw_sqlwatch_report_dim_agent_job_step.sql" />
     <Build Include="dbo\Views\vw_sqlwatch_report_dim_os_volume.sql" />
     <Build Include="dbo\Views\vw_sqlwatch_report_dim_index_missing.sql" />
