@@ -13,7 +13,7 @@
 	),
 
 	constraint fk_sqlwatch_meta_retention_sql_instance foreign key (sql_instance)
-		references dbo.sqlwatch_config_sql_instance ([sql_instance]) on delete cascade
+		references dbo.sqlwatch_meta_server (servername) on delete cascade
 )
 GO
 
