@@ -58,3 +58,5 @@ project.assets.json
 SqlWatch.Monitor/.vs/SqlWatch.Monitor/DesignTimeBuild/.dtbcache.v2
 /SqlWatch.Monitor/UpgradeLog.htm
 SqlWatch.Monitor/Project.SqlWatch.Database/obj/SQLWATCHDATABASE.generated.sql
+/SqlWatch.Monitor/Project.SqlWatch.Database/bin/Release
+/SqlWatch.Monitor/Project.SqlWatch.Database/obj/Release
