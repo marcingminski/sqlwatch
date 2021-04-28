@@ -2786,4 +2786,18 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[usp_sqlwatch_internal_normalise_query_text]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="7712919c-c918-4d18-917a-d9a1926e0e9c" ChangeDateTime="04/26/2021 14:38:59">
+    <Property Name="ElementName" Value="[dbo].[usp_sqlwatch_internal_normalise_plan_handle]" />
+    <Property Name="ElementType" Value="SqlProcedure" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[usp_sqlwatch_internal_get_query_plans]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="5424d8a7-8017-4069-ad2f-b6cd03ab2425" ChangeDateTime="04/26/2021 21:19:36">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_meta_query_plan_procedure]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[sqlwatch_meta_procedure_query_plan]" />
+  </Operation>
 </Operations>
