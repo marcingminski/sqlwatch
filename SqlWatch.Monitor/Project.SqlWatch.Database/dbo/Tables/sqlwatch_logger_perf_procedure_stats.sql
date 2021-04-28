@@ -5,8 +5,6 @@
 	[sqlwatch_procedure_id] int not null,
 	[snapshot_time] datetime2(0) not null,
 	[snapshot_type_id] tinyint NOT NULL, 
-	[sql_handle] varbinary(64) NOT NULL,
-	[plan_handle] varbinary(64) NOT NULL,
 	[cached_time] datetime not NULL,
 	[last_execution_time] datetime not NULL,
 	[execution_count] real NULL,
