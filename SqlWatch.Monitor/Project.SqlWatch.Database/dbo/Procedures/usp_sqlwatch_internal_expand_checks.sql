@@ -148,7 +148,7 @@ begin
 					from [dbo].[sqlwatch_config_check_template] c
 					cross apply (
 						select *
-						from [dbo].[vw_sqlwatch_report_dim_aget_job]
+						from [dbo].[vw_sqlwatch_report_dim_agent_job]
 						where sql_instance = @sql_instance
 						) d
 					where c.check_name = @check_name

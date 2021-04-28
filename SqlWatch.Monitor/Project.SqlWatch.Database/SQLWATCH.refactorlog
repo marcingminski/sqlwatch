@@ -2786,4 +2786,11 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[usp_sqlwatch_internal_normalise_query_text]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="87ef3ff9-9e22-4122-9ab7-9bf7310be592" ChangeDateTime="04/28/2021 10:31:01">
+    <Property Name="ElementName" Value="[dbo].[vw_sqlwatch_report_dim_aget_job]" />
+    <Property Name="ElementType" Value="SqlView" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[vw_sqlwatch_report_dim_agent_job]" />
+  </Operation>
 </Operations>
