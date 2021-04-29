@@ -181,5 +181,4 @@ else
 			@process_stage = '1535C6B0-F2BE-4745-8097-3D5F99A28701',
 			@process_message = 'Product version must be 11 or higher to use Extended Events',
 			@process_message_type = 'WARNING';
-	end
-
+	end;

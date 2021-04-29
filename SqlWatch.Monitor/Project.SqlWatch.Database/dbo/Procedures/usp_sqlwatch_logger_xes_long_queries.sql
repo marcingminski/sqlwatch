@@ -34,7 +34,6 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 				--something to check how many new long queries we get per second or minute and bail out if too many.
 				--perhaps also disable XES if too many queries are being logged
 
-
 				declare @event_data utype_event_data;
 
 				select @last_event_time = max(event_time) from dbo.[sqlwatch_logger_xes_long_queries];
@@ -197,4 +196,4 @@ else
 			@process_stage = '56FE7588-B8F4-49C5-A40D-167AC6067919',
 			@process_message = 'Product version must be 11 or higher to use Extended Events',
 			@process_message_type = 'WARNING';
-	end
+	end;
