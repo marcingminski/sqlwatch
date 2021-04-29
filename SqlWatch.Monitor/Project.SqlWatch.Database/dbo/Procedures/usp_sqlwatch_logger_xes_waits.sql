@@ -12,7 +12,8 @@ declare @execution_count bigint = 0,
 		@session_name nvarchar(64) = 'SQLWATCH_waits',
 		@address varbinary(8),
 		@filename varchar(8000),
-		@sql_instance varchar(32) = dbo.ufn_sqlwatch_get_servername();
+		@sql_instance varchar(32) = dbo.ufn_sqlwatch_get_servername(),
+		@store_event_data smallint = dbo.ufn_sqlwatch_get_config_value(23,null);;
 
 if (select collect from [dbo].[sqlwatch_config_snapshot_type]
 	where snapshot_type_id = @snapshot_type_id) = 0
@@ -52,8 +53,8 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 				offset_start = frame.event_data.value('(@offsetStart)[1]', 'varchar(255)'),
 				offset_end = frame.event_data.value('(@offsetEnd)[1]', 'varchar(255)'),
 				[sql_handle] = convert(varbinary(64),frame.event_data.value('(@handle)[1]', 'varchar(255)'),1),
-				sql_instance = @sql_instance
-				--event_data_xml --for debugging
+				sql_instance = @sql_instance,
+				event_data =  case when @store_event_data = 1 then event_data_xml else null end
 			into #w
 			from #event_data t
 			cross apply t.event_data_xml.nodes('event') as xed (event_data)
@@ -66,6 +67,11 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 			option (maxdop 1, keep plan)
 
 			create nonclustered index idx_tmp_w on #w ( wait_type, sql_instance, event_time, session_id, activity_id )
+
+			delete from #w
+			where plan_handle = 0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+			or offset_start is null
+			or offset_end is null
 
 			--normalise query text and plans
 			declare @plan_handle_table dbo.utype_plan_handle
@@ -90,82 +96,62 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 
 			commit transaction plans --persist plans
 
-			select 
-					w.event_time
-				, s.wait_type_id
-				, w.duration
-				, w.signal_duration
-				, w.session_id
-				, w.username
-				, w.client_hostname
-				, client_app_name = [dbo].[ufn_sqlwatch_parse_job_name] ( w.client_app_name, j.name )
-				, qp.sqlwatch_query_plan_id
-				, w.sql_instance
-				, snapshot_time = @snapshot_time
-				, snapshot_type_id = @snapshot_type_id
-				, w.activity_id
-			into #t
-			from #w w
-			
-			inner join dbo.sqlwatch_meta_wait_stats s
-				on s.wait_type = w.wait_type
-				and s.sql_instance = w.sql_instance
-
-			inner join [dbo].[sqlwatch_meta_query_plan_handle] qph
-				on qph.plan_handle = w.plan_handle
-				and qph.statement_start_offset = w.offset_start
-				and qph.statement_end_offset = w.offset_end
-				and qph.sql_instance = w.sql_instance
-			
-			inner join [dbo].[sqlwatch_meta_query_plan] qp
-				on qp.query_hash = qph.query_hash
-				and qp.query_plan_hash = qph.query_plan_hash
-				and qp.sql_instance = qph.sql_instance
-			
-			left join msdb.dbo.sysjobs j
-				on j.job_id = [dbo].[ufn_sqlwatch_parse_job_id] (client_app_name )
-			
-			left join [dbo].[sqlwatch_logger_xes_wait_event] t
-				on t.event_time = w.event_time
-				and t.session_id = w.session_id
-				and t.sql_instance = w.sql_instance
-				and s.wait_type = w.wait_type
-				and w.activity_id = t.activity_id
-			where t.event_time is null;
-
 			begin transaction dataload
 
 			begin try
+
 				insert into [dbo].[sqlwatch_logger_xes_wait_event] (
-						event_time
-					, wait_type_id
-					, duration
-					, signal_duration
-					, session_id
-					, username
-					, client_hostname
-					, client_app_name
-					, sqlwatch_query_plan_id
-					, sql_instance
-					, snapshot_time
-					, snapshot_type_id
-					, activity_id
-					)
+						  event_time
+						, wait_type_id
+						, duration
+						, signal_duration
+						, session_id
+						, username
+						, client_hostname
+						, client_app_name
+						, plan_handle
+						, statement_start_offset
+						, statement_end_offset
+						, sql_instance
+						, snapshot_time
+						, snapshot_type_id
+						, activity_id
+						, event_data
+						)
 				select 
-					  event_time
-					, wait_type_id
-					, duration
-					, signal_duration
-					, session_id
-					, username
-					, client_hostname
-					, client_app_name
-					, sqlwatch_query_plan_id
-					, sql_instance
-					, snapshot_time
-					, snapshot_type_id
-					, activity_id
-				from #t
+						w.event_time
+					, s.wait_type_id
+					, w.duration
+					, w.signal_duration
+					, w.session_id
+					, w.username
+					, w.client_hostname
+					, client_app_name = [dbo].[ufn_sqlwatch_parse_job_name] ( w.client_app_name, j.name )
+					, w.plan_handle
+					, w.offset_start
+					, w.offset_end
+					, w.sql_instance
+					, snapshot_time = @snapshot_time
+					, snapshot_type_id = @snapshot_type_id
+					, w.activity_id
+					, w.event_data
+				from #w w
+			
+				inner join dbo.sqlwatch_meta_wait_stats s
+					on s.wait_type = w.wait_type
+					and s.sql_instance = w.sql_instance
+		
+				left join msdb.dbo.sysjobs j
+					on j.job_id = [dbo].[ufn_sqlwatch_parse_job_id] (client_app_name )
+			
+				left join [dbo].[sqlwatch_logger_xes_wait_event] t
+					on t.event_time = w.event_time
+					and t.session_id = w.session_id
+					and t.sql_instance = w.sql_instance
+					and s.wait_type = w.wait_type
+					and w.activity_id = t.activity_id
+
+				where t.event_time is null;
 
 				commit transaction dataload
 
@@ -178,8 +164,6 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 			begin catch
 				if @@TRANCOUNT > 0
 					rollback transaction dataload;
-
-					select * from #t
 
 					exec [dbo].[usp_sqlwatch_internal_log]
 						@proc_id = @@PROCID,

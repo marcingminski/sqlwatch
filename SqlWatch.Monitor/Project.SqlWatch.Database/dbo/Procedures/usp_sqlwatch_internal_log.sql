@@ -9,7 +9,8 @@ as
 SET XACT_ABORT ON
 SET NOCOUNT ON 
 
-begin try		
+begin try	
+
 	declare @snapshot_time datetime2(0)
 
 	if @process_message_type = 'INFO' and dbo.ufn_sqlwatch_get_config_value(7, null) <> 1
@@ -48,16 +49,16 @@ begin try
 			, case when @process_message_type <> 'INFO' then ERROR_MESSAGE() else null end
 	)
 
---	begin
---		Print char(10) + '>>>---- ' + @process_message_type + ' ------------------------------------' + char(10) +
---'Time: ' + convert(nvarchar(23),@snapshot_time,121) + char(10) + 
---'Process Name: ' + @process_name + char(10) + 
---'Stage: ' + @process_stage + char(10) +  
---'Message: ' + @process_message + char(10) + 
---'Message Type: ' + @process_message_type + char(10) + 
---case when @process_message_type <> 'INFO' then 'Error: ' + [dbo].[ufn_sqlwatch_get_error_detail_text] () else '' end + char(10) +
---'---- ' + @process_message_type + ' ------------------------------------<<<' + char(10)
---	end 
+	begin
+		Print char(10) + '>>>---- ' + @process_message_type + ' ------------------------------------' + char(10) +
+'Time: ' + convert(nvarchar(23),@snapshot_time,121) + char(10) + 
+'Process Name: ' + @process_name + char(10) + 
+'Stage: ' + @process_stage + char(10) +  
+'Message: ' + @process_message + char(10) + 
+'Message Type: ' + @process_message_type + char(10) + 
+case when @process_message_type <> 'INFO' then 'Error: ' + [dbo].[ufn_sqlwatch_get_error_detail_text] () else '' end + char(10) +
+'---- ' + @process_message_type + ' ------------------------------------<<<' + char(10)
+	end 
 
 end try
 begin catch

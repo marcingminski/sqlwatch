@@ -321,8 +321,7 @@
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_add_procedure.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_logger_procedure_stats.sql" />
     <Build Include="dbo\Tables\sqlwatch_logger_perf_procedure_stats.sql" />
-    <Build Include="dbo\Tables\sqlwatch_meta_query_text.sql" />
-    <Build Include="dbo\Tables\sqlwatch_meta_query_plan.sql" />
+    <Build Include="dbo\Tables\sqlwatch_meta_query_plan_hash.sql" />
     <Build Include="dbo\Tables\sqlwatch_logger_perf_query_stats.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_logger_query_stats.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_get_time_utc.sql" />
@@ -372,14 +371,12 @@
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_get_query_plans.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_get_database_create_date.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_parse_job_name.sql" />
-    <Build Include="dbo\Tables\sqlwatch_meta_procedure_query_plan.sql" />
-    <Build Include="dbo\Tables\sqlwatch_meta_query_plan_database.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_get_xes_exec_time.sql" />
     <Build Include="dbo\Types\utype_plan_id.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_get_xes_timestamp.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_parse_job_id.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_get_delta_value.sql" />
-    <Build Include="dbo\Tables\sqlwatch_meta_query_plan_handle.sql" />
+    <Build Include="dbo\Tables\sqlwatch_meta_query_plan.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />

@@ -11,7 +11,7 @@ ON SERVER
 --    WHERE ([package0].[greater_than_uint64]([duration],(1000)) AND [sqlserver].[not_equal_i_sql_unicode_string]([sqlserver].[sql_text],N'')))
 
 ADD EVENT sqlos.wait_info(
-    ACTION(sqlserver.tsql_frame,sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.database_name,sqlserver.plan_handle,sqlserver.session_id,sqlserver.session_nt_username,sqlserver.username)
+    ACTION(sqlserver.sql_text, sqlserver.tsql_frame,sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.database_name,sqlserver.plan_handle,sqlserver.session_id,sqlserver.session_nt_username,sqlserver.username)
     WHERE (
             --the filter criteria will be the same for all events in this session:
 
@@ -38,7 +38,7 @@ ADD EVENT sqlos.wait_info(
         ),
 
 ADD EVENT sqlos.wait_info_external(
-    ACTION(sqlserver.tsql_frame, sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.database_name,sqlserver.plan_handle,sqlserver.session_id,sqlserver.session_nt_username,sqlserver.username)
+    ACTION(sqlserver.sql_text, sqlserver.tsql_frame, sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.database_name,sqlserver.plan_handle,sqlserver.session_id,sqlserver.session_nt_username,sqlserver.username)
     WHERE (
             [package0].[greater_than_uint64]([duration],(1000)) 
         AND [package0].[greater_than_uint64]([sqlserver].[database_id],(0)) 
