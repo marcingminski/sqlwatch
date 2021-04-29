@@ -28,57 +28,79 @@ AS
 	*/
 
 	declare @get_plans bit = dbo.ufn_sqlwatch_get_config_value(22,null),
-			@date_now datetime2(0) = getutcdate();
+			@date_now datetime2(0) = getutcdate(),
+			@sqlwatch_plan_id_output dbo.utype_plan_id;
 
-	declare @sqlwatch_plan_id_output dbo.utype_plan_id;
+	with cte_plans as (
+		select 
+			  RN = ROW_NUMBER() over (partition by ph.plan_handle, qs.query_plan_hash order by (select null))
+			, ph.[plan_handle]
+			, qs.[sql_handle]
+			, query_hash = qs.query_hash
+			, query_plan_hash = qs.query_plan_hash
+			, ph.statement_start_offset
+			, ph.statement_end_offset
+			, [statement] = substring(t.text, (ph.statement_start_offset/2)+1,((case qs.statement_end_offset
+							when -1 then datalength(t.text)
+							else qs.statement_end_offset
+							end - qs.statement_start_offset)/2) + 1)
+			, qp.query_plan
+			, sql_instance = @sql_instance
+			, mp.sqlwatch_procedure_id
+			, mdb.sqlwatch_database_id
+			, [database_name] = db_name(qp.dbid)
+			, [procedure_name] = isnull(object_schema_name(qp.objectid, qp.dbid) + '.' + object_name (qp.objectid, qp.[dbid]),'Ad-Hoc Query 3FBE6AA6')
+		from @plan_handle ph
+
+		inner join sys.dm_exec_query_stats qs 
+			on ph.[plan_handle] = qs.[plan_handle]
+			and ph.[statement_start_offset] = qs.[statement_start_offset]
+			and ph.[statement_end_offset] = qs.[statement_end_offset]
+			-- The idea is to also match on the sql_handle if present but I am not sure that we need to do this.
+			and qs.[sql_handle] = case when ph.[sql_handle] is not null then ph.[sql_handle] else qs.[sql_handle] end
+
+		cross apply sys.dm_exec_text_query_plan(ph.[plan_handle], ph.[statement_start_offset], ph.[statement_end_offset]) qp
+	
+		cross apply sys.dm_exec_sql_text(qs.sql_handle) t
+
+		where qp.[encrypted] = 0
+		and t.[encrypted] = 0
+		and @get_plans = 1
+		and ph.plan_handle <> 0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+		and ph.statement_start_offset is not null
+		and ph.statement_end_offset is not null
+	)
 
 	select 
-		  RN = ROW_NUMBER() over (partition by ph.plan_handle, qs.query_plan_hash order by (select null))
-		, ph.[plan_handle]
-		, qs.[sql_handle]
-		, query_hash = qs.query_hash
-		, query_plan_hash = qs.query_plan_hash
-		, ph.statement_start_offset
-		, ph.statement_end_offset
-		, [statement] = substring(t.text, (ph.statement_start_offset/2)+1,((case qs.statement_end_offset
-						when -1 then datalength(t.text)
-						else qs.statement_end_offset
-						end - qs.statement_start_offset)/2) + 1)
-		, qp.query_plan
-		, sql_instance = @sql_instance
-		, mp.sqlwatch_procedure_id
-		, mdb.sqlwatch_database_id
+		  p.RN
+		, p.[plan_handle]
+		, p.[sql_handle]
+		, p.query_hash
+		, p.query_plan_hash 
+		, p.statement_start_offset
+		, p.statement_end_offset
+		, p.[statement] 
+		, p.query_plan
+		, p.sql_instance 
+		, p.sqlwatch_procedure_id
+		, p.sqlwatch_database_id
+		, p.[database_name] 
+		, p.[procedure_name] 
 	into #plans
-	from @plan_handle ph
-	inner join sys.dm_exec_query_stats qs 
-		on ph.[plan_handle] = qs.[plan_handle]
-		and ph.[statement_start_offset] = qs.[statement_start_offset]
-		and ph.[statement_end_offset] = qs.[statement_end_offset]
-		-- The idea is to also match on the sql_handle if present but I am not sure that we need to do this.
-		and qs.[sql_handle] = case when ph.[sql_handle] is not null then ph.[sql_handle] else qs.[sql_handle] end
-
-	cross apply sys.dm_exec_text_query_plan(ph.[plan_handle], ph.[statement_start_offset], ph.[statement_end_offset]) qp
-	
-	cross apply sys.dm_exec_sql_text(qs.sql_handle) t
+	from cte_plans p
 
 	inner join [dbo].[sqlwatch_meta_database] mdb
-		on mdb.[database_name] = db_name(qp.dbid) collate database_default
+		on mdb.[database_name] = p.[database_name] collate database_default
 		and mdb.is_current = 1
 		and mdb.sql_instance = @sql_instance
 
 	inner join [dbo].[sqlwatch_meta_procedure] mp
 		on mp.sql_instance = @sql_instance
-		and mp.[procedure_name] = isnull(object_schema_name(qp.objectid, qp.dbid) + '.' + object_name (qp.objectid, qp.[dbid]),'Ad-Hoc Query 3FBE6AA6')
-		and mp.sqlwatch_database_id = mdb.sqlwatch_database_id
+		and mp.[procedure_name] = p.[procedure_name] collate database_default
+		and mp.sqlwatch_database_id = mdb.sqlwatch_database_id;
 
-	where qp.[encrypted] = 0
-	and t.[encrypted] = 0
-	and @get_plans = 1
-	and ph.plan_handle <> 0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-	and ph.statement_start_offset is not null
-	and ph.statement_end_offset is not null
+	create unique clustered index idx_tmp_plans on #plans ([plan_handle], [sql_handle], [query_hash], [query_plan_hash], [sql_instance]);
 
-	create unique clustered index idx_tmp_plans on #plans ([plan_handle], [sql_handle], [query_hash], [query_plan_hash], [sql_instance])
 	merge [dbo].[sqlwatch_meta_query_plan] as target
 	using (
 		select distinct 
@@ -180,73 +202,3 @@ AS
 			, source.[statement_end_offset]
 			)
 		;
-
-	--output 
-	--	 inserted.[sqlwatch_query_plan_id] 
-	--	,inserted.[query_hash] 
-	--	,inserted.[query_plan_hash] 
-	--	,$action
-	--into @sqlwatch_plan_id_output
-
-	--;
-
-	/* each query plan must have a database (impossible to run a query without a database) */
-	--merge [dbo].[sqlwatch_meta_query_plan_database] as target
-	--using (
-	--	select distinct
-	--		 sql_instance = p.sql_instance
-	--		,pid.[sqlwatch_query_plan_id]
-	--		,p.sqlwatch_database_id
-	--	from @sqlwatch_plan_id_output pid
-
-	--	inner join #plans p
-	--		on p.[query_hash] = pid.[query_hash]
-	--		and p.[query_plan_hash] = pid.[query_plan_hash]
-
-	--	where [action] = 'INSERT'
-
-	--) as source
-
-	--on target.sql_instance = source.sql_instance
-	--and target.[sqlwatch_query_plan_id] = source.[sqlwatch_query_plan_id]
-	--and target.sqlwatch_database_id = source.sqlwatch_database_id
-
-	--when not matched then
-	--	insert (sql_instance, sqlwatch_database_id, [sqlwatch_query_plan_id], [date_updated])
-	--	values (source.sql_instance, source.sqlwatch_database_id, source.[sqlwatch_query_plan_id], @date_now)
-	--;
-
-	/* in addition, some plans may have a procedure (some may come from ad-hoc queries and will not have a procedure */
-	--merge [dbo].[sqlwatch_meta_query_plan_procedure] as target
-	--using (
-	--	select distinct
-	--		 sql_instance = p.sql_instance
-	--		,pid.[sqlwatch_query_plan_id] 
-	--		,mp.sqlwatch_procedure_id
-	--		,p.sqlwatch_database_id
-	--	from @sqlwatch_plan_id_output pid
-
-	--	inner join #plans p
-	--		on p.[query_hash] = pid.[query_hash]
-	--		and p.[query_plan_hash] = pid.[query_plan_hash]
-
-	--	inner join [dbo].[sqlwatch_meta_procedure] mp
-	--		on mp.sql_instance = p.sql_instance
-	--		and mp.[procedure_name] = p.[object_name]
-	--		and mp.sqlwatch_database_id = p.sqlwatch_database_id
-
-	--	where [action] = 'INSERT'
-
-	--) as source
-
-	--on target.sql_instance = source.sql_instance
-	--and target.[sqlwatch_query_plan_id] = source.[sqlwatch_query_plan_id]
-	--and target.sqlwatch_procedure_id = source.sqlwatch_procedure_id
-	--and target.sqlwatch_database_id = source.sqlwatch_database_id
-
-	--when not matched then
-	--	insert (sql_instance, [sqlwatch_procedure_id], [sqlwatch_database_id], [sqlwatch_query_plan_id], [date_updated])
-	--	values (source.sql_instance, source.[sqlwatch_procedure_id], source.[sqlwatch_database_id], source.[sqlwatch_query_plan_id], @date_now)
-	--;
-
-	--select * from @sqlwatch_plan_id_output

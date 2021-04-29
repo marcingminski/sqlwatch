@@ -5,7 +5,7 @@ begin
 	set nocount on;
 	set xact_abort on;
 
-	declare @sql_instance varchar(32) = [dbo].[ufn_sqlwatch_get_servername]()
+	declare @sql_instance varchar(32) = [dbo].[ufn_sqlwatch_get_servername]();
 
 	merge [dbo].[sqlwatch_meta_procedure] as target
 	using (
@@ -34,7 +34,7 @@ begin
 			,  sqlwatch_database_id
 			,  [procedure_type] = 'A' --also a made up type to make sure we keep the separate
 			,  sql_instance = @sql_instance
-		from dbo.sqlwatch_meta_database
+		from dbo.sqlwatch_meta_database d
 
 	) as source
 	on target.sql_instance = source.sql_instance

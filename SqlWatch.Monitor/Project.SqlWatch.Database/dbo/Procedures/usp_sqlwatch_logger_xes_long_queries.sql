@@ -38,7 +38,7 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 
 				-- get only new events. This results in much smaller xml to parse in the steps below and dramatically speeds up the query
 				where [dbo].[ufn_sqlwatch_get_xes_timestamp]( event_data ) >=
-				isnull((select max(event_time) from dbo.[sqlwatch_logger_xes_long_queries]),'1970-01-01')
+				isnull((select max(event_time) from dbo.[sqlwatch_logger_xes_long_queries]),'1970-01-01');
 
 					SELECT 
 						 attach_activity_id=left(xed.event_data.value('(action[@name="attach_activity_id"]/value )[1]', 'varchar(255)'),36) --discard sequence
@@ -68,7 +68,7 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 						,event_data = case when @store_event_data = 1 then t.event_data else null end
 					into #t_queries
 					from #event_data t
-						cross apply t.event_data.nodes('event') as xed (event_data)
+						cross apply t.event_data.nodes('event') as xed (event_data);
 
 					create nonclustered index idx_tmp_t_queries_1 on #t_queries (sql_instance, plan_handle, [offset_start], [offset_end]);
 					create nonclustered index idx_tmp_t_queries_2 on #t_queries (event_name, event_time, session_id, sql_instance);
@@ -76,13 +76,13 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 					delete from #t_queries
 					where plan_handle = 0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 					or offset_start is null
-					or offset_end is null
+					or offset_end is null;
 					
 					--normalise query text and plans
 					declare @plan_handle_table utype_plan_handle
 					insert into @plan_handle_table (plan_handle, statement_start_offset, statement_end_offset )
 					select distinct plan_handle,  offset_start, offset_end
-					from #t_queries
+					from #t_queries;
 
 
 					begin transaction;
@@ -99,7 +99,7 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 					begin try
 						exec [dbo].[usp_sqlwatch_internal_insert_header] 
 							@snapshot_time_new = @snapshot_time OUTPUT,
-							@snapshot_type_id = @snapshot_type_id
+							@snapshot_type_id = @snapshot_type_id;
 
 						set xact_abort on;
 						begin transaction dataload;
@@ -158,14 +158,14 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 							and case when ex.username is not null then tx.username else '%' end like isnull(ex.username,'%')
 
 						where ex.[exclusion_id] is null
-						and x.event_time is null
+						and x.event_time is null;
 
 						commit transaction dataload;
 
 						--update execution count
 						exec [dbo].[usp_sqlwatch_internal_update_xes_query_count] 
 							  @session_name = @session_name
-							, @execution_count = @execution_count
+							, @execution_count = @execution_count;
 
 
 					end try
@@ -173,18 +173,24 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 
 						if @@TRANCOUNT > 0
 							begin
-								rollback tran dataload
+								rollback tran dataload;
 							end
 
 							exec [dbo].[usp_sqlwatch_internal_log]
 								@proc_id = @@PROCID,
 								@process_stage = 'D3D0A427-8CD8-4CBC-BB35-FE872A728704',
 								@process_message = null,
-								@process_message_type = 'ERROR'
+								@process_message_type = 'ERROR';
 
 					end catch			
 			end
 
 	end
 else
-	print 'Product version must be 11 or higher'
+	begin
+		exec [dbo].[usp_sqlwatch_internal_log]
+			@proc_id = @@PROCID,
+			@process_stage = '56FE7588-B8F4-49C5-A40D-167AC6067919',
+			@process_message = 'Product version must be 11 or higher to use Extended Events',
+			@process_message_type = 'WARNING';
+	end

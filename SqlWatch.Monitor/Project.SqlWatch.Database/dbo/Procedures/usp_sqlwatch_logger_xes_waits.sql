@@ -34,7 +34,7 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 
 			-- get only new events. This results in much smaller xml to parse in the steps below and dramatically speeds up the query
 			where [dbo].[ufn_sqlwatch_get_xes_timestamp]( event_data ) >=
-			isnull((select max(event_time) from [dbo].[sqlwatch_logger_xes_wait_event]),'1970-01-01')
+			isnull((select max(event_time) from [dbo].[sqlwatch_logger_xes_wait_event]),'1970-01-01');
 
 			select
 				[event_time] = xed.event_data.value('(@timestamp)[1]', 'datetime'),
@@ -64,14 +64,14 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 			where xed.event_data.value('(data[@name="wait_type"]/text)[1]', 'varchar(255)') not in (
 				select wait_type from sqlwatch_config_exclude_wait_stats
 			)
-			option (maxdop 1, keep plan)
+			option (maxdop 1, keep plan);
 
-			create nonclustered index idx_tmp_w on #w ( wait_type, sql_instance, event_time, session_id, activity_id )
+			create nonclustered index idx_tmp_w on #w ( wait_type, sql_instance, event_time, session_id, activity_id );
 
 			delete from #w
 			where plan_handle = 0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 			or offset_start is null
-			or offset_end is null
+			or offset_end is null;
 
 			--normalise query text and plans
 			declare @plan_handle_table dbo.utype_plan_handle
@@ -80,7 +80,7 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 			from #w
 			;
 
-			begin transaction plans
+			begin transaction plans;
 
 			declare @sqlwatch_plan_id dbo.utype_plan_id
 			insert into @sqlwatch_plan_id 
@@ -94,9 +94,9 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 				@snapshot_type_id = @snapshot_type_id
 			;
 
-			commit transaction plans --persist plans
+			commit transaction plans; --persist plans
 
-			begin transaction dataload
+			begin transaction dataload;
 
 			begin try
 
@@ -153,12 +153,12 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 
 				where t.event_time is null;
 
-				commit transaction dataload
+				commit transaction dataload;
 
 				--update execution count
 				exec [dbo].[usp_sqlwatch_internal_update_xes_query_count] 
 						@session_name = @session_name
-					, @execution_count = @execution_count
+					, @execution_count = @execution_count;
 
 			end try
 			begin catch
@@ -169,10 +169,16 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 						@proc_id = @@PROCID,
 						@process_stage = 'D3D0A427-8CD8-4CBC-BB35-FE872A728704',
 						@process_message = null,
-						@process_message_type = 'ERROR'
+						@process_message_type = 'ERROR';
 			end catch
 		end
 	end
 else
-	print 'Product version must be 11 or higher'
+	begin
+		exec [dbo].[usp_sqlwatch_internal_log]
+			@proc_id = @@PROCID,
+			@process_stage = '1535C6B0-F2BE-4745-8097-3D5F99A28701',
+			@process_message = 'Product version must be 11 or higher to use Extended Events',
+			@process_message_type = 'WARNING';
+	end
 
