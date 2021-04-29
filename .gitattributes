@@ -1,0 +1,4 @@
+*.sql diff
+*.csproj -text merge=union
+*.sqlproj -text merge=union 
+*.sln -text merge=union
