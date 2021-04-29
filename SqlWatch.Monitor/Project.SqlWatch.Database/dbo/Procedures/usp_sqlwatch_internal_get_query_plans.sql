@@ -46,8 +46,6 @@ AS
 							end - qs.statement_start_offset)/2) + 1)
 			, qp.query_plan
 			, sql_instance = @sql_instance
-			, mp.sqlwatch_procedure_id
-			, mdb.sqlwatch_database_id
 			, [database_name] = db_name(qp.dbid)
 			, [procedure_name] = isnull(object_schema_name(qp.objectid, qp.dbid) + '.' + object_name (qp.objectid, qp.[dbid]),'Ad-Hoc Query 3FBE6AA6')
 		from @plan_handle ph
@@ -82,10 +80,8 @@ AS
 		, p.[statement] 
 		, p.query_plan
 		, p.sql_instance 
-		, p.sqlwatch_procedure_id
-		, p.sqlwatch_database_id
-		, p.[database_name] 
-		, p.[procedure_name] 
+		, mp.sqlwatch_procedure_id
+		, mdb.sqlwatch_database_id
 	into #plans
 	from cte_plans p
 

@@ -55,10 +55,10 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 					offset_end = frame.event_data.value('(@offsetEnd)[1]', 'varchar(255)'),
 					[sql_handle] = convert(varbinary(64),frame.event_data.value('(@handle)[1]', 'varchar(255)'),1),
 					sql_instance = @sql_instance,
-					event_data =  case when @store_event_data = 1 then event_data_xml else null end
+					event_data =  case when @store_event_data = 1 then t.event_data else null end
 				into #w
 				from @event_data t
-				cross apply t.event_data_xml.nodes('event') as xed (event_data)
+				cross apply t.event_data.nodes('event') as xed (event_data)
 				cross apply xed.event_data.nodes('//frame') as frame (event_data)
 			
 				-- exclude any waits we dont want to collect:
