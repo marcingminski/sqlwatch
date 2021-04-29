@@ -15,7 +15,6 @@ AS
 		from sys.fn_xe_file_target_read_file (@event_file, null, null, null) t
 	)
 	select event_data, object_name, event_time
-	into #event_data
 	from cte_event_data
 	-- get only new events. This results in much smaller xml to parse in the steps below and dramatically speeds up the query
 	where event_time >= @last_event_time;
