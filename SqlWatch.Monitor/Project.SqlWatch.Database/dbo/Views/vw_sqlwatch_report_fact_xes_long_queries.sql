@@ -36,4 +36,4 @@ SELECT
 
     left join dbo.[sqlwatch_meta_query_plan_hash] qp
         on qp.sql_instance = qph.sql_instance
-        and qp.query_plan_hash = qph.query_plan_hash
+        and qp.query_plan_hash = qph.query_plan_hash;

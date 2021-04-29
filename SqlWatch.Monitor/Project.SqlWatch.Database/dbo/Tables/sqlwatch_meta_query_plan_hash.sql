@@ -19,5 +19,4 @@
 	--	foreign key (sql_instance, [plan_handle], [query_plan_hash], [statement_start_offset], [statement_end_offset])
 	--	references [dbo].[sqlwatch_meta_query_plan_handle] (sql_instance, [plan_handle], [query_plan_hash], [statement_start_offset], [statement_end_offset]) 
 	--	on delete cascade
-)
-go
+);
