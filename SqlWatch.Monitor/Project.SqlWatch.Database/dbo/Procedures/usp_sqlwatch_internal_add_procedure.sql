@@ -5,6 +5,8 @@ begin
 	set nocount on;
 	set xact_abort on;
 
+	declare @sql_instance varchar(32) = [dbo].[ufn_sqlwatch_get_servername]();
+
 	merge [dbo].[sqlwatch_meta_procedure] as target
 	using (
 
@@ -14,7 +16,7 @@ begin
 			distinct [procedure_name]=object_schema_name(ps.object_id, ps.database_id) + '.' + object_name(ps.object_id, ps.database_id),
 			sd.sqlwatch_database_id,
 			[procedure_type] = 'P',
-			sql_instance = [dbo].[ufn_sqlwatch_get_servername]()
+			sql_instance = @sql_instance
 		from sys.dm_exec_procedure_stats ps
 		inner join dbo.vw_sqlwatch_sys_databases d
 			on d.database_id = ps.database_id
@@ -22,6 +24,17 @@ begin
 			on sd.database_name = d.name collate database_default
 			and sd.database_create_date = d.create_date
 		where ps.type = 'P'
+
+		union all
+
+		--every statement executed in sql server goes through the optimiser and gets an execution plan.
+		--from that point of view, stored procedures are just sql queries saved in sql server.
+		--to make normalisation simpler, we are going to create a dummy procedure that will "hold" ad-hoc queries.
+		select [procedure_name] = 'Ad-Hoc Query 3FBE6AA6'
+			,  sqlwatch_database_id
+			,  [procedure_type] = 'A' --also a made up type to make sure we keep the separate
+			,  sql_instance = @sql_instance
+		from dbo.sqlwatch_meta_database d
 
 	) as source
 	on target.sql_instance = source.sql_instance

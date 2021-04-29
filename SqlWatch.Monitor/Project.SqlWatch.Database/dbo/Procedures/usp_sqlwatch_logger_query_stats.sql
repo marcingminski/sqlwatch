@@ -17,7 +17,9 @@ begin
 
 	select 
 		  [sql_instance]
-		, [sqlwatch_query_plan_id]
+		, plan_handle
+		, statement_start_offset
+		, statement_end_offset
 		, total_worker_time
 		, total_physical_reads
 		, total_logical_writes
@@ -32,7 +34,7 @@ begin
 	and snapshot_type_id = @snapshot_type_id
 	and snapshot_time = @date_snapshot_previous;
 
-	create unique clustered index icx_tmp_query_stats_prev on #t ([sql_instance],[sqlwatch_query_plan_id],[creation_time]);
+	create unique clustered index icx_tmp_query_stats_prev on #t ([sql_instance],plan_handle,statement_start_offset, statement_end_offset, [creation_time]);
 
 	exec [dbo].[usp_sqlwatch_internal_insert_header] 
 		@snapshot_time_new = @snapshot_time OUTPUT,
@@ -71,7 +73,9 @@ begin
 		[snapshot_time] ,
 		[snapshot_type_id]
 
-		,sqlwatch_query_plan_id
+		,plan_handle
+		,statement_start_offset
+		,statement_end_offset
 		,creation_time	
 		,last_execution_time	
 
@@ -141,7 +145,9 @@ begin
 		[snapshot_time] = @snapshot_time,
 		[snapshot_type_id] = @snapshot_type_id
 
-		,qp.sqlwatch_query_plan_id
+		,qp.plan_handle
+		,qp.[statement_start_offset]
+		,qp.[statement_end_offset]
 		,qs.creation_time	
 		,qs.last_execution_time	
 
@@ -208,7 +214,7 @@ begin
 
 	from #s qs
 
-	inner join dbo.sqlwatch_meta_query_plan qp
+	inner join dbo.[sqlwatch_meta_query_plan_handle_hash] qp
 		on qp.sql_instance = @sql_instance
 		and qp.plan_handle = qs.plan_handle
 		and qp.query_hash = qs.query_hash

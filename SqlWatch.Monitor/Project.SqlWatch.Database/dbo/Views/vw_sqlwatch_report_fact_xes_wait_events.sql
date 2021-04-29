@@ -15,8 +15,10 @@ select e.[event_time]
       ,e.[sql_instance]
       ,e.[snapshot_time]
       ,e.[snapshot_type_id]
-      ,e.sqlwatch_query_plan_id
-      ,p.query_plan
+      ,e.plan_handle
+      ,e.statement_start_offset
+      ,e.statement_end_offset
+      ,p.[query_plan_for_query_plan_hash]
   from [dbo].[sqlwatch_logger_xes_wait_event] e
 
   inner join dbo.vw_sqlwatch_meta_wait_stats_category ws
@@ -27,6 +29,12 @@ select e.[event_time]
 	--on db.sqlwatch_database_id = e.[sqlwatch_database_id]
 	--and db.sql_instance = e.sql_instance
 
-  left join dbo.[sqlwatch_meta_query_plan] p
-    on p.sqlwatch_query_plan_id = e.sqlwatch_query_plan_id
-    and p.sql_instance = e.sql_instance
+    left join dbo.[sqlwatch_meta_query_plan] qph
+        on qph.sql_instance = e.sql_instance
+        and qph.plan_handle = e.plan_handle
+        and qph.statement_start_offset = e.statement_start_offset
+        and qph.statement_end_offset = e.statement_end_offset
+
+    left join dbo.[sqlwatch_meta_query_plan_hash] p
+        on p.sql_instance = qph.sql_instance
+        and p.query_plan_hash = qph.query_plan_hash;

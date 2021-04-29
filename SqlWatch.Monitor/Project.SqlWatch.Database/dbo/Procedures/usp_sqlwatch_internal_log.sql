@@ -9,7 +9,8 @@ as
 SET XACT_ABORT ON
 SET NOCOUNT ON 
 
-begin try		
+begin try	
+
 	declare @snapshot_time datetime2(0)
 
 	if @process_message_type = 'INFO' and dbo.ufn_sqlwatch_get_config_value(7, null) <> 1

@@ -3,7 +3,11 @@
 	[sql_instance] varchar(32) not null,
 	[snapshot_time] datetime2(0) not null,
 	[snapshot_type_id] tinyint NOT NULL, 
-	sqlwatch_query_plan_id int not null,
+	
+	plan_handle varbinary(64) not null,
+	statement_start_offset int not null,
+	statement_end_offset int not null,
+
 	[creation_time] datetime not NULL,
 	[last_execution_time] datetime not NULL,
 	[execution_count] real NULL,
@@ -72,7 +76,9 @@
 
 	constraint pk_sqlwatch_logger_perf_query_stats primary key clustered (
 			  [sql_instance]
-			, [sqlwatch_query_plan_id]
+			, plan_handle
+			, statement_start_offset
+			, statement_end_offset
 			, [snapshot_time]
 			, [snapshot_type_id]
 			, [creation_time]
