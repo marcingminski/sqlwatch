@@ -20,6 +20,9 @@ $PSScriptRoot = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
 # Run Build and force Rebuild so we bump the build number for a clean state:
 Write-Output "Run Database Build and force Rebuild so we bump the build number for a clean state..."
 MSBuild.exe -v:m -nologo /t:Rebuild "$PSScriptRoot\SqlWatch.Monitor\Project.SqlWatch.Database\SQLWATCH.sqlproj"
+if ($LASTEXITCODE -ne 0) {
+    exit $LASTEXITCODE
+}
 
 # Read SQLWATCH build version:
 
@@ -43,6 +46,9 @@ New-Item -Path $ReleaseFolder -ItemType Directory
 
 Write-Output "We are about to build the entire solution including C# apps. Before we do that, we have to restore NuGet packages..."
 nuget restore "$PSScriptRoot\SqlWatch.Monitor\SqlWatch.Monitor.sln"
+if ($LASTEXITCODE -ne 0) {
+    exit $LASTEXITCODE
+}
 
 Write-Output @"
 Run Build again without rebuild so we dont bump the build number but include in the dacpac.
@@ -51,10 +57,18 @@ That file is already included in the build so its a chicken and egg situation. I
 Nothing has changed since the last build, the build number will reman the same but it will now be included in the build itself.
 "@
 MSBuild.exe /m -v:m -nologo "$PSScriptRoot\SqlWatch.Monitor\SqlWatch.Monitor.sln" /p:Configuration=Release /p:Platform="Any CPU" /p:OutDir="$($ReleaseFolder)"
-
+if ($LASTEXITCODE -ne 0) {
+    exit $LASTEXITCODE
+}
 
 # Copy Dashboard files:
 Copy-Item -Recurse -Path "$PSScriptRoot\SqlWatch.Dashboard\" -Destination "$ReleaseFolder" -Container -Exclude *.bak
+if ($LASTEXITCODE -ne 0) {
+    exit $LASTEXITCODE
+}
 
 # Create ZIP:
 Compress-Archive -Path $ReleaseFolder -DestinationPath "$TmpFolder\$ReleaseFolderName.zip"
+if ($LASTEXITCODE -ne 0) {
+    exit $LASTEXITCODE
+}
