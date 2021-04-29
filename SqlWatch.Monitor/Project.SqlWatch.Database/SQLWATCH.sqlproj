@@ -377,6 +377,8 @@
     <Build Include="dbo\Functions\ufn_sqlwatch_parse_job_id.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_get_delta_value.sql" />
     <Build Include="dbo\Tables\sqlwatch_meta_query_plan.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_get_xes_data.sql" />
+    <Build Include="dbo\Types\utype_event_data.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
