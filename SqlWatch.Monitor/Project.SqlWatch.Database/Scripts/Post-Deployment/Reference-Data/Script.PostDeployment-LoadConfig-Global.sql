@@ -122,9 +122,13 @@ values
 	/* use CLR to collect performance counters. Experimental */
 	,(21	,'Use CLR to collect performance counters. This is experimental.' ,0)
 
-	/* Whether to collect execution plans into [dbo].[sqlwatch_meta_plan_handle].
-		If enabled execution plans will be pulled as xml into the table */
-	,(22	,'Collect Execution Plans and SQL text' ,1)
+	/* Whether to collect all execution plans  */
+	,(22	,'Collect Execution Plans' , 1)
+
+	/* Whether to store raw event data in xml from xes. Handy for debugging on in cases where we werent able to capture query plan,
+		the event data in most cases will have sql text*/
+	,(23	,'Store RAW XML Event Data' , 1)
+
 ;
 
 merge dbo.sqlwatch_config as target

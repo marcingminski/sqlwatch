@@ -64,12 +64,27 @@ commit tran
 begin tran
 	merge sqlwatch_config_exclude_xes_long_query as target
 	using (
+		--exclude internal process DatabaseMail 
 		select	
 			[statement] = null,
 			[sql_text] = null,
 			[username] = null,
 			[client_hostname] = null,
 			[client_app_name] = 'DatabaseMail%'
+
+		union all
+
+		--exclude SQL Agent jobs - if there are any long running jobs we can check the agent history
+		--if any of the jobs causes excessive waits or blocking they will be captured by other events
+		--jobs usually run for long time - backups, overnight batches, maintenance etc.
+		select	
+			[statement] = null,
+			[sql_text] = null,
+			[username] = null,
+			[client_hostname] = null,
+			[client_app_name] = 'SQLAgent - TSQL JobStep%'
+
+		
 		) as source
 on isnull(source.[statement],'') = isnull(target.[statement],'')
 and isnull(source.[sql_text],'') = isnull(target.[sql_text],'')

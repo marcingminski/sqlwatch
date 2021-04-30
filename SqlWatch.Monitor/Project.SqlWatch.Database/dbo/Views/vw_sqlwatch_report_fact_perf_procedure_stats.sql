@@ -8,8 +8,6 @@ select
 	, [ps].[sqlwatch_procedure_id]
 	, [ps].[snapshot_time]
 	, [ps].[snapshot_type_id]
-	, [ps].[sql_handle]
-	, [ps].[plan_handle]
 	, [ps].[cached_time]
 	, [ps].[last_execution_time]
 	, [ps].[execution_count]
