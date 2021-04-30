@@ -192,7 +192,7 @@ and database_name = ''{DATABASE}'''
 	
 		--[check_description]
 		,'The number of times that job {JOB} has failed since the last check.
-Becuase we are checking for failure every few minutes, a frequent jobs may fail multiple times.
+Because we are checking for failure every few minutes, a frequent jobs may fail multiple times.
 It would not be enough to just check the last outcome, we have to check the history.'
 
 		--[check_query]
@@ -250,7 +250,7 @@ and free_space_percentage is not null
 		'Disk {DISK} days left until full'
 	
 		--[check_description]
-		,'TThe "days until full" value is lower than expected. One or more disks will be full in few days.'
+		,'The "days until full" value is lower than expected. One or more disks will be full in few days.'
 
 		--[check_query]
 		,'select @output=days_until_full
@@ -276,15 +276,60 @@ and volume_name = ''{DISK}''
 	
 		--[check_description]
 		,'The latest log backup is older than expected. 
-Databases that are in either FULL or BULK_LOGGED recovery must have frequent Transaction Log backups. The recovery point will be to the last Transaction Log backup and therefore these must happen often to minimise data loss.
-https://docs.microsoft.com/en-us/sql/relational-databases/backup-restore/recovery-models-sql-server'
+Databases that are in either FULL or BULK_LOGGED recovery must have frequent Transaction Log backups.
+The recovery point will be to the last Transaction Log backup and therefore these must happen often to minimise data loss.
+https://docs.microsoft.com/en-us/sql/relational-databases/backup-restore/recovery-models-sql-server
+
+The Script checks if the Database is member of an AVG. Based on the AVG setting the Alarm will Return Last Backup Age only on an expected Node.
+Otherwise it will return 0 as Backup age.
+HINT for Columns
+[msdb].[sys].[availability_replicas].secondary_role_allow_connections
+0 NO
+1 READ_ONLY
+2 ALL
+
+[msdb].[sys].[dm_hadr_availability_replica_states].role
+1 Primary Node
+2 Secondary Node
+
+[msdb].[sys].[availability_groups].automated_backup_preference
+0 Primary
+1 Secondary_Only
+2 Secondary (Prefer)
+3 none (can be done on All)'
 
 		--[check_query]
-		,'select @output=isnull(min(case when db.recovery_model_desc = ''SIMPLE'' then 0 else datediff(minute,bs.backup_finish_date,getdate()) end),9999)
-from sys.databases db
-left join msdb.dbo.backupset bs
-		on db.name = bs.database_name
-		and bs.type = ''L''
+		,'select @output = isnull(
+    min(   case
+    when db.recovery_model_desc = ''SIMPLE'' then 0
+        -- when DB is in AVG, Current Node is Secondary and Backup Preference is Primary
+        when HADR_REP.role = 2
+        and AVG_DESC.automated_backup_preference = 0 then 0
+    -- when DB is in AVG, Current Node is Secondary and Backup Preference is Prefer Secondary or none (use All) and Secondaries not readable
+    when HADR_REP.role = 2
+        and AVG_DESC.automated_backup_preference >= 2
+        and AVG_REP.secondary_role_allow_connections = 0 then 0
+    -- when DB is in AVG, Current Node is Primary and automated_backup_preference on secondary_only and Secondary is Readable -> suggest Backup is done on Secondary,
+    when HADR_REP.role = 1
+        and AVG_DESC.automated_backup_preference <> 0
+        and AVG_REP.secondary_role_allow_connections <> 0 then 0
+    else
+        datediff(minute, bs.backup_finish_date, getdate())
+    end
+    )
+    , 9999
+)
+from [msdb].[sys].[databases] as db
+    left join [msdb].[sys].[dm_hadr_availability_replica_states] as HADR_REP
+        on db.[replica_id] = HADR_REP.[replica_id]
+    left join [msdb].[sys].[availability_replicas] as AVG_REP
+        on HADR_REP.group_id = AVG_REP.group_id
+           and HADR_REP.[replica_id] = AVG_REP.[replica_id]
+    left join [msdb].[sys].[availability_groups] as AVG_DESC
+        on HADR_REP.[group_id] = AVG_DESC.[group_id]
+    left join msdb.dbo.backupset as bs
+        on db.name = bs.database_name
+           and bs.type = ''L''
 where db.name = ''{DATABASE}''
 '
 
@@ -304,15 +349,58 @@ where db.name = ''{DATABASE}''
 		'Database {Database} Data Backup Age'
 	
 		--[check_description]
-		,'The Database has no recent backup. The last backup was more than 1 day ago.'
+		,'The Database has no recent backup. The last backup is older than expected.
+The Script checks if the Database is member of an AVG. Based on the AVG setting the Alarm will Return Last Backup Age only on an expected Node.
+Otherwise it will return 0 as Backup age.
+HINT for Columns
+[msdb].[sys].[availability_replicas].secondary_role_allow_connections
+0 NO
+1 READ_ONLY
+2 ALL
+
+[msdb].[sys].[dm_hadr_availability_replica_states].role
+1 Primary Node
+2 Secondary Node
+
+[msdb].[sys].[availability_groups].automated_backup_preference
+0 Primary
+1 Secondary_Only
+2 Secondary (Prefer)
+3 none (can be done on All)'
 
 		--[check_query]
-		,'select @output=isnull(min(case when db.name = ''tempdb'' then 0 else datediff(day,bs.backup_finish_date,getdate()) end),9999)
-		from sys.databases db
-		left join msdb.dbo.backupset bs
-				on db.name = bs.database_name
-				and bs.type <> ''L''
-		where db.name = ''{DATABASE}''
+		,'select @output = isnull(
+    min(   case
+    when db.name = ''tempdb'' then 0
+    -- when DB is in AVG, Current Node is Secondary and Backup Preference is Primary
+    when HADR_REP.role = 2
+        and AVG_DESC.automated_backup_preference = 0 then 0
+    -- when DB is in AVG, Current Node is Secondary and Backup Preference is Prefer Secondary or none (use All) and Secondaries not readable
+    when HADR_REP.role = 2
+        and AVG_DESC.automated_backup_preference >= 2
+        and AVG_REP.secondary_role_allow_connections = 0 then 0
+    -- when DB is in AVG, Current Node is Primary and automated_backup_preference on secondary_only and Secondary is Readable -> suggest Backup is done on Secondary,
+    when HADR_REP.role = 1
+        and AVG_DESC.automated_backup_preference <> 0
+        and AVG_REP.secondary_role_allow_connections <> 0 then 0
+    else
+        datediff(day, bs.backup_finish_date, getdate())
+    end
+    )
+    , 9999
+)
+from [msdb].[sys].[databases] as db
+    left join [msdb].[sys].[dm_hadr_availability_replica_states] as HADR_REP
+        on db.[replica_id] = HADR_REP.[replica_id]
+    left join [msdb].[sys].[availability_replicas] as AVG_REP
+        on HADR_REP.group_id = AVG_REP.group_id
+           and HADR_REP.[replica_id] = AVG_REP.[replica_id]
+    left join [msdb].[sys].[availability_groups] as AVG_DESC
+        on HADR_REP.[group_id] = AVG_DESC.[group_id]
+    left join msdb.dbo.backupset as bs
+        on db.name = bs.database_name
+           and bs.type <> ''L''
+where db.name = ''{DATABASE}''
 '
 
 		, 720 --[check_frequency_minutes]
