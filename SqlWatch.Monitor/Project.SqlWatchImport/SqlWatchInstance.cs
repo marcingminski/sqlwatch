@@ -285,9 +285,9 @@ namespace SqlWatchImport
 			Logger.LogMessage($"Importing: \"{ SqlInstance }\"");
 
 			if (await IsOnline() == false)
-            {
+			{
 				return false;
-            }
+			}
 
 			await Task.Run(() =>
 			{
@@ -386,7 +386,7 @@ namespace SqlWatchImport
 						}
 					}
 					else if (HasLastUpdated == true && lastUpdatedInRepo == "")
-                    {
+					{
 						// The nolock here is safe as nothing is modifying or writing data for specific instance but it does not block other threads modifying their own instances
 						sql = $"select convert(varchar(30),isnull(max(date_updated),'1970-01-01'),121) " +
 							$"from { tableName } with (nolock) " +
@@ -403,30 +403,17 @@ namespace SqlWatchImport
 					// For the header table, we have to pull new headers for each snapshot
 					// We are going to build a where clause dynamically
 					if (tableName == "dbo.sqlwatch_logger_snapshot_header")
-                    {
-						// The nolock here is safe as nothing is modifying or writing data for specific instance but it does not block other threads modifying their own instances
-						sql = $@"select 'case ' + char(10) + (
-												select 'when [snapshot_type_id] = ' + convert(varchar(10),[snapshot_type_id]) + ' then ''' + convert(varchar(23),max([snapshot_time])) + '''' + char(10)
-												from [dbo].[sqlwatch_logger_snapshot_header] with (nolock)
-												where sql_instance = '{ this.SqlInstance }'
-												group by [snapshot_type_id],[sql_instance]
-												for xml path('')
-											) + char(10) + ' else '''' end '";
-
-						string snapshotTimes = "";
-
+					{
 						// If we are doing a full load, we are going to skip the below and default to 1970-01-01 further below:
-						if (Config.fullLoad == false)
+						var snapshotTimes = new DateTime(1970, 1, 1);
+						if (!Config.fullLoad)
 						{
-							using (SqlCommand cmdGetLastHeaderTimes = new SqlCommand(sql, connectionRepository))
-							{
-								snapshotTimes = (await cmdGetLastHeaderTimes.ExecuteScalarAsync()).ToString();
-							}
+							snapshotTimes = await SnapshotTimeForInstance(connectionRepository);
 						}
 
 						sql = $@"select * 
 								from [dbo].[sqlwatch_logger_snapshot_header] with (readpast) 
-								where [snapshot_time] > { (snapshotTimes == "" ? "'1970-01-01'" : snapshotTimes) } ";
+								where [snapshot_time] > { snapshotTimes } ";
 					}
 					// For logger tables excluding the snapshot header, check the last snapshot_time we have in the central respository
 					// and only import new records from remote
@@ -437,7 +424,7 @@ namespace SqlWatchImport
 						string snapshotTime = Config.fullLoad == true ? "1970-01-01" : "";
 
 						if (snapshotTime == "")
-                        {
+						{
 							// The nolock here is safe as nothing is modifying or writing data for specific instance but it does not block other threads modifying their own instances
 							sql = $"select [snapshot_time]=isnull(convert(varchar(23),max([snapshot_time]),121),'1970-01-01') " +
 								$"from { tableName } with (nolock)" +
@@ -466,9 +453,9 @@ namespace SqlWatchImport
 						{
 							sql += $" where date_last_seen > '{ lastSeenInRepo }'";
 						}
-						else if  (lastUpdatedInRepo != "" && HasLastUpdated == true)
-                        {
-							sql+= $" where date_updated > '{ lastUpdatedInRepo }'";
+						else if (lastUpdatedInRepo != "" && HasLastUpdated == true)
+						{
+							sql += $" where date_updated > '{ lastUpdatedInRepo }'";
 						}
 					}
 
@@ -489,7 +476,7 @@ namespace SqlWatchImport
 							{
 
 								if (reader.HasRows == false)
-                                {
+								{
 									Logger.LogVerbose($"Nothing to import from \"[{ SqlInstance }].{ tableName }\"");
 
 									if (tableName == "dbo.sqlwatch_logger_snapshot_header")
@@ -580,7 +567,7 @@ namespace SqlWatchImport
 						sql += $";merge { tableName } as target ";
 
 						if (tableName.Contains("sqlwatch_logger") == true && tableName != "dbo.sqlwatch_logger_snapshot_header")
-                        {
+						{
 							sql += $@"
 								using (
 								select s.* from [#{ tableName }] s
@@ -590,9 +577,9 @@ namespace SqlWatchImport
 									and s.[sql_instance] = h.[sql_instance]) as source";
 						}
 						else
-                        {
+						{
 							sql += $"using [#{ tableName }] as source";
-                        }
+						}
 
 						sql += $@"
 							on ({ Joins })
@@ -637,7 +624,7 @@ namespace SqlWatchImport
 							{
 								string message = $"Failed to merge table \"[{ SqlInstance }].{ tableName }\"";
 								if (e.Errors[0].Message.Contains("Violation of PRIMARY KEY constraint") == true)
-                                {
+								{
 									message += ". Perhaps you should try running a full load to try to resolve the issue.";
 								}
 
@@ -646,7 +633,7 @@ namespace SqlWatchImport
 								//dump # table to physical table to help debugging
 
 								if (Config.dumpOnError == true)
-                                {
+								{
 									sql = $"select * into [_DUMP_{ string.Format("{0:yyyyMMddHHmmssfff}", DateTime.Now) }_{ SqlInstance }.{ tableName }] from [#{ tableName }]";
 									using (SqlCommand cmdDumpData = new SqlCommand(sql, connectionRepository))
 									{
@@ -673,8 +660,27 @@ namespace SqlWatchImport
 			}
 		}
 
+		private async Task<DateTime> SnapshotTimeForInstance(SqlConnection connectionRepository)
+		{
+			// The nolock here is safe as nothing is modifying or writing data for specific instance but it does not block other threads modifying their own instances
+			var sql = @"select 'case ' + char(10) + (
+												select 'when [snapshot_type_id] = ' + convert(varchar(10),[snapshot_type_id]) + ' then ''' + convert(varchar(23),max([snapshot_time])) + '''' + char(10)
+												from [dbo].[sqlwatch_logger_snapshot_header] with (nolock)
+												where sql_instance = @SqlInstance
+												group by [snapshot_type_id],[sql_instance]
+												for xml path('')
+											) + char(10) + ' else '''' end '";
+
+			using (var cmd = new SqlCommand(sql, connectionRepository))
+			{
+				cmd.Parameters.AddWithValue("@SqlInstance", this.SqlInstance);
+				var result = await cmd.ExecuteScalarAsync();
+				return DateTime.Parse(result.ToString());
+			}
+		}
+
 		public async Task<string> GetVersion()
-        {
+		{
 			string sql = "SELECT [sqlwatch_version] FROM [dbo].[vw_sqlwatch_app_version]";
 			string version = "";
 
@@ -764,7 +770,7 @@ namespace SqlWatchImport
 				}
 			}
 		}
-		
+
 		public bool UpdateRemoteInstance(string SqlInstance, string SqlUser, string SqlPassword)
 		{
 			string SqlSecret = Tools.Encrypt(SqlPassword);
