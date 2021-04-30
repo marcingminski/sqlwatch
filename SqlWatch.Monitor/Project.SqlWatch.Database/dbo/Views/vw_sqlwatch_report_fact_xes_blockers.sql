@@ -20,4 +20,4 @@ select
 	, sql_instance
 	, snapshot_time
 	, snapshot_type_id
-from [dbo].[ufn_sqlwatch_get_blocking_chains]('1970-01-01','2099-12-31', null)
+from [dbo].[ufn_sqlwatch_get_blocking_chains]('1970-01-01','2099-12-31', null);
