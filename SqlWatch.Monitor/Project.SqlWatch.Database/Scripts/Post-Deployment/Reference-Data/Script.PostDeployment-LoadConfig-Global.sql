@@ -24,7 +24,7 @@ values
 	(1	,'Application Log (app_log) retention days'			,7),
 
 	/*	Delete objects that have not been seen by x days	*/
-	(2	,'Last Seen Items (date_last_seen) retention days'	,2),
+	(2	,'Last Seen Items (date_last_seen) retention days'	,7),
 
 	/*	When action fails, the record is retained in the queue tables with an error status
 		How many days should we keep these for?	*/
