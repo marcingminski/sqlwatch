@@ -296,21 +296,21 @@ namespace SqlWatchImport
 				int depLevels = (SqlWatchTables.Max(s => s.DependencyLevel));
 				for (int i = 1; i <= depLevels; i++)
 				{
-					Parallel.ForEach(SqlWatchTables.FindAll(s => s.DependencyLevel == i), Table =>
+					foreach (var table in SqlWatchTables.FindAll(s => s.DependencyLevel == i))
 					{
 						Task<bool> TableImportTask = ImportTableAsync(
-									Table.Name,
-									Table.PrimaryKey,
-									Table.HasIdentity,
-									Table.HasLastSeen,
-									Table.HasLastUpdated,
-									Table.Joins,
-									Table.UpdateColumns,
-									Table.AllColumns
+									table.Name,
+									table.PrimaryKey,
+									table.HasIdentity,
+									table.HasLastSeen,
+									table.HasLastUpdated,
+									table.Joins,
+									table.UpdateColumns,
+									table.AllColumns
 									);
 
 						TableImportTasks.Add(TableImportTask);
-					});
+					}
 
 					Task.WhenAll(TableImportTasks);
 
@@ -405,7 +405,7 @@ namespace SqlWatchImport
 					if (tableName == "dbo.sqlwatch_logger_snapshot_header")
 					{
 						// If we are doing a full load, we are going to skip the below and default to 1970-01-01 further below:
-						var snapshotTimes = new DateTime(1970, 1, 1);
+						var snapshotTimes = "";
 						if (!Config.fullLoad)
 						{
 							snapshotTimes = await SnapshotTimeForInstance(connectionRepository);
@@ -413,7 +413,7 @@ namespace SqlWatchImport
 
 						sql = $@"select * 
 								from [dbo].[sqlwatch_logger_snapshot_header] with (readpast) 
-								where [snapshot_time] > { snapshotTimes } ";
+								where [snapshot_time] > { (snapshotTimes == "" ? "'1970-01-01'" : snapshotTimes) } ";
 					}
 					// For logger tables excluding the snapshot header, check the last snapshot_time we have in the central respository
 					// and only import new records from remote
@@ -660,7 +660,7 @@ namespace SqlWatchImport
 			}
 		}
 
-		private async Task<DateTime> SnapshotTimeForInstance(SqlConnection connectionRepository)
+		private async Task<string> SnapshotTimeForInstance(SqlConnection connectionRepository)
 		{
 			// The nolock here is safe as nothing is modifying or writing data for specific instance but it does not block other threads modifying their own instances
 			var sql = @"select 'case ' + char(10) + (
@@ -675,7 +675,7 @@ namespace SqlWatchImport
 			{
 				cmd.Parameters.AddWithValue("@SqlInstance", this.SqlInstance);
 				var result = await cmd.ExecuteScalarAsync();
-				return DateTime.Parse(result.ToString());
+				return result.ToString();
 			}
 		}
 
