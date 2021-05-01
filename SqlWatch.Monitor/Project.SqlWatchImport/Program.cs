@@ -9,6 +9,7 @@ using System.Reflection;
 using CommandLine;
 using System.Configuration;
 using System.Data;
+using System.Linq;
 
 namespace SqlWatchImport
 {
@@ -153,11 +154,9 @@ namespace SqlWatchImport
 							RemoteImportTasks.Add(RemoteImportTask);
 						});
 
-						//Task.WaitAll(RemoteImportTasks.ToArray());
-						Task results = Task.WhenAll(RemoteImportTasks.ToArray());
-
 						try
 						{
+							Task results = Task.WhenAll(RemoteImportTasks.Where(t => t != null).ToArray());
 							results.Wait();
 						}
 						catch (Exception e)

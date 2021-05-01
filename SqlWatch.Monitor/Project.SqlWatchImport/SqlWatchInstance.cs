@@ -296,21 +296,21 @@ namespace SqlWatchImport
 				int depLevels = (SqlWatchTables.Max(s => s.DependencyLevel));
 				for (int i = 1; i <= depLevels; i++)
 				{
-					Parallel.ForEach(SqlWatchTables.FindAll(s => s.DependencyLevel == i), Table =>
+					foreach (var table in SqlWatchTables.FindAll(s => s.DependencyLevel == i))
 					{
 						Task<bool> TableImportTask = ImportTableAsync(
-									Table.Name,
-									Table.PrimaryKey,
-									Table.HasIdentity,
-									Table.HasLastSeen,
-									Table.HasLastUpdated,
-									Table.Joins,
-									Table.UpdateColumns,
-									Table.AllColumns
+									table.Name,
+									table.PrimaryKey,
+									table.HasIdentity,
+									table.HasLastSeen,
+									table.HasLastUpdated,
+									table.Joins,
+									table.UpdateColumns,
+									table.AllColumns
 									);
 
 						TableImportTasks.Add(TableImportTask);
-					});
+					}
 
 					Task.WhenAll(TableImportTasks);
 
@@ -413,7 +413,7 @@ namespace SqlWatchImport
 
 						sql = $@"select * 
 								from [dbo].[sqlwatch_logger_snapshot_header] with (readpast) 
-								where [snapshot_time] > { snapshotTimes } ";
+								where [snapshot_time] > { (snapshotTimes == "" ? "'1970-01-01'" : snapshotTimes) } ";
 					}
 					// For logger tables excluding the snapshot header, check the last snapshot_time we have in the central respository
 					// and only import new records from remote
