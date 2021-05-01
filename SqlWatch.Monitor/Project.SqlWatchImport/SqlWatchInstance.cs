@@ -405,7 +405,7 @@ namespace SqlWatchImport
 					if (tableName == "dbo.sqlwatch_logger_snapshot_header")
 					{
 						// If we are doing a full load, we are going to skip the below and default to 1970-01-01 further below:
-						var snapshotTimes = new DateTime(1970, 1, 1);
+						var snapshotTimes = "";
 						if (!Config.fullLoad)
 						{
 							snapshotTimes = await SnapshotTimeForInstance(connectionRepository);
@@ -660,7 +660,7 @@ namespace SqlWatchImport
 			}
 		}
 
-		private async Task<DateTime> SnapshotTimeForInstance(SqlConnection connectionRepository)
+		private async Task<string> SnapshotTimeForInstance(SqlConnection connectionRepository)
 		{
 			// The nolock here is safe as nothing is modifying or writing data for specific instance but it does not block other threads modifying their own instances
 			var sql = @"select 'case ' + char(10) + (
@@ -675,7 +675,7 @@ namespace SqlWatchImport
 			{
 				cmd.Parameters.AddWithValue("@SqlInstance", this.SqlInstance);
 				var result = await cmd.ExecuteScalarAsync();
-				return DateTime.Parse(result.ToString());
+				return result.ToString();
 			}
 		}
 
