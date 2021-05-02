@@ -1,11 +1,21 @@
 # About
 
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
-![GitHub release](https://img.shields.io/github/release/marcingminski/sqlwatch.svg)
+![GitHub contributors](https://img.shields.io/github/contributors/marcingminski/sqlwatch)
+![GitHub Repo stars](https://img.shields.io/github/stars/marcingminski/sqlwatch)
 ![GitHub All Releases](https://img.shields.io/github/downloads/marcingminski/sqlwatch/total.svg)
+![GitHub release](https://img.shields.io/github/release/marcingminski/sqlwatch.svg)
 ![GitHub commits since latest release (by date)](https://img.shields.io/github/commits-since/marcingminski/sqlwatch/latest)
+![GitHub last commit](https://img.shields.io/github/last-commit/marcingminski/sqlwatch)
+![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed-raw/marcingminski/sqlwatch)
+![GitHub closed issues](https://img.shields.io/github/issues-closed-raw/marcingminski/sqlwatch)
 ![AppVeyor](https://img.shields.io/appveyor/build/marcingminski/sqlwatch?label=branch%20build)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/c176e01274c649aeb4ee5f64d1aeddeb)](https://www.codacy.com/gh/marcingminski/sqlwatch/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=marcingminski/sqlwatch&amp;utm_campaign=Badge_Grade)
+
+
+![Twitter Follow](https://img.shields.io/twitter/follow/sqlwatch?style=social)
+![YouTube Channel Subscribers](https://img.shields.io/youtube/channel/subscribers/UCmU6X1zVucgz0dlO0L7XybA?style=social)
+![YouTube Channel Views](https://img.shields.io/youtube/channel/views/UCmU6X1zVucgz0dlO0L7XybA?style=social)
 
 SQLWATCH is decentralised, real to near-real time SQL Server Monitoring Solution. It is designed to provide comprehensive monitoring out of the box and to serve as a monitoring framework for your own projects or applications. It collects performance data in a local database with an option for centralised reporting for convenience.
 
