@@ -102,14 +102,14 @@ if [dbo].[ufn_sqlwatch_get_product_version]('major') >= 11
 						, [blocked_process_report_details].[lockMode]
 						, [blocked_process_report_details].[blocked_spid]
 						, [blocked_process_report_details].[blocked_ecid]
-						, [blocked_process_report_details].[blocked_clientapp]
+						, [blocked_clientapp] = [dbo].[ufn_sqlwatch_parse_job_name]([blocked_process_report_details].[blocked_clientapp], null)
 						, [blocked_process_report_details].[blocked_currentdbname]
 						, [blocked_process_report_details].[blocked_hostname]
 						, [blocked_process_report_details].[blocked_loginname]
 						, [blocked_process_report_details].[blocked_inputbuff]
 						, [blocked_process_report_details].[blocking_spid]
 						, [blocked_process_report_details].[blocking_ecid]
-						, [blocked_process_report_details].[blocking_clientapp]
+						, [blocking_clientapp] = [dbo].[ufn_sqlwatch_parse_job_name]([blocked_process_report_details].[blocking_clientapp],null)
 						, [blocked_process_report_details].[blocking_currentdbname]
 						, [blocked_process_report_details].[blocking_hostname]
 						, [blocked_process_report_details].[blocking_loginname]
