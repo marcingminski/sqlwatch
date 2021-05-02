@@ -59,6 +59,37 @@ Then click on import and upload JSON file - the SQLWATCH dashboards are JSON fil
 
 ![Grafana Configuration]({{ site.baseurl }}/assets/images/grafana-upload-json-file.png)
 
+## How to bulk add Data Sources
+
+SQLWATCH is decentralised which means it does not require central monitoring server or repository. If you have hundreds or thousands of SQL Servers with SQLWATCH installed, getting all of the remote instances into a single or even multiple central repositories may not be viable. In that case you may want to simply connect Grafana directly to your SQL instances but you will need to create a Data Source for every instance. You can do this programatically using Grafana API:
+
+Generate API key in your Grafana portal at Settings -> Api Keys:
+
+```
+$key = "eyJrIjoiNVJOdDVwdDcwZ2VYUHJYQzkwcldNYjZxd1l1ZlhaZTEiLCJuIjoic3Fsd2F0Y2giLCJpZCI6MX0="
+$headers = @{Authorization = "Bearer $key"}
+$contentType = "application/json"
+
+$url = "http://grafana.local/api/datasources"
+
+# list data sources:
+Invoke-RestMethod -ContentType "$contentType" -Uri $url -Method GET -Headers $headers -UseBasicParsing
+
+
+# create data sources
+# This can be wrapped in a loop and pass SqlInstance, Database and user credentials dynamically
+$body = @{
+    "name"="SQLInstance";
+    "database"="SQLWATCH";
+    "type"="mssql";
+    "password"="password" ;
+    "user"="sqlwatch_grafana";
+    "access"="proxy";
+    }
+
+Invoke-RestMethod -ContentType "$contentType" -Uri $url -Method POST -Headers $headers -UseBasicParsing -Body ($body|ConvertTo-Json)
+```
+
 ## How to use SQLWATCH dashboards
 
 Coming soon...
