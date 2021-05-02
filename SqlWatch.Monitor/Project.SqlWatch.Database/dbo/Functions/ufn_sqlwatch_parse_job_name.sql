@@ -14,8 +14,8 @@ AS
 BEGIN
 	if @job_name is null
 		begin
-			declare @job_id uniqueidentifier = [dbo].[ufn_sqlwatch_parse_job_id] (@client_app_name)
-			select @job_name = name from msdb.dbo.sysjobs where job_id = @job_id
+			declare @job_id uniqueidentifier = [dbo].[ufn_sqlwatch_parse_job_id] (@client_app_name);
+			select @job_name = name from msdb.dbo.sysjobs where job_id = @job_id;
 		end
 
 	RETURN (
@@ -24,5 +24,5 @@ BEGIN
 			then replace(@client_app_name collate DATABASE_DEFAULT,left(replace(@client_app_name collate DATABASE_DEFAULT,'SQLAgent - TSQL JobStep (Job ',''),34),@job_name) 
 			else @client_app_name
 			end
-			)
+			);
 END
