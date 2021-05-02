@@ -3,18 +3,21 @@ autolabeler:
     files:
       - '*.md'
       - '*.MD'
+  - label: 'docs'
+    files:
+      - '/docs/*'
     branch:
-      - '/docs{0,1}\/.+/'
+      - '/docs/i'
   - label: 'bug'
     branch:
-      - '/fix\/.+/'
+      - '/fix/i'
+      - '/bug/i'
     title:
       - '/fix/i'
+      - '/bug/i'
   - label: 'enhancement'
     branch:
-      - '/feature\/.+/'
-    body:
-      - '/JIRA-[0-9]{1,4}/'
+      - '/feature/i'
 categories:
   - title: 'Features'
     labels:
@@ -26,10 +29,13 @@ categories:
       - 'bugfix'
       - 'bug'
   - title: 'Maintenance'
-    label: 'chore'
+    labels: 
+      - 'chore'
+      - 'docs'
 change-template: '- $TITLE (#$NUMBER by @$AUTHOR)'
 change-title-escapes: '\<*_&' # You can add # and @ to disable mentions, and add ` to disable code blocks.
 template: |
+  ## Contributors
+  $CONTRIBUTORS
   ## Changes
-
   $CHANGES
