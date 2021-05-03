@@ -78,6 +78,13 @@ Describe 'Failed Checks' {
 
     Context "Checking for checks that do not respect the execution frequency parameter " {
 
+        $sql = "
+            exec [dbo].[usp_sqlwatch_internal_process_checks];
+            waitfor delay '00:00:05';
+            exec [dbo].[usp_sqlwatch_internal_process_checks]
+            "
+        Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+
          It 'Check [<check_name>] should respect execution frequency setting' -TestCases $TestCases {
      
             Param($check_name) 
@@ -232,6 +239,7 @@ Describe 'Data Retention' {
             from INFORMATION_SCHEMA.COLUMNS
             where COLUMN_NAME = 'date_last_seen'
         )
+        and TABLE_NAME not like '_DUMP_%'
         and TABLE_TYPE = 'BASE TABLE'";
     
         $Tables = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
@@ -250,9 +258,100 @@ Describe 'Data Retention' {
     }
 }
 
+Describe 'Procedure Execution' {
+    
+    Context 'Collector jobs must be disabled and not running before procedure test to avoid clashing' {
+
+        $sql = "SELECT running_jobs=count(*)
+        FROM msdb.dbo.sysjobactivity AS sja
+        INNER JOIN msdb.dbo.sysjobs AS sj 
+        ON sja.job_id = sj.job_id
+        WHERE sja.start_execution_date IS NOT NULL
+           AND sja.stop_execution_date IS NULL
+           AND sj.name like 'SQLWATCH%'
+        "
+       
+        $RunnigJobs = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+        $RunnigJobs.running_jobs | Should -Be 0 -Because "SQLWATCH Jobs must not be running before we execute collection during the test." 
+
+    }
+
+    Context 'Check That Logger Procedures Execute OK' {
+
+        $sql = "select p.name 
+        from sys.procedures p
+        where name like 'usp_sqlwatch_logger%'
+    
+        --not procedures with parameters as we dont know what param to pass
+        except 
+        select distinct p.name 
+        from sys.procedures p
+        inner join sys.parameters r
+            on r.object_id = p.object_id"
+
+        $Procedures = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+
+        $TestCases = @();
+        $Procedures.ForEach{$TestCases += @{ProcedureName = $_.name }}        
+
+        It 'The Procedure [<ProcedureName>] should not throw an error on the first run' -TestCases $TestCases {
+
+            Param($ProcedureName)
+
+            $sql = "exec $($ProcedureName);"
+            { Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql -ErrorAction Stop } | Should -Not -Throw 
+        
+        }
+
+        Start-Sleep -Seconds 5
+
+        It 'The Procedure [<ProcedureName>] should not throw an error on the second run' -TestCases $TestCases {
+
+            Param($ProcedureName)
+
+            $sql = "exec $($ProcedureName);"
+            { Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql -ErrorAction Stop } | Should -Not -Throw 
+        
+        }        
+    }
+}
+
+Describe 'Table Content' {
+
+    Context 'Logger tables should have data' {
+
+        $sql = "select TableName=TABLE_SCHEMA + '.' + TABLE_NAME
+        from INFORMATION_SCHEMA.TABLES
+        where TABLE_NAME not like '_DUMP_%'
+        and TABLE_NAME like '%logger%'
+        and TABLE_TYPE = 'BASE TABLE'";
+    
+        $Tables = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+    
+        $TestCases = @();
+        $Tables.ForEach{$TestCases += @{TableName = $_.TableName }}        
+
+        It 'Table <TableName> should have rows' -TestCases $TestCases {
+            Param($TableName)
+        
+            $sql = "select row_count=count(*) from $TableName"
+
+            try {
+                $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+            } 
+            catch {
+                $result = 0
+            }            
+            $result.row_count | should -BeGreaterThan 0 -Because 'Tables with no rows indicate collector issues.'    
+        }        
+
+    }
+}
+
+# This MUST be last check
 Describe 'Application Errors' {
 
-    Context 'Check Application log for WARNINGS' {
+    Context 'Check Application log for Errors' {
 
         <# Warnings are OK. Flapping checks or exceeding email thresholds etc.
         It 'Application Log should not contain WARNINGS' {
@@ -278,37 +377,5 @@ Describe 'Application Errors' {
 
         }
 
-    }
-}
-
-Describe 'Procedure Execution' {
-    
-    Context 'Check That Logger Procedures Execute OK' {
-
-        $sql = "select p.name 
-        from sys.procedures p
-        where name like 'usp_sqlwatch_logger%'
-    
-        --not procedures with parameters as we dont know what param to pass
-        except 
-        select distinct p.name 
-        from sys.procedures p
-        inner join sys.parameters r
-            on r.object_id = p.object_id"
-
-        $Procedures = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
-
-        $TestCases = @();
-        $Procedures.ForEach{$TestCases += @{ProcedureName = $_.name }}        
-
-        It 'The Procedure [<ProcedureName>] should execute without errors' -TestCases $TestCases {
-
-            Param($ProcedureName)
-            
-            $sql = "exec $($ProcedureName)"
-            $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
-            $result.Column1 | Should -BeNullOrEmpty -Because "The return should not be error and should be Null." 
-
-        }
     }
 }
