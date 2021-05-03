@@ -4,6 +4,7 @@
 	errorlog_text_id int identity(1,1),
 	errorlog_text nvarchar(max),
 	total_occurence_count int,
+	--these should be called first_seen and last_seen. change in v5.
 	first_occurence datetime,
 	last_occurence datetime,
 	[date_updated] datetime not null constraint df_sqlwatch_meta_errorlog_text_updated default (getutcdate()),
