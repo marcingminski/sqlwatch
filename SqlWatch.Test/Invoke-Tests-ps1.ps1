@@ -1,6 +1,9 @@
 ﻿
-$SqlInstance = "localhost"
-$SqlWatchDatabase = "SQLWATCH"
+param(
+        [string]$SqlInstance,
+        [string]$SqlWatchDatabase
+)
+
 $MinSqlUpHours = 2;
 
 #$sql = "select datediff(hour,install_date,getdate()) from vw_sqlwatch_app_version"

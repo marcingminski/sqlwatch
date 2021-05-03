@@ -280,3 +280,35 @@ Describe 'Application Errors' {
 
     }
 }
+
+Describe 'Procedure Execution' {
+    
+    Context 'Check That Logger Procedures Execute OK' {
+
+        $sql = "select p.name 
+        from sys.procedures p
+        where name like 'usp_sqlwatch_logger%'
+    
+        --not procedures with parameters as we dont know what param to pass
+        except 
+        select distinct p.name 
+        from sys.procedures p
+        inner join sys.parameters r
+            on r.object_id = p.object_id"
+
+        $Procedures = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+
+        $TestCases = @();
+        $Procedures.ForEach{$TestCases += @{ProcedureName = $_.name }}        
+
+        It 'The Procedure [<ProcedureName>] should execute without errors' -TestCases $TestCases {
+
+            Param($ProcedureName)
+            
+            $sql = "exec $($ProcedureName)"
+            $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+            $result.Column1 | Should -BeNullOrEmpty -Because "The return should not be error and should be Null." 
+
+        }
+    }
+}
