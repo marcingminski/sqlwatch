@@ -76,6 +76,11 @@ exec [dbo].[usp_sqlwatch_internal_add_database]
 :r .\Scripts\Post-Deployment\Reference-Data\Script.PostDeployment-LoadConfig-Global.sql
 
 -------------------------------------------------------------------------------------
+-- Load Errorlog Default Collectoin
+-------------------------------------------------------------------------------------
+:r .\Scripts\Post-Deployment\Reference-Data\Script.PostDeployment-LoadConfig-DefaultErrorLog.sql
+
+-------------------------------------------------------------------------------------
 -- start XES
 -------------------------------------------------------------------------------------
 exec [dbo].[usp_sqlwatch_internal_start_xes]
