@@ -11,7 +11,7 @@ Post-Deployment Script Template
 */
 
 --only do this on the fresh install becuase the end user could have removed our default records, we do not want to reload them
-if (select count(*) from dbo.sqlwatch_app_version) <= 1
+if (select count(*) from dbo.sqlwatch_app_version) < 1
     begin
         declare @keywords table (
             [keyword] nvarchar(255) not null,
@@ -24,7 +24,12 @@ if (select count(*) from dbo.sqlwatch_app_version) <= 1
                 ('I/O requests', 1)
         ;
 
-        insert into [dbo].[sqlwatch_config_include_errorlog_keywords]
-        select s.[keyword], s.[log_type_id]
-        from @keywords s;
+        merge [dbo].[sqlwatch_config_include_errorlog_keywords] as target
+        using @keywords as source 
+        on source.[keyword] = target.[keyword]
+        and source.[log_type_id] = target.[log_type_id]
+        
+        when not matched then 
+            insert ([keyword], [log_type_id])
+            values (source.[keyword], source.[log_type_id]);
     end;
