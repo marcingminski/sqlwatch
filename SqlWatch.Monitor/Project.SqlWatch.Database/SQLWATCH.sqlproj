@@ -386,6 +386,7 @@
     <None Include="Scripts\Post-Deployment\Data-Fixes\Script.PostDeployment-DataFix-MigrateReportTime.sql" />
     <None Include="Scripts\Post-Deployment\Data-Fixes\Script.PostDeployment-FixNonTrustedConstraints.sql" />
     <None Include="Scripts\Post-Deployment\Reference-Data\Script.PostDeployment-LoadConfig-Global.sql" />
+    <None Include="Scripts\Post-Deployment\Reference-Data\Script.PostDeployment-LoadDefaultErrorLog.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SQLWATCH.refactorlog" />

@@ -8,6 +8,7 @@
 	log_type_id int,
 	snapshot_time datetime2(0),
 	snapshot_type_id tinyint,
+	record_count real --there could be many entries of the same type at the same time in the error log (especially failed logins)
 	constraint pk_sqlwatch_logger_errorlog primary key clustered (
 		snapshot_time, log_date, attribute_id, errorlog_text_id, keyword_id, log_type_id, snapshot_type_id
 		),
