@@ -369,8 +369,7 @@ Describe 'Application Errors' {
         It 'Application Log should not contain ERRORS' {
 
             $sql = "select count(*) from [dbo].[sqlwatch_app_log]
-            where process_message_type = 'ERRROR'
-            and event_sequence > dateadd(hour,-$($LookBackHours),getutcdate())"
+            where process_message_type = 'ERROR'"
 
             $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
             $result.Column1 | Should -Be 0
