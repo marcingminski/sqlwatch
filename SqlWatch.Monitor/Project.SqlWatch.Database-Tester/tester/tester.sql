@@ -1,1 +1,1 @@
-﻿CREATE SCHEMA [tester]
+﻿CREATE SCHEMA [tester];

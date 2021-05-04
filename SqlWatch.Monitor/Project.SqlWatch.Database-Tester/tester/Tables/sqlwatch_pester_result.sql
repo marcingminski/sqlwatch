@@ -9,4 +9,4 @@
 	[TestName] [nvarchar](max) NULL,
 	[TestResult] nvarchar(50) NULL,
 	[TestTime] decimal(20,5) NULL
-)
+);

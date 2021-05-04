@@ -5,7 +5,7 @@ param(
 )
 
 #https://sqlnotesfromtheunderground.wordpress.com/2017/10/26/publish-pester-results-to-anything/
-function Parse-PesterXML {
+function ParsePesterXML {
         <#
         .SYNOPSIS 
         Converts Pester XML output file into a simplified result set
@@ -265,8 +265,8 @@ Foreach ($job in $jobs) {
 
 $outputfile1
 
-$output = Parse-PesterXML -XMLFile $outputfile2 -Server $SqlInstance | Out-DbaDataTable
+$output = ParsePesterXML -XMLFile $outputfile2 -Server $SqlInstance | Out-DbaDataTable
 Write-DbaDataTable -SqlInstance $SqlInstance -InputObject $output -Database $("$SqlWatchDatabase-TESTER") -Schema tester -Table sqlwatch_pester_result
 
-$output = Parse-PesterXML -XMLFile $outputfile2 -Server $SqlInstance | Out-DbaDataTable
+$output = ParsePesterXML -XMLFile $outputfile2 -Server $SqlInstance | Out-DbaDataTable
 Write-DbaDataTable -SqlInstance $SqlInstance -InputObject $output -Database $("$SqlWatchDatabase-TESTER") -Schema tester -Table sqlwatch_pester_result
