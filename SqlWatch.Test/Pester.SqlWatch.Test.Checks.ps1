@@ -275,6 +275,7 @@ Describe 'Procedure Execution' {
         $RunnigJobs.running_jobs | Should -Be 0 -Because "SQLWATCH Jobs must not be running before we execute collection during the test." 
 
     }
+    
 
     Context 'Check That Logger Procedures Execute OK' {
 
@@ -318,6 +319,64 @@ Describe 'Procedure Execution' {
 
 Describe 'Table Content' {
 
+    Context 'Config tables should have data' {
+
+        $sql = "select TableName=TABLE_SCHEMA + '.' + TABLE_NAME
+        from INFORMATION_SCHEMA.TABLES
+        where TABLE_NAME not like '_DUMP_%'
+        and TABLE_NAME like '%config%'
+        and TABLE_TYPE = 'BASE TABLE'";
+    
+        $Tables = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+    
+        $TestCases = @();
+        $Tables.ForEach{$TestCases += @{TableName = $_.TableName }}        
+
+        It 'Table <TableName> should have rows' -TestCases $TestCases {
+            Param($TableName)
+        
+            $sql = "select row_count=count(*) from $TableName"
+
+            try {
+                $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+            } 
+            catch {
+                $result = 0
+            }            
+            $result.row_count | should -BeGreaterThan 0 -Because 'Config Tables with no rows indicate development issues.'    
+        }        
+
+    }
+
+    Context 'Meta tables should have data' {
+
+        $sql = "select TableName=TABLE_SCHEMA + '.' + TABLE_NAME
+        from INFORMATION_SCHEMA.TABLES
+        where TABLE_NAME not like '_DUMP_%'
+        and TABLE_NAME like '%meta%'
+        and TABLE_TYPE = 'BASE TABLE'";
+    
+        $Tables = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+    
+        $TestCases = @();
+        $Tables.ForEach{$TestCases += @{TableName = $_.TableName }}        
+
+        It 'Table <TableName> should have rows' -TestCases $TestCases {
+            Param($TableName)
+        
+            $sql = "select row_count=count(*) from $TableName"
+
+            try {
+                $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+            } 
+            catch {
+                $result = 0
+            }            
+            $result.row_count | should -BeGreaterThan 0 -Because 'Meta Tables with no rows indicate configuration issues.'    
+        }        
+
+    }
+
     Context 'Logger tables should have data' {
 
         $sql = "select TableName=TABLE_SCHEMA + '.' + TABLE_NAME
@@ -342,7 +401,7 @@ Describe 'Table Content' {
             catch {
                 $result = 0
             }            
-            $result.row_count | should -BeGreaterThan 0 -Because 'Tables with no rows indicate collector issues.'    
+            $result.row_count | should -BeGreaterThan 0 -Because 'Logger Tables with no rows indicate collector issues.'    
         }        
 
     }
