@@ -394,7 +394,7 @@ Describe 'Test Check Results' {
 
 if ($SqlUpHours -lt 168) { $Skip = $true } else { $Skip = $false }
 
-Describe 'Data Retention' -Skip:$Skip {
+Describe 'Data Retention' {
 
     Context 'Checking Snapshot Retention Policy is being applied' {
 
@@ -403,7 +403,7 @@ Describe 'Data Retention' -Skip:$Skip {
         $TestCases = @();
         $SnapshotTypes.ForEach{$TestCases += @{SnapshotTypeDesc = $_.snapshot_type_desc }}
     
-        It 'Snapshot Type [<SnapshotTypeDesc>] should respect retention policy' -TestCases $TestCases {
+        It 'Snapshot Type [<SnapshotTypeDesc>] should respect retention policy' -TestCases $TestCases -Skip:$Skip {
 
             Param($SnapshotTypeDesc)
 
