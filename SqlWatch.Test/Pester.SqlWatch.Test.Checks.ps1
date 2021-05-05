@@ -97,7 +97,7 @@ Describe 'Test Long Queries Capture' {
             $n = 1
             $duration = Measure-Command{}
             
-            while ($duration.TotalSeconds -lt 6) {
+            while ($duration.TotalSeconds -lt 6 -and $n -lt 10) {
                 $sql = "select top $($n)00000 a.*
                 into #t
                 from sys.all_objects a
