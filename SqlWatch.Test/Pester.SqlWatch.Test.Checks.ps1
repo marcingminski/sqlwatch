@@ -458,6 +458,7 @@ Describe 'Table Content' {
         from INFORMATION_SCHEMA.TABLES
         where TABLE_NAME not like '_DUMP_%'
         and TABLE_NAME like '%config%'
+        and TABLE_NAME not like '%logger%'
         and TABLE_TYPE = 'BASE TABLE'";
     
         $Tables = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
