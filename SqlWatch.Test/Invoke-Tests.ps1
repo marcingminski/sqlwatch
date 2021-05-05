@@ -225,15 +225,24 @@ $Checks = "IndentityUsage","FKCKTrusted"
 $sql = "select name
 from msdb.dbo.sysjobs
 where name like 'SQLWATCH%'
-and enabled = 1"
+and enabled = 1"        
 
 $jobs = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
 
-Foreach ($job in $jobs) {
-    
-        $sql = "EXEC msdb.dbo.sp_update_job @job_name = N'$($job.name)', @enabled = 0;"
-        Invoke-SqlCmd -ServerInstance SQL-2 -Database $SqlWatchDatabase -Query $sql
-    }
+$sql = "select agent_status=[dbo].[ufn_sqlwatch_get_agent_status]()"
+$result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+
+if ($result.agent_status -eq $true) {
+
+        Foreach ($job in $jobs) {
+
+                $sql = "EXEC msdb.dbo.sp_update_job @job_name = N'$($job.name)', @enabled = 0;"
+                Invoke-SqlCmd -ServerInstance SQL-2 -Database $SqlWatchDatabase -Query $sql
+                }
+
+        }
+
+
 
 ## custom pester scripts
 Write-Output "Custom SqlWatch Tests"
@@ -255,11 +264,16 @@ $outputfile2 = ("$ChecksFolder\Result.SqlWatch.DbaChecks.xml")
 Invoke-DbcCheck -Check $Checks -SqlInstance $SqlInstance -Database $SqlWatchDatabase -OutputFormat  NUnitXml -OutputFile $outputfile2 -Show All 
 
 #re-enable sqlwatch jobs:
-Foreach ($job in $jobs) {
+if ($result.agent_status -eq $true) { {
+
+        Foreach ($job in $jobs) {
     
-        $sql = "EXEC msdb.dbo.sp_update_job @job_name = N'$($job.name)', @enabled = 1;"
-        Invoke-SqlCmd -ServerInstance SQL-2 -Database $SqlWatchDatabase -Query $sql
-    }
+                $sql = "EXEC msdb.dbo.sp_update_job @job_name = N'$($job.name)', @enabled = 1;"
+                Invoke-SqlCmd -ServerInstance SQL-2 -Database $SqlWatchDatabase -Query $sql
+            }
+            
+}
+
 
 #cd C:\TEMP
 #.\ReportUnit.exe $outputfile1
