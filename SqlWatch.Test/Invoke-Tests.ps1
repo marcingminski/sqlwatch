@@ -242,8 +242,6 @@ if ($result.agent_status -eq $true) {
 
         }
 
-
-
 ## custom pester scripts
 Write-Output "Custom SqlWatch Tests"
 $outputfile1 = "$ChecksFolder\Result.SqlWatch.Test.Checks.xml"
@@ -264,14 +262,14 @@ $outputfile2 = ("$ChecksFolder\Result.SqlWatch.DbaChecks.xml")
 Invoke-DbcCheck -Check $Checks -SqlInstance $SqlInstance -Database $SqlWatchDatabase -OutputFormat  NUnitXml -OutputFile $outputfile2 -Show All 
 
 #re-enable sqlwatch jobs:
-if ($result.agent_status -eq $true) { {
+if ($result.agent_status -eq $true) {
 
         Foreach ($job in $jobs) {
     
                 $sql = "EXEC msdb.dbo.sp_update_job @job_name = N'$($job.name)', @enabled = 1;"
                 Invoke-SqlCmd -ServerInstance SQL-2 -Database $SqlWatchDatabase -Query $sql
             }
-            
+
 }
 
 
