@@ -378,7 +378,7 @@ Describe 'Data Retention' {
         It 'The "Last Seen" Retention in Table [<TableName>] should respect the configuration setting' -TestCases $TestCases {
 
             if ($SqlUpHours -lt 168) {
-                It -Skip "Sql Server has not been running long enough to test data retention"
+                It -Skip 'The "Last Seen" Retention in Table [<TableName>] should respect the configuration setting' -Because "Sql Server has not been running long enough to test data retention"
             } 
             else {
                 Param($TableName)
