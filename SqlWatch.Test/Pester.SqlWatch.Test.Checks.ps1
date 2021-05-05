@@ -78,8 +78,6 @@ Describe 'Test Blocking Chains Capture' {
             $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
             $result.cnt | Should -BeGreaterThan 0 -Because 'Blocking chain count should have increased'
         }
-
-
     }
 }
 
@@ -337,18 +335,25 @@ Describe 'Data Retention' {
         $SnapshotTypes.ForEach{$TestCases += @{SnapshotTypeDesc = $_.snapshot_type_desc }}
     
         It 'Snapshot Type [<SnapshotTypeDesc>] should respect retention policy' -TestCases $TestCases {
-            Param($SnapshotTypeDesc)
+
+            if ($SqlUpHours -lt 168) {
+                It -Skip "Sql Server has not been running long enough to test data retention"
+            } 
+            else {
+                Param($SnapshotTypeDesc)
     
-            $sql = "select count(*)
-            from sqlwatch_logger_snapshot_header h
-            inner join sqlwatch_config_snapshot_type t
-                on h.snapshot_type_id = t.snapshot_type_id
-            where datediff(day,h.snapshot_time,getutcdate()) > snapshot_retention_days
-            and snapshot_type_desc = '$($SnapshotTypeDesc)'
-            and snapshot_retention_days > 0"
+                $sql = "select count(*)
+                from sqlwatch_logger_snapshot_header h
+                inner join sqlwatch_config_snapshot_type t
+                    on h.snapshot_type_id = t.snapshot_type_id
+                where datediff(day,h.snapshot_time,getutcdate()) > snapshot_retention_days
+                and snapshot_type_desc = '$($SnapshotTypeDesc)'
+                and snapshot_retention_days > 0"
+        
+                $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+                $result.Column1 | Should -Be 0 -Because "There should not be any rows beyond the max age."
     
-            $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
-            $result.Column1 | Should -Be 0 -Because "There should not be any rows beyond the max age."
+            }
         }
 
     }
@@ -372,11 +377,16 @@ Describe 'Data Retention' {
 
         It 'The "Last Seen" Retention in Table [<TableName>] should respect the configuration setting' -TestCases $TestCases {
 
-            Param($TableName)
+            if ($SqlUpHours -lt 168) {
+                It -Skip "Sql Server has not been running long enough to test data retention"
+            } 
+            else {
+                Param($TableName)
             
-            $sql = "select count(*) from $($TableName) where datediff(day,date_last_seen,getutcdate()) > [dbo].[ufn_sqlwatch_get_config_value](2,null)"
-            $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
-            $result.Column1 | Should -Be 0 -Because "There should not be any rows beyond the max age." 
+                $sql = "select count(*) from $($TableName) where datediff(day,date_last_seen,getutcdate()) > [dbo].[ufn_sqlwatch_get_config_value](2,null)"
+                $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+                $result.Column1 | Should -Be 0 -Because "There should not be any rows beyond the max age." 
+            }
         }
     }
 }
