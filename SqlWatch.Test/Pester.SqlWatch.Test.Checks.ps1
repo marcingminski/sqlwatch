@@ -439,18 +439,13 @@ Describe 'Data Retention' {
         $TestCases = @();
         $Tables.ForEach{$TestCases += @{TableName = $_.Column1 }}
 
-        It 'The "Last Seen" Retention in Table [<TableName>] should respect the configuration setting' -TestCases $TestCases {
+        It 'The "Last Seen" Retention in Table [<TableName>] should respect the configuration setting' -TestCases $TestCases -Skip:$Skip {
 
-            if ($SqlUpHours -lt 168) {
-                It -Skip 'The "Last Seen" Retention in Table [<TableName>] should respect the configuration setting' -Because "Sql Server has not been running long enough to test data retention"
-            } 
-            else {
-                Param($TableName)
-            
-                $sql = "select count(*) from $($TableName) where datediff(day,date_last_seen,getutcdate()) > [dbo].[ufn_sqlwatch_get_config_value](2,null)"
-                $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
-                $result.Column1 | Should -Be 0 -Because "There should not be any rows beyond the max age." 
-            }
+            Param($TableName)
+        
+            $sql = "select count(*) from $($TableName) where datediff(day,date_last_seen,getutcdate()) > [dbo].[ufn_sqlwatch_get_config_value](2,null)"
+            $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+            $result.Column1 | Should -Be 0 -Because "There should not be any rows beyond the max age." 
         }
     }
 }
