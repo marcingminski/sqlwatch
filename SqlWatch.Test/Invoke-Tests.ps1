@@ -1,7 +1,8 @@
 ﻿
 param(
         [string]$SqlInstance,
-        [string]$SqlWatchDatabase
+        [string]$SqlWatchDatabase,
+        [string]$SqlWatchDatabaseTest
 )
 
 #https://sqlnotesfromtheunderground.wordpress.com/2017/10/26/publish-pester-results-to-anything/
@@ -242,15 +243,16 @@ Invoke-Pester -Script @{
         Parameters=@{
                 SqlInstance=$SqlInstance;
                 SqlWatchDatabase=$SqlWatchDatabase;
+                SqlWatchDatabaseTest=$SqlWatchDatabaseTest;
                 MinSqlUpHours=$MinSqlUpHours;
                 LookBackHours=$LookBackHours
             }
-        } -OutputFormat  NUnitXml -OutputFile $outputfile1 -Show All -Strict
+        } -OutputFormat  NUnitXml -OutputFile $outputfile1 -Show All 
 
 ## use dbachecks where possible and only build our own pester checks for things not already covered by dbachecks
 Write-Output "dbachecks"
 $outputfile2 = ("$ChecksFolder\Result.SqlWatch.DbaChecks.xml")
-Invoke-DbcCheck -Check $Checks -SqlInstance $SqlInstance -Database $SqlWatchDatabase -OutputFormat  NUnitXml -OutputFile $outputfile2 -Show All -Strict
+Invoke-DbcCheck -Check $Checks -SqlInstance $SqlInstance -Database $SqlWatchDatabase -OutputFormat  NUnitXml -OutputFile $outputfile2 -Show All 
 
 #re-enable sqlwatch jobs:
 Foreach ($job in $jobs) {
@@ -260,13 +262,13 @@ Foreach ($job in $jobs) {
     }
 
 #cd C:\TEMP
-#.\ReportUnit.exe $outputfile1
-# .\ReportUnit.exe $outputfile2
+.\ReportUnit.exe $outputfile1
+.\ReportUnit.exe $outputfile2
 
 $outputfile1
 
 $output = ParsePesterXML -XMLFile $outputfile2 -Server $SqlInstance | Out-DbaDataTable
-Write-DbaDataTable -SqlInstance $SqlInstance -InputObject $output -Database $("$SqlWatchDatabase-TESTER") -Schema tester -Table sqlwatch_pester_result
+Write-DbaDataTable -SqlInstance $SqlInstance -InputObject $output -Database $SqlWatchDatabaseTest -Schema tester -Table sqlwatch_pester_result
 
 $output = ParsePesterXML -XMLFile $outputfile2 -Server $SqlInstance | Out-DbaDataTable
-Write-DbaDataTable -SqlInstance $SqlInstance -InputObject $output -Database $("$SqlWatchDatabase-TESTER") -Schema tester -Table sqlwatch_pester_result
+Write-DbaDataTable -SqlInstance $SqlInstance -InputObject $output -Database $SqlWatchDatabaseTest -Schema tester -Table sqlwatch_pester_result
