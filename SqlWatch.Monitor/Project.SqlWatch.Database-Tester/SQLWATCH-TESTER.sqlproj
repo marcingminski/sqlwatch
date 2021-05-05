@@ -22,6 +22,8 @@
     <SqlServerVerification>False</SqlServerVerification>
     <IncludeCompositeObjects>True</IncludeCompositeObjects>
     <TargetDatabaseSet>True</TargetDatabaseSet>
+    <Recovery>SIMPLE</Recovery>
+    <PageVerify>CHECKSUM</PageVerify>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -63,5 +65,7 @@
   <ItemGroup>
     <Build Include="tester\tester.sql" />
     <Build Include="tester\Tables\sqlwatch_pester_result.sql" />
+    <Build Include="tester\Tables\sqlwatch_blocking_chain.sql" />
+    <Build Include="tester\Tables\sqlwatch_long_query.sql" />
   </ItemGroup>
 </Project>
