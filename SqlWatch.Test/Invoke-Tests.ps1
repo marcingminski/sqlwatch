@@ -232,7 +232,7 @@ $jobs = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -
 Foreach ($job in $jobs) {
     
         $sql = "EXEC msdb.dbo.sp_update_job @job_name = N'$($job.name)', @enabled = 0;"
-        Invoke-SqlCmd -ServerInstance SQL-2 -Database SQLWATCH -Query $sql
+        Invoke-SqlCmd -ServerInstance SQL-2 -Database $SqlWatchDatabase -Query $sql
     }
 
 ## custom pester scripts
@@ -258,14 +258,12 @@ Invoke-DbcCheck -Check $Checks -SqlInstance $SqlInstance -Database $SqlWatchData
 Foreach ($job in $jobs) {
     
         $sql = "EXEC msdb.dbo.sp_update_job @job_name = N'$($job.name)', @enabled = 1;"
-        Invoke-SqlCmd -ServerInstance SQL-2 -Database SQLWATCH -Query $sql
+        Invoke-SqlCmd -ServerInstance SQL-2 -Database $SqlWatchDatabase -Query $sql
     }
 
 #cd C:\TEMP
-.\ReportUnit.exe $outputfile1
-.\ReportUnit.exe $outputfile2
-
-$outputfile1
+#.\ReportUnit.exe $outputfile1
+#.\ReportUnit.exe $outputfile2
 
 $output = ParsePesterXML -XMLFile $outputfile2 -Server $SqlInstance | Out-DbaDataTable
 Write-DbaDataTable -SqlInstance $SqlInstance -InputObject $output -Database $SqlWatchDatabaseTest -Schema tester -Table sqlwatch_pester_result
