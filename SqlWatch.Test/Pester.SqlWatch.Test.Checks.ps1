@@ -1,6 +1,7 @@
 ﻿param(
     $SqlInstance,
     $SqlWatchDatabase,
+    $SqlWatchDatabaseTest,
     $MinSqlUpHours,
     $LookBackHours
 )
@@ -14,6 +15,128 @@ $Checks = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase
 
 $TestCases = @();
 $Checks.ForEach{$TestCases += @{check_name = $_.check_name }}
+
+Describe 'Test Blocking Chains Capture' {
+
+    Context 'Creating reference data for blocking chains' {
+
+        It "Reference data created" {
+            #create blocking chain
+            $sql = "insert into tester.sqlwatch_blocking_chain (date)
+            values (GETUTCDATE());"
+
+            { Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabaseTest -Query $sql -ErrorAction Stop } | Should -Not -Throw 
+        }
+    }
+
+    Context 'Creating blocking chains' {
+
+        It "Blocking chains created" {
+
+            $scriptBlock1 = {           
+                param($SqlInstance , $SqlWatchDatabaseTest)
+                Invoke-SqlCmd -ServerInstance $($SqlInstance) -Database $($SqlWatchDatabaseTest) -Query "
+                begin tran
+                select * from tester.sqlwatch_blocking_chain with (tablock, holdlock, xlock)
+                waitfor delay '00:00:25'
+                commit tran
+                waitfor delay '00:00:2'"
+            }
+             
+            $job1 = Start-Job -Name "JobBlk1" -ScriptBlock $scriptBlock1 -ArgumentList $SqlInstance, $SqlWatchDatabaseTest
+      
+           $scriptBlock2 = {           
+                param($SqlInstance , $SqlWatchDatabaseTest)
+                Invoke-SqlCmd -ServerInstance $($SqlInstance) -Database $($SqlWatchDatabaseTest) -Query "select * from tester.sqlwatch_blocking_chain"
+            }
+             
+            $Job2 = Start-Job -Name "JobBlk2" -ScriptBlock $scriptBlock2 -ArgumentList $SqlInstance, $SqlWatchDatabaseTest
+    
+            Wait-Job $job1
+            Wait-Job $job2
+
+            $job2.State | Should -Be "Completed" 
+
+        }
+
+
+    }
+
+    Context 'Checking that we are able to read XES and offload blocking chains to table' {
+
+        Start-Sleep -Seconds 10 #to make sure event has been dispatched
+
+        It "Getting blocking chains from XES" {
+            $sql = "exec [dbo].[usp_sqlwatch_logger_xes_blockers];"
+            { Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql } | Should -Not -Throw
+            
+        }
+
+        It "New blocking chain recorded" {
+            $sql = "select cnt=count(*) from [dbo].[sqlwatch_logger_xes_blockers] where event_time >= (select max(date) from [$($SqlWatchDatabaseTest)].tester.sqlwatch_blocking_chain)"
+    
+            $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+            $result.cnt | Should -BeGreaterThan 0 -Because 'Blocking chain count should have increased'
+        }
+
+
+    }
+}
+
+Describe 'Test Long Queries Capture' {
+
+    Context 'Generating Test data' {
+
+        # ref data
+        $sql = "insert into [tester].[sqlwatch_long_query] (date)
+        values (getutcdate());"
+        Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabaseTest -Query $sql
+
+        It "Running Long Query Lasting over 5 seconds" {
+
+            $n = 1
+            $duration = Measure-Command{}
+            
+            while ($duration.TotalSeconds -lt 6) {
+                $sql = "select top $($n)00000 a.*
+                into #t
+                from sys.all_objects a
+                cross join sys.all_objects"
+        
+                $duration = Measure-Command { Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabaseTest -Query $sql }
+                $n+=$n;
+            }
+
+            $duration.TotalSeconds | Should -BeGreaterThan 5 -Because "To trigger long query XES the query must last over 5 seconds"
+
+        }
+
+
+    }
+
+    Context 'Checking that we are able to read XES and offload Long Queries to table' {
+
+        It "Getting Long Queries from XES" {
+            $sql = "exec [dbo].[usp_sqlwatch_logger_xes_long_queries];"
+            { Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql -ErrorAction Stop } | Should -Not -Throw
+        }
+
+        It "New Long Queries recorded" {
+
+            $sql = "select cnt=count(*) from [dbo].[sqlwatch_logger_xes_long_queries] where [event_time] >= (select max(date) from [$($SqlWatchDatabaseTest)].[tester].[sqlwatch_long_query])"
+            $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+            $result.cnt | Should -BeGreaterThan 0 -Because 'Long Query count should have increased' 
+
+        }
+
+        It "Only queries lasting more than 5 seconds" {
+
+            $sql = "select duration_ms=min(duration_ms) from [dbo].[sqlwatch_logger_xes_long_queries]"
+            $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+            $result.duration_ms | Should -BeGreaterThan 5000 -Because 'Long query threshold is 5s'
+        }
+    }
+}
 
 Describe 'Failed Checks' {
 
