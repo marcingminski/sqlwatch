@@ -10,11 +10,66 @@ $sql = "select datediff(hour,sqlserver_start_time,getdate()) from sys.dm_os_sys_
 $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
 $SqlUpHours = $result.Column1 #| Should -BeGreaterThan 4 -Because 'Recently restarted Sql Instance may not provide accurate test results'
 
-$Checks = @(); #thanks Rob https://sqldbawithabeard.com/2017/11/28/2-ways-to-loop-through-collections-in-pester/
-$Checks = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query "select check_id, check_name from [dbo].[sqlwatch_config_check]"
 
-$TestCases = @();
-$Checks.ForEach{$TestCases += @{check_name = $_.check_name }}
+Describe 'Procedure Execution' {
+    
+    Context 'Collector jobs must be disabled and not running before procedure test to avoid clashing' {
+
+        $sql = "SELECT running_jobs=count(*)
+        FROM msdb.dbo.sysjobactivity AS sja
+        INNER JOIN msdb.dbo.sysjobs AS sj 
+        ON sja.job_id = sj.job_id
+        WHERE sja.start_execution_date IS NOT NULL
+           AND sja.stop_execution_date IS NULL
+           AND sj.name like 'SQLWATCH%'
+        "
+       
+        $RunnigJobs = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+        $RunnigJobs.running_jobs | Should -Be 0 -Because "SQLWATCH Jobs must not be running before we execute collection during the test." 
+
+    }
+    
+
+    Context 'Check That Logger Procedures Execute OK' {
+
+        $sql = "select p.name 
+        from sys.procedures p
+        where name like 'usp_sqlwatch_logger%'
+    
+        --not procedures with parameters as we dont know what param to pass
+        except 
+        select distinct p.name 
+        from sys.procedures p
+        inner join sys.parameters r
+            on r.object_id = p.object_id"
+
+        $Procedures = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+
+        $TestCases = @();
+        $Procedures.ForEach{$TestCases += @{ProcedureName = $_.name }}        
+
+        It 'The Procedure [<ProcedureName>] should not throw an error on the first run' -TestCases $TestCases {
+
+            Param($ProcedureName)
+
+            $sql = "exec $($ProcedureName);"
+            { Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql -ErrorAction Stop } | Should -Not -Throw 
+        
+        }
+
+        Start-Sleep -Seconds 5
+
+        It 'The Procedure [<ProcedureName>] should not throw an error on the second run' -TestCases $TestCases {
+
+            Param($ProcedureName)
+
+            $sql = "exec $($ProcedureName);"
+            { Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql -ErrorAction Stop } | Should -Not -Throw 
+        
+        }        
+    }
+}
+
 
 Describe 'Test Blocking Chains Capture' {
 
@@ -137,6 +192,14 @@ Describe 'Test Long Queries Capture' {
 }
 
 Describe 'Failed Checks' {
+
+    $sql = ""
+    $Checks = @(); #thanks Rob https://sqldbawithabeard.com/2017/11/28/2-ways-to-loop-through-collections-in-pester/
+    $Checks = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query "select check_id, check_name from [dbo].[sqlwatch_config_check]"
+    
+    $TestCases = @();
+    $Checks.ForEach{$TestCases += @{check_name = $_.check_name }} 
+
 
     Context "Checking for checks that have failed to execute with the CHECK_ERROR outcome" {
     
@@ -388,65 +451,6 @@ Describe 'Data Retention' {
                 $result.Column1 | Should -Be 0 -Because "There should not be any rows beyond the max age." 
             }
         }
-    }
-}
-
-Describe 'Procedure Execution' {
-    
-    Context 'Collector jobs must be disabled and not running before procedure test to avoid clashing' {
-
-        $sql = "SELECT running_jobs=count(*)
-        FROM msdb.dbo.sysjobactivity AS sja
-        INNER JOIN msdb.dbo.sysjobs AS sj 
-        ON sja.job_id = sj.job_id
-        WHERE sja.start_execution_date IS NOT NULL
-           AND sja.stop_execution_date IS NULL
-           AND sj.name like 'SQLWATCH%'
-        "
-       
-        $RunnigJobs = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
-        $RunnigJobs.running_jobs | Should -Be 0 -Because "SQLWATCH Jobs must not be running before we execute collection during the test." 
-
-    }
-    
-
-    Context 'Check That Logger Procedures Execute OK' {
-
-        $sql = "select p.name 
-        from sys.procedures p
-        where name like 'usp_sqlwatch_logger%'
-    
-        --not procedures with parameters as we dont know what param to pass
-        except 
-        select distinct p.name 
-        from sys.procedures p
-        inner join sys.parameters r
-            on r.object_id = p.object_id"
-
-        $Procedures = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
-
-        $TestCases = @();
-        $Procedures.ForEach{$TestCases += @{ProcedureName = $_.name }}        
-
-        It 'The Procedure [<ProcedureName>] should not throw an error on the first run' -TestCases $TestCases {
-
-            Param($ProcedureName)
-
-            $sql = "exec $($ProcedureName);"
-            { Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql -ErrorAction Stop } | Should -Not -Throw 
-        
-        }
-
-        Start-Sleep -Seconds 5
-
-        It 'The Procedure [<ProcedureName>] should not throw an error on the second run' -TestCases $TestCases {
-
-            Param($ProcedureName)
-
-            $sql = "exec $($ProcedureName);"
-            { Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql -ErrorAction Stop } | Should -Not -Throw 
-        
-        }        
     }
 }
 
