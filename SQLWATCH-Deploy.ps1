@@ -9,7 +9,6 @@ param(
 
 $Dacpac = "SQLWATCH-TESTER.dacpac"
 $DACPACPath = Get-ChildItem -Recurse -Filter $Dacpac | Sort-Object LastWriteTime -Descending | Select-Object -First 1
-$DACPACPath.Name
 
 if ($RunAsJob) {
 
