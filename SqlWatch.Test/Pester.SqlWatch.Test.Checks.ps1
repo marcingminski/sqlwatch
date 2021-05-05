@@ -8,25 +8,29 @@
 
 $sql = "select datediff(hour,sqlserver_start_time,getdate()) from sys.dm_os_sys_info"
 $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
-$SqlUpHours = $result.Column1 #| Should -BeGreaterThan 4 -Because 'Recently restarted Sql Instance may not provide accurate test results'
+$SqlUpHours = $result.Column1
 
+#If this fails it will mean sqlwatch hasnt been deployed and at this point it will create breaking eror and tests will stop
+$sql = "select * from [dbo].[vw_sqlwatch_app_version] "
+$result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
 
 Describe 'Procedure Execution' {
     
     Context 'Collector jobs must be disabled and not running before procedure test to avoid clashing' {
 
-        $sql = "SELECT running_jobs=count(*)
-        FROM msdb.dbo.sysjobactivity AS sja
-        INNER JOIN msdb.dbo.sysjobs AS sj 
-        ON sja.job_id = sj.job_id
-        WHERE sja.start_execution_date IS NOT NULL
-           AND sja.stop_execution_date IS NULL
-           AND sj.name like 'SQLWATCH%'
-        "
-       
-        $RunnigJobs = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
-        $RunnigJobs.running_jobs | Should -Be 0 -Because "SQLWATCH Jobs must not be running before we execute collection during the test." 
-
+        It 'SQLWATCH Jobs are disabled' {
+            $sql = "SELECT running_jobs=count(*)
+            FROM msdb.dbo.sysjobactivity AS sja
+            INNER JOIN msdb.dbo.sysjobs AS sj 
+            ON sja.job_id = sj.job_id
+            WHERE sja.start_execution_date IS NOT NULL
+               AND sja.stop_execution_date IS NULL
+               AND sj.name like 'SQLWATCH%'
+            "
+           
+            $RunnigJobs = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+            $RunnigJobs.running_jobs | Should -Be 0 -Because "SQLWATCH Jobs must not be running before we execute collection during the test." 
+        }
     }
     
 
@@ -388,7 +392,9 @@ Describe 'Test Check Results' {
     }
 }
 
-Describe 'Data Retention' {
+if ($SqlUpHours -lt 168) { $Skip = $true } else { $Skip = $false }
+
+Describe 'Data Retention' -Skip:$Skip {
 
     Context 'Checking Snapshot Retention Policy is being applied' {
 
@@ -399,24 +405,19 @@ Describe 'Data Retention' {
     
         It 'Snapshot Type [<SnapshotTypeDesc>] should respect retention policy' -TestCases $TestCases {
 
-            if ($SqlUpHours -lt 168) {
-                It -Skip "Sql Server has not been running long enough to test data retention"
-            } 
-            else {
-                Param($SnapshotTypeDesc)
+            Param($SnapshotTypeDesc)
+
+            $sql = "select count(*)
+            from sqlwatch_logger_snapshot_header h
+            inner join sqlwatch_config_snapshot_type t
+                on h.snapshot_type_id = t.snapshot_type_id
+            where datediff(day,h.snapshot_time,getutcdate()) > snapshot_retention_days
+            and snapshot_type_desc = '$($SnapshotTypeDesc)'
+            and snapshot_retention_days > 0"
     
-                $sql = "select count(*)
-                from sqlwatch_logger_snapshot_header h
-                inner join sqlwatch_config_snapshot_type t
-                    on h.snapshot_type_id = t.snapshot_type_id
-                where datediff(day,h.snapshot_time,getutcdate()) > snapshot_retention_days
-                and snapshot_type_desc = '$($SnapshotTypeDesc)'
-                and snapshot_retention_days > 0"
-        
-                $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
-                $result.Column1 | Should -Be 0 -Because "There should not be any rows beyond the max age."
+            $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+            $result.Column1 | Should -Be 0 -Because "There should not be any rows beyond the max age."
     
-            }
         }
 
     }
