@@ -74,6 +74,96 @@ Describe 'Procedure Execution' {
     }
 }
 
+Describe 'Table Content' {
+
+    Context 'Config tables should have data' {
+
+        $sql = "select TableName=TABLE_SCHEMA + '.' + TABLE_NAME
+        from INFORMATION_SCHEMA.TABLES
+        where TABLE_NAME not like '_DUMP_%'
+        and TABLE_NAME like '%config%'
+        and TABLE_NAME not like '%logger%'
+        and TABLE_TYPE = 'BASE TABLE'";
+    
+        $Tables = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+    
+        $TestCases = @();
+        $Tables.ForEach{$TestCases += @{TableName = $_.TableName }}        
+
+        It 'Table <TableName> should have rows' -TestCases $TestCases {
+            Param($TableName)
+        
+            $sql = "select row_count=count(*) from $TableName"
+
+            try {
+                $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+            } 
+            catch {
+                $result = 0
+            }            
+            $result.row_count | should -BeGreaterThan 0 -Because 'Config Tables with no rows indicate development issues.'    
+        }        
+
+    }
+
+    Context 'Meta tables should have data' {
+
+        $sql = "select TableName=TABLE_SCHEMA + '.' + TABLE_NAME
+        from INFORMATION_SCHEMA.TABLES
+        where TABLE_NAME not like '_DUMP_%'
+        and TABLE_NAME like '%meta%'
+        and TABLE_TYPE = 'BASE TABLE'";
+    
+        $Tables = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+    
+        $TestCases = @();
+        $Tables.ForEach{$TestCases += @{TableName = $_.TableName }}        
+
+        It 'Table <TableName> should have rows' -TestCases $TestCases {
+            Param($TableName)
+        
+            $sql = "select row_count=count(*) from $TableName"
+
+            try {
+                $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+            } 
+            catch {
+                $result = 0
+            }            
+            $result.row_count | should -BeGreaterThan 0 -Because 'Meta Tables with no rows indicate configuration issues.'    
+        }        
+
+    }
+
+    Context 'Logger tables should have data' {
+
+        $sql = "select TableName=TABLE_SCHEMA + '.' + TABLE_NAME
+        from INFORMATION_SCHEMA.TABLES
+        where TABLE_NAME not like '_DUMP_%'
+        and TABLE_NAME like '%logger%'
+        and TABLE_TYPE = 'BASE TABLE'";
+    
+        $Tables = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+    
+        $TestCases = @();
+        $Tables.ForEach{$TestCases += @{TableName = $_.TableName }}        
+
+        It 'Table <TableName> should have rows' -TestCases $TestCases {
+            Param($TableName)
+        
+            $sql = "select row_count=count(*) from $TableName"
+
+            try {
+                $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+            } 
+            catch {
+                $result = 0
+            }            
+            $result.row_count | should -BeGreaterThan 0 -Because 'Logger Tables with no rows indicate collector issues.'    
+        }        
+
+    }
+}
 
 Describe 'Test Blocking Chains Capture' {
 
@@ -376,7 +466,7 @@ Describe 'Test Check Results' {
 
     It 'The Latest Log Backup Check should return correct result' {
         ## Use dbatools as a baseline
-        $LastLogBackup = Get-DbaLastBackup -SqlInstance SQL-1 | Sort-Object LastLogBackup -Descending | Select-Object -first 1 
+        $LastLogBackup = Get-DbaLastBackup -SqlInstance $SqlInstance | Sort-Object LastLogBackup -Descending | Select-Object -first 1 
 
         [int]$LastLogBackupAgeMinutes = $(New-TimeSpan -Start $LastLogBackup.LastLogBackup -End (Get-Date)).TotalMinutes
 
@@ -447,97 +537,6 @@ Describe 'Data Retention' {
             $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
             $result.Column1 | Should -Be 0 -Because "There should not be any rows beyond the max age." 
         }
-    }
-}
-
-Describe 'Table Content' {
-
-    Context 'Config tables should have data' {
-
-        $sql = "select TableName=TABLE_SCHEMA + '.' + TABLE_NAME
-        from INFORMATION_SCHEMA.TABLES
-        where TABLE_NAME not like '_DUMP_%'
-        and TABLE_NAME like '%config%'
-        and TABLE_NAME not like '%logger%'
-        and TABLE_TYPE = 'BASE TABLE'";
-    
-        $Tables = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
-    
-        $TestCases = @();
-        $Tables.ForEach{$TestCases += @{TableName = $_.TableName }}        
-
-        It 'Table <TableName> should have rows' -TestCases $TestCases {
-            Param($TableName)
-        
-            $sql = "select row_count=count(*) from $TableName"
-
-            try {
-                $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
-            } 
-            catch {
-                $result = 0
-            }            
-            $result.row_count | should -BeGreaterThan 0 -Because 'Config Tables with no rows indicate development issues.'    
-        }        
-
-    }
-
-    Context 'Meta tables should have data' {
-
-        $sql = "select TableName=TABLE_SCHEMA + '.' + TABLE_NAME
-        from INFORMATION_SCHEMA.TABLES
-        where TABLE_NAME not like '_DUMP_%'
-        and TABLE_NAME like '%meta%'
-        and TABLE_TYPE = 'BASE TABLE'";
-    
-        $Tables = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
-    
-        $TestCases = @();
-        $Tables.ForEach{$TestCases += @{TableName = $_.TableName }}        
-
-        It 'Table <TableName> should have rows' -TestCases $TestCases {
-            Param($TableName)
-        
-            $sql = "select row_count=count(*) from $TableName"
-
-            try {
-                $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
-            } 
-            catch {
-                $result = 0
-            }            
-            $result.row_count | should -BeGreaterThan 0 -Because 'Meta Tables with no rows indicate configuration issues.'    
-        }        
-
-    }
-
-    Context 'Logger tables should have data' {
-
-        $sql = "select TableName=TABLE_SCHEMA + '.' + TABLE_NAME
-        from INFORMATION_SCHEMA.TABLES
-        where TABLE_NAME not like '_DUMP_%'
-        and TABLE_NAME like '%logger%'
-        and TABLE_TYPE = 'BASE TABLE'";
-    
-        $Tables = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
-    
-        $TestCases = @();
-        $Tables.ForEach{$TestCases += @{TableName = $_.TableName }}        
-
-        It 'Table <TableName> should have rows' -TestCases $TestCases {
-            Param($TableName)
-        
-            $sql = "select row_count=count(*) from $TableName"
-
-            try {
-                $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
-            } 
-            catch {
-                $result = 0
-            }            
-            $result.row_count | should -BeGreaterThan 0 -Because 'Logger Tables with no rows indicate collector issues.'    
-        }        
-
     }
 }
 

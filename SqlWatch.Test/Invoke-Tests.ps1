@@ -237,7 +237,7 @@ if ($result.agent_status -eq $true) {
         Foreach ($job in $jobs) {
 
                 $sql = "EXEC msdb.dbo.sp_update_job @job_name = N'$($job.name)', @enabled = 0;"
-                Invoke-SqlCmd -ServerInstance SQL-2 -Database $SqlWatchDatabase -Query $sql
+                Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
                 }
 
         }
@@ -267,7 +267,7 @@ if ($result.agent_status -eq $true) {
         Foreach ($job in $jobs) {
     
                 $sql = "EXEC msdb.dbo.sp_update_job @job_name = N'$($job.name)', @enabled = 1;"
-                Invoke-SqlCmd -ServerInstance SQL-2 -Database $SqlWatchDatabase -Query $sql
+                Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
             }
 
 }
