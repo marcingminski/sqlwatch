@@ -28,49 +28,60 @@ Describe 'Procedure Execution' {
             $RunnigJobs.running_jobs | Should -Be 0 -Because "SQLWATCH Jobs must not be running before we execute collection during the test." 
         }
     }
-    
 
-    Context 'Check That Logger Procedures Execute OK' {
+    BeforeAll {
 
-        BeforeAll {
+        Start-Sleep -Seconds 2
 
-            $sql = "select p.name 
-            from sys.procedures p
-            where name like 'usp_sqlwatch_logger%'
-        
-            --not procedures with parameters as we dont know what param to pass
-            except 
+        $sql = "select p.name 
+        from sys.procedures p
+        where (
+            name like 'usp_sqlwatch_internal_add%'
+            or name like 'usp_sqlwatch_logger%'
+            or name like 'usp_sqlwatch_internal_expand%'
+            )
+        --not procedures with parameters as we dont know what param to pass
+        and name not in (
             select distinct p.name 
             from sys.procedures p
             inner join sys.parameters r
-                on r.object_id = p.object_id"
-    
-            $Procedures = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
-    
-            $TestCases = @();
-            $Procedures.ForEach{$TestCases += @{ProcedureName = $_.name }}        
+                on r.object_id = p.object_id
+        )
+        order by case when p.name like '%internal$' then 1 else 2 end,
+        case
+            when p.name like '%database' then 'A' 
+            when p.name like '%table' then 'B' 
+            else p.name end"
 
-        }
+        $Procedures = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
 
-        It 'The Procedure [<ProcedureName>] should not throw an error on the first run' -TestCases $TestCases {
+        $TestCases = @();
+        $Procedures.ForEach{$TestCases += @{ProcedureName = $_.name }}               
 
-            Param($ProcedureName)
+    } 
 
-            $sql = "exec $($ProcedureName);"
-            { Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql -ErrorAction Stop } | Should -Not -Throw 
-        
-        }
+    Context 'Check That Procedures Execute OK on the First Run' {
 
-        Start-Sleep -Seconds 5
-
-        It 'The Procedure [<ProcedureName>] should not throw an error on the second run' -TestCases $TestCases {
+        It 'The Procedure [<ProcedureName>] should not throw an error' -TestCases $TestCases {
 
             Param($ProcedureName)
 
             $sql = "exec $($ProcedureName);"
             { Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql -ErrorAction Stop } | Should -Not -Throw 
         
-        }        
+        }
+    }
+
+    Context 'Check That Procedures Execute OK on the Second Run' {
+
+        It 'The Procedure [<ProcedureName>] should not throw an error' -TestCases $TestCases {
+
+            Param($ProcedureName)
+
+            $sql = "exec $($ProcedureName);"
+            { Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql -ErrorAction Stop } | Should -Not -Throw 
+        
+        }           
     }
 }
 
@@ -107,7 +118,6 @@ Describe 'Table Content' {
             }            
             $result.row_count | should -BeGreaterThan 0 -Because 'Config Tables with no rows indicate development issues.'    
         }        
-
     }
 
     Context 'Meta tables should have data' {
@@ -140,7 +150,6 @@ Describe 'Table Content' {
             }            
             $result.row_count | should -BeGreaterThan 0 -Because 'Meta Tables with no rows indicate configuration issues.'    
         }        
-
     }
 
     Context 'Logger tables should have data' {
@@ -316,14 +325,8 @@ Describe 'Failed Checks' {
 
 
     Context "Checking for checks that have failed to execute with the CHECK_ERROR outcome" {
-
-        BeforeAll {
-
-            if ($SqlUpHours -lt $MinSqlUpHours) { $Skip = $true } else { $Skip = $false }
-
-        }
-    
-        It 'Check [<check_name>] executions should never return status of CHECK ERROR' -TestCases $TestCases -Skip:$Skip {
+  
+        It 'Check [<check_name>] executions should never return status of CHECK ERROR' -TestCases $TestCases {
 
             Param($check_name)
 
