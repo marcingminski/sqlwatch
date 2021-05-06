@@ -9,7 +9,7 @@ $sql = "select datediff(hour,sqlserver_start_time,getdate()) from sys.dm_os_sys_
 $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
 $SqlUpHours = $result.Column1
 
-$SqlWatchDatabaseTest = "SQLWATCH_BLOCKING_TEST"
+$SqlWatchDatabaseTest = "SQLWATCH_TEST"
 
 Write-Host "Creating test database"
 <#
@@ -294,7 +294,7 @@ Describe 'Test Long Queries Capture' {
             # ref data
             $sql = "insert into [dbo].[sqlwatch_pester_ref] (date,test)
             values (getutcdate(),'Long Query');"
-            Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+            Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabaseTest -Query $sql
 
         }
 
