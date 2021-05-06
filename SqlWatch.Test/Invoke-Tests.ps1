@@ -229,6 +229,7 @@ and enabled = 1"
 
 $jobs = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
 
+#If this fails it will mean sqlwatch hasnt been deployed and at this point it will create breaking eror and tests will stop
 $sql = "select agent_status=[dbo].[ufn_sqlwatch_get_agent_status]()"
 $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
 
@@ -244,7 +245,7 @@ if ($result.agent_status -eq $true) {
 
 ## custom pester scripts
 Write-Output "Custom SqlWatch Tests"
-$outputfile1 = "$ChecksFolder\Result.SqlWatch.Test.Checks.xml"
+$outputfile1 = "$ChecksFolder\Result.SqlWatch.Test.Checks.($($SqlInstance -Replace '\\' ,'-')).xml"
 Invoke-Pester -Script @{
         Path=$CustomPesterChecksPath;
         Parameters=@{
@@ -258,7 +259,7 @@ Invoke-Pester -Script @{
 
 ## use dbachecks where possible and only build our own pester checks for things not already covered by dbachecks
 Write-Output "dbachecks"
-$outputfile2 = ("$ChecksFolder\Result.SqlWatch.DbaChecks.xml")
+$outputfile2 = ("$ChecksFolder\Result.SqlWatch.DbaChecks.($($SqlInstance -Replace '\\' ,'-')).xml")
 Invoke-DbcCheck -Check $Checks -SqlInstance $SqlInstance -Database $SqlWatchDatabase -OutputFormat  NUnitXml -OutputFile $outputfile2 -Show All 
 
 #re-enable sqlwatch jobs:
@@ -268,17 +269,35 @@ if ($result.agent_status -eq $true) {
     
                 $sql = "EXEC msdb.dbo.sp_update_job @job_name = N'$($job.name)', @enabled = 1;"
                 Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
-            }
 
+        }
 }
 
 
 #cd C:\TEMP
-#.\ReportUnit.exe $outputfile1
-#.\ReportUnit.exe $outputfile2
+.\ReportUnit.exe $outputfile1
+.\ReportUnit.exe $outputfile2
+
+$sql = "if not exists (select * from sys.tables where name = 'sqlwatch_pester_result')
+        begin
+                CREATE TABLE [dbo].[sqlwatch_pester_result]
+                (
+                [result_datetime_utc] datetime not null constraint df_sqlawatch_pester_result_datetime_utc default getutcdate(),
+                [result_datetime] datetime not null constraint df_sqlawatch_pester_result_datetime_local default getdate(),
+                [Server] [nvarchar](max) NULL,
+                [User] [nvarchar](max) NULL,
+                [DateTime] datetime NULL,
+                [Context] [nvarchar](max) NULL,
+                [TestName] [nvarchar](max) NULL,
+                [TestResult] nvarchar(50) NULL,
+                [TestTime] decimal(20,5) NULL
+                );        
+        end;
+"
+Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
 
 $output = ParsePesterXML -XMLFile $outputfile2 -Server $SqlInstance | Out-DbaDataTable
-Write-DbaDataTable -SqlInstance $SqlInstance -InputObject $output -Database $SqlWatchDatabaseTest -Schema tester -Table sqlwatch_pester_result
+Write-DbaDataTable -SqlInstance $SqlInstance -InputObject $output -Database $SqlWatchDatabase -Schema dbo -Table sqlwatch_pester_result
 
 $output = ParsePesterXML -XMLFile $outputfile2 -Server $SqlInstance | Out-DbaDataTable
-Write-DbaDataTable -SqlInstance $SqlInstance -InputObject $output -Database $SqlWatchDatabaseTest -Schema tester -Table sqlwatch_pester_result
+Write-DbaDataTable -SqlInstance $SqlInstance -InputObject $output -Database $SqlWatchDatabase -Schema dbo -Table sqlwatch_pester_result
