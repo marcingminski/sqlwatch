@@ -8,11 +8,7 @@
 
 $sql = "select datediff(hour,sqlserver_start_time,getdate()) from sys.dm_os_sys_info"
 $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
-$SqlUpHours = $result.Column1
-
-#If this fails it will mean sqlwatch hasnt been deployed and at this point it will create breaking eror and tests will stop
-$sql = "select * from [dbo].[vw_sqlwatch_app_version] "
-$result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+$SqlUpHours = $result.Column1    
 
 Describe 'Procedure Execution' {
     
@@ -36,21 +32,25 @@ Describe 'Procedure Execution' {
 
     Context 'Check That Logger Procedures Execute OK' {
 
-        $sql = "select p.name 
-        from sys.procedures p
-        where name like 'usp_sqlwatch_logger%'
+        BeforeAll {
+
+            $sql = "select p.name 
+            from sys.procedures p
+            where name like 'usp_sqlwatch_logger%'
+        
+            --not procedures with parameters as we dont know what param to pass
+            except 
+            select distinct p.name 
+            from sys.procedures p
+            inner join sys.parameters r
+                on r.object_id = p.object_id"
     
-        --not procedures with parameters as we dont know what param to pass
-        except 
-        select distinct p.name 
-        from sys.procedures p
-        inner join sys.parameters r
-            on r.object_id = p.object_id"
+            $Procedures = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+    
+            $TestCases = @();
+            $Procedures.ForEach{$TestCases += @{ProcedureName = $_.name }}        
 
-        $Procedures = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
-
-        $TestCases = @();
-        $Procedures.ForEach{$TestCases += @{ProcedureName = $_.name }}        
+        }
 
         It 'The Procedure [<ProcedureName>] should not throw an error on the first run' -TestCases $TestCases {
 
@@ -78,17 +78,21 @@ Describe 'Table Content' {
 
     Context 'Config tables should have data' {
 
-        $sql = "select TableName=TABLE_SCHEMA + '.' + TABLE_NAME
-        from INFORMATION_SCHEMA.TABLES
-        where TABLE_NAME not like '_DUMP_%'
-        and TABLE_NAME like '%config%'
-        and TABLE_NAME not like '%logger%'
-        and TABLE_TYPE = 'BASE TABLE'";
-    
-        $Tables = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
-    
-        $TestCases = @();
-        $Tables.ForEach{$TestCases += @{TableName = $_.TableName }}        
+        BeforeAll {
+
+            $sql = "select TableName=TABLE_SCHEMA + '.' + TABLE_NAME
+            from INFORMATION_SCHEMA.TABLES
+            where TABLE_NAME not like '_DUMP_%'
+            and TABLE_NAME like '%config%'
+            and TABLE_NAME not like '%logger%'
+            and TABLE_TYPE = 'BASE TABLE'";
+        
+            $Tables = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+        
+            $TestCases = @();
+            $Tables.ForEach{$TestCases += @{TableName = $_.TableName }}                    
+
+        }
 
         It 'Table <TableName> should have rows' -TestCases $TestCases {
             Param($TableName)
@@ -108,16 +112,20 @@ Describe 'Table Content' {
 
     Context 'Meta tables should have data' {
 
-        $sql = "select TableName=TABLE_SCHEMA + '.' + TABLE_NAME
-        from INFORMATION_SCHEMA.TABLES
-        where TABLE_NAME not like '_DUMP_%'
-        and TABLE_NAME like '%meta%'
-        and TABLE_TYPE = 'BASE TABLE'";
-    
-        $Tables = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
-    
-        $TestCases = @();
-        $Tables.ForEach{$TestCases += @{TableName = $_.TableName }}        
+        BeforeAll {
+
+            $sql = "select TableName=TABLE_SCHEMA + '.' + TABLE_NAME
+            from INFORMATION_SCHEMA.TABLES
+            where TABLE_NAME not like '_DUMP_%'
+            and TABLE_NAME like '%meta%'
+            and TABLE_TYPE = 'BASE TABLE'";
+        
+            $Tables = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+        
+            $TestCases = @();
+            $Tables.ForEach{$TestCases += @{TableName = $_.TableName }}        
+
+        }
 
         It 'Table <TableName> should have rows' -TestCases $TestCases {
             Param($TableName)
@@ -137,16 +145,20 @@ Describe 'Table Content' {
 
     Context 'Logger tables should have data' {
 
-        $sql = "select TableName=TABLE_SCHEMA + '.' + TABLE_NAME
-        from INFORMATION_SCHEMA.TABLES
-        where TABLE_NAME not like '_DUMP_%'
-        and TABLE_NAME like '%logger%'
-        and TABLE_TYPE = 'BASE TABLE'";
-    
-        $Tables = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
-    
-        $TestCases = @();
-        $Tables.ForEach{$TestCases += @{TableName = $_.TableName }}        
+        BeforeAll {
+
+            $sql = "select TableName=TABLE_SCHEMA + '.' + TABLE_NAME
+            from INFORMATION_SCHEMA.TABLES
+            where TABLE_NAME not like '_DUMP_%'
+            and TABLE_NAME like '%logger%'
+            and TABLE_TYPE = 'BASE TABLE'";
+        
+            $Tables = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+        
+            $TestCases = @();
+            $Tables.ForEach{$TestCases += @{TableName = $_.TableName }}                    
+
+        }
 
         It 'Table <TableName> should have rows' -TestCases $TestCases {
             Param($TableName)
@@ -234,10 +246,14 @@ Describe 'Test Long Queries Capture' {
 
     Context 'Generating Test data' {
 
-        # ref data
-        $sql = "insert into [tester].[sqlwatch_long_query] (date)
-        values (getutcdate());"
-        Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabaseTest -Query $sql
+        BeforeAll {
+           
+            # ref data
+            $sql = "insert into [tester].[sqlwatch_long_query] (date)
+            values (getutcdate());"
+            Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabaseTest -Query $sql
+
+        }
 
         It "Running Long Query Lasting over 5 seconds" {
 
@@ -287,96 +303,98 @@ Describe 'Test Long Queries Capture' {
 
 Describe 'Failed Checks' {
 
-    $sql = ""
-    $Checks = @(); #thanks Rob https://sqldbawithabeard.com/2017/11/28/2-ways-to-loop-through-collections-in-pester/
-    $Checks = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query "select check_id, check_name from [dbo].[sqlwatch_config_check]"
-    
-    $TestCases = @();
-    $Checks.ForEach{$TestCases += @{check_name = $_.check_name }} 
+    BeforeAll {
+
+        $sql = ""
+        $Checks = @(); #thanks Rob https://sqldbawithabeard.com/2017/11/28/2-ways-to-loop-through-collections-in-pester/
+        $Checks = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query "select check_id, check_name from [dbo].[sqlwatch_config_check]"
+        
+        $TestCases = @();
+        $Checks.ForEach{$TestCases += @{check_name = $_.check_name }} 
+
+    }
 
 
     Context "Checking for checks that have failed to execute with the CHECK_ERROR outcome" {
+
+        BeforeAll {
+
+            if ($SqlUpHours -lt $MinSqlUpHours) { $Skip = $true } else { $Skip = $false }
+
+        }
     
-        It 'Check [<check_name>] executions should never return status of CHECK ERROR' -TestCases $TestCases {
+        It 'Check [<check_name>] executions should never return status of CHECK ERROR' -TestCases $TestCases -Skip:$Skip {
 
             Param($check_name)
 
-            if ($SqlUpHours -lt $MinSqlUpHours) {
+            $sql = "declare @starttime datetime; 
 
-                It -Skip "SQL Server has recently been restared. For accureate results, please allow minimum of 6 hours before running these tests."
+            select @starttime=sqlserver_start_time 
+            from sys.dm_os_sys_info
 
-            } else {
+            select count(*) 
+                from [dbo].[sqlwatch_config_check] cc 
+                left join [dbo].[sqlwatch_logger_check] lc 
+                    on cc.check_id = lc.check_id 
+                where snapshot_time > dateadd(hour,-$($LookBackHours),getutcdate()) 
+                and cc.check_name = '$($check_name)' 
+                and lc.check_status like '%ERROR%'
+                --skip records after restart as Perf counters will be empty right after restart.
+                and lc.snapshot_time > dateadd(minute,2,@starttime)
+                "
 
-                $sql = "declare @starttime datetime; 
-    
-                select @starttime=sqlserver_start_time 
-                from sys.dm_os_sys_info
-    
-                select count(*) 
-                    from [dbo].[sqlwatch_config_check] cc 
-                    left join [dbo].[sqlwatch_logger_check] lc 
-                        on cc.check_id = lc.check_id 
-                    where snapshot_time > dateadd(hour,-$($LookBackHours),getutcdate()) 
-                    and cc.check_name = '$($check_name)' 
-                    and lc.check_status like '%ERROR%'
-                    --skip records after restart as Perf counters will be empty right after restart.
-                    and lc.snapshot_time > dateadd(minute,2,@starttime)
-                    "
+            $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+            $result.Column1 | Should -Be 0 -Because 'The check results should be "OK", "WARNING" or "CRITICAL". However, checks that fail to execute or return value that is out of bound, will return "CHECK ERROR" status.'
 
-                $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
-                $result.Column1 | Should -Be 0 -Because 'The check results should be "OK", "WARNING" or "CRITICAL". However, checks that fail to execute or return value that is out of bound, will return "CHECK ERROR" status.'
-
-            }
         }
     }
 
     Context "Checking if checks have outcome" {
+
+        BeforeAll {
+
+            if ($SqlUpHours -lt $MinSqlUpHours) { $Skip = $true } else { $Skip = $false }
+
+        }
     
-      It 'Check [<check_name>] should have an outcome' -TestCases $TestCases {
+        It 'Check [<check_name>] should have an outcome' -TestCases $TestCases -Skip:$Skip {
     
 
-        Param($check_name) 
-
-        if ($SqlUpHours -lt $MinSqlUpHours) {
-
-            It -Skip "SQL Server has recently been restared. For accureate results, please allow minimum of 6 hours before running these tests."
-
-        } else {
+            Param($check_name) 
 
             $sql = "select last_check_status from [dbo].[sqlwatch_meta_check] where check_name = '$($check_name)'"
 
             $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
             $result.last_check_status | Should -BeIn ("OK","WARNING","CRITICAL","CHECK ERROR") -Because 'Checks must return an outcome, it should be either "OK", "WARNING", "CRITICAL" or "CHECK_ERROR"'
-
-        }
-      
+     
       }
 
     }
 
     Context "Checking for checks that do not respect the execution frequency parameter " {
 
-        $sql = "
+        BeforeAll {
+            $sql = "
             exec [dbo].[usp_sqlwatch_internal_process_checks];
             waitfor delay '00:00:05';
             exec [dbo].[usp_sqlwatch_internal_process_checks]
             "
-        Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+            Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
 
+
+            if ($SqlUpHours -lt $MinSqlUpHours) { $Skip = $true } else { $Skip = $false }
+    
+        }
+
+        
          It 'Check [<check_name>] should respect execution frequency setting' -TestCases $TestCases {
      
             Param($check_name) 
 
-            if ($SqlUpHours -lt $MinSqlUpHours) {
+            $sql = "select check_frequency_minutes=isnull(check_frequency_minutes,1) from [dbo].[sqlwatch_config_check] where check_name = '$($check_name)'"
+            $check_frequency_minutes = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
 
-                It -Skip "SQL Server has recently been restared. For accureate results, please allow minimum of 6 hours before running these tests."
-
-            } else {
-
-                $sql = "select check_frequency_minutes=isnull(check_frequency_minutes,1) from [dbo].[sqlwatch_config_check] where check_name = '$($check_name)'"
-                $check_frequency_minutes = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
-
-                $sql = "select cc.check_id, lc.snapshot_time, RN=ROW_NUMBER() over (partition by cc.check_id order by lc.snapshot_time)
+            $sql = "select cc.check_id, lc.snapshot_time, RN=ROW_NUMBER() over (partition by cc.check_id order by lc.snapshot_time)
             into #t
             from [dbo].[sqlwatch_logger_check] lc
             inner join dbo.sqlwatch_config_check cc
@@ -403,37 +421,39 @@ Describe 'Failed Checks' {
                 $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
                 $result.min_check_frequency_minutes_calculated | Should -BeIn ($minvalue,$value,$maxvalue) -Because 'The agent job that invokes the check engine runs every 1 minute but not all checks should run every 1 minute. There is a [check_frequency_minutes] column that tells us how often each check should run. This value must be respected otherwise all checks will run every 1 minute which will create additional load on the server'
 
-            }
-          }
+        }
     }
 }
 
-$TimeFields = @();
-$TimeFields = "select column=TABLE_SCHEMA + '.' + TABLE_NAME + '.' + COLUMN_NAME from INFORMATION_SCHEMA.COLUMNS where DATA_TYPE LIKE '%time%'"
-
-$TestCases = @();
-$TimeFields.ForEach{$TestCases += @{column = $_.column}}
 
 Describe 'Test database design' {
 
-    $sql = "select datediff(hour,getutcdate(),getdate())"
-    $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql;
+    BeforeAll {
 
-    if ($result.Column1 -ge 0) {
-        It -Skip "The server must be in a time zone behind the UTC time zone in order to validate what time values are being written. This will allow us to assume that if the written value is in the future, the value is Not a UTC zone.";
-    } else {
-        It 'Datetime values in <column> should be UTC' -TestCases $TestCases {
-            Param($column)
-        
-            $sql = "select LOCAL_TIME=GETDATE(), UTC_TIME=GETUTCDATE(), TABLE_NAME,COLUMN_NAME 
-            from INFORMATION_SCHEMA.COLUMNS 
-            where TABLE_SCHEMA + '.' + TABLE_NAME + '.' + COLUMN_NAME = '$($column)'"
+        $sql = "select datediff(hour,getutcdate(),getdate())"
+        $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql;        
 
-            $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql;
+        if ($result.Column1 -ge 0) { $Skip = $true } else { $Skip = $false }
+    }
 
-            $sql = "select top 1 datediff(hour,GETUTCDATE(),$($result.COLUMN_NAME)) from [$($result.$TABLE_NAME)] order by $($result.COLUMN_NAME) desc";
-            $result.Column1 | should -Not -BeGreaterThan 0 -Because 'Values in the future indicate incorrect time zone'    
-        }
+    $TimeFields = @();
+    $sql = "select [column]=TABLE_SCHEMA + '.' + TABLE_NAME + '.' + COLUMN_NAME from INFORMATION_SCHEMA.COLUMNS where DATA_TYPE LIKE '%time%'"
+    $TimeFields = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql;
+
+    $TestCases = @();
+    $TimeFields.ForEach{$TestCases += @{column = $_.column}}    
+
+    It 'Datetime values in <column> should not be greater than UTC' -TestCases $TestCases -Skip:$Skip {
+        Param($column)
+    
+        $sql = "select LOCAL_TIME=GETDATE(), UTC_TIME=GETUTCDATE(), TABLE_NAME,COLUMN_NAME 
+        from INFORMATION_SCHEMA.COLUMNS 
+        where TABLE_SCHEMA + '.' + TABLE_NAME + '.' + COLUMN_NAME = '$($column)'"
+
+        $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql;
+
+        $sql = "select top 1 datediff(hour,GETUTCDATE(),$($result.COLUMN_NAME)) from [$($result.$TABLE_NAME)] order by $($result.COLUMN_NAME) desc";
+        $result.Column1 | should -Not -BeGreaterThan 0 -Because 'Values in the future indicate local time rather than UTC'    
     }
 }
 
@@ -482,17 +502,20 @@ Describe 'Test Check Results' {
     }
 }
 
-if ($SqlUpHours -lt 168) { $Skip = $true } else { $Skip = $false }
-
 Describe 'Data Retention' {
 
     Context 'Checking Snapshot Retention Policy is being applied' {
 
-        $SnapshotTypes = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query "select * from sqlwatch_config_snapshot_type"
+        BeforeAll {
 
-        $TestCases = @();
-        $SnapshotTypes.ForEach{$TestCases += @{SnapshotTypeDesc = $_.snapshot_type_desc }}
-    
+            if ($SqlUpHours -lt 168) { $Skip = $true } else { $Skip = $false }
+            $SnapshotTypes = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query "select * from sqlwatch_config_snapshot_type"
+
+            $TestCases = @();
+            $SnapshotTypes.ForEach{$TestCases += @{SnapshotTypeDesc = $_.snapshot_type_desc }}
+
+        }
+  
         It 'Snapshot Type [<SnapshotTypeDesc>] should respect retention policy' -TestCases $TestCases -Skip:$Skip {
 
             Param($SnapshotTypeDesc)
@@ -514,20 +537,24 @@ Describe 'Data Retention' {
 
     Context 'Checking Last Seen Retention Policy is being applied' {
 
-        $sql = "select TABLE_SCHEMA + '.' + TABLE_NAME
-        from INFORMATION_SCHEMA.TABLES
-        where TABLE_NAME IN (
-            select DISTINCT TABLE_NAME
-            from INFORMATION_SCHEMA.COLUMNS
-            where COLUMN_NAME = 'date_last_seen'
-        )
-        and TABLE_NAME not like '_DUMP_%'
-        and TABLE_TYPE = 'BASE TABLE'";
-    
-        $Tables = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
-    
-        $TestCases = @();
-        $Tables.ForEach{$TestCases += @{TableName = $_.Column1 }}
+        BeforeAll {
+
+            $sql = "select TABLE_SCHEMA + '.' + TABLE_NAME
+            from INFORMATION_SCHEMA.TABLES
+            where TABLE_NAME IN (
+                select DISTINCT TABLE_NAME
+                from INFORMATION_SCHEMA.COLUMNS
+                where COLUMN_NAME = 'date_last_seen'
+            )
+            and TABLE_NAME not like '_DUMP_%'
+            and TABLE_TYPE = 'BASE TABLE'";
+        
+            $Tables = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+        
+            $TestCases = @();
+            $Tables.ForEach{$TestCases += @{TableName = $_.Column1 }}
+
+        }
 
         It 'The "Last Seen" Retention in Table [<TableName>] should respect the configuration setting' -TestCases $TestCases -Skip:$Skip {
 
