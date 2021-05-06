@@ -11,51 +11,38 @@ $SqlUpHours = $result.Column1
 
 $SqlWatchDatabaseTest = "SQLWATCH_BLOCKING_TEST"
 
-BeforeAll {
+Write-Host "Creating test database"
+<#
+    Create pester table to store results and other data.
+    This used to be in its own database but there is no need for another databae project.
+    Whilst we do need a separate database to create blocking chains (becuase sqlwatch has RCSI, 
+    we can just create it on the fligh here.
+    The benefit of this approach is that we can just create tables for the purpose of the test in one place here, 
+    rather than having to manage separate database project. The original idea was to move some of the testing stuff
+    from the SQLWATCH database but I will move it all here rather than separate database.
+#>
 
-    <#
-        Create pester table to store results and other data.
-        This used to be in its own database but there is no need for another databae project.
-        Whilst we do need a separate database to create blocking chains (becuase sqlwatch has RCSI, 
-        we can just create it on the fligh here.
-        The benefit of this approach is that we can just create tables for the purpose of the test in one place here, 
-        rather than having to manage separate database project. The original idea was to move some of the testing stuff
-        from the SQLWATCH database but I will move it all here rather than separate database.
-    #>
-
-    $sql = "if not exists (select * from sys.databases where name = '$($SqlWatchDatabaseTest)') 
-        begin
-            create database [$($SqlWatchDatabaseTest)]
-        end;
-        ALTER DATABASE [$($SqlWatchDatabaseTest)] SET READ_COMMITTED_SNAPSHOT OFF;
-		ALTER DATABASE [$($SqlWatchDatabaseTest)] SET RECOVERY SIMPLE ;"
-
-    Invoke-Sqlcmd -ServerInstance $SqlInstance -Database master -Query $sql
-
-    #Create table to store reference data for other tests where required:
-    $sql = "if not exists (select * from sys.tables where name = 'sqlwatch_pester_ref')
+$sql = "if not exists (select * from sys.databases where name = '$($SqlWatchDatabaseTest)') 
     begin
-        CREATE TABLE [dbo].[sqlwatch_pester_ref]
-        (
-            [date] datetime NOT NULL,
-            [test] varchar(255) not null,
-        );    
-    end;"
+        create database [$($SqlWatchDatabaseTest)]
+    end;
+    ALTER DATABASE [$($SqlWatchDatabaseTest)] SET READ_COMMITTED_SNAPSHOT OFF;
+    ALTER DATABASE [$($SqlWatchDatabaseTest)] SET RECOVERY SIMPLE ;"
 
-    Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabaseTest -Query $sql
+Invoke-Sqlcmd -ServerInstance $SqlInstance -Database master -Query $sql
 
-}
+#Create table to store reference data for other tests where required:
+$sql = "if not exists (select * from sys.tables where name = 'sqlwatch_pester_ref')
+begin
+    CREATE TABLE [dbo].[sqlwatch_pester_ref]
+    (
+        [date] datetime NOT NULL,
+        [test] varchar(255) not null,
+    );    
+end;"
 
-AfterAll {
+Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabaseTest -Query $sql
 
-    #Cleanup
-    $sql = "if exists (select * from sys.databses where name = '$($SqlWatchDatabaseTest)'
-    begin
-        drop database [$($SqlWatchDatabaseTest)]
-    end;"
-    Invoke-Sqlcmd -ServerInstance $SqlInstance -Database master -Query $sql
-
-}
 
 Describe 'Procedure Execution' {
     
@@ -647,3 +634,12 @@ Describe 'Application Errors' {
 
     }
 }
+
+
+Write-host "Cleaning up..."
+#Cleanup
+$sql = "if exists (select * from sys.databses where name = '$($SqlWatchDatabaseTest)'
+begin
+    drop database [$($SqlWatchDatabaseTest)]
+end;"
+Invoke-Sqlcmd -ServerInstance $SqlInstance -Database master -Query $sql
