@@ -1,14 +1,61 @@
 ﻿param(
     $SqlInstance,
     $SqlWatchDatabase,
-    $SqlWatchDatabaseTest,
     $MinSqlUpHours,
     $LookBackHours
 )
 
 $sql = "select datediff(hour,sqlserver_start_time,getdate()) from sys.dm_os_sys_info"
 $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
-$SqlUpHours = $result.Column1    
+$SqlUpHours = $result.Column1
+
+$SqlWatchDatabaseTest = "SQLWATCH_BLOCKING_TEST"
+
+BeforeAll {
+
+    <#
+        Create pester table to store results and other data.
+        This used to be in its own database but there is no need for another databae project.
+        Whilst we do need a separate database to create blocking chains (becuase sqlwatch has RCSI, 
+        we can just create it on the fligh here.
+        The benefit of this approach is that we can just create tables for the purpose of the test in one place here, 
+        rather than having to manage separate database project. The original idea was to move some of the testing stuff
+        from the SQLWATCH database but I will move it all here rather than separate database.
+    #>
+
+    $sql = "if not exists (select * from sys.databases where name = '$($SqlWatchDatabaseTest)') 
+        begin
+            create database [$($SqlWatchDatabaseTest)]
+        end;
+        ALTER DATABASE [$($SqlWatchDatabaseTest)] SET READ_COMMITTED_SNAPSHOT OFF;
+		ALTER DATABASE [$($SqlWatchDatabaseTest)] SET RECOVERY SIMPLE ;"
+
+    Invoke-Sqlcmd -ServerInstance $SqlInstance -Database master -Query $sql
+
+    #Create table to store reference data for other tests where required:
+    $sql = "if not exists (select * from sys.tables where name = 'sqlwatch_pester_ref')
+    begin
+        CREATE TABLE [dbo].[sqlwatch_pester_ref]
+        (
+            [date] datetime NOT NULL,
+            [test] varchar(255) not null,
+        );    
+    end;"
+
+    Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabaseTest -Query $sql
+
+}
+
+AfterAll {
+
+    #Cleanup
+    $sql = "if exists (select * from sys.databses where name = '$($SqlWatchDatabaseTest)'
+    begin
+        drop database [$($SqlWatchDatabaseTest)]
+    end;"
+    Invoke-Sqlcmd -ServerInstance $SqlInstance -Database master -Query $sql
+
+}
 
 Describe 'Procedure Execution' {
     
@@ -192,8 +239,8 @@ Describe 'Test Blocking Chains Capture' {
 
         It "Reference data created" {
             #create blocking chain
-            $sql = "insert into tester.sqlwatch_blocking_chain (date)
-            values (GETUTCDATE());"
+            $sql = "insert into [dbo].[sqlwatch_pester_ref] (date,test)
+            values (GETUTCDATE(),'Blocking Chain');"
 
             { Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabaseTest -Query $sql -ErrorAction Stop } | Should -Not -Throw 
         }
@@ -207,7 +254,7 @@ Describe 'Test Blocking Chains Capture' {
                 param($SqlInstance , $SqlWatchDatabaseTest)
                 Invoke-SqlCmd -ServerInstance $($SqlInstance) -Database $($SqlWatchDatabaseTest) -Query "
                 begin tran
-                select * from tester.sqlwatch_blocking_chain with (tablock, holdlock, xlock)
+                select * from [dbo].[sqlwatch_blocking_chain] with (tablock, holdlock, xlock)
                 waitfor delay '00:00:25'
                 commit tran
                 waitfor delay '00:00:2'"
@@ -217,7 +264,7 @@ Describe 'Test Blocking Chains Capture' {
       
            $scriptBlock2 = {           
                 param($SqlInstance , $SqlWatchDatabaseTest)
-                Invoke-SqlCmd -ServerInstance $($SqlInstance) -Database $($SqlWatchDatabaseTest) -Query "select * from tester.sqlwatch_blocking_chain"
+                Invoke-SqlCmd -ServerInstance $($SqlInstance) -Database $($SqlWatchDatabaseTest) -Query "select * from [dbo].[sqlwatch_blocking_chain]"
             }
              
             $Job2 = Start-Job -Name "JobBlk2" -ScriptBlock $scriptBlock2 -ArgumentList $SqlInstance, $SqlWatchDatabaseTest
@@ -243,7 +290,7 @@ Describe 'Test Blocking Chains Capture' {
         }
 
         It "New blocking chain recorded" {
-            $sql = "select cnt=count(*) from [dbo].[sqlwatch_logger_xes_blockers] where event_time >= (select max(date) from [$($SqlWatchDatabaseTest)].tester.sqlwatch_blocking_chain)"
+            $sql = "select cnt=count(*) from [dbo].[sqlwatch_logger_xes_blockers] where event_time >= (select max(date) from [$($SqlWatchDatabaseTest)].[dbo].[sqlwatch_pester_ref] where test = 'Blocking Chain')"
     
             $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
             $result.cnt | Should -BeGreaterThan 0 -Because 'Blocking chain count should have increased'
@@ -258,9 +305,9 @@ Describe 'Test Long Queries Capture' {
         BeforeAll {
            
             # ref data
-            $sql = "insert into [tester].[sqlwatch_long_query] (date)
-            values (getutcdate());"
-            Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabaseTest -Query $sql
+            $sql = "insert into [dbo].[sqlwatch_pester_ref] (date,test)
+            values (getutcdate(),'Long Query');"
+            Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
 
         }
 
@@ -295,7 +342,7 @@ Describe 'Test Long Queries Capture' {
 
         It "New Long Queries recorded" {
 
-            $sql = "select cnt=count(*) from [dbo].[sqlwatch_logger_xes_long_queries] where [event_time] >= (select max(date) from [$($SqlWatchDatabaseTest)].[tester].[sqlwatch_long_query])"
+            $sql = "select cnt=count(*) from [dbo].[sqlwatch_logger_xes_long_queries] where [event_time] >= (select max(date) from dbo.[sqlwatch_pester_ref] where test = 'Long Query')"
             $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
             $result.cnt | Should -BeGreaterThan 0 -Because 'Long Query count should have increased' 
 
