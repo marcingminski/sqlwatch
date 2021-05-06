@@ -251,7 +251,6 @@ Invoke-Pester -Script @{
         Parameters=@{
                 SqlInstance=$SqlInstance;
                 SqlWatchDatabase=$SqlWatchDatabase;
-                SqlWatchDatabaseTest=$SqlWatchDatabaseTest;
                 MinSqlUpHours=$MinSqlUpHours;
                 LookBackHours=$LookBackHours
             }
@@ -272,11 +271,6 @@ if ($result.agent_status -eq $true) {
 
         }
 }
-
-
-#cd C:\TEMP
-.\ReportUnit.exe $outputfile1
-.\ReportUnit.exe $outputfile2
 
 $sql = "if not exists (select * from sys.tables where name = 'sqlwatch_pester_result')
         begin
