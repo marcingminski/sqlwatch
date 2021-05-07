@@ -12,7 +12,6 @@ BeforeDiscovery {
     $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database master -Query $sql
     $SqlUpHours = $result.Column1
     
-    
     <#
         Create pester table to store results and other data.
         This used to be in its own database but there is no need for another databae project.
@@ -108,7 +107,7 @@ BeforeDiscovery {
 Describe 'Procedure Execution' {
 
     Context 'Procedure Should not Throw an error on the first run' {
-        It "Procedure <_.ProcName> should not throw an error" -Foreach $Procedure {
+        It "$($SqlInstance): Procedure <_.ProcName> should not throw an error" -Foreach $Procedure {
             $sql = "exec $($_.ProcName);"
             { Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql -ErrorAction Stop } | Should -Not -Throw 
         }
@@ -117,7 +116,7 @@ Describe 'Procedure Execution' {
     Start-Sleep -s 1
 
     Context 'Procedure Should not Throw an error on the second run' {
-        It "Procedure <_.ProcName> should not throw an error" -Foreach $Procedure {
+        It "$($SqlInstance): Procedure <_.ProcName> should not throw an error" -Foreach $Procedure {
             $sql = "exec $($_.ProcName);"
             { Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql -ErrorAction Stop } | Should -Not -Throw 
         }
@@ -126,19 +125,19 @@ Describe 'Procedure Execution' {
 
 Describe 'Config tables should not be empty' {
     Context 'Config tables should have rows' {
-        It "Table <_.TableName> should have rows" -Foreach $ConfigTable {
+        It "$($SqlInstance): Table <_.TableName> should have rows" -Foreach $ConfigTable {
             $sql = "select row_count=count(*) from $($_.TableName)"
             (Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql -ErrorAction Stop).row_count | Should -BeGreaterThan 0
         }        
     }
     Context 'Meta tables should have rows' {
-        It "Table <_.TableName> should have rows" -Foreach $MetaTable {
+        It "$($SqlInstance): Table <_.TableName> should have rows" -Foreach $MetaTable {
             $sql = "select row_count=count(*) from $($_.TableName)"
             (Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql -ErrorAction Stop).row_count | Should -BeGreaterThan 0
         }        
     }
     Context 'Logger tables should have rows' {
-        It "Table <_.TableName> should have rows" -Foreach $LoggerTable {
+        It "$($SqlInstance): Table <_.TableName> should have rows" -Foreach $LoggerTable {
             if ($($_.TableName) -eq "dbo.sqlwatch_logger_hadr_database_replica_states") {
                 Set-ItResult -Skip -Because "Availability Groups are not found"
             }
@@ -158,7 +157,7 @@ Describe 'Check Status should not be CHECK_ERROR' {
     $sql = "select CheckId=check_id, CheckName=check_name, CheckStatus=last_check_status from [dbo].[sqlwatch_meta_check]"
     $Check = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
         
-    It 'Check [<_.CheckName>] has valid outcome (<_.CheckStatus>)' -ForEach $Check {
+    It "$($SqlInstance): Check [<_.CheckName>] has valid outcome (<_.CheckStatus>)" -ForEach $Check {
         $($_.CheckStatus) | Should -BeIn ("OK","WARNING","CRITICAL") -Because 'Checks must return an outcome, it should be either "OK", "WARNING", "CRITICAL"'
     }
 }
