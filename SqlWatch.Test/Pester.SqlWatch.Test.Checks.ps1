@@ -5,13 +5,13 @@
     $LookBackHours
 )
 
+$SqlWatchDatabaseTest = "SQLWATCH_TEST"
 Write-Host "Testing $SqlInstance"
 
 $sql = "select datediff(hour,sqlserver_start_time,getdate()) from sys.dm_os_sys_info"
-$result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+$result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database master -Query $sql
 $SqlUpHours = $result.Column1
 
-$SqlWatchDatabaseTest = "SQLWATCH_TEST"
 
 <#
     Create pester table to store results and other data.
