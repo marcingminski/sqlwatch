@@ -225,7 +225,7 @@ $Checks = "IndentityUsage","FKCKTrusted"
 $sql = "select name
 from msdb.dbo.sysjobs
 where name like 'SQLWATCH%'
-and enabled = 1"        
+and enabled = 1"
 
 $jobs = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
 
@@ -242,6 +242,29 @@ if ($result.agent_status -eq $true) {
                 }
 
         }
+
+## on rare ocassions, appveyor is throws random errors which seem to be caused by timing, as if we are trying to access database before it has been deployed.
+$sql = "select dbonline=count(*) from sys.databases where name = '$SqlWatchDatabase' and user_access = 0 and state = 0"
+$isDbOnline = 0
+$Tries = 0
+
+while ($isDbOnline -eq 0 -and $Tries -le 10 ) {
+        Write-Host "Waiting for $SqlWatchDatabase database to come online..."
+        $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database master -Query $sql;
+        $isDbOnline = $result.dbonline;
+
+        if ($isDbOnline -eq 1) {
+                Break;
+        }
+        Start-Sleep -s 5;
+        $Tries+=1;
+}
+
+if ($isDbOnline -eq 0) {
+        Throw "Database $SqlWatchDatabase has not come online. Unable to continue"
+} else {
+        Write-Host "Database $SqlWatchDatabase is online."
+}
 
 ## custom pester scripts
 Write-Output "Custom SqlWatch Tests"
