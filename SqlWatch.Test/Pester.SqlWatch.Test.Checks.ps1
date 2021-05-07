@@ -356,6 +356,12 @@ Describe 'Failed Checks' {
         $TestCases = @();
         $Checks.ForEach{$TestCases += @{check_name = $_.check_name }} 
 
+        BeforeAll {
+
+            if ($SqlUpHours -lt $MinSqlUpHours) { $Skip = $true } else { $Skip = $false }
+
+        }        
+
     }
 
 
@@ -389,13 +395,8 @@ Describe 'Failed Checks' {
 
     Context "Checking if checks have outcome" {
 
-        BeforeAll {
-
-            if ($SqlUpHours -lt $MinSqlUpHours) { $Skip = $true } else { $Skip = $false }
-
-        }
     
-        It 'Check [<check_name>] should have an outcome' -TestCases $TestCases -Skip:$Skip {
+        It 'Check [<check_name>] should have an outcome' -TestCases $TestCases {
     
 
             Param($check_name) 
@@ -425,7 +426,7 @@ Describe 'Failed Checks' {
         }
 
         
-         It 'Check [<check_name>] should respect execution frequency setting' -TestCases $TestCases {
+         It 'Check [<check_name>] should respect execution frequency setting' -TestCases $TestCases -Skip:$Skip {
      
             Param($check_name) 
 
@@ -497,7 +498,13 @@ Describe 'Test database design' {
 
 Describe 'Test Check Results' {
 
-    It 'The Latest Data Backup Check should return correct result' {
+    BeforeAll {
+
+        if ($SqlUpHours -lt $MinSqlUpHours) { $Skip = $true } else { $Skip = $false }
+
+    }     
+
+    It 'The Latest Data Backup Check should return correct result' -Skip:$Skip {
         ## Use dbatools as a baseline
         $LastFullBackup = Get-DbaLastBackup -SqlInstance $SqlInstance | Sort-Object LastFullBackup -Descending | Select-Object -first 1 
         $LastDiffBackup = Get-DbaLastBackup -SqlInstance $SqlInstance | Sort-Object LastDiffBackup -Descending | Select-Object -first 1 
@@ -522,7 +529,7 @@ Describe 'Test Check Results' {
         $result.output | should -Be $LastDataBackupAgeDays 
     }
 
-    It 'The Latest Log Backup Check should return correct result' {
+    It 'The Latest Log Backup Check should return correct result' -Skip:$Skip {
         ## Use dbatools as a baseline
         $LastLogBackup = Get-DbaLastBackup -SqlInstance $SqlInstance | Sort-Object LastLogBackup -Descending | Select-Object -first 1 
 
@@ -546,7 +553,6 @@ Describe 'Data Retention' {
 
         BeforeAll {
 
-            if ($SqlUpHours -lt 168) { $Skip = $true } else { $Skip = $false }
             $SnapshotTypes = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query "select * from sqlwatch_config_snapshot_type"
 
             $TestCases = @();
@@ -554,7 +560,7 @@ Describe 'Data Retention' {
 
         }
   
-        It 'Snapshot Type [<SnapshotTypeDesc>] should respect retention policy' -TestCases $TestCases -Skip:$Skip {
+        It 'Snapshot Type [<SnapshotTypeDesc>] should respect retention policy' -TestCases $TestCases {
 
             Param($SnapshotTypeDesc)
 
