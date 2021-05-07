@@ -46,27 +46,8 @@ Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabaseTest -Quer
 
 
 Describe 'Procedure Execution' {
-    
-    Context 'Collector jobs must be disabled and not running before procedure test to avoid clashing' {
-
-        It 'SQLWATCH Jobs are disabled' {
-            $sql = "SELECT running_jobs=count(*)
-            FROM msdb.dbo.sysjobactivity AS sja
-            INNER JOIN msdb.dbo.sysjobs AS sj 
-            ON sja.job_id = sj.job_id
-            WHERE sja.start_execution_date IS NOT NULL
-               AND sja.stop_execution_date IS NULL
-               AND sj.name like 'SQLWATCH%'
-            "
-           
-            $RunnigJobs = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
-            $RunnigJobs.running_jobs | Should -Be 0 -Because "SQLWATCH Jobs must not be running before we execute collection during the test." 
-        }
-    }
 
     BeforeAll {
-
-        Start-Sleep -Seconds 2
 
         $sql = "select p.name 
         from sys.procedures p
@@ -92,12 +73,40 @@ Describe 'Procedure Execution' {
             when p.name like '%table' then 'B' 
             else p.name end"
 
-        $Procedures = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
 
         $TestCases = @();
-        $Procedures.ForEach{$TestCases += @{ProcedureName = $_.name }}               
+        $Tries = 0
 
-    } 
+        # On some ocassions, appveyor throws an error:
+        # The Procedure [<ProcedureName>] should not throw an error 
+        # which means we have not gotten any procedures despite the db being deployed and online.
+        # I am not sure why but lets check we have populated the procs:
+
+        While ($TestCases.count -eq 0 -and $Tries -lt 10 ) {
+            Write-Host "Getting procedures for testing..."
+            $Procedures = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+            $Procedures.ForEach{$TestCases += @{ProcedureName = $_.name }}
+            $Tries+=1
+            Start-Sleep -s 2
+        }
+    }     
+    
+    Context 'Collector jobs must be disabled and not running before procedure test to avoid clashing' {
+
+        It 'SQLWATCH Jobs are disabled' {
+            $sql = "SELECT running_jobs=count(*)
+            FROM msdb.dbo.sysjobactivity AS sja
+            INNER JOIN msdb.dbo.sysjobs AS sj 
+            ON sja.job_id = sj.job_id
+            WHERE sja.start_execution_date IS NOT NULL
+               AND sja.stop_execution_date IS NULL
+               AND sj.name like 'SQLWATCH%'
+            "
+           
+            $RunnigJobs = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+            $RunnigJobs.running_jobs | Should -Be 0 -Because "SQLWATCH Jobs must not be running before we execute collection during the test." 
+        }
+    }
 
     Context 'Check That Procedures Execute OK on the First Run' {
 
