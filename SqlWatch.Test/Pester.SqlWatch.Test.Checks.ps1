@@ -74,6 +74,7 @@ Describe 'Procedure Execution' {
             name like 'usp_sqlwatch_internal_add%'
             or name like 'usp_sqlwatch_logger%'
             or name like 'usp_sqlwatch_internal_expand%'
+            or name like 'usp_sqlwatch_internal_process%'
             )
         --not procedures with parameters as we dont know what param to pass
         and name not in (
@@ -82,7 +83,10 @@ Describe 'Procedure Execution' {
             inner join sys.parameters r
                 on r.object_id = p.object_id
         )
-        order by case when p.name like '%internal$' then 1 else 2 end,
+        order by case 
+            when p.name like '%internal_expand%' then 1 
+            when p.name like '%internal_process%' then 2
+            else 9 end,
         case
             when p.name like '%database' then 'A' 
             when p.name like '%table' then 'B' 
