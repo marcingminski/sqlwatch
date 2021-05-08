@@ -101,16 +101,6 @@ Describe 'Procedure Execution' -Tag 'Procedures' {
         or p.name like 'usp_sqlwatch_internal_expand%'
         or p.name like 'usp_sqlwatch_internal_process%'
         )
-    --not procedures with parameters that are not nullabel or do not have default
-    --as we dont know what values to pass
-    and p.name not in (
-        select distinct p1.name 
-        from sys.procedures p1
-        inner join sys.parameters r
-            on r.object_id = p1.object_id
-        where default_value is null
-        or (default_value is not null and is_nullable = 0)            
-    )
     order by case 
         when p.name like '%internal_add%' then 0
         when p.name like '%internal_expand%' then 1 
