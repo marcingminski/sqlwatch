@@ -162,7 +162,20 @@ Describe "$($SqlInstance): Procedure Execution" -Tag 'Procedures' {
         when p.name like '%table' then 'B' 
         else p.name end"
 
-    $SqlWatchProcedures = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+    $SqlWatchProcedures = @()        
+    $i = 0;
+
+
+    While ($SqlWatchProcedures.Count -eq 0 -and $i -lt 20 ) {
+
+        $SqlWatchProcedures = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+        
+        if ($SqlWatchProcedures.Count -gt 0) {
+            break;
+        }
+        $i+=1
+        Start-Sleep -s 5
+    }
 
     Context 'Procedure Should not Throw an error on the first run' {
         It "Procedure <_.ProcedureName> should not throw an error" -Foreach $SqlWatchProcedures {
