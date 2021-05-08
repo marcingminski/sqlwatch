@@ -310,7 +310,7 @@ declare @sql nvarchar(4000)
 			left join [dbo].[sqlwatch_logger_perf_os_performance_counters] prev (nolock) --previous
 				on prev.snapshot_time = @date_snapshot_previous
 				and prev.performance_counter_id = pc.performance_counter_id
-				and prev.instance_name = pc.instance_name
+				and prev.instance_name = pc.instance_name collate database_default
 				and prev.sql_instance = @sql_instance
 				and prev.snapshot_type_id = 1
 		
