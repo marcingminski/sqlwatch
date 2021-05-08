@@ -1,11 +1,23 @@
 #PS script to deploy SQLWATCH during appveyor builds
 
-param([string]$SqlInstance)
+param(
+    [string]$SqlInstance,
+    [string]$Database,
+    [string]$Dacpac,
+    [switch]$RunAsJob
+    )
 
-# Get root path of this script:
-$PSScriptRoot = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
+$DACPACPath = Get-ChildItem -Recurse -Filter $Dacpac | Sort-Object LastWriteTime -Descending | Select-Object -First 1
 
-$DACPAC = Get-ChildItem -Path "$PSScriptRoot\RELEASE\" -Recurse -Filter SQLWATCH.dacpac | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+if ($RunAsJob) {
 
-sqlpackage.exe /a:Publish /sf:"$($DACPAC.FullName)" /tdn:SQLWATCH /tsn:$SqlInstance
-exit $LASTEXITCODE
+    $JobName = $Database + "@" + $SqlInstance
+    Start-Job -Name $JobName -ScriptBlock { 
+        param([string]$arguments)
+        Start-Process sqlpackage.exe -ArgumentList $arguments -NoNewWindow -PassThru 
+        } -ArgumentList "/a:Publish /sf:`"$($DACPACPath.FullName)`" /tdn:$Database /tsn:$SqlInstance"
+}
+else {
+    sqlpackage.exe /a:Publish /sf:"$($DACPACPath.FullName)" /tdn:$Database /tsn:$SqlInstance
+    exit $LASTEXITCODE
+}

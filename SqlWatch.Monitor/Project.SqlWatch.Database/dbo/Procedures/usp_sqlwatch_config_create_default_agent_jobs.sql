@@ -10,11 +10,7 @@ set nocount on;
 -- if the agent isnt running or if we're in express edition we dont want to raise errors just a gentle warning
 -- if we are in the express edition we will be able to run collection via broker
 
-if not exists (
-	select *
-	from master.dbo.sysprocesses
-	where program_name = N'SQLAgent - Generic Refresher'
-	)
+if [dbo].[ufn_sqlwatch_get_agent_status]() = 0
 	begin
 		print 'SQL Agent is not running. SQLWATCH relies on Agent to collect performance data.
 		The database will be deployed but you will have to deploy jobs manually once you have enabled SQL Agent.
