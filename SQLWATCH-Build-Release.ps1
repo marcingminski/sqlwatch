@@ -4,7 +4,8 @@
 # Copy executables
 
 # Get root path of this script:
-$PSScriptRoot = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
+$PSScriptRoot = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition;
+$ErrorActionPreference = "Stop";
 
 # Create TMP folder to store release files:
 Write-Output "Create Release folder and copy all files for the release..."
@@ -12,6 +13,10 @@ Write-Output "Create Release folder and copy all files for the release..."
 $TmpFolder = "$PSScriptRoot\RELEASE\"
 $ReleaseFolderName = "SQLWATCH Latest"
 $ReleaseFolder = "$TmpFolder\$ReleaseFolderName"
+
+if (Test-Path -path $TmpFolder) {
+    Remove-Item -Path $TmpFolder -Force -Confirm:$false -Recurse
+ }
 New-Item -Path $ReleaseFolder -ItemType Directory
 
 # Run Build again without rebuild so we dont bump the build number but include in the dacpac.
