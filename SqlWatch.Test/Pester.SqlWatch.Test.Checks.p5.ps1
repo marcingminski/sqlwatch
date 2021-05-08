@@ -33,7 +33,12 @@ while ((!$result -eq 0) -and $i -lt 20 ) {
     try {
         $result = (Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql).cnt
     }
-    catch {}
+    catch {
+        $IdontCareAboutTheErrorHere = $Error
+        if (1 -eq 2) {
+            Throw "we must have a throw in the catch"
+        }
+    }
     $i+=1
     if ($result -gt 0) {
         break;
