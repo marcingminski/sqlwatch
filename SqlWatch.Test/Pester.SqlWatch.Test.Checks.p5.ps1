@@ -1,53 +1,55 @@
 ﻿param(
-    $SqlInstance,
-    $SqlWatchDatabase
+    [string]$SqlInstance,
+    [string]$SqlWatchDatabase,
+    [string]$SqlWatchDatabaseTest,
+    [int]$SqlUptimeHours
 )
 
+Describe 'System Configuration' {
 
-BeforeDiscovery {
+    $sql = "select collation_name from sys.databases where name = 'tempdb'"
+    $SystemCollation = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
 
-    $SqlWatchDatabaseTest = "SQLWATCH_TEST"
-   
-    $sql = "select datediff(hour,sqlserver_start_time,getdate()) from sys.dm_os_sys_info"
-    $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database master -Query $sql
-    $SqlUpHours = $result.Column1
-    
-    <#
-        Create pester table to store results and other data.
-        This used to be in its own database but there is no need for another databae project.
-        Whilst we do need a separate database to create blocking chains (becuase sqlwatch has RCSI, 
-        we can just create it on the fligh here.
-        The benefit of this approach is that we can just create tables for the purpose of the test in one place here, 
-        rather than having to manage separate database project. The original idea was to move some of the testing stuff
-        from the SQLWATCH database but I will move it all here rather than separate database.
-    #>
-    
-    $sql = "if not exists (select * from sys.databases where name = '$($SqlWatchDatabaseTest)') 
-        begin
-            create database [$($SqlWatchDatabaseTest)]
-        end;
-        ALTER DATABASE [$($SqlWatchDatabaseTest)] SET READ_COMMITTED_SNAPSHOT OFF;
-        ALTER DATABASE [$($SqlWatchDatabaseTest)] SET RECOVERY SIMPLE ;"
-    
-    Invoke-Sqlcmd -ServerInstance $SqlInstance -Database master -Query $sql
-    
-    #Create table to store reference data for other tests where required:
-    $sql = "if not exists (select * from sys.tables where name = 'sqlwatch_pester_ref')
-    begin
-        CREATE TABLE [dbo].[sqlwatch_pester_ref]
-        (
-            [date] datetime NOT NULL,
-            [test] varchar(255) not null,
-        );    
+    $sql = "select collation_name from sys.databases where name = '$($SqlWatchDatabase)'"
+    $SqlWatchCollation  = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
 
-        create index idx_sqlwatch_pester_ref_test
-            on [dbo].[sqlwatch_pester_ref] ([test]) include ([date])
-    end;
-    
-    insert into [dbo].[sqlwatch_pester_ref] (date,test)
-    values (getutcdate(),'Test Start')"
-    
-    Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabaseTest -Query $sql
+    If ($SystemCollation.collation_name -eq $SqlWatchCollation.collation_name) {
+        $CollationMismatch = $false
+        $Skip = $true
+    } else {
+        $CollationMismatch = $true
+        $Skip = $false
+    }
+    It 'The SQLWATCH database collaction should be different to system collaction to incrase test coverage' -Skip:$Skip {
+
+    }         
+
+
+    if ($SqlUptimeHours -lt 168) {
+        $Skip = $true 
+    } else { 
+        $Skip = $false 
+    }
+
+    It 'SQL Server should be running for at least a weeek to test data retention routines' -Skip:$Skip {}
+
+
+    $sql = "select datediff(hour,getutcdate(),getdate())"
+    $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql; 
+
+    if ($result.Column1 -ge 0) { 
+        $Skip = $true 
+    } else { 
+        $Skip = $false 
+    }
+
+    #if the local time is ahead of utc we can easily spot records in the future.
+    #cannot do the same when the local time is behind or same as utc.
+    It 'The Servers local time should be ahead of UTC in order to test that we are only using UTC dates' -Skip {}
+
+}
+
+Describe 'Procedure Execution' -Tag 'Procedures' {
 
     #SQLWATCH Procedures
     $sql = "select ProcedureName= s.name + '.' + p.name 
@@ -80,7 +82,26 @@ BeforeDiscovery {
         when p.name like '%table' then 'B' 
         else p.name end"
 
-    $SqlWatchProcedure = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+    $SqlWatchProcedures = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+
+    Context 'Procedure Should not Throw an error on the first run' {
+        It "Procedure <_.ProcedureName> should not throw an error" -Foreach $SqlWatchProcedures {
+            $sql = "exec $($_.ProcedureName);"
+            { Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql -ErrorAction Stop } | Should -Not -Throw 
+        }
+    }
+
+    Start-Sleep -s 1
+
+    Context 'Procedure Should not Throw an error on the second run' {
+        It "Procedure <_.ProcedureName> should not throw an error" -Foreach $SqlWatchProcedures {
+            $sql = "exec $($_.ProcedureName);"
+            { Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql -ErrorAction Stop } | Should -Not -Throw 
+        }
+    }    
+}
+
+Describe 'Config tables should not be empty' -Tag 'Tables' {
 
     ## SQLWATCH Tables
     $sql = "select TableName=TABLE_SCHEMA + '.' + TABLE_NAME
@@ -93,74 +114,11 @@ BeforeDiscovery {
     where TABLE_TYPE = 'BASE TABLE'
     and TABLE_NAME not like 'sqlwatch%baseline'";
 
-    $SqlWatchTable = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
-    $SqlWatchTableConfig = $SqlWatchTable | Where-Object { $_.TableType -eq "Config" }
-    $SqlWatchTableMeta = $SqlWatchTable | Where-Object { $_.TableType -eq "Meta" }
-    $SqlWatchTableLogger = $SqlWatchTable | Where-Object { $_.TableType -eq "Logger" }
+    $SqlWatchTables = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql    
 
-}
-
-Describe 'System Configuration' {
-
-    Context 'Database Collation' {
-
-        $sql = "select collation_name from sys.databases where name = 'tempdb'"
-        $SystemCollation = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
-    
-        $sql = "select collation_name from sys.databases where name = '$($SqlWatchDatabase)'"
-        $SqlWatchCollation  = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
-    
-        If ($SystemCollation.collation_name -eq $SqlWatchCollation.collation_name) {
-            $CollationMismatch = $false
-            $Skip = $true
-        } else {
-            $CollationMismatch = $true
-            $Skip = $false
-        }
-        It 'The SQLWATCH database collaction should be different to system collaction to incrase test coverage' -Skip:$Skip {
-    
-        }         
-    }
-
-    Context 'System time' {
-
-        $sql = "select datediff(hour,getutcdate(),getdate())"
-        $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql; 
-
-        if ($result.Column1 -ge 0) { 
-            $Skip = $true 
-        } else { 
-            $Skip = $false 
-        }
-
-        #if the local time is ahead of utc we can easily spot records in the future.
-        #cannot do the same when the local time is behind or same as utc.
-        It 'The Servers local time should be ahead of UTC in order to test that we are only using UTC dates' -Skip {
-
-        }
-    }
-}
-
-Describe 'Procedure Execution' -Tag 'Procedures' {
-
-    Context 'Procedure Should not Throw an error on the first run' {
-        It "Procedure <_.ProcedureName> should not throw an error" -Foreach $SqlWatchProcedure {
-            $sql = "exec $($_.ProcedureName);"
-            { Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql -ErrorAction Stop } | Should -Not -Throw 
-        }
-    }
-
-    Start-Sleep -s 1
-
-    Context 'Procedure Should not Throw an error on the second run' {
-        It "Procedure <_.ProcedureName> should not throw an error" -Foreach $SqlWatchProcedure {
-            $sql = "exec $($_.ProcedureName);"
-            { Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql -ErrorAction Stop } | Should -Not -Throw 
-        }
-    }    
-}
-
-Describe 'Config tables should not be empty' -Tag 'Tables' {
+    $SqlWatchTableConfig = $SqlWatchTables | Where-Object { $_.TableType -eq "Config" }
+    $SqlWatchTableMeta = $SqlWatchTables | Where-Object { $_.TableType -eq "Meta" }
+    $SqlWatchTableLogger = $SqlWatchTables | Where-Object { $_.TableType -eq "Logger" }    
 
     Context 'Config tables should have rows' {
         It "Table <_.TableName> should have rows" -Foreach $SqlWatchTableConfig {
@@ -230,21 +188,10 @@ Describe 'Config tables should not be empty' -Tag 'Tables' {
 
 Describe 'Testing Blocking chains capture' -Tag 'BlockingChains' {
 
-    Context 'Creating reference data for blocking chains' {
-
-        It "Reference data created" {
-
-            $sql = "insert into [dbo].[sqlwatch_pester_ref] (date,test)
-            values (GETUTCDATE(),'Blocking Chain');"
-
-            { Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabaseTest -Query $sql -ErrorAction Stop } | Should -Not -Throw 
-        }
-    }
-
-    Context 'Creating blocking chains' {
+    Context 'Creating blocking chains' {        
 
         It "Head blocker initiated" {
-
+                           
             $scriptBlock = {           
                 param($SqlInstance , $SqlWatchDatabaseTest)
                 Invoke-SqlCmd -ServerInstance $($SqlInstance) -Database $($SqlWatchDatabaseTest) -Query "
@@ -261,9 +208,9 @@ Describe 'Testing Blocking chains capture' -Tag 'BlockingChains' {
 
         It 'Blocked process initiated' {
 
-            Start-Sleep -s 3
+            Start-Sleep -s 5
             
-            $BlockingDuration = Measure-Command { Invoke-SqlCmd -ServerInstance $($SqlInstance) -Database $($SqlWatchDatabaseTest) -Query "select cnt=count(*) from [dbo].[sqlwatch_pester_ref]" }
+            $BlockingDuration = Measure-Command { Invoke-SqlCmd -ServerInstance $($SqlInstance) -Database $($SqlWatchDatabase) -Query "select cnt=count(*) from [$($SqlWatchDatabaseTest)].[dbo].[sqlwatch_pester_ref]" }
             $BlockingDuration.TotalSeconds | Should -BeGreaterThan 20 -Because "The blocking transaction lasts at least 25 seconds"
         }
     }    
@@ -278,7 +225,7 @@ Describe 'Testing Blocking chains capture' -Tag 'BlockingChains' {
         }
 
         It "New blocking chain recorded" {
-            $sql = "select cnt=count(*) from [dbo].[sqlwatch_logger_xes_blockers] where event_time >= (select max(date) from [$($SqlWatchDatabaseTest)].[dbo].[sqlwatch_pester_ref] where test = 'Blocking Chain')"
+            $sql = "select cnt=count(*) from [dbo].[sqlwatch_logger_xes_blockers] where event_time >= (select max(date) from [$($SqlWatchDatabaseTest)].[dbo].[sqlwatch_pester_ref])"
             $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
             $result.cnt | Should -BeGreaterThan 0 -Because 'Blocking chain count should have increased'
         }
@@ -286,17 +233,6 @@ Describe 'Testing Blocking chains capture' -Tag 'BlockingChains' {
 }
 
 Describe 'Testing Long Queries Capture' -Tag 'LongQueries' {
-
-    Context 'Creating reference data for Long Query' {
-
-        It "Reference data created" {
-
-            $sql = "insert into [dbo].[sqlwatch_pester_ref] (date,test)
-            values (GETUTCDATE(),'Long Query');"
-
-            { Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabaseTest -Query $sql -ErrorAction Stop } | Should -Not -Throw 
-        }
-    }
 
     Context 'Generating Long Query' {
 
@@ -352,8 +288,7 @@ Describe 'Testing Long Queries Capture' -Tag 'LongQueries' {
                     from [dbo].[sqlwatch_logger_xes_long_queries] 
                     where [event_time] >= (
                             select max(date) 
-                            from [$($SqlWatchDatabaseTest)].dbo.[sqlwatch_pester_ref] 
-                            where test = 'Long Query'
+                            from [$($SqlWatchDatabaseTest)].dbo.[sqlwatch_pester_ref]
                             )"
             $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
             $result.cnt | Should -BeGreaterThan 0 -Because 'Long Query count should have increased' 
@@ -371,12 +306,25 @@ Describe 'Testing Long Queries Capture' -Tag 'LongQueries' {
 
 Describe 'Check Status should not be CHECK_ERROR' -Tag 'Checks' {
 
-    #This can only run after we have run procedures that expand and create checks:
-    $sql = "select CheckId=check_id, CheckName=check_name, CheckStatus=last_check_status from [dbo].[sqlwatch_meta_check]"
-    $Check = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
-        
-    It "Check [<_.CheckName>] has valid outcome (<_.CheckStatus>)" -ForEach $Check {
-        $($_.CheckStatus) | Should -BeIn ("OK","WARNING","CRITICAL") -Because 'Checks must return an outcome, it should be either "OK", "WARNING", "CRITICAL"'
+    Context 'Proces checks - 1st run' {
+        $sql = "exec [dbo].[usp_sqlwatch_internal_process_checks]"
+        { Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql } | Should -Not -Throw
+    }
+
+    Context 'Proces checks - 2nd run' {
+        Start-Sleep -s 5
+        $sql = "exec [dbo].[usp_sqlwatch_internal_process_checks]"
+        { Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql } | Should -Not -Throw
+    }
+
+    Context 'Test outcome' {
+        #This can only run after we have run procedures that expand and create checks:
+        $sql = "select CheckId=check_id, CheckName=check_name, CheckStatus=last_check_status from [dbo].[sqlwatch_meta_check]"
+        $Check = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+            
+        It "Check [<_.CheckName>] has valid outcome (<_.CheckStatus>)" -ForEach $Check {
+            $($_.CheckStatus) | Should -BeIn ("OK","WARNING","CRITICAL") -Because 'Checks must return an outcome, it should be either "OK", "WARNING", "CRITICAL"'
+        }
     }
 }
 
@@ -451,15 +399,12 @@ Describe 'Application Log Errors' -Tag 'ApplicationErrors' {
     and process_message_type = 'ERROR'"
     $SqlWatchError = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
 
-    if ($Error -eq $null) {
+    if ($SqlWatchError -eq $null) {
         It 'Application Log should not contain ERRORS Raised during the testing'{}
     } else {
 
         It 'Procedure <_.ERROR_PROCEDURE> has raised an error' -ForEach $SqlWatchError {
             $($_.ERROR_MESSAGE) | Should -BeNullOrEmpty
         }
-
-    }
-
-    
+    }   
 }
