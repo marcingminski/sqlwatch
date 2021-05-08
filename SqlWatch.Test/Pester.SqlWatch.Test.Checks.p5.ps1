@@ -44,7 +44,7 @@ values (getutcdate(),'Test Start')"
 
 Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabaseTest -Query $sql
 
-Describe 'System Configuration' {
+Describe "$($SqlInstance): System Configuration" {
 
     $sql = "select collation_name from sys.databases where name = 'tempdb'"
     $SystemCollation = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
@@ -88,7 +88,7 @@ Describe 'System Configuration' {
 
 }
 
-Describe 'Procedure Execution' -Tag 'Procedures' {
+Describe "$($SqlInstance): Procedure Execution" -Tag 'Procedures' {
 
     #SQLWATCH Procedures
     $sql = "select ProcedureName= s.name + '.' + p.name 
@@ -130,7 +130,7 @@ Describe 'Procedure Execution' -Tag 'Procedures' {
     }    
 }
 
-Describe 'Config tables should not be empty' -Tag 'Tables' {
+Describe "$($SqlInstance): Config tables should not be empty" -Tag 'Tables' {
 
     ## SQLWATCH Tables
     $sql = "select TableName=TABLE_SCHEMA + '.' + TABLE_NAME
@@ -215,7 +215,7 @@ Describe 'Config tables should not be empty' -Tag 'Tables' {
     }
 }
 
-Describe 'Testing Blocking chains capture' -Tag 'BlockingChains' {
+Describe "$($SqlInstance): Testing Blocking chains capture" -Tag 'BlockingChains' {
 
     Context 'Creating blocking chains' {        
 
@@ -261,7 +261,7 @@ Describe 'Testing Blocking chains capture' -Tag 'BlockingChains' {
     }    
 }
 
-Describe 'Testing Long Queries Capture' -Tag 'LongQueries' {
+Describe "$($SqlInstance): Testing Long Queries Capture" -Tag 'LongQueries' {
 
     Context 'Generating Long Query' {
 
@@ -333,7 +333,7 @@ Describe 'Testing Long Queries Capture' -Tag 'LongQueries' {
     }
 }
 
-Describe 'Check Status should not be CHECK_ERROR' -Tag 'Checks' {
+Describe "$($SqlInstance): Check Status should not be CHECK_ERROR" -Tag 'Checks' {
 
     Context 'Proces checks - 1st run' {
         $sql = "exec [dbo].[usp_sqlwatch_internal_process_checks]"
@@ -357,7 +357,7 @@ Describe 'Check Status should not be CHECK_ERROR' -Tag 'Checks' {
     }
 }
 
-Describe 'Data Retention' -Tag 'DataRetention' {
+Describe "$($SqlInstance): Data Retention" -Tag 'DataRetention' {
 
     $sql = "select * from dbo.sqlwatch_config_snapshot_type"
     $SnapshotType = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
@@ -416,7 +416,7 @@ Describe 'Data Retention' -Tag 'DataRetention' {
  
 }
 
-Describe 'Application Log Errors' -Tag 'ApplicationErrors' {
+Describe "$($SqlInstance): Application Log Errors" -Tag 'ApplicationErrors' {
 
     $sql = "select ERROR_PROCEDURE, ERROR_MESSAGE 
     from [dbo].[sqlwatch_app_log] 
