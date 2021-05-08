@@ -4,9 +4,44 @@
     [string]$SqlWatchDatabaseTest
 )
 
-$sql = "select Hours=datediff(hour,sqlserver_start_time,getdate()) from sys.dm_os_sys_info"
-$SqlUptime = Invoke-SqlCmd -ServerInstance $SqlInstance -Database master -Query $sql
-$SqlUptimeHours = $SqlUptime.Hours
+<# On not so rare ocassions, Appveyor throws an error
+Cannot open database "SQLWATCH" requested by the login. The login failed.
+Login failed for user 'APPVYR-WIN\appveyor'
+so we have to make sure all databases are onine and accesible before we can proceed with testing
+#> 
+
+$SqlWatchDatabaseState = 0
+$sql = "select isOnline=count(*) 
+    from sys.databases
+    where name = '$($SqlWatchDatabase)' 
+    and state = 0 and user_access = 0 " 
+
+$i = 0
+While ($SqlWatchDatabaseState -ne 1 -and $i -lt 20) {
+    $SqlWatchDatabaseState = (Invoke-SqlCmd -ServerInstance $SqlInstance -Database master -Query $sql).isOnline
+    $i+=1
+    If ($SqlWatchDatabaseState -eq 1) {
+        break;
+    }
+    Start-Sleep -s 5
+}
+    
+$sql  = "select cnt=count(*) from [dbo].[sqlwatch_app_version]"
+
+$i = 0
+while ((!$result -eq 0) -and $i -lt 20 ) {
+    try {
+        $result = (Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql).cnt
+    }
+    catch {}
+    $i+=1
+    if ($result -gt 0) {
+        break;
+    }
+    Start-Sleep 5
+}
+
+
 <#
     Create pester table to store results and other data.
     This used to be in its own database but there is no need for another databae project.
@@ -63,7 +98,10 @@ Describe "$($SqlInstance): System Configuration" {
 
     }         
 
-
+    $sql = "select Hours=datediff(hour,sqlserver_start_time,getdate()) from sys.dm_os_sys_info"
+    $SqlUptime = Invoke-SqlCmd -ServerInstance $SqlInstance -Database master -Query $sql
+    $SqlUptimeHours = $SqlUptime.Hours
+   
     if ($SqlUptimeHours -lt 168) {
         $Skip = $true 
     } else { 
