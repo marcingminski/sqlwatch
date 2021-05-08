@@ -144,6 +144,14 @@ Describe "$($SqlInstance): Procedure Execution" -Tag 'Procedures' {
         or p.name like 'usp_sqlwatch_internal_expand%'
         or p.name like 'usp_sqlwatch_internal_process%'
         )
+    --exclue procs that require parameters
+    and p.name not in (
+            'usp_sqlwatch_internal_add_check',
+            'usp_sqlwatch_internal_add_os_volume',
+            'usp_sqlwatch_internal_process_actions',
+            'usp_sqlwatch_internal_process_reports',
+            'usp_sqlwatch_logger_disk_utilisation_os_volume'
+            )
     order by case 
         when p.name like '%internal_add%' then 0
         when p.name like '%internal_expand%' then 1 
@@ -154,7 +162,20 @@ Describe "$($SqlInstance): Procedure Execution" -Tag 'Procedures' {
         when p.name like '%table' then 'B' 
         else p.name end"
 
-    $SqlWatchProcedures = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+    $SqlWatchProcedures = @()        
+    $i = 0;
+
+
+    While ($SqlWatchProcedures.Count -eq 0 -and $i -lt 20 ) {
+
+        $SqlWatchProcedures = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+        
+        if ($SqlWatchProcedures.Count -gt 0) {
+            break;
+        }
+        $i+=1
+        Start-Sleep -s 5
+    }
 
     Context 'Procedure Should not Throw an error on the first run' {
         It "Procedure <_.ProcedureName> should not throw an error" -Foreach $SqlWatchProcedures {
@@ -173,12 +194,12 @@ Describe "$($SqlInstance): Procedure Execution" -Tag 'Procedures' {
     }    
 }
 
-Describe "$($SqlInstance): Config tables should not be empty" -Tag 'Tables' {
+Describe "$($SqlInstance): Tables should not be empty" -Tag 'Tables' {
 
     ## SQLWATCH Tables
     $sql = "select TableName=TABLE_SCHEMA + '.' + TABLE_NAME
         , TableType=case 
-            when TABLE_NAME like '%config%' and TABLE_NAME not like '%logger%' and TABLE_NAME not like '_DUMP_%' then 'Config'
+            when TABLE_NAME like '%config%' and TABLE_NAME not like '%logger%' and TABLE_NAME not like '%meta%' and TABLE_NAME not like '_DUMP_%' then 'Config'
             when TABLE_NAME like '%meta%' then 'Meta'
             when TABLE_NAME not like '_DUMP_%' and TABLE_NAME like '%logger%' then 'Logger'
             else 'Other' end
