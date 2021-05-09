@@ -477,7 +477,112 @@ Describe "$($SqlInstance): Data Retention" -Tag 'DataRetention' {
             $result.Column1 | Should -Be 0 -Because "There should not be any rows beyond the max age." 
         }           
     }
- 
+}
+
+Describe "$($SqlInstance): Database Design" -Tag 'DatabaseDesign' {
+
+    $sql = "select TableName=schema_name(t.schema_id) + '.' +  t.[name], 
+    PkName = pk.[name], FkName=fk.[name]
+    from sys.tables t
+    left join sys.indexes pk
+        on t.object_id = pk.object_id 
+        and pk.is_primary_key = 1
+    left join sys.foreign_keys fk
+        on fk.parent_object_id = t.object_id"
+
+    $SqlWatchTableKeys = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+
+    Context 'Tables have Primary Keys' {
+
+        It 'Table <_.TableName> has Primary Key' -ForEach $SqlWatchTableKeys {
+
+            If ($($_.TableName) -eq "dbo.sqlwatch_pester_result" `
+            -or $($_.TableName) -eq "dbo.dbachecksChecks" `
+            -or $($_.TableName) -eq "dbo.dbachecksResults") {
+                Set-ItResult -Skip -Because 'it is a third party table'
+            } else {
+                $($_.PkName) | Should -Not -BeNullOrEmpty
+            }
+        }
+    }
+
+    Context 'Tables have Foreign Keys' {
+
+        It 'Table <_.TableName> has Foreign Key' -ForEach $SqlWatchTableKeys {
+
+            If ($($_.TableName) -Like "dbo.sqlwatch_config*") {
+                Set-ItResult -Skip -Because 'config tables do not have FKs by design'
+            }
+            ElseIf ($($_.TableName) -Like "dbo.sqlwatch_stage*") {
+                Set-ItResult -Skip -Because 'stage tables do not have FKs by design'                
+            }
+            ElseIf (
+                $($_.TableName) -eq "dbo.sqlwatch_pester_result" `
+            -or $($_.TableName) -eq "dbo.dbachecksChecks" `
+            -or $($_.TableName) -eq "dbo.dbachecksResults" `
+            -or $($_.TableName) -eq "dbo.__RefactorLog"  
+            ) {
+                Set-ItResult -Skip -Because 'it is a third party table'
+            } else {
+                $($_.FkName) | Should -Not -BeNullOrEmpty
+            }
+        }        
+    }
+
+    Context 'Check Constraints are trusted' {
+
+        $sql = "select name, is_not_trusted 
+        from sys.check_constraints"
+
+        $SqlWatchConstraints = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+
+        It 'Constraint <_.name> is trusted' -ForEach $SqlWatchConstraints {
+            $($_.is_not_trusted) | Should -Be 0 
+        }
+    }
+
+    Context 'Foreign Keys are trusted' {
+
+        $sql = "select name, is_not_trusted 
+        from sys.foreign_keys"
+
+        $SqlWatchForeignKeys = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+
+        It 'Constraint <_.name> is trusted' -ForEach $SqlWatchForeignKeys {
+            $($_.is_not_trusted) | Should -Be 0 
+        }
+    }
+    
+    Context 'Dates are correct' {
+
+        $sql="select [SqlWatchColumn]=c.TABLE_SCHEMA + '.' + c.TABLE_NAME + '.' + c.COLUMN_NAME 
+        from INFORMATION_SCHEMA.COLUMNS c
+        inner join INFORMATION_SCHEMA.TABLES t
+            on t.TABLE_CATALOG = c.TABLE_CATALOG
+            and t.TABLE_NAME = c.TABLE_NAME
+            and t.TABLE_SCHEMA = c.TABLE_SCHEMA
+        where t.TABLE_TYPE = 'BASE TABLE'         
+        and c.DATA_TYPE LIKE '%time%'"
+        $SqlWatchTimeColumns = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+
+
+        $sql = "select LOCAL_TIME=GETDATE(), UTC_TIME=GETUTCDATE(), TABLE_NAME,COLUMN_NAME 
+        from INFORMATION_SCHEMA.COLUMNS 
+        where TABLE_SCHEMA + '.' + TABLE_NAME + '.' + COLUMN_NAME = '$($column)'"
+
+        It 'Datetime values in <_.SqlWatchColumn> are not in the future' -ForEach $SqlWatchTimeColumns {
+
+            $sql = "select LOCAL_TIME=GETDATE(), UTC_TIME=GETUTCDATE(), TABLE_NAME,COLUMN_NAME 
+            from INFORMATION_SCHEMA.COLUMNS 
+            where TABLE_SCHEMA + '.' + TABLE_NAME + '.' + COLUMN_NAME = '$($column)'"
+
+            $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql;
+
+            $sql = "select max(datediff(hour,GETUTCDATE(),$($result.COLUMN_NAME))) from [$($result.$TABLE_NAME)]";
+            $result.Column1 | should -Not -BeGreaterThan 0 -Because 'Values in the future could indicate that we are collecting local time rather than UTC'  
+
+        }
+    }
 }
 
 Describe "$($SqlInstance): Application Log Errors" -Tag 'ApplicationErrors' {
