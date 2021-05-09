@@ -12,6 +12,7 @@
 ![AppVeyor](https://img.shields.io/appveyor/build/marcingminski/sqlwatch?label=build)
 ![AppVeyor tests](https://img.shields.io/appveyor/tests/marcingminski/sqlwatch?label=AppVeyor%20Tests)
 ![Testspace tests](https://img.shields.io/testspace/tests/marcingminski/marcingminski:sqlwatch/main?label=Testspace%20Tests)
+[![Space Metric](https://marcingminski.testspace.com/spaces/139534/badge?token=4ff7ada23232f72be8c90caf9cac0a753b54d8f7)](https://marcingminski.testspace.com/spaces/139534?utm_campaign=badge&utm_medium=referral&utm_source=test "Test Cases Passed %")
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/c176e01274c649aeb4ee5f64d1aeddeb)](https://www.codacy.com/gh/marcingminski/sqlwatch/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=marcingminski/sqlwatch&amp;utm_campaign=Badge_Grade)
 
 
