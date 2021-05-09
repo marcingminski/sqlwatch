@@ -510,11 +510,12 @@ Describe "$($SqlInstance): Database Design" -Tag 'DatabaseDesign' {
 
         It 'Table <_.TableName> has Foreign Key' -ForEach $SqlWatchTableKeys {
 
-            If ($($_.TableName) -Like "dbo.sqlwatch_config*") {
-                Set-ItResult -Skip -Because 'config tables do not have FKs by design'
-            }
-            ElseIf ($($_.TableName) -Like "dbo.sqlwatch_stage*") {
-                Set-ItResult -Skip -Because 'stage tables do not have FKs by design'                
+            If (
+                $($_.TableName) -Like "dbo.sqlwatch_config*" `
+            -or $($_.TableName) -Like "dbo.sqlwatch_stage*" `
+            -or $($_.TableName) -Like "dbo.sqlwatch_app_version"
+                ) {
+                Set-ItResult -Skip -Because 'it does not have FK by design'
             }
             ElseIf (
                 $($_.TableName) -eq "dbo.sqlwatch_pester_result" `

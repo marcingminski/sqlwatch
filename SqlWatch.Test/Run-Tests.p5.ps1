@@ -31,6 +31,7 @@ If ($RunAsJob) {
         $configuration = New-PesterConfiguration
         $configuration.TestResult.Enabled = $true
         $configuration.TestResult.OutputPath = $ResultsFile
+        $configuration.TestResult.TestSuiteName = "Pester: $($SqlInstance)"
         $configuration.Output.Verbosity = "Detailed"
         $configuration.CodeCoverage.Enabled = $false
         $configuration.Filter.Tag = $IncludeTags
@@ -58,6 +59,7 @@ If ($RunAsJob) {
     $configuration = New-PesterConfiguration
     $configuration.TestResult.Enabled = $true
     $configuration.TestResult.OutputPath = $ResultsFile
+    $configuration.TestResult.TestSuiteName = "Pester: $($SqlInstance)"    
     $configuration.Output.Verbosity = "Detailed"
     $configuration.CodeCoverage.Enabled = $false
     $configuration.Filter.Tag = $IncludeTags
