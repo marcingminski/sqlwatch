@@ -10,7 +10,8 @@
 ![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed-raw/marcingminski/sqlwatch)
 ![GitHub closed issues](https://img.shields.io/github/issues-closed-raw/marcingminski/sqlwatch)
 ![AppVeyor](https://img.shields.io/appveyor/build/marcingminski/sqlwatch?label=build)
-![AppVeyor tests](https://img.shields.io/appveyor/tests/marcingminski/sqlwatch)
+![AppVeyor tests](https://img.shields.io/appveyor/tests/marcingminski/sqlwatch?label=AppVeyor%20Tests)
+![Testspace tests](https://img.shields.io/testspace/tests/marcingminski/marcingminski:sqlwatch/main?label=Testspace%20Tests)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/c176e01274c649aeb4ee5f64d1aeddeb)](https://www.codacy.com/gh/marcingminski/sqlwatch/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=marcingminski/sqlwatch&amp;utm_campaign=Badge_Grade)
 
 
