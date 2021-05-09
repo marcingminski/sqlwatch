@@ -95,7 +95,7 @@ AS
 		and mp.[procedure_name] = p.[procedure_name] collate database_default
 		and mp.sqlwatch_database_id = mdb.sqlwatch_database_id;
 
-	create unique clustered index idx_tmp_plans on #plans ([plan_handle], [sql_handle], [query_hash], [query_plan_hash], [sql_instance]);
+	create unique clustered index idx_tmp_plans on #plans ([plan_handle], [sql_handle], [query_hash], [query_plan_hash], [sql_instance], sqlwatch_procedure_id, sqlwatch_database_id, RN);
 
 	merge [dbo].[sqlwatch_meta_query_plan] as target
 	using (
