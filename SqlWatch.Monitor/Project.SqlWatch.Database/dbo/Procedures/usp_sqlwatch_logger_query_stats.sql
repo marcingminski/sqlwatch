@@ -8,12 +8,12 @@ begin
 	declare @snapshot_type_id smallint = 28,
 			@snapshot_time datetime2(0),
 			@date_snapshot_previous datetime2(0),
-			@sql_instance varchar(32) = [dbo].[ufn_sqlwatch_get_servername]()
+			@sql_instance varchar(32) = [dbo].[ufn_sqlwatch_get_servername]();
 
 	select @date_snapshot_previous = max([snapshot_time])
 	from [dbo].[sqlwatch_logger_snapshot_header] (nolock) --so we dont get blocked by central repository. this is safe at this point.
 	where snapshot_type_id = @snapshot_type_id
-	and sql_instance = @sql_instance 
+	and sql_instance = @sql_instance ;
 
 	select 
 		  [sql_instance]
@@ -51,10 +51,11 @@ begin
 		),'1970-01-01')
 
 	--not stored procedures as we're collecting stored procedures elsewhere.
-	and qp.objectid is null 
+	and qp.objectid is null ;
 
 	--normalise query text and plans
-	declare @plan_handle_table dbo.utype_plan_handle
+	declare @plan_handle_table dbo.utype_plan_handle;
+
 	insert into @plan_handle_table (plan_handle, statement_start_offset, statement_end_offset )
 	select distinct plan_handle,  statement_start_offset, statement_end_offset
 	from #s
@@ -145,9 +146,9 @@ begin
 		[snapshot_time] = @snapshot_time,
 		[snapshot_type_id] = @snapshot_type_id
 
-		,qp.plan_handle
-		,qp.[statement_start_offset]
-		,qp.[statement_end_offset]
+		,qs.plan_handle
+		,qs.[statement_start_offset]
+		,qs.[statement_end_offset]
 		,qs.creation_time	
 		,qs.last_execution_time	
 
@@ -214,14 +215,10 @@ begin
 
 	from #s qs
 
-	inner join dbo.[sqlwatch_meta_query_plan_handle_hash] qp
-		on qp.sql_instance = @sql_instance
-		and qp.plan_handle = qs.plan_handle
-		and qp.query_hash = qs.query_hash
-		and qp.query_plan_hash = qs.query_plan_hash
-		and qp.statement_start_offset = qs.statement_start_offset
-		and qp.statement_end_offset = qs.statement_end_offset
-
 	left join #t prev
-		on prev.sqlwatch_query_plan_id = qp.sqlwatch_query_plan_id
-end
+		on prev.[sql_instance] = @sql_instance
+		and prev.plan_handle = qs.plan_handle
+		and prev.statement_start_offset = qs.statement_start_offset
+		and prev.statement_end_offset = qs.statement_end_offset
+		and prev.[creation_time] = qs.creation_time;
+end;
