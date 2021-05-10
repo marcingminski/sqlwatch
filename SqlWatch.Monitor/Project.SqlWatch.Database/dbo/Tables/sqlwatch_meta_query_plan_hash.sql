@@ -15,10 +15,16 @@
 		sql_instance, [query_plan_hash] --, [statement_start_offset], [statement_end_offset]
 	),
 
+	/* TODO TO DO THIS NEEDS PERIOD RETENTION TO REMOVE ANY PLAN HASHSES THAT DO NOT HAVE PARENT PLAN HANDLE */
 	--cannot have a constraint to plan_handle as we are storing query plans at the hash level.
 	--multiple handles across different databases may have the same hash.
 	--constraint fk_sqlwatch_meta_plan_handle
 	--	foreign key (sql_instance, [plan_handle], [query_plan_hash], [statement_start_offset], [statement_end_offset])
 	--	references [dbo].[sqlwatch_meta_query_plan_handle] (sql_instance, [plan_handle], [query_plan_hash], [statement_start_offset], [statement_end_offset]) 
 	--	on delete cascade
+
+	constraint fk_sqlwatch_meta_query_plan_hash_sql_instance
+		foreign key (sql_instance)
+		references dbo.sqlwatch_meta_server (servername)
+		on delete cascade
 );

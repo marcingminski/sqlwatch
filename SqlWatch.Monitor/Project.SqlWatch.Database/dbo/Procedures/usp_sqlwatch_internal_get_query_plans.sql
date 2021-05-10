@@ -34,7 +34,6 @@ AS
 	with cte_plans as (
 		select 
 			  RN_HANDLE = ROW_NUMBER() over (partition by ph.plan_handle, qs.query_plan_hash order by (select null))
-			, RN_HASH = ROW_NUMBER() over (partition by qs.query_plan_hash ,  ph.statement_start_offset,  ph.statement_end_offset order by (select null))
 			, ph.[plan_handle]
 			, qs.[sql_handle]
 			, query_hash = qs.query_hash
@@ -72,7 +71,7 @@ AS
 
 	select 
 		  p.RN_HANDLE
-		, P.RN_HASH
+		, RN_HASH = ROW_NUMBER() over (partition by p.sql_instance, query_plan_hash order by (select null))
 		, p.[plan_handle]
 		, p.[sql_handle]
 		, p.query_hash
@@ -160,7 +159,7 @@ AS
 
 	merge dbo.[sqlwatch_meta_query_plan_hash] as target
 	using (
-		select distinct 
+		select 
 			  [sql_instance]
 			, [query_plan_hash]
 			, [statement]
@@ -168,7 +167,7 @@ AS
 			--, [statement_start_offset]
 			--, [statement_end_offset]
 		from #plans 
-		where RN_HANDLE = 1
+		where RN_HASH = 1
 		and [query_plan_hash] not in (0x000,0x00)
 
 	)as source
