@@ -234,7 +234,7 @@ begin
 			,max_reserved_threads=null	
 			,total_used_threads=null	
 			,last_used_threads=null	
-			,min_used_threads	
+			,min_used_threads=null	
 			,max_used_threads=null'
 		end + '
 
