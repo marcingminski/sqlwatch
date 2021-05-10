@@ -8,7 +8,9 @@ begin
 	declare @snapshot_type_id smallint = 28,
 			@snapshot_time datetime2(0),
 			@date_snapshot_previous datetime2(0),
-			@sql_instance varchar(32) = [dbo].[ufn_sqlwatch_get_servername]();
+			@sql_instance varchar(32) = [dbo].[ufn_sqlwatch_get_servername](),
+			@sql_version smallint = [dbo].[ufn_sqlwatch_get_sql_version](),
+			@sql nvarchar(max) = '';
 
 	select @date_snapshot_previous = max([snapshot_time])
 	from [dbo].[sqlwatch_logger_snapshot_header] (nolock) --so we dont get blocked by central repository. this is safe at this point.
@@ -69,6 +71,7 @@ begin
 	;
 
 
+	set @sql = '
 	insert into [dbo].[sqlwatch_logger_perf_query_stats] (
 		[sql_instance] ,
 		[snapshot_time] ,
@@ -181,30 +184,57 @@ begin
 		,qs.last_rows	
 		,qs.min_rows	
 		,qs.max_rows	
-		,qs.total_dop	
-		,qs.last_dop	
-		,qs.min_dop	
-		,qs.max_dop	
-		,qs.total_grant_kb	
-		,qs.last_grant_kb	
-		,qs.min_grant_kb	
-		,qs.max_grant_kb	
-		,qs.total_used_grant_kb	
-		,qs.last_used_grant_kb	
-		,qs.min_used_grant_kb	
-		,qs.max_used_grant_kb	
-		,qs.total_ideal_grant_kb	
-		,qs.last_ideal_grant_kb	
-		,qs.min_ideal_grant_kb	
-		,qs.max_ideal_grant_kb	
-		,qs.total_reserved_threads	
-		,qs.last_reserved_threads	
-		,qs.min_reserved_threads	
-		,qs.max_reserved_threads	
-		,qs.total_used_threads	
-		,qs.last_used_threads	
-		,qs.min_used_threads	
-		,qs.max_used_threads
+		' + case when @sql_version >= 2016 then '
+			,qs.total_dop	
+			,qs.last_dop	
+			,qs.min_dop	
+			,qs.max_dop	
+			,qs.total_grant_kb	
+			,qs.last_grant_kb	
+			,qs.min_grant_kb	
+			,qs.max_grant_kb	
+			,qs.total_used_grant_kb	
+			,qs.last_used_grant_kb	
+			,qs.min_used_grant_kb	
+			,qs.max_used_grant_kb	
+			,qs.total_ideal_grant_kb	
+			,qs.last_ideal_grant_kb	
+			,qs.min_ideal_grant_kb	
+			,qs.max_ideal_grant_kb	
+			,qs.total_reserved_threads	
+			,qs.last_reserved_threads	
+			,qs.min_reserved_threads	
+			,qs.max_reserved_threads	
+			,qs.total_used_threads	
+			,qs.last_used_threads	
+			,qs.min_used_threads	
+			,qs.max_used_threads'
+		else '
+			,total_dop=null
+			,last_dop=null	
+			,min_dop=null	
+			,max_dop=null	
+			,total_grant_kb=null	
+			,last_grant_kb=null	
+			,min_grant_kb=null	
+			,max_grant_kb=null	
+			,total_used_grant_kb=null	
+			,last_used_grant_kb=null	
+			,min_used_grant_kb=null	
+			,max_used_grant_kb=null	
+			,total_ideal_grant_kb=null	
+			,last_ideal_grant_kb=null	
+			,min_ideal_grant_kb=null	
+			,max_ideal_grant_kb=null	
+			,total_reserved_threads=null	
+			,last_reserved_threads=null	
+			,min_reserved_threads=null	
+			,max_reserved_threads=null	
+			,total_used_threads=null	
+			,last_used_threads=null	
+			,min_used_threads	
+			,max_used_threads=null'
+		end + '
 
 		, delta_worker_time = [dbo].[ufn_sqlwatch_get_delta_value](prev.total_worker_time, qs.total_worker_time)
 		, delta_physical_reads = [dbo].[ufn_sqlwatch_get_delta_value](prev.total_physical_reads, qs.total_physical_reads)
@@ -221,4 +251,7 @@ begin
 		and prev.statement_start_offset = qs.statement_start_offset
 		and prev.statement_end_offset = qs.statement_end_offset
 		and prev.[creation_time] = qs.creation_time;
+		';
+
+	exec sp_executesql @sql
 end;
