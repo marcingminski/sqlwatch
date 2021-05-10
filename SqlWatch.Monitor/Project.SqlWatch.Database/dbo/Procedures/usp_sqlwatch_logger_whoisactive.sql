@@ -3,31 +3,11 @@
 	)
 AS
 
-/*
--------------------------------------------------------------------------------------------------------------------
- Procedure:
-	[usp_sqlwatch_logger_whoisactive]
-
- Description:
-	Collect sp_WhoIsActive output
-
- Parameters
-	
- Author:
-	Marcin Gminski
-
- Change Log:
-	1.0		2018-08		- Marcin Gminski, Initial version
-	1.1		2020-03-18	- Marcin Gminski, move explicit transaction after header to fix https://github.com/marcingminski/sqlwatch/issues/155
-	1.2		2020-04-22	- Marcin Gminski, changed getutcdate() to getdate() in where clause as [start_time] is always local
--------------------------------------------------------------------------------------------------------------------
-*/
-
-set xact_abort on
+set xact_abort on;
 
 	declare @sp_whoisactive_destination_table varchar(255),
 			@snapshot_time datetime,
-			@snapshot_type_id tinyint  = 11
+			@snapshot_type_id tinyint  = 11;
 
 	--------------------------------------------------------------------------------------------------------------
 	-- sp_whoisactive
@@ -63,22 +43,20 @@ set xact_abort on
 				,[physical_reads] varchar(30) NULL
 				,[login_time] datetime NULL
 				)
-
+				;
 			-- we are running WhoIsActive is very lightweight mode without any additional info and without execution plans
 			exec dbo.sp_WhoIsActive
 				 @get_outer_command = 1
 				,@output_column_list = '[collection_time][start_time][session_id][status][percent_complete][host_name][database_name][program_name][sql_text][sql_command][login_name][open_tran_count][wait_info][blocking_session_id][blocked_session_count][CPU][used_memory][tempdb_current][tempdb_allocations][reads][writes][physical_reads][login_time]'
 				,@find_block_leaders = 1
-				,@destination_table = [##SQLWATCH_7A2124DA-B485-4C43-AE04-65D61E6A157C]
+				,@destination_table = [##SQLWATCH_7A2124DA-B485-4C43-AE04-65D61E6A157C];
 			-- the insert to tmp then actual table approach is required mainly to use our
 			-- snapshot_time and enforce referential integrity with the header table and
 			-- to apply any additional filtering:
 
 			exec [dbo].[usp_sqlwatch_internal_insert_header] 
 				@snapshot_time_new = @snapshot_time OUTPUT,
-				@snapshot_type_id = @snapshot_type_id
-
-begin tran
+				@snapshot_type_id = @snapshot_type_id;
 
 			insert into [dbo].[sqlwatch_logger_whoisactive] ([snapshot_time],[start_time],
 					 [session_id],[status],[percent_complete],[host_name]
@@ -96,10 +74,13 @@ begin tran
 			-- exclude anything that has been running for less that the desired duration in seconds (default 15)
 			where [start_time] < dateadd(s,@min_session_duration_seconds,getdate())
 			-- unless its being blocked or is a blocker
-			or [blocking_session_id] is not null or [blocked_session_count] > 0
-		end
+			or [blocking_session_id] is not null or [blocked_session_count] > 0;
+		end;
 	else
 		begin
-			print 'sp_WhoIsActive not found.'
-		end
-commit tran
+				exec [dbo].[usp_sqlwatch_internal_log]
+					@proc_id = @@PROCID,
+					@process_stage = '9EB9405D-C924-4E92-88E1-1CB5E24F3733',
+					@process_message = 'sp_WhoIsActive is not found',
+					@process_message_type = 'WARNING';
+		end;
