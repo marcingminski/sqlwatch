@@ -10,7 +10,8 @@ begin
 			@date_snapshot_previous datetime2(0),
 			@sql_instance varchar(32) = [dbo].[ufn_sqlwatch_get_servername](),
 			@sql_version smallint = [dbo].[ufn_sqlwatch_get_sql_version](),
-			@sql nvarchar(max) = '';
+			@sql nvarchar(max) = '',
+			@sql_params nvarchar(max) = '';
 
 	select @date_snapshot_previous = max([snapshot_time])
 	from [dbo].[sqlwatch_logger_snapshot_header] (nolock) --so we dont get blocked by central repository. this is safe at this point.
@@ -70,6 +71,8 @@ begin
 		@sql_instance = @sql_instance
 	;
 
+
+	set @sql_params = '@snapshot_type_id smallint, @snapshot_time datetime2(0),@sql_instance varchar(32)';
 
 	set @sql = '
 	insert into [dbo].[sqlwatch_logger_perf_query_stats] (
@@ -253,5 +256,9 @@ begin
 		and prev.[creation_time] = qs.creation_time;
 		';
 
-	exec sp_executesql @sql;
+	exec sp_executesql @sql
+		, @sql_params
+		, @snapshot_time = @snapshot_time
+		, @snapshot_type_id = @snapshot_type_id
+		, @sql_instance = @sql_instance
 end;
