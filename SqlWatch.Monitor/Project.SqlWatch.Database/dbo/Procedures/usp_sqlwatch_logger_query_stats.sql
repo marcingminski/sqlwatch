@@ -260,5 +260,5 @@ begin
 		, @sql_params
 		, @snapshot_time = @snapshot_time
 		, @snapshot_type_id = @snapshot_type_id
-		, @sql_instance = @sql_instance
+		, @sql_instance = @sql_instance;
 end;
