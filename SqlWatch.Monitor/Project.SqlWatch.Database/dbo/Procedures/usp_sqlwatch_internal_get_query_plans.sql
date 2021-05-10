@@ -33,7 +33,7 @@ AS
 
 	with cte_plans as (
 		select 
-			  RN = ROW_NUMBER() over (partition by ph.plan_handle, qs.query_plan_hash order by (select null))
+			  RN_HANDLE = ROW_NUMBER() over (partition by ph.plan_handle, qs.query_plan_hash order by (select null))
 			, ph.[plan_handle]
 			, qs.[sql_handle]
 			, query_hash = qs.query_hash
@@ -70,7 +70,8 @@ AS
 	)
 
 	select 
-		  p.RN
+		  p.RN_HANDLE
+		, RN_HASH = ROW_NUMBER() over (partition by p.sql_instance, query_plan_hash order by (select null))
 		, p.[plan_handle]
 		, p.[sql_handle]
 		, p.query_hash
@@ -95,7 +96,9 @@ AS
 		and mp.[procedure_name] = p.[procedure_name] collate database_default
 		and mp.sqlwatch_database_id = mdb.sqlwatch_database_id;
 
-	create unique clustered index idx_tmp_plans on #plans ([plan_handle], [sql_handle], [query_hash], [query_plan_hash], [sql_instance]);
+	create unique clustered index idx_tmp_plans on #plans ([plan_handle], [sql_handle], [query_hash]
+		, [query_plan_hash], [sql_instance], sqlwatch_procedure_id, sqlwatch_database_id, RN_HANDLE, RN_HASH
+		, statement_start_offset, statement_end_offset);
 
 	merge [dbo].[sqlwatch_meta_query_plan] as target
 	using (
@@ -156,16 +159,15 @@ AS
 
 	merge dbo.[sqlwatch_meta_query_plan_hash] as target
 	using (
-		select distinct 
+		select 
 			  [sql_instance]
 			, [query_plan_hash]
 			, [statement]
 			, [query_plan]
-			, [statement_start_offset]
-			, [statement_end_offset]
-			, RN
+			--, [statement_start_offset]
+			--, [statement_end_offset]
 		from #plans 
-		where RN = 1
+		where RN_HASH = 1
 		and [query_plan_hash] not in (0x000,0x00)
 
 	)as source
@@ -184,8 +186,8 @@ AS
 			, [query_plan_for_query_plan_hash]
 			, [date_first_seen]
 			, [date_last_seen]
-			, [statement_start_offset]
-			, [statement_end_offset]
+			--, [statement_start_offset]
+			--, [statement_end_offset]
 			)
 		values (
 			  source.[sql_instance]
@@ -194,7 +196,7 @@ AS
 			, source.query_plan 
 			, @date_now
 			, @date_now
-			, source.[statement_start_offset]
-			, source.[statement_end_offset]
+			--, source.[statement_start_offset]
+			--, source.[statement_end_offset]
 			)
 		;
