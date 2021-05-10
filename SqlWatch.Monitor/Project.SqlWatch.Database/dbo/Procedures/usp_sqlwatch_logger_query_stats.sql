@@ -253,5 +253,5 @@ begin
 		and prev.[creation_time] = qs.creation_time;
 		';
 
-	exec sp_executesql @sql
+	exec sp_executesql @sql;
 end;
