@@ -39,10 +39,6 @@ begin
 
 	create unique clustered index icx_tmp_query_stats_prev on #t ([sql_instance],plan_handle,statement_start_offset, statement_end_offset, [creation_time]);
 
-	exec [dbo].[usp_sqlwatch_internal_insert_header] 
-		@snapshot_time_new = @snapshot_time OUTPUT,
-		@snapshot_type_id = @snapshot_type_id	
-
 	select qs.*
 	into #s
 	from sys.dm_exec_query_stats qs	
@@ -71,6 +67,9 @@ begin
 		@sql_instance = @sql_instance
 	;
 
+	exec [dbo].[usp_sqlwatch_internal_insert_header] 
+		@snapshot_time_new = @snapshot_time OUTPUT,
+		@snapshot_type_id = @snapshot_type_id;
 
 	set @sql_params = '@snapshot_type_id smallint, @snapshot_time datetime2(0),@sql_instance varchar(32)';
 
