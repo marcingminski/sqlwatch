@@ -8,7 +8,7 @@ declare @snapshot_type_id tinyint = 7,
 		@snapshot_time datetime2(0),
 		@target_data_char nvarchar(max),
 		@target_data_xml xml,
-		@max_event_time datetime2(0);
+		@max_event_time datetime;
 
 declare @execution_count bigint = 0,
 		@session_name nvarchar(64) = 'system_health',
@@ -51,6 +51,8 @@ begin transaction;
 	select @max_event_time = max(event_time) 
 	from [dbo].[sqlwatch_logger_xes_query_processing]
 	where sql_instance = @sql_instance;
+
+	set @max_event_time = isnull(@max_event_time,'1970-01-01');
 
 	with cte_query_processing as (
 		select 
@@ -95,6 +97,8 @@ begin transaction;
 	select @max_event_time = max(event_time) 
 	from [dbo].[sqlwatch_logger_xes_iosubsystem]
 	where sql_instance = @sql_instance;
+
+	set @max_event_time = isnull(@max_event_time,'1970-01-01');
 
 	with cte_io_subsystem as (
 		select
