@@ -86,11 +86,11 @@ Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabaseTest -Quer
 
 $sql = "select Hours=datediff(hour,sqlserver_start_time,getdate()) from sys.dm_os_sys_info"
 $SqlUptime = Invoke-SqlCmd -ServerInstance $SqlInstance -Database master -Query $sql
-[int]$SqlUptimeHours = $SqlUptime.Hours
+$SqlUptimeHours = $SqlUptime.Hours
 
 $sql = "select AgentEnabled=[dbo].[ufn_sqlwatch_get_agent_status]()"
 $AgentStatus = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
-[boolean]$IsAgentEnabled = $AgentStatus.AgentEnabled
+$IsAgentEnabled = $AgentStatus.AgentEnabled
 
 Describe "$($SqlInstance): System Configuration" -Tag 'System' {
 
@@ -572,7 +572,8 @@ Describe "$($SqlInstance): Database Design" -Tag 'DatabaseDesign' {
         on t.object_id = pk.object_id 
         and pk.is_primary_key = 1
     left join sys.foreign_keys fk
-        on fk.parent_object_id = t.object_id"
+        on fk.parent_object_id = t.object_id
+    where t.name like '%sqlwatch%'"
 
     $SqlWatchTableKeys = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
 
@@ -647,7 +648,8 @@ Describe "$($SqlInstance): Database Design" -Tag 'DatabaseDesign' {
             and t.TABLE_NAME = c.TABLE_NAME
             and t.TABLE_SCHEMA = c.TABLE_SCHEMA
         where t.TABLE_TYPE = 'BASE TABLE'         
-        and c.DATA_TYPE LIKE '%time%'"
+        and c.DATA_TYPE LIKE '%time%'
+        and t.TABLE_NAME like '%sqlwatch%'"
         $SqlWatchTimeColumns = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
 
 
