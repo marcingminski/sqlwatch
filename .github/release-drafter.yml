@@ -19,7 +19,7 @@ autolabeler:
     branch:
       - '/feature/i'
 categories:
-  - title: 'Features'
+  - title: 'New Features'
     labels:
       - 'feature'
       - 'enhancement'
