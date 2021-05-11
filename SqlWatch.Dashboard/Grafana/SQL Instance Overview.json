@@ -9450,7 +9450,7 @@
               "alias": "",
               "format": "table",
               "queryType": "randomWalk",
-              "rawSql": "SELECT       event_time\n      ,[event_name]\n      ,[session_id]\n      ,[database_name]\n      ,[cpu_time]\n      ,[physical_reads]\n      ,[logical_reads]\n      ,[writes]\n      ,[spills]\n     ,[username]\n    ,[object_name]\n      ,[client_hostname]\n      ,[client_app_name]\n      ,[duration_ms]\n      ,[long_query_id]\n    , sql_text      \nFROM [dbo].[vw_sqlwatch_report_fact_xes_long_queries]\nWHERE $__timeFilter([event_time])\nand sql_instance = '$sql_instance'",
+              "rawSql": "SELECT       event_time\n      ,[event_name]\n      ,[session_id]\n      ,[database_name]\n      ,[cpu_time]\n      ,[physical_reads]\n      ,[logical_reads]\n      ,[writes]\n      ,[spills]\n     ,[username]\n    ,[client_hostname]\n      ,[client_app_name]\n      ,[duration_ms]\n      ,[long_query_id]\n    , sql_text      \nFROM [dbo].[vw_sqlwatch_report_fact_xes_long_queries]\nWHERE $__timeFilter([event_time])\nand sql_instance = '$sql_instance'",
               "refId": "A"
             }
           ],
