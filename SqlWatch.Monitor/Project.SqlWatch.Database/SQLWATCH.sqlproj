@@ -380,6 +380,8 @@
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_get_xes_data.sql" />
     <Build Include="dbo\Types\utype_event_data.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_get_agent_status.sql" />
+    <Build Include="dbo\Functions\ufn_sqlwatch_clean_sql_text.sql" />
+    <Build Include="dbo\Functions\ufn_sqlwatch_parse_xes_event_data.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
