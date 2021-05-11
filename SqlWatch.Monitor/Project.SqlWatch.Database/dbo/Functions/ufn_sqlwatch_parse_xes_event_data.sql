@@ -40,7 +40,7 @@ BEGIN
 		@event_data.value('(event/action[@name="database_name"]/value)[1]', 'varchar(max)') as [database_name],
 		convert(varbinary(64),'0x' + @event_data.value('(action[@name="plan_handle"]/value)[1]', 'varchar(max)'),1) as plan_handle,
 		@event_data.value('(event/action[@name="session_id"]/value)[1]', 'int') as session_id,
-		@event_data.value('(event/action[@name="username"]/value)[1]', 'varchar(max)') as username
+		@event_data.value('(event/action[@name="username"]/value)[1]', 'varchar(max)') as username;
 
 	RETURN;
 END;
