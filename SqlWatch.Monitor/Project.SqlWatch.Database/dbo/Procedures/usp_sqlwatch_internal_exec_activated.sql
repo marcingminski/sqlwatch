@@ -186,6 +186,7 @@ begin
                                             exec dbo.usp_sqlwatch_internal_add_memory_clerk;
                                             exec dbo.usp_sqlwatch_internal_add_wait_type;
                                             exec dbo.usp_sqlwatch_internal_add_index;
+                                            exec dbo.usp_sqlwatch_internal_add_procedure;
 
                                             --exec dbo.usp_sqlwatch_logger_disk_utilisation;
 
