@@ -43,4 +43,4 @@ BEGIN
 		@event_data.value('(event/action[@name="username"]/value)[1]', 'varchar(max)') as username
 
 	RETURN;
-END
+END;

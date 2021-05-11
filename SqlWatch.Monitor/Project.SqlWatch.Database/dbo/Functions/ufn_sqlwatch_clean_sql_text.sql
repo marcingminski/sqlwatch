@@ -8,4 +8,4 @@ BEGIN
 	RETURN (
 		replace(replace(replace(replace(replace(@sql_text,char(9), ''),char(10),'') ,' ',char(9)+char(10)),char(10)+char(9),''),char(9)+char(10),' ')
 	)
-END
+END;

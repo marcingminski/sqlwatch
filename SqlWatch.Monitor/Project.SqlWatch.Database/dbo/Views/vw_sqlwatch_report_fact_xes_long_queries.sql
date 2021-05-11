@@ -49,4 +49,4 @@ SELECT
         on pr.sqlwatch_procedure_id = qp.sqlwatch_procedure_id
         and pr.sql_instance = qp.sql_instance
 
-	cross apply dbo.ufn_sqlwatch_parse_xes_event_data([event_data]) ed
+	cross apply dbo.ufn_sqlwatch_parse_xes_event_data([event_data]) ed;
