@@ -131,6 +131,19 @@ Describe "$($SqlInstance): System Configuration" {
 
 }
 
+Describe "$($SqlInstance): ERROLOG Capture" -Tag "ERRORLOG" {
+
+    It 'Logging in with incorrect user' {
+        $sql = "select 1"
+        { Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql -Username "InvalidUserTest" -Password "Password" } | Should -Throw
+    }
+
+    It 'Capture ERRORLOG into SQLWATCH' {
+        $sql = "exec [dbo].[usp_sqlwatch_logger_errorlog];"
+        { Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql } | Should -Not -Throw
+    }
+}
+
 Describe "$($SqlInstance): Procedure Execution" -Tag 'Procedures' {
 
     #SQLWATCH Procedures
@@ -213,6 +226,9 @@ Describe "$($SqlInstance): Tables should not be empty" -Tag 'Tables' {
     $SqlWatchTableMeta = $SqlWatchTables | Where-Object { $_.TableType -eq "Meta" }
     $SqlWatchTableLogger = $SqlWatchTables | Where-Object { $_.TableType -eq "Logger" }    
 
+    $sql = "select IsAgentEnabled=[dbo].[ufn_sqlwatch_get_agent_status]()"
+    $IsAgentEnabled = (Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql).IsAgentEnabled    
+
     Context 'Config tables should have rows' {
         It "Table <_.TableName> should have rows" -Foreach $SqlWatchTableConfig {
             $sql = "select row_count=count(*) from $($_.TableName)"
@@ -221,7 +237,12 @@ Describe "$($SqlInstance): Tables should not be empty" -Tag 'Tables' {
     }
 
     Context 'Meta tables should have rows' {
+
         It "Table <_.TableName> should have rows" -Foreach $SqlWatchTableMeta {
+
+            if ($($_.TableName) -eq "dbo.sqlwatch_meta_os_volume" -and $IsAgentEnabled -eq 0) {
+                Set-ItResult -Skip -Because "OS volume is collected by the Agent Job but SQL Agent is disabled"
+            }
 
             if ($($_.TableName) -eq "dbo.sqlwatch_meta_performance_counter_instance") {
                 Set-ItResult -Skip -Because "this is only populated when CLR is enabled"
@@ -257,7 +278,11 @@ Describe "$($SqlInstance): Tables should not be empty" -Tag 'Tables' {
             $AG = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database master -Query $sql
 
             $sql = "select cnt=count(*) from [dbo].[sqlwatch_config_include_index_histogram] where object_name_pattern <> '%.dbo.table%'"
-            $HistogramToCollect = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql            
+            $HistogramToCollect = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+            
+            if ($($_.TableName) -eq "dbo.sqlwatch_logger_agent_job_history" -and $IsAgentEnabled -eq 0)  {
+                Set-ItResult -Skip -Because "SQL Agent is disabled so it will not generate any history"
+            }
 
             if ($($_.TableName) -eq "dbo.sqlwatch_logger_hadr_database_replica_states" -and $AG.cnt -eq 0)  {
                 Set-ItResult -Skip -Because "Availability Groups are not found"
