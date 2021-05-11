@@ -84,7 +84,15 @@ values (getutcdate(),'Test Start')"
 
 Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabaseTest -Query $sql
 
-Describe "$($SqlInstance): System Configuration" {
+$sql = "select Hours=datediff(hour,sqlserver_start_time,getdate()) from sys.dm_os_sys_info"
+$SqlUptime = Invoke-SqlCmd -ServerInstance $SqlInstance -Database master -Query $sql
+$SqlUptimeHours = $SqlUptime.Hours
+
+$sql = "select AgentEnabled=[dbo].[ufn_sqlwatch_get_agent_status]()"
+$AgentStatus = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+$IsAgentEnabled = $AgentStatus.AgentEnabled
+
+Describe "$($SqlInstance): System Configuration" -Tag 'System' {
 
     $sql = "select collation_name from sys.databases where name = 'tempdb'"
     $SystemCollation = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
@@ -99,21 +107,18 @@ Describe "$($SqlInstance): System Configuration" {
         $CollationMismatch = $true
         $Skip = $false
     }
+    
     It 'The SQLWATCH database collaction should be different to system collaction to incrase test coverage' -Skip:$Skip {
 
     }         
-
-    $sql = "select Hours=datediff(hour,sqlserver_start_time,getdate()) from sys.dm_os_sys_info"
-    $SqlUptime = Invoke-SqlCmd -ServerInstance $SqlInstance -Database master -Query $sql
-    $SqlUptimeHours = $SqlUptime.Hours
-   
+  
     if ($SqlUptimeHours -lt 168) {
         $Skip = $true 
     } else { 
         $Skip = $false 
     }
 
-    It 'SQL Server should be running for at least a weeek to test data retention routines' -Skip:$Skip {}
+    It 'SQL Server should be running for at least a week to test data retention routines' -Skip:$Skip {}
 
 
     $sql = "select datediff(hour,getutcdate(),getdate())"
@@ -129,6 +134,19 @@ Describe "$($SqlInstance): System Configuration" {
     #cannot do the same when the local time is behind or same as utc.
     It 'The Servers local time should be ahead of UTC in order to test that we are only using UTC dates' -Skip {}
 
+}
+
+Describe "$($SqlInstance): ERRORLOG Capture" -Tag "ERRORLOG" {
+
+    It 'Logging in with incorrect user' {
+        $sql = "select 1"
+        { Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql -Username "InvalidUserTest" -Password "Password" } | Should -Throw
+    }
+
+    It 'Capture ERRORLOG into SQLWATCH' {
+        $sql = "exec [dbo].[usp_sqlwatch_logger_errorlog];"
+        { Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql } | Should -Not -Throw
+    }
 }
 
 Describe "$($SqlInstance): Procedure Execution" -Tag 'Procedures' {
@@ -184,7 +202,7 @@ Describe "$($SqlInstance): Procedure Execution" -Tag 'Procedures' {
         }
     }
 
-    Start-Sleep -s 1
+    Start-Sleep -s 30
 
     Context 'Procedure Should not Throw an error on the second run' {
         It "Procedure <_.ProcedureName> should not throw an error" -Foreach $SqlWatchProcedures {
@@ -192,12 +210,23 @@ Describe "$($SqlInstance): Procedure Execution" -Tag 'Procedures' {
             { Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql -ErrorAction Stop } | Should -Not -Throw 
         }
     }    
+
+    #this should give us enough time and data to collect at least some index stats
+    Start-Sleep -s 30
+
+    Context 'Procedure Should not Throw an error on the third run' {
+        It "Procedure <_.ProcedureName> should not throw an error" -Foreach $SqlWatchProcedures {
+            $sql = "exec $($_.ProcedureName);"
+            { Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql -ErrorAction Stop } | Should -Not -Throw 
+        }
+    }        
 }
 
 Describe "$($SqlInstance): Tables should not be empty" -Tag 'Tables' {
 
     ## SQLWATCH Tables
-    $sql = "select TableName=TABLE_SCHEMA + '.' + TABLE_NAME
+    $sql = ";with cte_tables as (
+        select TableName=TABLE_SCHEMA + '.' + TABLE_NAME
         , TableType=case 
             when TABLE_NAME like '%config%' and TABLE_NAME not like '%logger%' and TABLE_NAME not like '%meta%' and TABLE_NAME not like '_DUMP_%' then 'Config'
             when TABLE_NAME like '%meta%' then 'Meta'
@@ -205,23 +234,81 @@ Describe "$($SqlInstance): Tables should not be empty" -Tag 'Tables' {
             else 'Other' end
     from INFORMATION_SCHEMA.TABLES
     where TABLE_TYPE = 'BASE TABLE'
-    and TABLE_NAME not like 'sqlwatch%baseline'";
+    --and TABLE_NAME not like 'sqlwatch%baseline'
+    --and TABLE_NAME not like 'sqlwatch_stage%'
+    --and TABLE_NAME like '%sqlwatch%'
+    )
+    select * from cte_tables
+    where TableType <> 'Other'
+    order by case 
+        when TableType = 'Config' then 1
+        when TableType = 'Meta' then 2
+        when TableType = 'Logger' then 3
+        else 4 end
+        ";
 
     $SqlWatchTables = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql    
 
-    $SqlWatchTableConfig = $SqlWatchTables | Where-Object { $_.TableType -eq "Config" }
-    $SqlWatchTableMeta = $SqlWatchTables | Where-Object { $_.TableType -eq "Meta" }
-    $SqlWatchTableLogger = $SqlWatchTables | Where-Object { $_.TableType -eq "Logger" }    
 
-    Context 'Config tables should have rows' {
-        It "Table <_.TableName> should have rows" -Foreach $SqlWatchTableConfig {
-            $sql = "select row_count=count(*) from $($_.TableName)"
-            (Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql -ErrorAction Stop).row_count | Should -BeGreaterThan 0
-        }        
-    }
+    Context 'Tables should have rows' {
+        
+        It "Table <_.TableName> should have rows" -Foreach $SqlWatchTables {    
+            
+            $sql = "select AgentEnabled=[dbo].[ufn_sqlwatch_get_agent_status]()"
+            $AgentStatus = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+            [boolean]$IsAgentEnabled = $AgentStatus.AgentEnabled      
+            
+            $sql = "select Hours=datediff(hour,sqlserver_start_time,getdate()) from sys.dm_os_sys_info"
+            $SqlUptime = Invoke-SqlCmd -ServerInstance $SqlInstance -Database master -Query $sql
+            [int]$SqlUptimeHours = $SqlUptime.Hours            
 
-    Context 'Meta tables should have rows' {
-        It "Table <_.TableName> should have rows" -Foreach $SqlWatchTableMeta {
+            $sql = "select Enabled=case when count(*) > 0 then 1 else 0 end 
+            from sqlwatch_config_action
+            where action_enabled = 1
+            and action_exec is not null"
+            $SqlWatchActions = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+
+            $sql = "select cnt=count(*) from sys.availability_groups"
+            $AG = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database master -Query $sql
+
+            $sql = "select cnt=count(*) from [dbo].[sqlwatch_config_include_index_histogram] where object_name_pattern <> '%.dbo.table%'"
+            $HistogramToCollect = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+
+            $sql = "if exists (select * from sys.all_objects
+            where name = 'sp_WhoIsActive'
+            union all
+            select * from master.sys.all_objects
+            where name = 'sp_WhoIsActive') 
+                begin
+                    select Installed=convert(bit,1)
+                end
+            else
+                begin
+                    select Installed=convert(bit,0)
+                end"
+            $WhoIsActive = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+            
+            $sql = "select Enabled=convert(bit,case when count(*) > 0 then 1 else 0 end) 
+            from dbo.sqlwatch_config_baseline"
+            $SqlWatchBaseline = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+            
+            #########################
+
+            if ($($_.TableName) -Like "*baseline*" -and $SqlWatchBaseline.Enabled -eq $false)  {
+                Set-ItResult -Skip -Because "no baseline is defined"
+            }            
+
+            if ($($_.TableName) -eq "dbo.sqlwatch_meta_action_queue" -and $SqlWatchActions.Enabled -eq $false)  {
+                Set-ItResult -Skip -Because "no SQLWATCH action is enabled"
+            }            
+           
+            if ($($_.TableName) -Like "*index_missing*" -and $($SqlUptimeHours) -lt 24) {
+                Set-ItResult -Skip -Because "SQL Server needs a longer uptime to capture missing indexes"
+            }
+
+            if (($($_.TableName) -eq "dbo.sqlwatch_meta_os_volume" -or $($_.TableName) -eq 'dbo.sqlwatch_logger_disk_utilisation_volume') -and $($IsAgentEnabled) -eq $false) {
+                Set-ItResult -Skip -Because "OS volume is collected by the Agent Job but SQL Agent is disabled"
+            }
 
             if ($($_.TableName) -eq "dbo.sqlwatch_meta_performance_counter_instance") {
                 Set-ItResult -Skip -Because "this is only populated when CLR is enabled"
@@ -243,21 +330,18 @@ Describe "$($SqlInstance): Tables should not be empty" -Tag 'Tables' {
                     Set-ItResult -Skip -Because "these tables are populated on demand"
                 }
             }
-        
-            $sql = "select row_count=count(*) from $($_.TableName)"
-            (Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql -ErrorAction Stop).row_count | Should -BeGreaterThan 0
-        }        
-    }
 
-    Context 'Logger tables should have rows' {
+            if ($($_.TableName) -eq "dbo.sqlwatch_logger_check_action" -and $SqlWatchActions.Enabled -eq $false)  {
+                Set-ItResult -Skip -Because "no SQLWATCH actions are enabled"
+            }            
 
-        It "Table <_.TableName> should have rows" -Foreach $SqlWatchTableLogger {
+            if ($($_.TableName) -eq "dbo.sqlwatch_logger_whoisactive" -and $WhoIsActive.Installed -eq $false)  {
+                Set-ItResult -Skip -Because "sp_WhoIsActive is not installed"
+            }
 
-            $sql = "select cnt=count(*) from sys.availability_groups"
-            $AG = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database master -Query $sql
-
-            $sql = "select cnt=count(*) from [dbo].[sqlwatch_config_include_index_histogram] where object_name_pattern <> '%.dbo.table%'"
-            $HistogramToCollect = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql            
+            if ($($_.TableName) -eq "dbo.sqlwatch_logger_agent_job_history" -and $IsAgentEnabled -eq $false)  {
+                Set-ItResult -Skip -Because "SQL Agent is disabled so it will not generate any history"
+            }
 
             if ($($_.TableName) -eq "dbo.sqlwatch_logger_hadr_database_replica_states" -and $AG.cnt -eq 0)  {
                 Set-ItResult -Skip -Because "Availability Groups are not found"
@@ -271,11 +355,11 @@ Describe "$($SqlInstance): Tables should not be empty" -Tag 'Tables' {
                 if ($($HistogramToCollect.cnt) -eq 0) {
                     Set-ItResult -Skip -Because "no histograms are set to be collected"
                 }
-            }
-
+            }            
+        
             $sql = "select row_count=count(*) from $($_.TableName)"
             (Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql -ErrorAction Stop).row_count | Should -BeGreaterThan 0
-        }
+        }        
     }
 }
 
@@ -488,7 +572,8 @@ Describe "$($SqlInstance): Database Design" -Tag 'DatabaseDesign' {
         on t.object_id = pk.object_id 
         and pk.is_primary_key = 1
     left join sys.foreign_keys fk
-        on fk.parent_object_id = t.object_id"
+        on fk.parent_object_id = t.object_id
+    where t.name like '%sqlwatch%'"
 
     $SqlWatchTableKeys = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
 
@@ -563,7 +648,8 @@ Describe "$($SqlInstance): Database Design" -Tag 'DatabaseDesign' {
             and t.TABLE_NAME = c.TABLE_NAME
             and t.TABLE_SCHEMA = c.TABLE_SCHEMA
         where t.TABLE_TYPE = 'BASE TABLE'         
-        and c.DATA_TYPE LIKE '%time%'"
+        and c.DATA_TYPE LIKE '%time%'
+        and t.TABLE_NAME like '%sqlwatch%'"
         $SqlWatchTimeColumns = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
 
 
