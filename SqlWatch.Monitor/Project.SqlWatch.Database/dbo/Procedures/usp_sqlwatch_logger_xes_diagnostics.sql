@@ -7,7 +7,8 @@ set nocount on;
 declare @snapshot_type_id tinyint = 7,
 		@snapshot_time datetime2(0),
 		@target_data_char nvarchar(max),
-		@target_data_xml xml;
+		@target_data_xml xml,
+		@max_event_time datetime2(0);
 
 declare @execution_count bigint = 0,
 		@session_name nvarchar(64) = 'system_health',
@@ -32,10 +33,9 @@ exec [dbo].[usp_sqlwatch_internal_insert_header]
 	@snapshot_time_new = @snapshot_time OUTPUT,
 	@snapshot_type_id = @snapshot_type_id;
 
-begin transaction 
+begin transaction;
 
 	insert into @event_data
-
 	exec [dbo].[usp_sqlwatch_internal_get_xes_data]
 		@session_name = @session_name,
 		@object_name = 'sp_server_diagnostics_component_result',
@@ -47,6 +47,10 @@ begin transaction
 			commit transaction;
 			return;
 		end;
+
+	select @max_event_time = max(event_time) 
+	from [dbo].[sqlwatch_logger_xes_query_processing]
+	where sql_instance = @sql_instance;
 
 	with cte_query_processing as (
 		select 
@@ -85,13 +89,12 @@ begin transaction
 		, [snapshot_time]
 		, [snapshot_type_id]
 	from cte_query_processing
-	where event_time > (
-		select max(event_time) 
-		from [dbo].[sqlwatch_logger_xes_query_processing]
-		where sql_instance = @sql_instance
-		)
+	where event_time > @max_event_time
 	option (maxdop 1, keepfixed plan);
 
+	select @max_event_time = max(event_time) 
+	from [dbo].[sqlwatch_logger_xes_iosubsystem]
+	where sql_instance = @sql_instance;
 
 	with cte_io_subsystem as (
 		select
@@ -125,11 +128,7 @@ begin transaction
 		, [snapshot_time]
 		, [snapshot_type_id] 
 	from cte_io_subsystem
-	where event_time > (
-		select max(event_time) 
-		from [dbo].[sqlwatch_logger_xes_iosubsystem] 
-		where sql_instance = @sql_instance
-		)
+	where event_time > @max_event_time
 	option (maxdop 1, keepfixed plan);
 
 commit transaction;
