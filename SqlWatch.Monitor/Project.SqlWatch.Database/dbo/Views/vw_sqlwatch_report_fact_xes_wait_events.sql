@@ -10,7 +10,6 @@ select e.[event_time]
       ,e.[username]
       ,e.[client_hostname]
       ,e.[client_app_name]
-      --,db.[database_name]
       --,p.plan_handle
       ,e.[sql_instance]
       ,e.[snapshot_time]
@@ -21,7 +20,7 @@ select e.[event_time]
       ,qph.[query_plan_for_query_plan_hash]
       , db.[database_name]
 	  , pr.[procedure_name]
-	  , replace(replace(replace(replace(replace(coalesce(qph.statement_for_query_plan_hash,[event_data].value('(event/action[@name="sql_text"]/value)[1]', 'varchar(max)')),char(9), ''),char(10),'') ,' ',char(9)+char(10)),char(10)+char(9),''),char(9)+char(10),' ')
+	  , coalesce(dbo.ufn_sqlwatch_clean_sql_text(qph.statement_for_query_plan_hash),ed.sql_text)
 		  as sql_text
   from [dbo].[sqlwatch_logger_xes_wait_event] e
 
@@ -45,5 +44,7 @@ select e.[event_time]
 
     left join dbo.[sqlwatch_meta_procedure] pr
         on pr.sqlwatch_procedure_id = qp.sqlwatch_procedure_id
-        and pr.sql_instance = qp.sql_instance;
+        and pr.sql_instance = qp.sql_instance
+			
+	cross apply dbo.ufn_sqlwatch_parse_xes_event_data([event_data]) ed;
 

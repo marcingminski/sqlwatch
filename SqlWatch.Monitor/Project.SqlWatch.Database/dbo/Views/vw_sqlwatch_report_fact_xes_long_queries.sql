@@ -2,18 +2,18 @@
 as
 
 SELECT
-       event_time
-      ,[event_name]
-      ,[session_id]
-      ,[cpu_time]
-      ,[physical_reads]
-      ,[logical_reads]
-      ,[writes]
-      ,[spills]
-      ,[username]
-      ,[client_hostname]
-      ,[client_app_name]
-      ,[duration_ms]
+       d.event_time
+      ,d.[event_name]
+      ,d.[session_id]
+      ,d.[cpu_time]
+      ,d.[physical_reads]
+      ,d.[logical_reads]
+      ,d.[writes]
+      ,d.[spills]
+      ,d.[username]
+      ,d.[client_hostname]
+      ,d.[client_app_name]
+      ,d.[duration_ms]
       ,report_time
       ,d.[sql_instance]
       ,[long_query_id]
@@ -23,7 +23,7 @@ SELECT
     , qph.[query_plan_for_query_plan_hash]
 	  , db.[database_name]
 	  , pr.[procedure_name]
-	  , replace(replace(replace(replace(replace(coalesce(qph.statement_for_query_plan_hash,[event_data].value('(event/action[@name="sql_text"]/value)[1]', 'varchar(max)')),char(9), ''),char(10),'') ,' ',char(9)+char(10)),char(10)+char(9),''),char(9)+char(10),' ')
+	  , coalesce(dbo.ufn_sqlwatch_clean_sql_text(qph.statement_for_query_plan_hash),ed.sql_text)
 		  as sql_text
   FROM [dbo].[sqlwatch_logger_xes_long_queries] d
   	inner join dbo.sqlwatch_logger_snapshot_header h
@@ -47,4 +47,6 @@ SELECT
 
     left join dbo.[sqlwatch_meta_procedure] pr
         on pr.sqlwatch_procedure_id = qp.sqlwatch_procedure_id
-        and pr.sql_instance = qp.sql_instance;
+        and pr.sql_instance = qp.sql_instance
+
+	cross apply dbo.ufn_sqlwatch_parse_xes_event_data([event_data]) ed
