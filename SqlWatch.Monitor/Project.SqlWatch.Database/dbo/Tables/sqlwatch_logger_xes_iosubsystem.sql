@@ -14,9 +14,9 @@
 		),
 	constraint fk_sqlwatch_logger_xes_iosubsystem_server foreign key ([sql_instance])
 		references [dbo].[sqlwatch_meta_server] ([servername]) on delete cascade
-)
+);
 go
 
---CREATE NONCLUSTERED INDEX idx_sqlwatch_xes_iosubsystem_001
---ON [dbo].[sqlwatch_logger_xes_iosubsystem] ([sql_instance])
---INCLUDE ([snapshot_time],[snapshot_type_id])
+create unique nonclustered index idx_sqlwatch_xes_iosubsystem_event_time
+	on [dbo].[sqlwatch_logger_xes_iosubsystem] ([event_time]);
+go

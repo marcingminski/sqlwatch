@@ -138,19 +138,22 @@ using (
 	from sys.dm_xe_session_targets t
 	inner join sys.dm_xe_sessions s
 	on t.event_session_address = s.address
-	where s.name like 'SQLWATCH%'	
-	and t.target_name = 'event_file'
+	where t.target_name = 'event_file'
+	and (
+			s.name like 'SQLWATCH%'
+		or	s.name = 'system_health'
+		)
 ) as source
 on source.session_name = target.session_name collate database_default
 
 when matched then update
 	set	  execution_count = 0
-		, last_updated = null
+		, last_event_time = null
 
 --remove any non existing sessions from our count table:
 when not matched by source then
 	delete
 
 when not matched then
-	insert (session_name, execution_count, last_updated)
+	insert (session_name, execution_count, last_event_time)
 	values (source.session_name, 0, null);

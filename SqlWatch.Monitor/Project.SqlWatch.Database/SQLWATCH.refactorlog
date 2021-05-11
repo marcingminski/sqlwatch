@@ -2905,4 +2905,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="[statement_for_query_plan_hash]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="7b7ce8bf-69e6-4da9-b57f-f110e0bb4428" ChangeDateTime="05/11/2021 12:58:47">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_stage_xes_exec_count].[last_updated]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_stage_xes_exec_count]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="last_event_time" />
+  </Operation>
 </Operations>
