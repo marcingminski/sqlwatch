@@ -37,16 +37,6 @@ $SqlWatchImportPath = "C:\projects\sqlwatch\SqlWatch.Test"
 Get-Job | Wait-Job | Receive-Job | Format-Table
 Get-Job | Format-Table -Autosize
 
-
-## Wait until we have results from all 4 tests:
-$xmls = get-item -path .\SqlWatch.Test\Pester*.xml
-$i=1
-while ($xmls.Count -lt 4 -and $i -lt 10) {
-   Start-Sleep -s 5
-   $xmls = get-item -path .\SqlWatch.Test\Pester*.xml
-   $i+=1
-}
-
 ## Upload Nunit tests to Appveyor:
 foreach ($xml in $xmls) {
     .\SqlWatch.Test\ReportUnit.exe $xml
@@ -55,7 +45,6 @@ foreach ($xml in $xmls) {
           throw "$($res.FailedCount) tests failed."
       }
 }
-
 
 ## Generate html reports:
 Remove-Item .\SqlWatch.Test\CommandLine.xml -Force -Confirm:$false
