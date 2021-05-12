@@ -12,6 +12,19 @@ Login failed for user 'APPVYR-WIN\appveyor'
 so we have to make sure all databases are onine and accesible before we can proceed with testing
 #> 
 
+Function Get-SqlAgentStatus(
+    [string]$SqlInstance,
+    [string]$SqlWatchDatabase
+) {
+    $sql = "select return=[dbo].[ufn_sqlwatch_get_agent_status]()"
+    $result=Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+    if ($result.return -eq $true) {
+        return $true;
+    } else {
+        return $false;
+    }
+};
+
 $SqlWatchDatabaseState = 0
 $sql = "select isOnline=count(*) 
     from sys.databases
@@ -746,13 +759,7 @@ Describe "$($SqlInstance): Application Log Errors" -Tag 'ApplicationErrors' {
 
 Describe "$($SqlInstance): SqlWatchImport.exe" -Tag "SqlWatchImport" {
 
-    Write-Host "SqlWatchImportPath: $SqlWatchImportPath"
-    Write-Host "SqlWatchImportPath: $($SqlWatchImportPath)"
-
     Context 'Adding remote instances' {
-
-        Write-Host "SqlWatchImportPath: $SqlWatchImportPath"
-        Write-Host "SqlWatchImportPath: $($SqlWatchImportPath)"        
 
         #Edit App.Config to change central repo:
         $SqlWatchImportConfigFile = "$($SqlWatchImportPath)\SqlWatchImport.exe.config" 
@@ -781,7 +788,7 @@ Describe "$($SqlInstance): SqlWatchImport.exe" -Tag "SqlWatchImport" {
 
             $Arguments = "--add -s $_ -d $SqlWatchDatabase"
 
-            { Start-Process -FilePath "$("$($SqlWatchImportPath)\SqlWatchImport.exe")" -ArgumentList $Arguments -NoNewWindow -Wait } | Should -Not -Throw
+            { Start-Process -FilePath "$($SqlWatchImportPath)\SqlWatchImport.exe"  -ArgumentList $Arguments -NoNewWindow -Wait } | Should -Not -Throw
         }
 
         It 'Instance <_> was added to the config table' -ForEach $RemoteInstances {
@@ -795,7 +802,7 @@ Describe "$($SqlInstance): SqlWatchImport.exe" -Tag "SqlWatchImport" {
 
             Start-Sleep -s 60
 
-            { Start-Process -FilePath "$("$SqlWatchImportPath\SqlWatchImport.exe")" -NoNewWindow -Wait } | Should -Not -Throw
+            { Start-Process -FilePath "$($SqlWatchImportPath)\SqlWatchImport.exe.config"  -NoNewWindow -Wait } | Should -Not -Throw
         }
 
         It 'LogFile should have no errors' {
