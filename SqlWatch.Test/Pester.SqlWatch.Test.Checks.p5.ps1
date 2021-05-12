@@ -746,7 +746,13 @@ Describe "$($SqlInstance): Application Log Errors" -Tag 'ApplicationErrors' {
 
 Describe "$($SqlInstance): SqlWatchImport.exe" -Tag "SqlWatchImport" {
 
+    Write-Host "SqlWatchImportPath: $SqlWatchImportPath"
+    Write-Host "SqlWatchImportPath: $($SqlWatchImportPath)"
+
     Context 'Adding remote instances' {
+
+        Write-Host "SqlWatchImportPath: $SqlWatchImportPath"
+        Write-Host "SqlWatchImportPath: $($SqlWatchImportPath)"        
 
         #Edit App.Config to change central repo:
         $SqlWatchImportConfigFile = "$($SqlWatchImportPath)\SqlWatchImport.exe.config" 

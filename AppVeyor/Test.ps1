@@ -18,16 +18,15 @@ Get-Job | Format-Table -Autosize
 
 ## Run Test
 
-Start-Sleep -s 10
+Start-Sleep -s 5
 $ErrorActionPreference = "Continue"
 
-$TestFile = "c:\projects\sqlwatch\SqlWatch.Test\Pester.SqlWatch.Test.Checks.p5.ps1"
-$ResultFile = "c:\projects\sqlwatch\SqlWatch.Test"
-
+## Copy SqlWatchImport files from the release folder to the test folder becuae we are going to change the app.config:
 Get-Childitem -Path c:\projects\sqlwatch\RELEASE -recurse -Filter "SqlWatchImport*" | Copy-Item -Destination C:\projects\sqlwatch\SqlWatch.Test
 Get-Childitem -Path c:\projects\sqlwatch\RELEASE -recurse -Filter "CommandLine*" | Copy-Item -Destination C:\projects\sqlwatch\SqlWatch.Test
 
-
+$TestFile = "c:\projects\sqlwatch\SqlWatch.Test\Pester.SqlWatch.Test.Checks.p5.ps1"
+$ResultFile = "c:\projects\sqlwatch\SqlWatch.Test"
 $SqlWatchImportPath = "C:\projects\sqlwatch\SqlWatch.Test"
 
 .\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance localhost\SQL2017 -SqlWatchDatabase SQLWATCH -TestFilePath $TestFile -ResultsPath $ResultFile -RunAsJob -SqlWatchImportPath $SqlWatchImportPath -RemoteInstances localhost\SQL2016, localhost\SQL2014, localhost\SQL2012SP1
@@ -36,23 +35,15 @@ $SqlWatchImportPath = "C:\projects\sqlwatch\SqlWatch.Test"
 .\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance localhost\SQL2012SP1 -SqlWatchDatabase SQLWATCH -TestFilePath $TestFile -ResultsPath $ResultFile -RunAsJob -SqlWatchImportPath $SqlWatchImportPath -ExcludeTags SqlWatchImport
 
 Get-Job | Wait-Job | Receive-Job | Format-Table
-Get-Job | Format-Table -Autosize
 
+## Wait until we have results from all 4 tests:
 $xmls = get-item -path .\SqlWatch.Test\*.xml
-
 while ($xmls.Count -lt 4) {
    Start-Sleep -s 5
    $xmls = get-item -path .\SqlWatch.Test\*.xml
 }
 
-Start-Sleep -s 5
-
-.\SqlWatch.Test\testspace config url marcingminski.testspace.com
-.\SqlWatch.Test\testspace "[SqlWatch.Test.SQL2017]c:\projects\sqlwatch\SqlWatch.Test\Pester.SqlWatch.Test.Checks.p5.result.localhostSQL2017.xml" "[SqlWatch.Test.SQL2016]c:\projects\sqlwatch\SqlWatch.Test\Pester.SqlWatch.Test.Checks.p5.result.localhostSQL2016.xml" "[SqlWatch.Test.SQL2014]c:\projects\sqlwatch\SqlWatch.Test\Pester.SqlWatch.Test.Checks.p5.result.localhostSQL2014.xml" "[SqlWatch.Test.SQL2012SP1]c:\projects\sqlwatch\SqlWatch.Test\Pester.SqlWatch.Test.Checks.p5.result.localhostSQL2012SP1.xml"
-
-.\SqlWatch.Test\ReportUnit.exe .\SqlWatch.Test\ .\SqlWatch.Test\TestReport\
-Copy-Item -path .\SqlWatch.Test\SqlWatchImport*.log -Destination .\SqlWatch.Test\TestReport\
-
+## Upload Nunit tests to Appveyor:
 foreach ($xml in $xmls) {
     .\SqlWatch.Test\ReportUnit.exe $xml
     (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path $xml))
@@ -61,15 +52,20 @@ foreach ($xml in $xmls) {
       }
 }
 
-
-## Upload Tests results in HTML format to Artifact
-
+## Generate html reports:
 .\SqlWatch.Test\ReportUnit.exe .\SqlWatch.Test\ .\SqlWatch.Test\TestReport\
-Copy-Item .\SqlWatch.Test\*.xml .\SqlWatch.Test\TestReport\
 
+## Copy source xml and any logs files into the Report folder:
+Copy-Item .\SqlWatch.Test\*.log .\SqlWatch.Test\TestReport\
+Copy-Item .\SqlWatch.Test\Pester.*.xml .\SqlWatch.Test\TestReport\
+
+## Zip the report folder and upload to AppVeyor as Artifact
 Compress-Archive -Path .\SqlWatch.Test\TestReport -DestinationPath .\SqlWatch.Test\TestReport.zip
-
 Push-AppveyorArtifact .\SqlWatch.Test\TestReport.zip
+
+## Push Nunit results to testcase (disabled until testcase is fixed, bug logged with testcase)
+## .\SqlWatch.Test\testspace config url marcingminski.testspace.com
+## .\SqlWatch.Test\testspace "[SqlWatch.Test.SQL2017]c:\projects\sqlwatch\SqlWatch.Test\Pester.SqlWatch.Test.Checks.p5.result.localhostSQL2017.xml" "[SqlWatch.Test.SQL2016]c:\projects\sqlwatch\SqlWatch.Test\Pester.SqlWatch.Test.Checks.p5.result.localhostSQL2016.xml" "[SqlWatch.Test.SQL2014]c:\projects\sqlwatch\SqlWatch.Test\Pester.SqlWatch.Test.Checks.p5.result.localhostSQL2014.xml" "[SqlWatch.Test.SQL2012SP1]c:\projects\sqlwatch\SqlWatch.Test\Pester.SqlWatch.Test.Checks.p5.result.localhostSQL2012SP1.xml"
 
 # Push results to testcase
 
