@@ -746,23 +746,23 @@ Describe "$($SqlInstance): Application Log Errors" -Tag 'ApplicationErrors' {
 
 Describe "$($SqlInstance): SqlWatchImport.exe" -Tag "SqlWatchImport" {
 
-    #Edit App.Config to change central repo:
-    $SqlWatchImportConfigFile = "$($SqlWatchImportPath)\SqlWatchImport.exe.config" 
-    $SqlWatchImportConfig = New-Object XML
-    $SqlWatchImportConfig.Load($SqlWatchImportConfigFile)
-    
-    $node = $SqlWatchImportConfig.SelectSingleNode('configuration/appSettings/add[@key="CentralRepositorySqlInstance"]')
-    $node.Attributes['value'].Value = $SqlInstance
-
-    $node = $SqlWatchImportConfig.SelectSingleNode('configuration/appSettings/add[@key="CentralRepositorySqlDatabase"]')
-    $node.Attributes['value'].Value = $SqlWatchDatabase
-
-    $node = $SqlWatchImportConfig.SelectSingleNode('configuration/appSettings/add[@key="LogFile"]')
-    $node.Attributes['value'].Value = "$($SqlWatchImportPath)\SqlWatchImport.log"
-
-    $SqlWatchImportConfig.Save($SqlWatchImportConfigFile)
-    
     Context 'Adding remote instances' {
+
+        #Edit App.Config to change central repo:
+        $SqlWatchImportConfigFile = "$($SqlWatchImportPath)\SqlWatchImport.exe.config" 
+        $SqlWatchImportConfig = New-Object XML
+        $SqlWatchImportConfig.Load($SqlWatchImportConfigFile)
+        
+        $node = $SqlWatchImportConfig.SelectSingleNode('configuration/appSettings/add[@key="CentralRepositorySqlInstance"]')
+        $node.Attributes['value'].Value = $SqlInstance
+
+        $node = $SqlWatchImportConfig.SelectSingleNode('configuration/appSettings/add[@key="CentralRepositorySqlDatabase"]')
+        $node.Attributes['value'].Value = $SqlWatchDatabase
+
+        $node = $SqlWatchImportConfig.SelectSingleNode('configuration/appSettings/add[@key="LogFile"]')
+        $node.Attributes['value'].Value = "$($SqlWatchImportPath)\SqlWatchImport.log"
+
+        $SqlWatchImportConfig.Save($SqlWatchImportConfigFile)        
 
         It 'Instance <_> does not exist in the config table' -ForEach $RemoteInstances {
             $sql = "select cnt=count(*) from dbo.sqlwatch_config_sql_instance where [sql_instance] = '$_'"
