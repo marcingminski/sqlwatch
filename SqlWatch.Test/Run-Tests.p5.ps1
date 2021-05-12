@@ -5,7 +5,9 @@ param(
         [string]$ResultsPath,
         [string[]]$IncludeTags,
         [string[]]$ExcludeTags,
-        [switch]$RunAsJob
+        [switch]$RunAsJob,
+        [string[]]$RemoteInstances,
+        [string]$SqlWatchImportPath
 )
 
 
@@ -20,7 +22,8 @@ If ($RunAsJob) {
             [string]$ResultsPath,
             [string[]]$IncludeTags,
             [string[]]$ExcludeTags,
-            [int]$SqlUptimeHours
+            [string[]]$RemoteInstances,
+            [string]$SqlWatchImportPath
         )
 
         Import-Module Pester
@@ -41,12 +44,14 @@ If ($RunAsJob) {
             ( New-PesterContainer -Path $($TestFile.FullName) -Data @{ 
                     SqlInstance = $SqlInstance;
                     SqlWatchDatabase = $SqlWatchDatabase;
-                    SqlWatchDatabaseTest = "SQLWATCH_TEST";
+                    SqlWatchDatabaseTest = "SQLWATCH_TEST"
+                    RemoteInstances = $RemoteInstances
+                    SqlWatchImportPath = $SqlWatchImportPath;
                 } )
         )
             
         Invoke-Pester -Configuration $configuration 
-        } -ArgumentList $SqlInstance,$SqlWatchDatabase,$TestFilePath,$ResultsPath,$IncludeTags,$ExcludeTags
+        } -ArgumentList $SqlInstance,$SqlWatchDatabase,$TestFilePath,$ResultsPath,$IncludeTags,$ExcludeTags,$RemoteInstances
     
 } else {
     <#This is repeated and the same as in the Start-Job. I do not know how to make the Pester Configuration generic and Pass into the Job as argument, I am getting:
@@ -70,7 +75,8 @@ If ($RunAsJob) {
                 SqlInstance = $SqlInstance;
                 SqlWatchDatabase = $SqlWatchDatabase;
                 SqlWatchDatabaseTest = "SQLWATCH_TEST";
-                SqlUptimeHours = $SqlUptime.Hours;
+                RemoteInstances = $RemoteInstances
+                SqlWatchImportPath = $SqlWatchImportPath;
             } )
     )
 

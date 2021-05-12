@@ -1,7 +1,9 @@
 ﻿param(
     [string]$SqlInstance,
     [string]$SqlWatchDatabase,
-    [string]$SqlWatchDatabaseTest
+    [string]$SqlWatchDatabaseTest,
+    [string[]]$RemoteInstances,
+    [string]$SqlWatchImportPath
 )
 
 <# On not so rare ocassions, Appveyor throws an error
@@ -84,7 +86,7 @@ values (getutcdate(),'Test Start')"
 
 Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabaseTest -Query $sql
 
-$sql = "select Hours=datediff(hour,sqlserver_start_time,getdate()) from sys.dm_os_sys_info"
+$sql = "select top 1 Hours=datediff(hour,sqlserver_start_time,getdate()) from sys.dm_os_sys_info"
 $SqlUptime = Invoke-SqlCmd -ServerInstance $SqlInstance -Database master -Query $sql
 $SqlUptimeHours = $SqlUptime.Hours
 
@@ -256,11 +258,11 @@ Describe "$($SqlInstance): Tables should not be empty" -Tag 'Tables' {
             
             $sql = "select AgentEnabled=[dbo].[ufn_sqlwatch_get_agent_status]()"
             $AgentStatus = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
-            [boolean]$IsAgentEnabled = $AgentStatus.AgentEnabled      
+            $IsAgentEnabled = $AgentStatus.AgentEnabled      
             
-            $sql = "select Hours=datediff(hour,sqlserver_start_time,getdate()) from sys.dm_os_sys_info"
+            $sql = "select top 1 Hours=datediff(hour,sqlserver_start_time,getdate()) from sys.dm_os_sys_info"
             $SqlUptime = Invoke-SqlCmd -ServerInstance $SqlInstance -Database master -Query $sql
-            [int]$SqlUptimeHours = $SqlUptime.Hours            
+            $SqlUptimeHours = $SqlUptime.Hours            
 
             $sql = "select Enabled=case when count(*) > 0 then 1 else 0 end 
             from sqlwatch_config_action
@@ -692,4 +694,76 @@ Describe "$($SqlInstance): Application Log Errors" -Tag 'ApplicationErrors' {
             $($_.ERROR_MESSAGE) | Should -BeNullOrEmpty
         }
     }   
+}
+
+Describe "$($SqlInstance): SqlWatchImport.exe" -Tag "SqlWatchImport" {
+
+    #Edit App.Config to change central repo:
+    $SqlWatchImportConfigFile = "$SqlWatchImportPath\SqlWatchImport.exe.config" 
+    $SqlWatchImportConfig = New-Object XML
+    $SqlWatchImportConfig.Load($SqlWatchImportConfigFile)
+    
+    $node = $SqlWatchImportConfig.SelectSingleNode('configuration/appSettings/add[@key="CentralRepositorySqlInstance"]')
+    $node.Attributes['value'].Value = $SqlInstance
+
+    $node = $SqlWatchImportConfig.SelectSingleNode('configuration/appSettings/add[@key="CentralRepositorySqlDatabase"]')
+    $node.Attributes['value'].Value = $SqlWatchDatabase
+
+    $node = $SqlWatchImportConfig.SelectSingleNode('configuration/appSettings/add[@key="LogFile"]')
+    $node.Attributes['value'].Value = "$($SqlWatchImportPath)\SqlWatchImport.log"
+
+    $SqlWatchImportConfig.Save($SqlWatchImportConfigFile)
+    
+    Context 'Adding remote instances' {
+
+        It 'Instance <_> does not exist in the config table' -ForEach $RemoteInstances {
+            $sql = "select cnt=count(*) from dbo.sqlwatch_config_sql_instance where [sql_instance] = '$_'"
+            $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+
+            $result.cnt | Should -Be 0
+        }
+
+        It 'Adding remote instance <_> to the central repository should not throw' -ForEach $RemoteInstances {
+
+            $Arguments = "--add -s $_ -d $SqlWatchDatabase"
+
+            { Start-Process -FilePath "$("$SqlWatchImportPath\SqlWatchImport.exe")" -ArgumentList $Arguments -NoNewWindow -Wait } | Should -Not -Throw
+        }
+
+        It 'Instance <_> was added to the config table' -ForEach $RemoteInstances {
+            $sql = "select cnt=count(*) from dbo.sqlwatch_config_sql_instance where [sql_instance] = '$_'"
+            $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+
+            $result.cnt | Should -Be 1
+        }
+
+        It 'Running SqlWatchImport.exe should not throw' {
+
+            { Start-Process -FilePath "$("$SqlWatchImportPath\SqlWatchImport.exe")" -NoNewWindow -Wait } | Should -Not -Throw
+        }
+
+        It 'LogFile should have no errors' {
+
+            $SqlWatchImportLogErrors = Get-Content -Path "$($SqlWatchImportPath)\SqlWatchImport.log" | ForEach-Object {
+                if ($_ -like "*Exception*") {
+                    $_
+                }
+            } 
+            $SqlWatchImportLogErrors | Should -BeNullOrEmpty
+
+        }
+        
+        It 'Instance <_> should have new headers' -ForEach $RemoteInstances {
+            $sql = "select cnt=count(*) from sqlwatch_logger_snapshot_header where [sql_instance] = '$_'"
+            $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+
+            $result.cnt | Should -BeGreaterThan 0
+        }        
+
+        It 'Removing remote instance <_> from the central repository should not throw' -ForEach $RemoteInstances {
+
+            $sql = "delete from [dbo].[sqlwatch_config_sql_instance] where sql_instance = '$_'"
+            { Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql } | Should -Not -Throw
+        }        
+    }
 }
