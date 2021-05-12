@@ -51,7 +51,7 @@ If ($RunAsJob) {
         )
             
         Invoke-Pester -Configuration $configuration 
-        } -ArgumentList $SqlInstance,$SqlWatchDatabase,$TestFilePath,$ResultsPath,$IncludeTags,$ExcludeTags,$RemoteInstances
+        } -ArgumentList $SqlInstance,$SqlWatchDatabase,$TestFilePath,$ResultsPath,$IncludeTags,$ExcludeTags,$RemoteInstances, $SqlWatchImportPath
     
 } else {
     <#This is repeated and the same as in the Start-Job. I do not know how to make the Pester Configuration generic and Pass into the Job as argument, I am getting:
