@@ -29,14 +29,13 @@ $TestFile = "c:\projects\sqlwatch\SqlWatch.Test\Pester.SqlWatch.Test.Checks.p5.p
 $ResultFile = "c:\projects\sqlwatch\SqlWatch.Test"
 $SqlWatchImportPath = "C:\projects\sqlwatch\SqlWatch.Test"
 
-.\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance localhost\SQL2017 -SqlWatchDatabase SQLWATCH -TestFilePath $TestFile -ResultsPath $ResultFile -RunAsJob -SqlWatchImportPath $SqlWatchImportPath -ExcludeTags SqlWatchImport
+.\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance localhost\SQL2017 -SqlWatchDatabase SQLWATCH -TestFilePath $TestFile -ResultsPath $ResultFile -RunAsJob -SqlWatchImportPath $SqlWatchImportPath -$SqlWatchImportPath localhost\SQL2016
 .\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance localhost\SQL2016 -SqlWatchDatabase SQLWATCH -TestFilePath $TestFile -ResultsPath $ResultFile -RunAsJob -SqlWatchImportPath $SqlWatchImportPath -ExcludeTags SqlWatchImport
 .\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance localhost\SQL2014 -SqlWatchDatabase SQLWATCH -TestFilePath $TestFile -ResultsPath $ResultFile -RunAsJob -SqlWatchImportPath $SqlWatchImportPath -ExcludeTags SqlWatchImport
 .\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance localhost\SQL2012SP1 -SqlWatchDatabase SQLWATCH -TestFilePath $TestFile -ResultsPath $ResultFile -RunAsJob -SqlWatchImportPath $SqlWatchImportPath -ExcludeTags SqlWatchImport
 
 Get-Job | Wait-Job | Receive-Job | Format-Table
 Get-Job | Format-Table -Autosize
-
 
 ## Get XMLS to push to AppVeyor
 $xmls = get-item -path .\SqlWatch.Test\Pester*.xml
@@ -49,7 +48,6 @@ foreach ($xml in $xmls) {
           throw "$($res.FailedCount) tests failed."
       }
 }
-
 
 ## Generate html reports:
 Remove-Item .\SqlWatch.Test\CommandLine.xml -Force -Confirm:$false

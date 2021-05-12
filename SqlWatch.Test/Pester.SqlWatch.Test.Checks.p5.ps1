@@ -798,9 +798,7 @@ Describe "$($SqlInstance): SqlWatchImport.exe" -Tag "SqlWatchImport" {
             $result.cnt | Should -Be 1
         }
 
-        It 'Running SqlWatchImport.exe should not throw' {
-
-            Start-Sleep -s 60
+        It 'Running SqlWatchImport.exe should not throw' -Skip {
 
             { Start-Process -FilePath "$($SqlWatchImportPath)\SqlWatchImport.exe.config"  -NoNewWindow -Wait } | Should -Not -Throw
         }
