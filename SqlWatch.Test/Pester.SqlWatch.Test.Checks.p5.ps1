@@ -703,7 +703,23 @@ Describe "$($SqlInstance): Broker Activation" -Tag "Broker" {
         $result3 = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
 
         $result3.cnt | Should -BeGreaterThan $result2.cnt
-    }        
+    } 
+
+    $sql = "declare @teststart datetime;
+    select @teststart = max(date) from [$($SqlWatchDatabaseTest)].[dbo].[sqlwatch_pester_ref];
+
+    EXEC sys.xp_readerrorlog 0, 1,  N'sqlwatch_exec',N'Error',@teststart"
+    $ErrorLogErrors = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+
+    if ($ErrorLogErrors.Count -eq 0) {
+        $Skip = $true
+    } else {
+        $Skip = $false
+    }
+
+    It 'No ERRORLOG entries raised by the broker' -Skip:$Skip -ForEach $ErrorLogErrors {
+        $_.Text | Shuold -BeNullOrEmpty
+    }
 }
 
 Describe "$($SqlInstance): Application Log Errors" -Tag 'ApplicationErrors' {
