@@ -40,9 +40,11 @@ Get-Job | Format-Table -Autosize
 
 ## Wait until we have results from all 4 tests:
 $xmls = get-item -path .\SqlWatch.Test\Pester*.xml
-while ($xmls.Count -lt 4) {
+$i=1
+while ($xmls.Count -lt 4 -and $i -lt 10) {
    Start-Sleep -s 5
    $xmls = get-item -path .\SqlWatch.Test\Pester*.xml
+   $i+=1
 }
 
 ## Upload Nunit tests to Appveyor:
