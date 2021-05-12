@@ -747,7 +747,7 @@ Describe "$($SqlInstance): Application Log Errors" -Tag 'ApplicationErrors' {
 Describe "$($SqlInstance): SqlWatchImport.exe" -Tag "SqlWatchImport" {
 
     #Edit App.Config to change central repo:
-    $SqlWatchImportConfigFile = "$SqlWatchImportPath\SqlWatchImport.exe.config" 
+    $SqlWatchImportConfigFile = "$($SqlWatchImportPath)\SqlWatchImport.exe.config" 
     $SqlWatchImportConfig = New-Object XML
     $SqlWatchImportConfig.Load($SqlWatchImportConfigFile)
     
@@ -775,7 +775,7 @@ Describe "$($SqlInstance): SqlWatchImport.exe" -Tag "SqlWatchImport" {
 
             $Arguments = "--add -s $_ -d $SqlWatchDatabase"
 
-            { Start-Process -FilePath "$("$SqlWatchImportPath\SqlWatchImport.exe")" -ArgumentList $Arguments -NoNewWindow -Wait } | Should -Not -Throw
+            { Start-Process -FilePath "$("$($SqlWatchImportPath)\SqlWatchImport.exe")" -ArgumentList $Arguments -NoNewWindow -Wait } | Should -Not -Throw
         }
 
         It 'Instance <_> was added to the config table' -ForEach $RemoteInstances {
@@ -795,7 +795,7 @@ Describe "$($SqlInstance): SqlWatchImport.exe" -Tag "SqlWatchImport" {
         It 'LogFile should have no errors' {
 
             $SqlWatchImportLogErrors = Get-Content -Path "$($SqlWatchImportPath)\SqlWatchImport.log" | ForEach-Object {
-                if ($_ -like "*Exception*") {
+                if ($_ -like "*Exception*" -or $_ -like "*ERROR*") {
                     $_
                 }
             } 
