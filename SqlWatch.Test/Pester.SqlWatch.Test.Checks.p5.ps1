@@ -674,6 +674,38 @@ Describe "$($SqlInstance): Database Design" -Tag 'DatabaseDesign' {
     }
 }
 
+Describe "$($SqlInstance): Broker Activation" -Tag "Broker" {
+
+    It 'Migrating from Agent Jobs to Broker' {
+        $sql = "exec [dbo].[usp_sqlwatch_internal_migrate_jobs_to_queues]"
+        { Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql } | Should -Not -Throw
+    }
+
+    It 'Data is being collected via Broker' {
+        Start-Sleep -s 6
+        $sql = "select cnt=count(*) from sqlwatch_logger_snapshot_header"
+        $result1 = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+
+        $result1.cnt | Should -BeGreaterThan 0
+    }    
+
+    It 'Data is being collected via Broker' {
+        Start-Sleep -s 6
+        $sql = "select cnt=count(*) from sqlwatch_logger_snapshot_header"
+        $result2 = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+
+        $result2.cnt | Should -BeGreaterThan $result1.cnt
+    }    
+
+    It 'Data is being collected via Broker' {
+        Start-Sleep -s 6
+        $sql = "select cnt=count(*) from sqlwatch_logger_snapshot_header"
+        $result3 = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+
+        $result3.cnt | Should -BeGreaterThan $result2.cnt
+    }        
+}
+
 Describe "$($SqlInstance): Application Log Errors" -Tag 'ApplicationErrors' {
 
     $sql = "select ERROR_PROCEDURE, ERROR_MESSAGE 
@@ -738,6 +770,8 @@ Describe "$($SqlInstance): SqlWatchImport.exe" -Tag "SqlWatchImport" {
         }
 
         It 'Running SqlWatchImport.exe should not throw' {
+
+            Start-Sleep -s 60
 
             { Start-Process -FilePath "$("$SqlWatchImportPath\SqlWatchImport.exe")" -NoNewWindow -Wait } | Should -Not -Throw
         }
