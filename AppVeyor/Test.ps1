@@ -35,12 +35,14 @@ $SqlWatchImportPath = "C:\projects\sqlwatch\SqlWatch.Test"
 .\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance localhost\SQL2012SP1 -SqlWatchDatabase SQLWATCH -TestFilePath $TestFile -ResultsPath $ResultFile -RunAsJob -SqlWatchImportPath $SqlWatchImportPath -ExcludeTags SqlWatchImport
 
 Get-Job | Wait-Job | Receive-Job | Format-Table
+Get-Job | Format-Table -Autosize
+
 
 ## Wait until we have results from all 4 tests:
-$xmls = get-item -path .\SqlWatch.Test\*.xml
+$xmls = get-item -path .\SqlWatch.Test\Pester*.xml
 while ($xmls.Count -lt 4) {
    Start-Sleep -s 5
-   $xmls = get-item -path .\SqlWatch.Test\*.xml
+   $xmls = get-item -path .\SqlWatch.Test\Pester*.xml
 }
 
 ## Upload Nunit tests to Appveyor:
@@ -52,7 +54,9 @@ foreach ($xml in $xmls) {
       }
 }
 
+
 ## Generate html reports:
+Remove-Item .\SqlWatch.Test\CommandLine.xml -Force -Confirm:$false
 .\SqlWatch.Test\ReportUnit.exe .\SqlWatch.Test\ .\SqlWatch.Test\TestReport\
 
 ## Copy source xml and any logs files into the Report folder:
