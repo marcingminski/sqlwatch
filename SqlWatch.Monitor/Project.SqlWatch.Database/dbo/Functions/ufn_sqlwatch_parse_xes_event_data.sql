@@ -1,23 +1,23 @@
 ﻿CREATE FUNCTION [dbo].[ufn_sqlwatch_parse_xes_event_data](@event_data xml) 
 RETURNS @retEventData TABLE
 (
-	Duration int,
-	Cpu_time int,
-	Physical_reads int,
-	Logical_reads int,
-	Writes int,
-	Row_count int,
-	Last_row_count int,
-	Line_number int,
-	Offset int,
-	Offset_end int,
-	Sql_text varchar(max),
-	Client_app_name varchar(max),
-	Client_hostname varchar(max),
-	Database_name varchar(max),
-	Plan_handle varchar(max),
-	Session_id varchar(max),
-	Username varchar(max)
+	duration int,
+	cpu_time int,
+	physical_reads int,
+	logical_reads int,
+	writes int,
+	row_count int,
+	last_row_count int,
+	line_number int,
+	offset int,
+	offset_end int,
+	sql_text varchar(max),
+	client_app_name varchar(max),
+	client_hostname varchar(max),
+	database_name varchar(max),
+	plan_handle varchar(max),
+	session_id varchar(max),
+	username varchar(max)
 
 ) with schemabinding
 AS
