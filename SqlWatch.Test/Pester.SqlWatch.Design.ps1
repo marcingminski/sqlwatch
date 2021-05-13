@@ -8,23 +8,17 @@ param(
 
 Get-Item -Path ./SqlWatch.Test/*.psm1 | Import-Module -Force
 
-$SqlCmdParams = @{
-    ServerInstance = $SqlInstance
-    Database = $SqlWatchDatabase
-    OutputSqlErrors = $false
-}   
+Get-Item -Path ./SqlWatch.Test/*.psm1 | Import-Module -Force
 
-$SqlWatchTables = Get-SqlWatchTableKeys -SqlCmdParams $SqlCmdParams
-$SqlWatchCheckConstraints = Get-CheckConstraints -SqlCmdParams $SqlCmdParams
-$SqlWatchDefaultConstraints = Get-DefaultConstraints -SqlCmdParams $SqlCmdParams
-$SqlWatchForeignKeys = Get-ForeignKeys -SqlCmdParams $SqlCmdParams
-$SqlWatchDateTimeColumns = Get-DateTimeColumns -SqlCmdParams $SqlCmdParams
+$global:SqlInstance=$SqlInstance
+$global:SqlWatchDatabase=$SqlWatchDatabase
+$global:OutputSqlErrors=$false
 
 Describe "$($SqlInstance): Database Design" -Tag 'DatabaseDesign' {    
 
     Context 'Tables have Primary Keys' {
 
-        It 'Table <_.TableName> has Primary Key' -ForEach $SqlWatchTables {
+        It 'Table <_.TableName> has Primary Key' -ForEach $(Get-SqlWatchTableKeys) {
 
             If (
                 $($TableName) -eq "dbo.sqlwatch_pester_result" `
@@ -39,7 +33,7 @@ Describe "$($SqlInstance): Database Design" -Tag 'DatabaseDesign' {
 
     Context 'Tables have Foreign Keys' {
 
-        It 'Table <_.TableName> has Foreign Key' -ForEach $SqlWatchTables {
+        It 'Table <_.TableName> has Foreign Key' -ForEach $(Get-SqlWatchTableKeys) {
 
             If (
                 $($_.TableName) -Like "dbo.sqlwatch_config*" `
@@ -63,28 +57,28 @@ Describe "$($SqlInstance): Database Design" -Tag 'DatabaseDesign' {
 
     Context 'Check Constraints are trusted' {
 
-        It 'Check Constraint <_.ConstraintName> is trusted' -ForEach $SqlWatchCheckConstraints {
+        It 'Check Constraint <_.ConstraintName> is trusted' -ForEach $(Get-CheckConstraints) {
             $($_.IsNotTrusted) | Should -Be 0 
         }
     }    
 
     Context 'Default Constraints are named' {
 
-        It 'Default Constraint <_.ConstraintName> is named' -ForEach $SqlWatchDefaultConstraints {
+        It 'Default Constraint <_.ConstraintName> is named' -ForEach $(Get-CheckConstraints) {
             $_.ConstraintName | Should -Not -BeLike "DF__*"
         }
     }
     
     Context 'Foreign Keys are trusted' {
 
-        It 'Foreign key <_.FkName> is trusted' -ForEach $SqlWatchForeignKeys {
+        It 'Foreign key <_.FkName> is trusted' -ForEach $(Get-ForeignKeys) {
             $($_.IsNotTrusted) | Should -Be 0 
         }
     }
     
     Context 'Dates are correct' {
 
-        It 'Datetime values in <_.SqlWatchTable>.<_.SqlWatchColumn> are not in the future' -ForEach $SqlWatchDateTimeColumns {
+        It 'Datetime values in <_.SqlWatchTable>.<_.SqlWatchColumn> are not in the future' -ForEach $(Get-DateTimeColumns) {
 
             $sql = "select [value]=isnull(max($($_.SqlWatchColumn)),'') from $($_.SqlWatchTable) where $($_.SqlWatchColumn) is not null";
             $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql;
