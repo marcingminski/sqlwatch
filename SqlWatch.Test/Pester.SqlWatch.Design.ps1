@@ -3,12 +3,11 @@ param(
     [string]$SqlWatchDatabase,
     [string]$SqlWatchDatabaseTest,
     [string[]]$RemoteInstances,
-    [string]$SqlWatchImportPath
+    [string]$SqlWatchImportPath,
+    [string]$Modules
 )
 
-Get-Item -Path ./SqlWatch.Test/*.psm1 | Import-Module -Force
-
-Get-Item -Path ./SqlWatch.Test/*.psm1 | Import-Module -Force
+Get-Item -Path $Modules | Import-Module -Force
 
 $global:SqlInstance=$SqlInstance
 $global:SqlWatchDatabase=$SqlWatchDatabase

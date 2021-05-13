@@ -27,12 +27,12 @@ Get-Childitem -Path c:\projects\sqlwatch\RELEASE -recurse -Filter "CommandLine*"
 
 $TestFile = "c:\projects\sqlwatch\SqlWatch.Test\Pester.SqlWatch.Design.ps1"
 $ResultFile = "c:\projects\sqlwatch\SqlWatch.Test"
-$SqlWatchImportPath = "C:\projects\sqlwatch\SqlWatch.Test"
+$ModulesPath = "C:\projects\sqlwatch\SqlWatch.Test\*.psm1"
 
-.\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance localhost\SQL2017 -SqlWatchDatabase SQLWATCH -TestFilePath $TestFile -ResultsPath $ResultFile -RunAsJob 
-.\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance localhost\SQL2016 -SqlWatchDatabase SQLWATCH -TestFilePath $TestFile -ResultsPath $ResultFile -RunAsJob 
-.\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance localhost\SQL2014 -SqlWatchDatabase SQLWATCH -TestFilePath $TestFile -ResultsPath $ResultFile -RunAsJob 
-.\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance localhost\SQL2012SP1 -SqlWatchDatabase SQLWATCH -TestFilePath $TestFile -ResultsPath $ResultFile -RunAsJob 
+.\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance localhost\SQL2017 -SqlWatchDatabase SQLWATCH -TestFilePath $TestFile -ResultsPath $ResultFile -RunAsJob -Modules $ModulesPath
+.\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance localhost\SQL2016 -SqlWatchDatabase SQLWATCH -TestFilePath $TestFile -ResultsPath $ResultFile -RunAsJob -Modules $ModulesPath
+.\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance localhost\SQL2014 -SqlWatchDatabase SQLWATCH -TestFilePath $TestFile -ResultsPath $ResultFile -RunAsJob -Modules $ModulesPath
+.\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance localhost\SQL2012SP1 -SqlWatchDatabase SQLWATCH -TestFilePath $TestFile -ResultsPath $ResultFile -RunAsJob -Modules $ModulesPath
 
 Get-Job | Wait-Job | Receive-Job | Format-Table
 Get-Job | Format-Table -Autosize
@@ -51,7 +51,7 @@ foreach ($xml in $xmls) {
 
 ## Generate html reports:
 Remove-Item .\SqlWatch.Test\CommandLine.xml -Force -Confirm:$false
-.\SqlWatch.Test\ReportUnit.exe .\SqlWatch.Test\ .\SqlWatch.Test\TestReport\
+.\SqlWatch.Test\ReportUnit.exe .\SqlWatch.Test\Pester.*.xml .\SqlWatch.Test\TestReport\
 
 ## Copy source xml and any logs files into the Report folder:
 Copy-Item .\SqlWatch.Test\*.log .\SqlWatch.Test\TestReport\
