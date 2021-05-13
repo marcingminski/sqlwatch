@@ -25,14 +25,14 @@ $ErrorActionPreference = "Continue"
 Get-Childitem -Path c:\projects\sqlwatch\RELEASE -recurse -Filter "SqlWatchImport*" | Copy-Item -Destination C:\projects\sqlwatch\SqlWatch.Test
 Get-Childitem -Path c:\projects\sqlwatch\RELEASE -recurse -Filter "CommandLine*" | Copy-Item -Destination C:\projects\sqlwatch\SqlWatch.Test
 
-$TestFile = "c:\projects\sqlwatch\SqlWatch.Test\Pester.SqlWatch.Test.Checks.p5.ps1"
+$TestFile = "c:\projects\sqlwatch\SqlWatch.Test\Pester.SqlWatch.Design.ps1"
 $ResultFile = "c:\projects\sqlwatch\SqlWatch.Test"
 $SqlWatchImportPath = "C:\projects\sqlwatch\SqlWatch.Test"
 
-.\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance localhost\SQL2017 -SqlWatchDatabase SQLWATCH -TestFilePath $TestFile -ResultsPath $ResultFile -RunAsJob -SqlWatchImportPath $SqlWatchImportPath -$SqlWatchImportPath localhost\SQL2016
-.\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance localhost\SQL2016 -SqlWatchDatabase SQLWATCH -TestFilePath $TestFile -ResultsPath $ResultFile -RunAsJob -SqlWatchImportPath $SqlWatchImportPath -ExcludeTags SqlWatchImport
-.\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance localhost\SQL2014 -SqlWatchDatabase SQLWATCH -TestFilePath $TestFile -ResultsPath $ResultFile -RunAsJob -SqlWatchImportPath $SqlWatchImportPath -ExcludeTags SqlWatchImport
-.\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance localhost\SQL2012SP1 -SqlWatchDatabase SQLWATCH -TestFilePath $TestFile -ResultsPath $ResultFile -RunAsJob -SqlWatchImportPath $SqlWatchImportPath -ExcludeTags SqlWatchImport
+.\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance localhost\SQL2017 -SqlWatchDatabase SQLWATCH -TestFilePath $TestFile -ResultsPath $ResultFile -RunAsJob 
+.\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance localhost\SQL2016 -SqlWatchDatabase SQLWATCH -TestFilePath $TestFile -ResultsPath $ResultFile -RunAsJob 
+.\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance localhost\SQL2014 -SqlWatchDatabase SQLWATCH -TestFilePath $TestFile -ResultsPath $ResultFile -RunAsJob 
+.\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance localhost\SQL2012SP1 -SqlWatchDatabase SQLWATCH -TestFilePath $TestFile -ResultsPath $ResultFile -RunAsJob 
 
 Get-Job | Wait-Job | Receive-Job | Format-Table
 Get-Job | Format-Table -Autosize
@@ -62,8 +62,8 @@ Compress-Archive -Path .\SqlWatch.Test\TestReport -DestinationPath .\SqlWatch.Te
 Push-AppveyorArtifact .\SqlWatch.Test\TestReport.zip
 
 ## Push Nunit results to testcase (disabled until testcase is fixed, bug logged with testcase)
-## .\SqlWatch.Test\testspace config url marcingminski.testspace.com
-## .\SqlWatch.Test\testspace "[SqlWatch.Test.SQL2017]c:\projects\sqlwatch\SqlWatch.Test\Pester.SqlWatch.Test.Checks.p5.result.localhostSQL2017.xml" "[SqlWatch.Test.SQL2016]c:\projects\sqlwatch\SqlWatch.Test\Pester.SqlWatch.Test.Checks.p5.result.localhostSQL2016.xml" "[SqlWatch.Test.SQL2014]c:\projects\sqlwatch\SqlWatch.Test\Pester.SqlWatch.Test.Checks.p5.result.localhostSQL2014.xml" "[SqlWatch.Test.SQL2012SP1]c:\projects\sqlwatch\SqlWatch.Test\Pester.SqlWatch.Test.Checks.p5.result.localhostSQL2012SP1.xml"
+.\SqlWatch.Test\testspace config url marcingminski.testspace.com
+.\SqlWatch.Test\testspace "[SqlWatch.Test.SQL2017]c:\projects\sqlwatch\SqlWatch.Test\Pester.SqlWatch.Design.result.localhostSQL2017.xml" "[SqlWatch.Test.SQL2016]c:\projects\sqlwatch\SqlWatch.Test\Pester.SqlWatch.Design.result.localhostSQL2016.xml" "[SqlWatch.Test.SQL2014]c:\projects\sqlwatch\SqlWatch.Test\Pester.SqlWatch.Design.result.localhostSQL2014.xml" "[SqlWatch.Test.SQL2012SP1]c:\projects\sqlwatch\SqlWatch.Test\Pester.SqlWatch.Design.result.localhostSQL2012SP1.xml"
 
 # Push results to testcase
 
