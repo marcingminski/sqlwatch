@@ -74,7 +74,7 @@ Describe "$($SqlInstance): Database Design" -Tag 'DatabaseDesign' {
         It 'Datetime values in <_.SqlWatchTable>.<_.SqlWatchColumn> are not in the future' -ForEach $(Get-DateTimeColumns) {
 
             $sql = "select [value]=isnull(max($($_.SqlWatchColumn)),'') from $($_.SqlWatchTable) where $($_.SqlWatchColumn) is not null";
-            $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql;
+            $result = Invoke-SqlWatchCmd -Query $sql;
                        
             if ($result.value -eq $null) {
                 Set-ItResult -Skip -Because 'value is empty'

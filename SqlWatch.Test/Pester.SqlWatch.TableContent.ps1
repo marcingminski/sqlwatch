@@ -51,7 +51,7 @@ Describe "$($SqlInstance): Tables should not be empty" -Tag 'Tables' {
         if ($($_.TableName) -Like "*sqlwatch_meta_repository*") {
             
             $sql = "select cnt=count(*) from [dbo].[sqlwatch_config_sql_instance]"
-            $Instance = Invoke-Sqlcmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+            $Instance = Invoke-SqlWatchcmd -Query $sql
 
             if ($Instance.cnt -eq 1) {
                 Set-ItResult -Skip -Because "this only applies to Central Repository"
