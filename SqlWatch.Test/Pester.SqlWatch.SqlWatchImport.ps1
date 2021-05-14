@@ -29,14 +29,14 @@ Describe "$($SqlInstance): SqlWatchImport.exe" -Tag "SqlWatchImport" {
 
         It 'Adding remote instance <_> to the central repository should not throw' -ForEach $RemoteInstances {
 
-            $Arguments = "--add -s $_ -d $SqlWatchDatabase"
+            $Arguments = "--add -s $_ -d $($global:SqlWatchDatabase)"
 
             { Start-Process -FilePath "$($SqlWatchImportPath)\SqlWatchImport.exe"  -ArgumentList $Arguments -NoNewWindow -Wait } | Should -Not -Throw
         }
 
         It 'Instance <_> was added to the config table' -ForEach $RemoteInstances {
             $sql = "select cnt=count(*) from dbo.sqlwatch_config_sql_instance where [sql_instance] = '$_'"
-            $result = Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql
+            $result = Invoke-SqlWatchCmd -Query $sql
 
             $result.cnt | Should -Be 1
         }        

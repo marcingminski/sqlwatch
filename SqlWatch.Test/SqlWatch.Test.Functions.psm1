@@ -443,7 +443,7 @@ Function New-SqlWatchTestDatabase {
     end;"
 
 
-    Invoke-Sqlcmd -ServerInstance $global:SqlInstance -Database $SqlWatchDatabaseTest -Query $sql;
+    Invoke-Sqlcmd -ServerInstance $($global:SqlInstance) -Database $SqlWatchDatabaseTest -Query $sql;
 
     return $SqlWatchDatabaseTest;
 
@@ -453,7 +453,7 @@ Function New-SqlWatchTest {
     $sql = "insert into [dbo].[sqlwatch_pester_ref] (date,test)
     values (getutcdate(),'Test Start')"
 
-    Invoke-Sqlcmd -ServerInstance $global:SqlInstance -Database $SqlWatchDatabaseTest -Query $sql;
+    Invoke-Sqlcmd -ServerInstance $($global:SqlInstance) -Database $SqlWatchDatabaseTest -Query $sql;
     
 }
 
@@ -469,7 +469,7 @@ Function New-HeadBlocker {
         "
     }
      
-    $HeadBlocker = Start-Job -ScriptBlock $scriptBlock -ArgumentList $global:SqlInstance, $global:SqlWatchDatabaseTest
+    $HeadBlocker = Start-Job -ScriptBlock $scriptBlock -ArgumentList $($global:SqlInstance), $($global:SqlWatchDatabaseTest)
     Return $HeadBlocker
 }
 
