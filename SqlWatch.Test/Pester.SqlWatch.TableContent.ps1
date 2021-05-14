@@ -13,34 +13,6 @@ Get-Item -Path $Modules | Import-Module -Force
 $global:SqlInstance=$SqlInstance
 $global:SqlWatchDatabase=$SqlWatchDatabase
 
-Describe "$($SqlInstance): Procedure Execution" -Tag 'Procedures' {
-
-    Context 'Procedure Should not Throw an error on the first run' {
-        It "Procedure <_.ProcedureName> should not throw an error" -Foreach $(Get-SqlWatchProcedures) {
-            $sql = "exec $($_.ProcedureName);"
-            { Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql -ErrorAction Stop } | Should -Not -Throw 
-        }
-    }
-
-    Context 'Procedure Should not Throw an error on the second run' {
-
-        Start-Sleep -s 5
-        It "Procedure <_.ProcedureName> should not throw an error" -Foreach $(Get-SqlWatchProcedures) {
-            $sql = "exec $($_.ProcedureName);"
-            { Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql -ErrorAction Stop } | Should -Not -Throw 
-        }
-    }
-
-    Context 'Procedure Should not Throw an error on the third run' {
-
-        Start-Sleep -s 5
-        It "Procedure <_.ProcedureName> should not throw an error" -Foreach $(Get-SqlWatchProcedures) {
-            $sql = "exec $($_.ProcedureName);"
-            { Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql -ErrorAction Stop } | Should -Not -Throw 
-        }
-    }
-}
-
 Describe "$($SqlInstance): Tables should not be empty" -Tag 'Tables' {
 
     It "Table <_.TableName> should have rows" -Foreach $(Get-SqlWatchTables) {    
@@ -119,6 +91,6 @@ Describe "$($SqlInstance): Tables should not be empty" -Tag 'Tables' {
         }            
     
         $sql = "select row_count=count(*) from $($_.TableName)"
-        (Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql).row_count | Should -BeGreaterThan 0
+        (Invoke-SqlWatchCmd -Query $sql).row_count | Should -BeGreaterThan 0
     }         
 }
