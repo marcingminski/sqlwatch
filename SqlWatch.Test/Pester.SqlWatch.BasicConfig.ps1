@@ -47,4 +47,4 @@ Describe "$($SqlInstance): System Configuration" -Tag 'System' {
     #cannot do the same when the local time is behind or same as utc.
     It 'The Servers local time should be ahead of UTC in order to test that we are only using UTC dates' -Skip {}
 
-}
+};

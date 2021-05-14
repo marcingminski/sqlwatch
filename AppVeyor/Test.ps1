@@ -1,7 +1,8 @@
 param(
         [string]$ProjectFolder,
         [switch]$TestOnly,
-        [string[]]$SqlInstances
+        [string[]]$SqlInstances,
+        [string]$CentralRepoInstance
 
     )
 
@@ -10,6 +11,13 @@ Set-Location -Path $ProjectFolder
 $TestFolder = "$($ProjectFolder)\SqlWatch.Test"
 $ResultFolder = "$($TestFolder)\Pester.Results"
 $ModulesPath = "$($TestFolder)\*.psm1"
+
+$RemoteInstances = @();
+ForEach ($SqlInstance in $SqlInstances) {
+    if ($SqlInstances -ne $CentralRepoInstance) {
+        $RemoteInstances+= $SqlInstances
+    }
+}
 
 if (!(Test-Path -Path $ResultFolder)) {
     New-Item -Path $ResultFolder -ItemType Directory
@@ -144,6 +152,37 @@ ForEach ($SqlInstance in $SqlInstances) {
     .\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance $SqlInstance -SqlWatchDatabase SQLWATCH -TestFile $TestFile -ResultsFile $ResultsFile -Modules $ModulesPath -RunAsJob    
 
 }
+Get-Job | Wait-Job | Receive-Job | Format-Table
+
+
+##############################################################################################################################################################
+## Sixth batch (Single Central Repository):
+$SqlInstance = $CentralRepoInstance
+
+## set SqlWatchImport.exe configuration
+## Dedicate SQL2017 as central repository:
+$SqlWatchImportConfigFile = "$($TestFolder)\SqlWatchImport.exe.config" 
+$SqlWatchImportConfig = New-Object XML
+$SqlWatchImportConfig.Load($SqlWatchImportConfigFile)
+
+$node = $SqlWatchImportConfig.SelectSingleNode('configuration/appSettings/add[@key="CentralRepositorySqlInstance"]')
+$node.Attributes['value'].Value = $CentralRepoInstance
+
+$node = $SqlWatchImportConfig.SelectSingleNode('configuration/appSettings/add[@key="CentralRepositorySqlDatabase"]')
+$node.Attributes['value'].Value = $SqlWatchDatabase
+
+$node = $SqlWatchImportConfig.SelectSingleNode('configuration/appSettings/add[@key="LogFile"]')
+$node.Attributes['value'].Value = "$($TestFolder)\SqlWatchImport.log"
+
+$SqlWatchImportConfig.Save($SqlWatchImportConfigFile)
+
+$TestFile = "$($TestFolder)\Pester.SqlWatch.SqlWatchImport.ps1"
+$PesterTest = Format-ResultsFileName -TestFile $TestFile
+$ResultsFile = "$($ResultFolder)\Pester.Results.$($PesterTest).$($SqlInstance -Replace "\\",'').xml"
+.\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance $SqlInstance -SqlWatchDatabase SQLWATCH -TestFile $TestFile -ResultsFile $ResultsFile -Modules $ModulesPath -RunAsJob -RemoteInstances $RemoteInstances
+
+##############################################################################################################################################################
+
 Get-Job | Wait-Job | Receive-Job | Format-Table
 
 Get-Job | Format-Table -Autosize
