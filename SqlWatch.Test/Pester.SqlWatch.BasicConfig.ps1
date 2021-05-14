@@ -13,8 +13,9 @@ Get-Item -Path $Modules | Import-Module -Force
 $global:SqlInstance=$SqlInstance
 $global:SqlWatchDatabase=$SqlWatchDatabase
 
-New-SqlWatchTestDatabase
-New-SqlWatchTest
+$TestDatabaseName = New-SqlWatchTestDatabase
+$global:SqlWatchDatabaseTest=$TestDatabaseName
+$global:SqlWatchTestStart=New-SqlWatchTest
 
 Describe "$($SqlInstance): System Configuration" -Tag 'System' {
 

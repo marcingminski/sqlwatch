@@ -28,7 +28,7 @@ Describe "$($SqlInstance): Broker Activation" -Tag "Broker" {
         for($i = 0; $i -lt $m; $i++) {
             It "Data is being collected via Broker. Waiting for new data... $($i+1) out of $($m)" {
                 $HeaderCount1 = $(Get-SqlWatchHeaderRowCount).Headers
-                Start-Sleep -s 5
+                Start-Sleep -s 6
                 $HeaderCount2 = $(Get-SqlWatchHeaderRowCount).Headers
                 $HeaderCount2 | Should -BeGreaterThan $HeaderCount1
             }    

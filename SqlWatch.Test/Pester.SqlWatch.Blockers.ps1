@@ -14,7 +14,7 @@ $global:SqlInstance=$SqlInstance
 $global:SqlWatchDatabase=$SqlWatchDatabase
 $global:OutputSqlErrors=$false
 
-$TestDatabaseName = New-TestDatabase
+$TestDatabaseName = New-SqlWatchTestDatabase
 $global:SqlWatchDatabaseTest=$TestDatabaseName
 
 Describe "$($SqlInstance): Blocking chains capture" -Tag 'BlockingChains' {

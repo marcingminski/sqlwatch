@@ -13,7 +13,7 @@ Get-Item -Path $Modules | Import-Module -Force
 $global:SqlInstance=$SqlInstance
 $global:SqlWatchDatabase=$SqlWatchDatabase
 
-$TestDatabaseName = New-TestDatabase
+$TestDatabaseName = New-SqlWatchTestDatabase
 $global:SqlWatchDatabaseTest=$TestDatabaseName
 
 Describe "$($SqlInstance): Application Log Errors" -Tag 'ApplicationErrors' {
