@@ -96,9 +96,9 @@ Describe "$($SqlInstance): Database Design" -Tag 'DatabaseDesign' {
     Context 'Parent objects contain SQLWATCH keyword' {
         It 'Object <_.ObjectName> contains the SQLWATCH keywors' -ForEach $(Get-AllParentObjects) {
             if (
-                $($_.TableName) -eq '__RefactorLog' `
-            -or $($_.TableName) -eq 'dbachecksChecks' `
-            -or $($_.TableName) -eq 'dbachecksResults' `
+                $($_.ObjectName) -eq '__RefactorLog' `
+            -or $($_.ObjectName) -eq 'dbachecksChecks' `
+            -or $($_.ObjectName) -eq 'dbachecksResults' `
             ) {
                 Set-ItResult -Skip -Because 'it is a third party table'
             }  
