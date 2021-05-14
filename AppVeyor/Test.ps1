@@ -98,17 +98,17 @@ Remove-Item .\SqlWatch.Test\CommandLine.xml -Force -Confirm:$false
 Copy-Item .\SqlWatch.Test\*.log "$($ResultFolder)"
 
 ## Zip the report folder and upload to AppVeyor as Artifact
-Compress-Archive -Path "$($ResultFolder)" -DestinationPath .\SqlWatch.Test\SqlWatch.Pester.Test.Results.$(Get-Date -Format "yyyyMMddHHmmss").zip
-Push-AppveyorArtifact "$($ResultFolder)\SqlWatch.Pester.Test.Results.*.zip"
+Compress-Archive -Path "$($ResultFolder)" -DestinationPath "$($ResultFolder)\SqlWatch.Pester.Test.Results.$(Get-Date -Format "yyyyMMddHHmmss").zip"
+Push-AppveyorArtifact $(Get-Item "$($ResultFolder)\SqlWatch.Pester.Test.Results.*.zip")
 
 ## Push Nunit results to testcase (disabled until testcase is fixed, bug logged with testcase)
 .\SqlWatch.Test\testspace config url marcingminski.testspace.com
 .\SqlWatch.Test\testspace --version
 .\SqlWatch.Test\testspace "[SqlWatch.Test.SQL2017]c:\projects\sqlwatch\SqlWatch.Test\Pester.Results\*.localhostSQL2017.xml" "[SqlWatch.Test.SQL2016]c:\projects\sqlwatch\SqlWatch.Test\Pester.Results\*.localhostSQL2016.xml" "[SqlWatch.Test.SQL2014]c:\projects\sqlwatch\SqlWatch.Test\Pester.Results\*.localhostSQL2014.xml" "[SqlWatch.Test.SQL2012SP1]c:\projects\sqlwatch\SqlWatch.Test\Pester.Results\*.localhostSQL2012SP1.xml"
 
-# Push results to testcase
-
 <# We are going to pass the build until I got all the tests sorted out
+-- with testspace now working, we can pass the build purely based on the build
+-- as testspace will fail the PR independently if tests fail
 
 ## If any of the background jobs failed, fails the entire deployment
 If ((Get-Job | Where-Object {$_.State -eq "Failed"}).Count -gt 0){
