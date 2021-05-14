@@ -46,19 +46,15 @@ if (-Not $TestOnly) {
     ForEach ($SqlInstance in $SqlInstances) {
         .\SQLWATCH-Deploy.ps1 -Dacpac SQLWATCH.dacpac -Database SQLWATCH -SqlInstance $SqlInstance -RunAsJob;
     }
-    
-    Get-Job | Format-Table -Autosize
-    Get-Job | Wait-Job | Receive-Job | Format-Table
-    
+        
     If ((Get-Job | Where-Object {$_.State -eq "Failed"}).Count -gt 0){
         Get-Job | Foreach-Object {$_.JobStateInfo.Reason}
         $host.SetShouldExit(1)
     }
-
-
-    Start-Sleep -s 5
 }
 
+Get-Job | Wait-Job | Receive-Job | Format-Table
+Get-Job | Format-Table
 
 ## Run Test
 Write-Output "Testing..."

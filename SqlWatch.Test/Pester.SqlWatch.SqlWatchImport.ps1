@@ -31,7 +31,7 @@ Describe "$($SqlInstance): SqlWatchImport.exe" -Tag "SqlWatchImport" {
 
             $Arguments = "--add -s $_ -d $($global:SqlWatchDatabase)"
 
-            { Start-Process -FilePath "$($SqlWatchImportPath)\SqlWatchImport.exe"  -ArgumentList $Arguments -NoNewWindow -Wait } | Should -Not -Throw
+            { Start-Process -FilePath "$($SqlWatchImportPath)\SqlWatchImport.exe"  -ArgumentList $Arguments -NoNewWindow -Wait -PassThru } | Should -Not -Throw
         }
 
         It 'Instance <_> was added to the config table' -ForEach $RemoteInstances {
