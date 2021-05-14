@@ -175,7 +175,7 @@ $SqlWatchImportConfig.Save($SqlWatchImportConfigFile)
 $TestFile = "$($TestFolder)\Pester.SqlWatch.SqlWatchImport.ps1"
 $PesterTest = Format-ResultsFileName -TestFile $TestFile
 $ResultsFile = "$($ResultFolder)\Pester.Results.$($PesterTest).$($SqlInstance -Replace "\\",'').xml"
-.\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance $SqlInstance -SqlWatchDatabase SQLWATCH -TestFile $TestFile -ResultsFile $ResultsFile -Modules $ModulesPath -RunAsJob -RemoteInstances $RemoteInstances
+.\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance $SqlInstance -SqlWatchDatabase SQLWATCH -TestFile $TestFile -ResultsFile $ResultsFile -Modules $ModulesPath -RunAsJob -RemoteInstances $RemoteInstances -SqlWatchImportPath $($TestFolder)
 
 ##############################################################################################################################################################
 
