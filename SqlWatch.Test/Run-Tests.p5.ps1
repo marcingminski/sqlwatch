@@ -29,6 +29,12 @@ If ($RunAsJob) {
             [string]$Modules
         )
 
+        ## Making sure that Pester has finished installing
+        $i = 0
+        while (!(Get-module -Name Pester) -and $i -lt 20 ) {
+            Start-Sleep -s 2
+            $i+=1
+        }
         Import-Module Pester 
 
         $configuration = New-PesterConfiguration
@@ -59,6 +65,11 @@ If ($RunAsJob) {
     Cannot process argument transformation on parameter 'Configuration'. Cannot convert value "PesterConfiguration" to type "PesterConfiguration". Error: "Cannot convert the "PesterConfiguration" value 
     of type "Deserialized.PesterConfiguration" to type "PesterConfiguration"." #>     
 
+    $i = 0
+    while (!(Get-module -Name Pester) -and $i -lt 20 ) {
+        Start-Sleep -s 2
+        $i+=1
+    }         
     Import-Module Pester 
 
     $configuration = New-PesterConfiguration
