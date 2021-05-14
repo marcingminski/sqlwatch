@@ -58,7 +58,7 @@ Write-Output "Testing..."
 $ErrorActionPreference = "Continue"
 
 ## Copy SqlWatchImport files from the release folder to the test folder becuae we are going to change the app.config:
-#Get-Childitem -Path .\RELEASE -recurse -Filter "SqlWatchImport*", "CommandLine*" | Copy-Item -Destination .\SqlWatch.Test
+Get-Childitem -Path "$($ProjectFolder)\RELEASE" -recurse -Filter "SqlWatchImport*", "CommandLine*" | Copy-Item -Destination $($TestFolder)
 
 ForEach ($SqlInstance in $SqlInstances) {
 
