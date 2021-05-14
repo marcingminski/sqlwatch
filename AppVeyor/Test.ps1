@@ -63,18 +63,20 @@ ForEach ($SqlInstance in $SqlInstances) {
 
     $TestFile = "$($TestFolder)\Pester.SqlWatch.Design.ps1"
     $PesterTest = Format-ResultsFileName -TestFile $TestFile
-    $ResultsFile = "$($ResultFolder)\Pester.Results.$($PesterTest).$($SqlInstance -Replace "\\","-").xml"
+    $ResultsFile = "$($ResultFolder)\Pester.Results.$($PesterTest).$($SqlInstance -Replace "\\",'').xml"
     .\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance $SqlInstance -SqlWatchDatabase SQLWATCH -TestFile $TestFile -ResultsFile $ResultsFile -Modules $ModulesPath -RunAsJob
 
     $TestFile = "$($TestFolder)\Pester.SqlWatch.Collection.ps1"
     $PesterTest = Format-ResultsFileName -TestFile $TestFile
-    $ResultsFile = "$($ResultFolder)\Pester.Results.$($PesterTest).$($SqlInstance -Replace "\\","-").xml"
+    $ResultsFile = "$($ResultFolder)\Pester.Results.$($PesterTest).$($SqlInstance -Replace "\\",'').xml"
     .\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance $SqlInstance -SqlWatchDatabase SQLWATCH -TestFile $TestFile -ResultsFile $ResultsFile -Modules $ModulesPath -RunAsJob   
 
 }
 
 Get-Job | Wait-Job | Receive-Job | Format-Table
 Get-Job | Format-Table -Autosize
+
+Set-Location -Path $ProjectFolder
 
 ## Get XMLS to push to AppVeyor
 $xmls = get-item -path "$($ResultFolder)\Pester*.xml"

@@ -14,7 +14,7 @@ param(
 
 
 If ($RunAsJob) {
-    $JobName = "Tests@" + $SqlInstance
+    $JobName = "Testing " + $SqlInstance
     Start-Job -Name $JobName -ScriptBlock {
 
         param(
@@ -60,7 +60,7 @@ If ($RunAsJob) {
     of type "Deserialized.PesterConfiguration" to type "PesterConfiguration"." #>     
 
     Import-Module Pester 
-    
+
     $configuration = New-PesterConfiguration
     $configuration.TestResult.Enabled = $true
     $configuration.TestResult.OutputPath = $ResultsFile
