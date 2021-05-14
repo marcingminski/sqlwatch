@@ -1,8 +1,8 @@
 param(
         [string]$SqlInstance,
         [string]$SqlWatchDatabase,
-        [string]$TestFilePath,
-        [string]$ResultsPath,
+        [string]$TestFile,
+        [string]$ResultsFile,
         [string[]]$IncludeTags,
         [string[]]$ExcludeTags,
         [switch]$RunAsJob,
@@ -19,8 +19,8 @@ If ($RunAsJob) {
         param(
             [string]$SqlInstance,
             [string]$SqlWatchDatabase,
-            [string]$TestFilePath,
-            [string]$ResultsPath,
+            [string]$TestFile,
+            [string]$ResultsFile,
             [string[]]$IncludeTags,
             [string[]]$ExcludeTags,
             [string[]]$RemoteInstances,
@@ -28,10 +28,7 @@ If ($RunAsJob) {
             [string]$Modules
         )
 
-        Import-Module Pester
-
-        $TestFile = Get-Item -Path $TestFilePath
-        $ResultsFile = "$($TestFile -Replace 'ps1','result').$($SqlInstance -Replace '\\','').xml"        
+        Import-Module Pester 
 
         $configuration = New-PesterConfiguration
         $configuration.TestResult.Enabled = $true
@@ -43,7 +40,7 @@ If ($RunAsJob) {
         $configuration.Filter.ExcludeTag = $ExcludeTags
         $configuration.Run.Exit = $false
         $configuration.Run.Container = @(
-            ( New-PesterContainer -Path $($TestFile.FullName) -Data @{ 
+            ( New-PesterContainer -Path $TestFile -Data @{ 
                     SqlInstance = $SqlInstance;
                     SqlWatchDatabase = $SqlWatchDatabase;
                     SqlWatchDatabaseTest = "SQLWATCH_TEST"
@@ -54,15 +51,12 @@ If ($RunAsJob) {
         )
             
         Invoke-Pester -Configuration $configuration 
-        } -ArgumentList $SqlInstance,$SqlWatchDatabase,$TestFilePath,$ResultsPath,$IncludeTags,$ExcludeTags,$RemoteInstances, $SqlWatchImportPath, $Modules
+        } -ArgumentList $SqlInstance,$SqlWatchDatabase,$TestFile,$ResultsFile,$IncludeTags,$ExcludeTags,$RemoteInstances, $SqlWatchImportPath, $Modules
     
 } else {
     <#This is repeated and the same as in the Start-Job. I do not know how to make the Pester Configuration generic and Pass into the Job as argument, I am getting:
     Cannot process argument transformation on parameter 'Configuration'. Cannot convert value "PesterConfiguration" to type "PesterConfiguration". Error: "Cannot convert the "PesterConfiguration" value 
-    of type "Deserialized.PesterConfiguration" to type "PesterConfiguration"." #>
-
-    $TestFile = Get-Item -Path $TestFilePath
-    $ResultsFile = "$($TestFile -Replace 'ps1','result').$($SqlInstance -Replace '\\','').xml"
+    of type "Deserialized.PesterConfiguration" to type "PesterConfiguration"." #>     
 
     $configuration = New-PesterConfiguration
     $configuration.TestResult.Enabled = $true
@@ -74,7 +68,7 @@ If ($RunAsJob) {
     $configuration.Filter.ExcludeTag = $ExcludeTags
     $configuration.Run.Exit = $false
     $configuration.Run.Container = @(
-        ( New-PesterContainer -Path $($TestFile.FullName) -Data @{ 
+        ( New-PesterContainer -Path $TestFile -Data @{ 
                 SqlInstance = $SqlInstance;
                 SqlWatchDatabase = $SqlWatchDatabase;
                 SqlWatchDatabaseTest = "SQLWATCH_TEST";
