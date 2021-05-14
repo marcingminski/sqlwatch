@@ -26,7 +26,7 @@ if ($RunAsJob) {
         )
         sqlpackage.exe /a:Publish /sf:"$($Dacpac)" /tdn:$($Database) /tsn:$($SqlInstance)
         #Start-Process sqlpackage.exe -ArgumentList $arguments -WindowStyle Hidden -PassThru -Wait
-    } -ArgumentList $SqlInstance, $Database, $($DACPACPath.FullName)
+    } -ArgumentList $SqlInstance, $Database, $($DACPACPath.FullName) | Format-Table
         #} -ArgumentList "/a:Publish /sf:`"$($DACPACPath.FullName)`" /tdn:$Database /tsn:$SqlInstance"
 }
 else {
