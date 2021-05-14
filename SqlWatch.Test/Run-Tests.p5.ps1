@@ -12,6 +12,7 @@ param(
 )
 
 
+
 If ($RunAsJob) {
     $JobName = "Tests@" + $SqlInstance
     Start-Job -Name $JobName -ScriptBlock {
@@ -58,6 +59,8 @@ If ($RunAsJob) {
     Cannot process argument transformation on parameter 'Configuration'. Cannot convert value "PesterConfiguration" to type "PesterConfiguration". Error: "Cannot convert the "PesterConfiguration" value 
     of type "Deserialized.PesterConfiguration" to type "PesterConfiguration"." #>     
 
+    Import-Module Pester 
+    
     $configuration = New-PesterConfiguration
     $configuration.TestResult.Enabled = $true
     $configuration.TestResult.OutputPath = $ResultsFile
