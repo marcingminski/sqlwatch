@@ -11,7 +11,7 @@ $DACPACPath = Get-ChildItem -Recurse -Filter $Dacpac | Sort-Object LastWriteTime
 
 if ($RunAsJob) {
 
-    $JobName = $Database + "@" + $SqlInstance
+    $JobName = "Deploying " + $SqlInstance
     Start-Job -Name $JobName -ScriptBlock { 
         param([string]$arguments)
         Start-Process sqlpackage.exe -ArgumentList $arguments -NoNewWindow -PassThru 

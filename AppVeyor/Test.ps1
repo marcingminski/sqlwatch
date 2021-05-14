@@ -51,6 +51,7 @@ if (-Not $TestOnly) {
     Start-Sleep -s 5
 }
 
+
 ## Run Test
 Write-Output "Testing..."
 
@@ -69,7 +70,7 @@ ForEach ($SqlInstance in $SqlInstances) {
     $TestFile = "$($TestFolder)\Pester.SqlWatch.Collection.ps1"
     $PesterTest = Format-ResultsFileName -TestFile $TestFile
     $ResultsFile = "$($ResultFolder)\Pester.Results.$($PesterTest).$($SqlInstance -Replace "\\",'').xml"
-    .\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance $SqlInstance -SqlWatchDatabase SQLWATCH -TestFile $TestFile -ResultsFile $ResultsFile -Modules $ModulesPath -RunAsJob   
+    .\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance $SqlInstance -SqlWatchDatabase SQLWATCH -TestFile $TestFile -ResultsFile $ResultsFile -Modules $ModulesPath RunAsJob   
 
 }
 
@@ -101,8 +102,8 @@ Compress-Archive -Path "$($ResultFolder)" -DestinationPath .\SqlWatch.Test\SqlWa
 Push-AppveyorArtifact .\SqlWatch.Test\SqlWatch.Pester.Test.Results.zip
 
 ## Push Nunit results to testcase (disabled until testcase is fixed, bug logged with testcase)
-#.\SqlWatch.Test\testspace config url marcingminski.testspace.com
-#.\SqlWatch.Test\testspace "[SqlWatch.Test.SQL2017]c:\projects\sqlwatch\SqlWatch.Test\Pester.SqlWatch.Design.result.localhostSQL2017.xml" "[SqlWatch.Test.SQL2016]c:\projects\sqlwatch\SqlWatch.Test\Pester.SqlWatch.Design.result.localhostSQL2016.xml" "[SqlWatch.Test.SQL2014]c:\projects\sqlwatch\SqlWatch.Test\Pester.SqlWatch.Design.result.localhostSQL2014.xml" "[SqlWatch.Test.SQL2012SP1]c:\projects\sqlwatch\SqlWatch.Test\Pester.SqlWatch.Design.result.localhostSQL2012SP1.xml"
+.\SqlWatch.Test\testspace config url marcingminski.testspace.com
+.\SqlWatch.Test\testspace "[SqlWatch.Test.SQL2017]c:\projects\sqlwatch\SqlWatch.Test\Pester.Results\Pester.Results.SqlWatch.Design.localhostSQL2017.xml" "[SqlWatch.Test.SQL2016]c:\projects\sqlwatch\SqlWatch.Test\Pester.Results\Pester.Results.SqlWatch.Design.localhostSQL2016.xml" "[SqlWatch.Test.SQL2014]c:\projects\sqlwatch\SqlWatch.Test\Pester.Results\Pester.Results.SqlWatch.Design.localhostSQL2014.xml" "[SqlWatch.Test.SQL2012SP1]c:\projects\sqlwatch\SqlWatch.Test\Pester.Results\Pester.Results.SqlWatch.Design.localhostSQL2012SP1.xml"
 
 # Push results to testcase
 
