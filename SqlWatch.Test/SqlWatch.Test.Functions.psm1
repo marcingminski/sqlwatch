@@ -427,7 +427,7 @@ Function New-SqlWatchTestDatabase {
         ALTER DATABASE [$($SqlWatchDatabaseTest)] SET READ_COMMITTED_SNAPSHOT OFF;
         ALTER DATABASE [$($SqlWatchDatabaseTest)] SET RECOVERY SIMPLE ;"
 
-    Invoke-Sqlcmd -ServerInstance $global:SqlInstance -Database master -Query $sql;
+    Invoke-Sqlcmd -ServerInstance $($global:SqlInstance) -Database master -Query $sql;
 
     #Create table to store reference data for other tests where required:
     $sql = "if not exists (select * from sys.tables where name = 'sqlwatch_pester_ref')
