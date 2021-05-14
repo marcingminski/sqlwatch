@@ -12,10 +12,10 @@ $DACPACPath = Get-ChildItem -Recurse -Filter $Dacpac | Sort-Object LastWriteTime
 if ($RunAsJob) {
 
     $JobName = "Deploying " + $SqlInstance
-    Start-Job -Name $JobName -ScriptBlock { 
+    $job = Start-Job -Name $JobName -ScriptBlock { 
         param([string]$arguments)
         Start-Process sqlpackage.exe -ArgumentList $arguments -NoNewWindow -PassThru 
-        } -ArgumentList "/a:Publish /sf:`"$($DACPACPath.FullName)`" /tdn:$Database /tsn:$SqlInstance" | Format-Table
+        } -ArgumentList "/a:Publish /sf:`"$($DACPACPath.FullName)`" /tdn:$Database /tsn:$SqlInstance"
 }
 else {
     sqlpackage.exe /a:Publish /sf:"$($DACPACPath.FullName)" /tdn:$Database /tsn:$SqlInstance
