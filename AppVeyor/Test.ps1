@@ -39,6 +39,7 @@ if (-Not $TestOnly) {
         .\SQLWATCH-Deploy.ps1 -Dacpac SQLWATCH.dacpac -Database SQLWATCH -SqlInstance $SqlInstance -RunAsJob;
     }
     
+    Get-Job | Format-Table -Autosize
     Get-Job | Wait-Job | Receive-Job | Format-Table
     
     If ((Get-Job | Where-Object {$_.State -eq "Failed"}).Count -gt 0){
@@ -46,7 +47,6 @@ if (-Not $TestOnly) {
         $host.SetShouldExit(1)
     }
 
-    Get-Job | Format-Table -Autosize
 
     Start-Sleep -s 5
 }
@@ -74,8 +74,8 @@ ForEach ($SqlInstance in $SqlInstances) {
 
 }
 
-Get-Job | Wait-Job | Receive-Job | Format-Table
 Get-Job | Format-Table -Autosize
+Get-Job | Wait-Job | Receive-Job | Format-Table
 
 Set-Location -Path $ProjectFolder
 
@@ -99,12 +99,12 @@ Copy-Item .\SqlWatch.Test\*.log "$($ResultFolder)"
 
 ## Zip the report folder and upload to AppVeyor as Artifact
 Compress-Archive -Path "$($ResultFolder)" -DestinationPath .\SqlWatch.Test\SqlWatch.Pester.Test.Results.$(Get-Date -Format "yyyyMMddHHmmss").zip
-Push-AppveyorArtifact "$($ResultFolder)"\SqlWatch.Pester.Test.Results.*.zip
+Push-AppveyorArtifact "$($ResultFolder)\SqlWatch.Pester.Test.Results.*.zip"
 
 ## Push Nunit results to testcase (disabled until testcase is fixed, bug logged with testcase)
 .\SqlWatch.Test\testspace config url marcingminski.testspace.com
 .\SqlWatch.Test\testspace --version
-.\SqlWatch.Test\testspace "[SqlWatch.Test.SQL2017]c:\projects\sqlwatch\SqlWatch.Test\Pester.Results\Pester.Results.SqlWatch.Design.localhostSQL2017.xml" "[SqlWatch.Test.SQL2016]c:\projects\sqlwatch\SqlWatch.Test\Pester.Results\Pester.Results.SqlWatch.Design.localhostSQL2016.xml" "[SqlWatch.Test.SQL2014]c:\projects\sqlwatch\SqlWatch.Test\Pester.Results\Pester.Results.SqlWatch.Design.localhostSQL2014.xml" "[SqlWatch.Test.SQL2012SP1]c:\projects\sqlwatch\SqlWatch.Test\Pester.Results\Pester.Results.SqlWatch.Design.localhostSQL2012SP1.xml"
+.\SqlWatch.Test\testspace "[SqlWatch.Test.SQL2017]c:\projects\sqlwatch\SqlWatch.Test\Pester.Results\*.localhostSQL2017.xml" "[SqlWatch.Test.SQL2016]c:\projects\sqlwatch\SqlWatch.Test\Pester.Results\*.localhostSQL2016.xml" "[SqlWatch.Test.SQL2014]c:\projects\sqlwatch\SqlWatch.Test\Pester.Results\*.localhostSQL2014.xml" "[SqlWatch.Test.SQL2012SP1]c:\projects\sqlwatch\SqlWatch.Test\Pester.Results\*.localhostSQL2012SP1.xml"
 
 # Push results to testcase
 
