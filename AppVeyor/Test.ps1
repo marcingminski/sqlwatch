@@ -65,13 +65,28 @@ $ErrorActionPreference = "Continue"
 Get-Childitem -Path "$($ProjectFolder)\RELEASE" -recurse -Filter "SqlWatchImport*" | Copy-Item -Destination $($TestFolder)
 Get-Childitem -Path "$($ProjectFolder)\RELEASE" -recurse -Filter "CommandLine*" | Copy-Item -Destination $($TestFolder)
 
-## First batch of tests:
+## TEST BATCH
 ForEach ($SqlInstance in $SqlInstances) {
 
     $TestFile = "$($TestFolder)\Pester.SqlWatch.BasicConfig.ps1"
     $PesterTest = Format-ResultsFileName -TestFile $TestFile
     $ResultsFile = "$($ResultFolder)\Pester.Results.$($PesterTest).$($SqlInstance -Replace "\\",'').xml"
     .\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance $SqlInstance -SqlWatchDatabase SQLWATCH -TestFile $TestFile -ResultsFile $ResultsFile -Modules $ModulesPath -RunAsJob    
+
+    $TestFile = "$($TestFolder)\Pester.SqlWatch.ProcedureExecution.ps1"
+    $PesterTest = Format-ResultsFileName -TestFile $TestFile
+    $ResultsFile = "$($ResultFolder)\Pester.Results.$($PesterTest).$($SqlInstance -Replace "\\",'').xml"
+    .\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance $SqlInstance -SqlWatchDatabase SQLWATCH -TestFile $TestFile -ResultsFile $ResultsFile -Modules $ModulesPath -RunAsJob
+}
+Get-Job | Wait-Job | Receive-Job | Format-Table
+
+## TEST BATCH
+ForEach ($SqlInstance in $SqlInstances) {
+
+    $TestFile = "$($TestFolder)\Pester.SqlWatch.BrokerActivation.ps1"
+    $PesterTest = Format-ResultsFileName -TestFile $TestFile
+    $ResultsFile = "$($ResultFolder)\Pester.Results.$($PesterTest).$($SqlInstance -Replace "\\",'').xml"
+    .\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance $SqlInstance -SqlWatchDatabase SQLWATCH -TestFile $TestFile -ResultsFile $ResultsFile -Modules $ModulesPath -RunAsJob        
 
     $TestFile = "$($TestFolder)\Pester.SqlWatch.Errorlog.ps1"
     $PesterTest = Format-ResultsFileName -TestFile $TestFile
@@ -101,55 +116,26 @@ ForEach ($SqlInstance in $SqlInstances) {
 }
 Get-Job | Wait-Job | Receive-Job | Format-Table
 
-## Second batch of tests that may rely on the first batch:
-ForEach ($SqlInstance in $SqlInstances) { 
-
-    $TestFile = "$($TestFolder)\Pester.SqlWatch.DataCollection.ps1"
-    $PesterTest = Format-ResultsFileName -TestFile $TestFile
-    $ResultsFile = "$($ResultFolder)\Pester.Results.$($PesterTest).$($SqlInstance -Replace "\\",'').xml"
-    .\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance $SqlInstance -SqlWatchDatabase SQLWATCH -TestFile $TestFile -ResultsFile $ResultsFile -Modules $ModulesPath -RunAsJob    
+## TEST BATCH
+ForEach ($SqlInstance in $SqlInstances) {   
 
     $TestFile = "$($TestFolder)\Pester.SqlWatch.DataRetention.ps1"
     $PesterTest = Format-ResultsFileName -TestFile $TestFile
     $ResultsFile = "$($ResultFolder)\Pester.Results.$($PesterTest).$($SqlInstance -Replace "\\",'').xml"
     .\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance $SqlInstance -SqlWatchDatabase SQLWATCH -TestFile $TestFile -ResultsFile $ResultsFile -Modules $ModulesPath -RunAsJob   
 
-}
-Get-Job | Wait-Job | Receive-Job | Format-Table
-
-## Third batch of tests that may rely on the previous batch:
-ForEach ($SqlInstance in $SqlInstances) { 
-
-    $TestFile = "$($TestFolder)\Pester.SqlWatch.DataCollection.ps1"
+    $TestFile = "$($TestFolder)\Pester.SqlWatch.TableContent.ps1"
     $PesterTest = Format-ResultsFileName -TestFile $TestFile
     $ResultsFile = "$($ResultFolder)\Pester.Results.$($PesterTest).$($SqlInstance -Replace "\\",'').xml"
-    .\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance $SqlInstance -SqlWatchDatabase SQLWATCH -TestFile $TestFile -ResultsFile $ResultsFile -Modules $ModulesPath -RunAsJob    
-
-}
-Get-Job | Wait-Job | Receive-Job | Format-Table
-
-## Fourth batch of tests that may rely on the previous batch:
-ForEach ($SqlInstance in $SqlInstances) { 
-
-    $TestFile = "$($TestFolder)\Pester.SqlWatch.BrokerActivation.ps1"
-    $PesterTest = Format-ResultsFileName -TestFile $TestFile
-    $ResultsFile = "$($ResultFolder)\Pester.Results.$($PesterTest).$($SqlInstance -Replace "\\",'').xml"
-    .\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance $SqlInstance -SqlWatchDatabase SQLWATCH -TestFile $TestFile -ResultsFile $ResultsFile -Modules $ModulesPath -RunAsJob    
-
-}
-Get-Job | Wait-Job | Receive-Job | Format-Table
-
-## Fifth batch of tests that may rely on the previous batch:
-ForEach ($SqlInstance in $SqlInstances) { 
+    .\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance $SqlInstance -SqlWatchDatabase SQLWATCH -TestFile $TestFile -ResultsFile $ResultsFile -Modules $ModulesPath -RunAsJob       
 
     $TestFile = "$($TestFolder)\Pester.SqlWatch.ApplicationLog.ps1"
     $PesterTest = Format-ResultsFileName -TestFile $TestFile
     $ResultsFile = "$($ResultFolder)\Pester.Results.$($PesterTest).$($SqlInstance -Replace "\\",'').xml"
-    .\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance $SqlInstance -SqlWatchDatabase SQLWATCH -TestFile $TestFile -ResultsFile $ResultsFile -Modules $ModulesPath -RunAsJob    
+    .\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance $SqlInstance -SqlWatchDatabase SQLWATCH -TestFile $TestFile -ResultsFile $ResultsFile -Modules $ModulesPath -RunAsJob   
 
 }
 Get-Job | Wait-Job | Receive-Job | Format-Table
-
 
 ##############################################################################################################################################################
 ## Sixth batch (Single Central Repository):
