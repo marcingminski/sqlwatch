@@ -12,7 +12,6 @@ Get-Item -Path $Modules | Import-Module -Force
 
 $global:SqlInstance=$SqlInstance
 $global:SqlWatchDatabase=$SqlWatchDatabase
-$global:OutputSqlErrors=$false
 
 Describe "$($SqlInstance): Procedure Execution" -Tag 'Procedures' {
 
@@ -30,7 +29,7 @@ Describe "$($SqlInstance): Procedure Execution" -Tag 'Procedures' {
             $sql = "exec $($_.ProcedureName);"
             { Invoke-SqlCmd -ServerInstance $SqlInstance -Database $SqlWatchDatabase -Query $sql -ErrorAction Stop } | Should -Not -Throw 
         }
-    }    
+    }
 
     Context 'Procedure Should not Throw an error on the third run' {
 
@@ -65,7 +64,7 @@ Describe "$($SqlInstance): Tables should not be empty" -Tag 'Tables' {
                 $($_.TableName) -eq "dbo.sqlwatch_meta_os_volume" `
             -or $($_.TableName) -eq 'dbo.sqlwatch_logger_disk_utilisation_volume'
             ) `
-            -and $SqlConfiguration.SqlAgentStatus -eq $false) {
+            -and $SqlConfiguration.SqlAgentStatus -eq 0) {
             Set-ItResult -Skip -Because "OS volume is collected by the Agent Job but SQL Agent is disabled"
         }
 
@@ -90,15 +89,15 @@ Describe "$($SqlInstance): Tables should not be empty" -Tag 'Tables' {
             }
         }
 
-        if ($($_.TableName) -eq "dbo.sqlwatch_logger_check_action" -and $($SqlConfiguration.SqlWatchActions) -eq $false)  {
+        if ($($_.TableName) -eq "dbo.sqlwatch_logger_check_action" -and $($SqlConfiguration.SqlWatchActions) -eq 0)  {
             Set-ItResult -Skip -Because "no SQLWATCH actions are enabled"
         }            
 
-        if ($($_.TableName) -eq "dbo.sqlwatch_logger_whoisactive" -and $($SqlConfiguration.sp_WhoIsActive) -eq $false)  {
+        if ($($_.TableName) -eq "dbo.sqlwatch_logger_whoisactive" -and $($SqlConfiguration.sp_WhoIsActive) -eq 0)  {
             Set-ItResult -Skip -Because "sp_WhoIsActive is not installed"
         }
 
-        if ($($_.TableName) -eq "dbo.sqlwatch_logger_agent_job_history" -and $($SqlConfiguration.SqlAgentStatus) -eq $false)  {
+        if ($($_.TableName) -eq "dbo.sqlwatch_logger_agent_job_history" -and $($SqlConfiguration.SqlAgentStatus) -eq 0)  {
             Set-ItResult -Skip -Because "SQL Agent is disabled so it will not generate any history"
         }
 

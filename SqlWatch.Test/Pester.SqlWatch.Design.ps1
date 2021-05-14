@@ -11,7 +11,6 @@ Get-Item -Path $Modules | Import-Module -Force
 
 $global:SqlInstance=$SqlInstance
 $global:SqlWatchDatabase=$SqlWatchDatabase
-$global:OutputSqlErrors=$false
 
 Describe "$($SqlInstance): Database Design" -Tag 'DatabaseDesign' {    
 
