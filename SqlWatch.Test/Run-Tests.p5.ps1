@@ -15,7 +15,7 @@ param(
 
 If ($RunAsJob) {
     $JobName = "Testing " + $SqlInstance
-    Start-Job -Name $JobName -ScriptBlock {
+    $job = Start-Job -Name $JobName -ScriptBlock {
 
         param(
             [string]$SqlInstance,

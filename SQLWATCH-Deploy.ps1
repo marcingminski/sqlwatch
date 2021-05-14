@@ -15,7 +15,7 @@ if ($RunAsJob) {
     Start-Job -Name $JobName -ScriptBlock { 
         param([string]$arguments)
         Start-Process sqlpackage.exe -ArgumentList $arguments -NoNewWindow -PassThru 
-        } -ArgumentList "/a:Publish /sf:`"$($DACPACPath.FullName)`" /tdn:$Database /tsn:$SqlInstance"
+        } -ArgumentList "/a:Publish /sf:`"$($DACPACPath.FullName)`" /tdn:$Database /tsn:$SqlInstance" | Format-Table
 }
 else {
     sqlpackage.exe /a:Publish /sf:"$($DACPACPath.FullName)" /tdn:$Database /tsn:$SqlInstance

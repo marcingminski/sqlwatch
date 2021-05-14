@@ -31,7 +31,7 @@ Function Get-SqlWatchTables {
     return $Return;        
 };
 
-Function Get-SqlWatchTableKeys {
+Function Get-SqlWatchTablePKeys {
     $SqlCmdParams = @{
         ServerInstance = $global:SqlInstance
         Database = $global:SqlWatchDatabase
@@ -39,19 +39,45 @@ Function Get-SqlWatchTableKeys {
     }
 
     $sql = "select TableName=schema_name(t.schema_id) + '.' +  t.[name], 
-    PkName = pk.[name], FkName=fk.[name]
+    PkName = pk.[name]
     from sys.tables t
     left join sys.indexes pk
         on t.object_id = pk.object_id 
         and pk.is_primary_key = 1
-    left join sys.foreign_keys fk
-        on fk.parent_object_id = t.object_id
-    where t.name like '%sqlwatch%'";
+    where t.name like '%sqlwatch%'
+    order by t.name";
     $Return = @();
-    Invoke-SqlCmd @SqlCmdParams -Query $sql | Foreach-Object {$Return += @{TableName = $_.TableName; PkName = $_.PkName; FkName = $_.FkName}};
+    Invoke-SqlCmd @SqlCmdParams -Query $sql | Foreach-Object {$Return += @{TableName = $_.TableName; PkName = $_.PkName}};
     return $Return;
 
 };
+
+Function Get-SqlWatchTableFKeys {
+    $SqlCmdParams = @{
+        ServerInstance = $global:SqlInstance
+        Database = $global:SqlWatchDatabase
+        OutputSqlErrors = $global:OutputSqlErrors
+    }
+
+    $sql = ";with cte_fkeys as (
+        select TableName=schema_name(t.schema_id) + '.' +  t.[name], 
+        FkName = fk.[name]
+        from sys.tables t
+        left join sys.foreign_keys fk
+        on fk.parent_object_id = t.object_id
+        where t.name like '%sqlwatch%'
+    ) 
+    select TableName, FkCount=count(distinct FkName)
+    from cte_fkeys
+    group by TableName
+    order by TableName";
+
+    $Return = @();
+    Invoke-SqlCmd @SqlCmdParams -Query $sql | Foreach-Object {$Return += @{TableName = $_.TableName; FkCount = $_.FkCount}};
+    return $Return;
+
+};
+
 Function Get-CheckConstraints {
     $SqlCmdParams = @{
         ServerInstance = $global:SqlInstance
@@ -107,6 +133,23 @@ Function Get-ForeignKeys {
 
     $Return = @();
     Invoke-SqlCmd @SqlCmdParams -Query $sql | Foreach-Object {$Return += @{FkName = $_.FkName; IsNotTrusted = $_.IsNotTrusted}};
+    return $Return;    
+
+};
+
+Function Get-PrimaryKeys {
+    $SqlCmdParams = @{
+        ServerInstance = $global:SqlInstance
+        Database = $global:SqlWatchDatabase
+        OutputSqlErrors = $global:OutputSqlErrors
+    }
+    
+    $sql = "select PkName=name
+    from sys.indexes pk
+         where pk.is_primary_key = 1"
+
+    $Return = @();
+    Invoke-SqlCmd @SqlCmdParams -Query $sql | Foreach-Object {$Return += @{PkName = $_.PkName}};
     return $Return;    
 
 };
@@ -187,6 +230,91 @@ Function Get-DateTimeColumns {
     $Return = @();
     Invoke-SqlCmd @SqlCmdParams -Query $sql | Foreach-Object {$Return += @{SqlWatchTable = $_.SqlWatchTable; SqlWatchColumn = $_.SqlWatchColumn;}};
     return $Return;    
+};
+
+Function Get-AllProcedures {
+    $SqlCmdParams = @{
+        ServerInstance = $global:SqlInstance
+        Database = $global:SqlWatchDatabase
+        OutputSqlErrors = $global:OutputSqlErrors
+    }
+
+    $sql = "select ProcedureName=name 
+    from sys.all_objects
+	where is_ms_shipped = 0
+    and type_desc = 'SQL_STORED_PROCEDURE'"
+
+    $Return = @();
+    Invoke-SqlCmd @SqlCmdParams -Query $sql | Foreach-Object {$Return += @{ProcedureName = $_.ProcedureName}};
+    return $Return;      
+}
+
+Function Get-AllViews {
+    $SqlCmdParams = @{
+        ServerInstance = $global:SqlInstance
+        Database = $global:SqlWatchDatabase
+        OutputSqlErrors = $global:OutputSqlErrors
+    }
+
+    $sql = "select ViewName=name 
+    from sys.all_objects
+    where is_ms_shipped = 0
+    and type_desc = 'VIEW'"
+
+    $Return = @();
+    Invoke-SqlCmd @SqlCmdParams -Query $sql | Foreach-Object {$Return += @{ViewName = $_.ViewName}};
+    return $Return;      
+}
+
+Function Get-AllTables {
+    $SqlCmdParams = @{
+        ServerInstance = $global:SqlInstance
+        Database = $global:SqlWatchDatabase
+        OutputSqlErrors = $global:OutputSqlErrors
+    }
+
+    $sql = "select TableName=name 
+    from sys.all_objects
+    where is_ms_shipped = 0
+    and type_desc = 'USER_TABLE'"
+
+    $Return = @();
+    Invoke-SqlCmd @SqlCmdParams -Query $sql | Foreach-Object {$Return += @{TableName = $_.TableName}};
+    return $Return;      
+}
+
+Function Get-AllFunctions {
+    $SqlCmdParams = @{
+        ServerInstance = $global:SqlInstance
+        Database = $global:SqlWatchDatabase
+        OutputSqlErrors = $global:OutputSqlErrors
+    }
+
+    $sql = "select FunctionName=name 
+    from sys.all_objects
+    where is_ms_shipped = 0
+    and type_desc like '%FUNCTION'"
+
+    $Return = @();
+    Invoke-SqlCmd @SqlCmdParams -Query $sql | Foreach-Object {$Return += @{FunctionName = $_.FunctionName}};
+    return $Return;      
+}
+
+Function Get-AllParentObjects {
+    $SqlCmdParams = @{
+        ServerInstance = $global:SqlInstance
+        Database = $global:SqlWatchDatabase
+        OutputSqlErrors = $global:OutputSqlErrors
+    }
+    
+    $sql = "select ObjectName=name 
+    from sys.all_objects
+    where is_ms_shipped = 0
+    and parent_object_id = 0"
+
+    $Return = @();
+    Invoke-SqlCmd @SqlCmdParams -Query $sql | Foreach-Object {$Return += @{ObjectName = $_.ObjectName}};
+    return $Return;        
 };
 
 Function Get-SqlWatchProcedures {
