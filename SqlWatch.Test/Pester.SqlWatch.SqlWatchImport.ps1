@@ -20,7 +20,7 @@ Describe "$($SqlInstance): SqlWatchImport.exe" -Tag "SqlWatchImport" {
 
     Context 'Adding remote instances' {
 
-        It 'Instance <_> does not exist in the config table' -ForEach $RemoteInstances {
+        It 'Instance <_> is not in the config table' -ForEach $RemoteInstances {
             $sql = "select cnt=count(*) from dbo.sqlwatch_config_sql_instance where [sql_instance] = '$_'"
             $result = Invoke-SqlWatchCmd -Query $sql
 
@@ -29,12 +29,12 @@ Describe "$($SqlInstance): SqlWatchImport.exe" -Tag "SqlWatchImport" {
 
         It 'Adding remote instance <_> to the central repository should not throw' -ForEach $RemoteInstances {
 
-            $Arguments = "--add -s $_ -d $($global:SqlWatchDatabase)"
-
-            { Start-Process -FilePath "$($SqlWatchImportPath)\SqlWatchImport.exe"  -ArgumentList $Arguments -NoNewWindow -Wait -PassThru } | Should -Not -Throw
+            ## the output is an array of lines, we have to convert to a single string using -join:
+            $output = (& "$($SqlWatchImportPath)\SqlWatchImport.exe" --add -s $_ -d $($global:SqlWatchDatabase)) -join ""
+            $output | Should -Match ".OK"
         }
 
-        It 'Instance <_> was added to the config table' -ForEach $RemoteInstances {
+        It 'Instance <_> is in the config table' -ForEach $RemoteInstances {
             $sql = "select cnt=count(*) from dbo.sqlwatch_config_sql_instance where [sql_instance] = '$_'"
             $result = Invoke-SqlWatchCmd -Query $sql
 
@@ -46,7 +46,9 @@ Describe "$($SqlInstance): SqlWatchImport.exe" -Tag "SqlWatchImport" {
 
         It 'Running SqlWatchImport.exe should not throw' {
 
-            { Start-Process -FilePath "$($SqlWatchImportPath)\SqlWatchImport.exe"  -NoNewWindow -Wait } | Should -Not -Throw -Because "this would mean that the application is crashing and not handling errors. No matter what happens, it should exit gracefuly and log errors to the log"
+            ## the output is an array of lines, we have to convert to a single string using -join:
+            $output = (& "$($SqlWatchImportPath)\SqlWatchImport.exe") -join ""
+            $output | Should -Not -Match "Exception|ERROR|Fail"
         }
 
         It 'LogFile should have no errors' {

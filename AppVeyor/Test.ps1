@@ -12,10 +12,12 @@ $TestFolder = "$($ProjectFolder)\SqlWatch.Test"
 $ResultFolder = "$($TestFolder)\Pester.Results"
 $ModulesPath = "$($TestFolder)\*.psm1"
 
+$SqlWatchDatabase = "SQLWATCH"
+
 $RemoteInstances = @();
 ForEach ($SqlInstance in $SqlInstances) {
-    if ($SqlInstances -ne $CentralRepoInstance) {
-        $RemoteInstances+= $SqlInstances
+    if ($SqlInstance -ne $CentralRepoInstance) {
+        $RemoteInstances+= $SqlInstance
     }
 }
 
@@ -71,12 +73,12 @@ ForEach ($SqlInstance in $SqlInstances) {
     $TestFile = "$($TestFolder)\Pester.SqlWatch.BasicConfig.ps1"
     $PesterTest = Format-ResultsFileName -TestFile $TestFile
     $ResultsFile = "$($ResultFolder)\Pester.Results.$($PesterTest).$($SqlInstance -Replace "\\",'').xml"
-    .\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance $SqlInstance -SqlWatchDatabase SQLWATCH -TestFile $TestFile -ResultsFile $ResultsFile -Modules $ModulesPath -RunAsJob    
+    .\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance $SqlInstance -SqlWatchDatabase $SqlWatchDatabase -TestFile $TestFile -ResultsFile $ResultsFile -Modules $ModulesPath -RunAsJob    
 
     $TestFile = "$($TestFolder)\Pester.SqlWatch.ProcedureExecution.ps1"
     $PesterTest = Format-ResultsFileName -TestFile $TestFile
     $ResultsFile = "$($ResultFolder)\Pester.Results.$($PesterTest).$($SqlInstance -Replace "\\",'').xml"
-    .\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance $SqlInstance -SqlWatchDatabase SQLWATCH -TestFile $TestFile -ResultsFile $ResultsFile -Modules $ModulesPath -RunAsJob
+    .\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance $SqlInstance -SqlWatchDatabase $SqlWatchDatabase -TestFile $TestFile -ResultsFile $ResultsFile -Modules $ModulesPath -RunAsJob
 }
 Get-Job | Wait-Job | Receive-Job | Format-Table
 
@@ -86,32 +88,32 @@ ForEach ($SqlInstance in $SqlInstances) {
     $TestFile = "$($TestFolder)\Pester.SqlWatch.BrokerActivation.ps1"
     $PesterTest = Format-ResultsFileName -TestFile $TestFile
     $ResultsFile = "$($ResultFolder)\Pester.Results.$($PesterTest).$($SqlInstance -Replace "\\",'').xml"
-    .\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance $SqlInstance -SqlWatchDatabase SQLWATCH -TestFile $TestFile -ResultsFile $ResultsFile -Modules $ModulesPath -RunAsJob        
+    .\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance $SqlInstance -SqlWatchDatabase $SqlWatchDatabase -TestFile $TestFile -ResultsFile $ResultsFile -Modules $ModulesPath -RunAsJob        
 
     $TestFile = "$($TestFolder)\Pester.SqlWatch.Errorlog.ps1"
     $PesterTest = Format-ResultsFileName -TestFile $TestFile
     $ResultsFile = "$($ResultFolder)\Pester.Results.$($PesterTest).$($SqlInstance -Replace "\\",'').xml"
-    .\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance $SqlInstance -SqlWatchDatabase SQLWATCH -TestFile $TestFile -ResultsFile $ResultsFile -Modules $ModulesPath -RunAsJob        
+    .\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance $SqlInstance -SqlWatchDatabase $SqlWatchDatabase -TestFile $TestFile -ResultsFile $ResultsFile -Modules $ModulesPath -RunAsJob        
 
     $TestFile = "$($TestFolder)\Pester.SqlWatch.Blockers.ps1"
     $PesterTest = Format-ResultsFileName -TestFile $TestFile
     $ResultsFile = "$($ResultFolder)\Pester.Results.$($PesterTest).$($SqlInstance -Replace "\\",'').xml"
-    .\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance $SqlInstance -SqlWatchDatabase SQLWATCH -TestFile $TestFile -ResultsFile $ResultsFile -Modules $ModulesPath -RunAsJob    
+    .\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance $SqlInstance -SqlWatchDatabase $SqlWatchDatabase -TestFile $TestFile -ResultsFile $ResultsFile -Modules $ModulesPath -RunAsJob    
 
     $TestFile = "$($TestFolder)\Pester.SqlWatch.LongQueries.ps1"
     $PesterTest = Format-ResultsFileName -TestFile $TestFile
     $ResultsFile = "$($ResultFolder)\Pester.Results.$($PesterTest).$($SqlInstance -Replace "\\",'').xml"
-    .\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance $SqlInstance -SqlWatchDatabase SQLWATCH -TestFile $TestFile -ResultsFile $ResultsFile -Modules $ModulesPath -RunAsJob        
+    .\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance $SqlInstance -SqlWatchDatabase $SqlWatchDatabase -TestFile $TestFile -ResultsFile $ResultsFile -Modules $ModulesPath -RunAsJob        
 
     $TestFile = "$($TestFolder)\Pester.SqlWatch.Design.ps1"
     $PesterTest = Format-ResultsFileName -TestFile $TestFile
     $ResultsFile = "$($ResultFolder)\Pester.Results.$($PesterTest).$($SqlInstance -Replace "\\",'').xml"
-    .\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance $SqlInstance -SqlWatchDatabase SQLWATCH -TestFile $TestFile -ResultsFile $ResultsFile -Modules $ModulesPath -RunAsJob
+    .\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance $SqlInstance -SqlWatchDatabase $SqlWatchDatabase -TestFile $TestFile -ResultsFile $ResultsFile -Modules $ModulesPath -RunAsJob
 
     $TestFile = "$($TestFolder)\Pester.SqlWatch.Checks.ps1"
     $PesterTest = Format-ResultsFileName -TestFile $TestFile
     $ResultsFile = "$($ResultFolder)\Pester.Results.$($PesterTest).$($SqlInstance -Replace "\\",'').xml"
-    .\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance $SqlInstance -SqlWatchDatabase SQLWATCH -TestFile $TestFile -ResultsFile $ResultsFile -Modules $ModulesPath -RunAsJob         
+    .\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance $SqlInstance -SqlWatchDatabase $SqlWatchDatabase -TestFile $TestFile -ResultsFile $ResultsFile -Modules $ModulesPath -RunAsJob         
 
 }
 Get-Job | Wait-Job | Receive-Job | Format-Table
@@ -122,17 +124,17 @@ ForEach ($SqlInstance in $SqlInstances) {
     $TestFile = "$($TestFolder)\Pester.SqlWatch.DataRetention.ps1"
     $PesterTest = Format-ResultsFileName -TestFile $TestFile
     $ResultsFile = "$($ResultFolder)\Pester.Results.$($PesterTest).$($SqlInstance -Replace "\\",'').xml"
-    .\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance $SqlInstance -SqlWatchDatabase SQLWATCH -TestFile $TestFile -ResultsFile $ResultsFile -Modules $ModulesPath -RunAsJob   
+    .\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance $SqlInstance -SqlWatchDatabase $SqlWatchDatabase -TestFile $TestFile -ResultsFile $ResultsFile -Modules $ModulesPath -RunAsJob   
 
     $TestFile = "$($TestFolder)\Pester.SqlWatch.TableContent.ps1"
     $PesterTest = Format-ResultsFileName -TestFile $TestFile
     $ResultsFile = "$($ResultFolder)\Pester.Results.$($PesterTest).$($SqlInstance -Replace "\\",'').xml"
-    .\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance $SqlInstance -SqlWatchDatabase SQLWATCH -TestFile $TestFile -ResultsFile $ResultsFile -Modules $ModulesPath -RunAsJob       
+    .\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance $SqlInstance -SqlWatchDatabase $SqlWatchDatabase -TestFile $TestFile -ResultsFile $ResultsFile -Modules $ModulesPath -RunAsJob       
 
     $TestFile = "$($TestFolder)\Pester.SqlWatch.ApplicationLog.ps1"
     $PesterTest = Format-ResultsFileName -TestFile $TestFile
     $ResultsFile = "$($ResultFolder)\Pester.Results.$($PesterTest).$($SqlInstance -Replace "\\",'').xml"
-    .\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance $SqlInstance -SqlWatchDatabase SQLWATCH -TestFile $TestFile -ResultsFile $ResultsFile -Modules $ModulesPath -RunAsJob   
+    .\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance $SqlInstance -SqlWatchDatabase $SqlWatchDatabase -TestFile $TestFile -ResultsFile $ResultsFile -Modules $ModulesPath -RunAsJob   
 
 }
 Get-Job | Wait-Job | Receive-Job | Format-Table
@@ -161,12 +163,11 @@ $SqlWatchImportConfig.Save($SqlWatchImportConfigFile)
 $TestFile = "$($TestFolder)\Pester.SqlWatch.SqlWatchImport.ps1"
 $PesterTest = Format-ResultsFileName -TestFile $TestFile
 $ResultsFile = "$($ResultFolder)\Pester.Results.$($PesterTest).$($SqlInstance -Replace "\\",'').xml"
-.\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance $SqlInstance -SqlWatchDatabase SQLWATCH -TestFile $TestFile -ResultsFile $ResultsFile -Modules $ModulesPath -RunAsJob -RemoteInstances $RemoteInstances -SqlWatchImportPath $($TestFolder)
+.\SqlWatch.Test\Run-Tests.p5.ps1 -SqlInstance $SqlInstance -SqlWatchDatabase $SqlWatchDatabase -TestFile $TestFile -ResultsFile $ResultsFile -Modules $ModulesPath -RemoteInstances $RemoteInstances -SqlWatchImportPath $($TestFolder)
 
 ##############################################################################################################################################################
 
 Get-Job | Wait-Job | Receive-Job | Format-Table
-
 Get-Job | Format-Table -Autosize
 
 Set-Location -Path $ProjectFolder
