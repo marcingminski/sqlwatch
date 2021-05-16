@@ -30,6 +30,8 @@ Describe "$($SqlInstance): SqlWatchImport.exe" -Tag "SqlWatchImport" {
         It 'Adding remote instance <_> to the central repository should not throw' -ForEach $RemoteInstances {
 
             ## the output is an array of lines, we have to convert to a single string using -join:
+            ## the output when using a command line option is always 0 and it just returns errors as a string. 
+            ## This is a bug that I need to fix, in the meantime we have to match the string and look for OK which indicates command completed OK
             $output = (& "$($SqlWatchImportPath)\SqlWatchImport.exe" --add -s $_ -d $($global:SqlWatchDatabase)) -join "`n`r"
             $output | Should -Match ".OK"
         }
@@ -49,9 +51,14 @@ Describe "$($SqlInstance): SqlWatchImport.exe" -Tag "SqlWatchImport" {
             It "Running SqlWatchImport.exe should not throw on run $($i+1)" {
 
                 ## the output is an array of lines, we have to convert to a single string using -join:
-                ## should I not be simply checking the exit code?
-                $output = (& "$($SqlWatchImportPath)\SqlWatchImport.exe") -join "`n`r"
-                $output | Should -Not -Match "Exception|ERROR|Fail"
+                $output = (& "$($SqlWatchImportPath)\SqlWatchImport.exe") -join "`n`r" 
+                $SqlWatchImportExitCode = $LastExitCode
+                
+                if ($SqlWatchImportExitCode -ne 0) {
+                    $output | Should -Not -Match "."
+                } else {
+                    $SqlWatchImportExitCode | Should -Be 0
+                    }                                
             }  
             Start-Sleep -s 6
         }
@@ -76,7 +83,7 @@ Describe "$($SqlInstance): SqlWatchImport.exe" -Tag "SqlWatchImport" {
 
     Context 'Removing Remote Instance' {
 
-        It 'Removing remote instance <_> from the central repository should not throw' -ForEach $RemoteInstances {
+        It 'Removing remote instance <_> from the central repository should not throw' -ForEach $RemoteInstances -Skip {
 
             $sql = "delete from [dbo].[sqlwatch_config_sql_instance] where sql_instance = '$_'"
             { Invoke-SqlWatchCmd -Query $sql } | Should -Not -Throw
