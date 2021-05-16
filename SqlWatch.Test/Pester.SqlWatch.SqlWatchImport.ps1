@@ -30,7 +30,7 @@ Describe "$($SqlInstance): SqlWatchImport.exe" -Tag "SqlWatchImport" {
         It 'Adding remote instance <_> to the central repository should not throw' -ForEach $RemoteInstances {
 
             ## the output is an array of lines, we have to convert to a single string using -join:
-            $output = (& "$($SqlWatchImportPath)\SqlWatchImport.exe" --add -s $_ -d $($global:SqlWatchDatabase)) -join ""
+            $output = (& "$($SqlWatchImportPath)\SqlWatchImport.exe" --add -s $_ -d $($global:SqlWatchDatabase)) -join "`n`r"
             $output | Should -Match ".OK"
         }
 
@@ -44,11 +44,16 @@ Describe "$($SqlInstance): SqlWatchImport.exe" -Tag "SqlWatchImport" {
 
     Context 'Importing data from remote instances' {
 
-        It 'Running SqlWatchImport.exe should not throw' {
+        $m=3
+        for ( $i = 0; $i -lt $m; $i++) {
+            It "Running SqlWatchImport.exe should not throw on run $($i+1)" {
 
-            ## the output is an array of lines, we have to convert to a single string using -join:
-            $output = (& "$($SqlWatchImportPath)\SqlWatchImport.exe") -join ""
-            $output | Should -Not -Match "Exception|ERROR|Fail"
+                ## the output is an array of lines, we have to convert to a single string using -join:
+                ## should I not be simply checking the exit code?
+                $output = (& "$($SqlWatchImportPath)\SqlWatchImport.exe") -join "`n`r"
+                $output | Should -Not -Match "Exception|ERROR|Fail"
+            }  
+            Start-Sleep -s 6
         }
 
         It 'LogFile should have no errors' {
