@@ -197,7 +197,7 @@ Push-AppveyorArtifact $(Get-Item "$($ResultFolder)\SqlWatch.Pester.Test.Results.
 ## Push Nunit results to testcase (disabled until testcase is fixed, bug logged with testcase)
 .\SqlWatch.Test\testspace config url marcingminski.testspace.com
 .\SqlWatch.Test\testspace --version
-.\SqlWatch.Test\testspace "[SqlWatch.Test.SQL2017]c:\projects\sqlwatch\SqlWatch.Test\Pester.Results\*.localhostSQL2017.xml" "[SqlWatch.Test.SQL2016]c:\projects\sqlwatch\SqlWatch.Test\Pester.Results\*.localhostSQL2016.xml" "[SqlWatch.Test.SQL2014]c:\projects\sqlwatch\SqlWatch.Test\Pester.Results\*.localhostSQL2014.xml" "[SqlWatch.Test.SQL2012SP1]c:\projects\sqlwatch\SqlWatch.Test\Pester.Results\*.localhostSQL2012SP1.xml"
+.\SqlWatch.Test\testspace "[SqlWatch.Test.SQL2017]c:\projects\sqlwatch\SqlWatch.Test\Pester.Results\*SQL2017.xml" "[SqlWatch.Test.SQL2016]c:\projects\sqlwatch\SqlWatch.Test\Pester.Results\*SQL2016.xml" "[SqlWatch.Test.SQL2014]c:\projects\sqlwatch\SqlWatch.Test\Pester.Results\*SQL2014.xml" "[SqlWatch.Test.SQL2012SP1]c:\projects\sqlwatch\SqlWatch.Test\Pester.Results\*SQL2012SP1.xml"
 
 <# We are going to pass the build until I got all the tests sorted out
 -- with testspace now working, we can pass the build purely based on the build
