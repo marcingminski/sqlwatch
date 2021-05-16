@@ -42,7 +42,7 @@ Describe "$($SqlInstance): SqlWatchImport.exe" -Tag "SqlWatchImport" {
         }        
     }
 
-    Context 'Importing data with SqlWatchImport' {
+    Context 'Importing data from remote instances' {
 
         It 'Running SqlWatchImport.exe should not throw' {
 
