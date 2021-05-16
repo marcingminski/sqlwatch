@@ -50,6 +50,9 @@ Describe "$($SqlInstance): SqlWatchImport.exe" -Tag "SqlWatchImport" {
         for ( $i = 0; $i -lt $m; $i++) {
             It "Running SqlWatchImport.exe should not throw on run $($i+1)" {
 
+                $sql = "select cnt=count(*) from sqlwatch_logger_snapshot_header where [sql_instance] = '$_'"
+                $headercountbaseline = Invoke-SqlWatchCmd -Query $sql
+
                 ## the output is an array of lines, we have to convert to a single string using -join:
                 $output = (& "$($SqlWatchImportPath)\SqlWatchImport.exe") -join "`n`r" 
                 $SqlWatchImportExitCode = $LastExitCode
@@ -59,11 +62,19 @@ Describe "$($SqlInstance): SqlWatchImport.exe" -Tag "SqlWatchImport" {
                 } else {
                     $SqlWatchImportExitCode | Should -Be 0
                     }                                
-            }  
+            }
+
+            It "Instance <_> should have new headers after run $($i+1)" -ForEach $RemoteInstances {
+                $sql = "select cnt=count(*) from sqlwatch_logger_snapshot_header where [sql_instance] = '$_'"
+                $result = Invoke-SqlWatchCmd -Query $sql
+
+                $result.cnt | Should -BeGreaterThan $headercountbaseline.cnt
+            }              
             Start-Sleep -s 6
         }
 
-        It 'LogFile should have no errors' {
+        <#
+        It 'LogFile should have no errors' -Skip {
 
             $SqlWatchImportLogErrors = Get-Content -Path "$($SqlWatchImportPath)\SqlWatchImport.log" | ForEach-Object {
                 if ($_ -NotLike "*DumpDataOnError*" -and ($_ -like "*Exception*" -or $_ -like "*ERROR*")) {
@@ -71,16 +82,11 @@ Describe "$($SqlInstance): SqlWatchImport.exe" -Tag "SqlWatchImport" {
                 }
             } 
             $SqlWatchImportLogErrors | Should -BeNullOrEmpty
-        }
-
-        It 'Instance <_> should have new headers' -ForEach $RemoteInstances {
-            $sql = "select cnt=count(*) from sqlwatch_logger_snapshot_header where [sql_instance] = '$_'"
-            $result = Invoke-SqlWatchCmd -Query $sql
-
-            $result.cnt | Should -BeGreaterThan 0
-        }
+        }        
+        #>
     }
 
+    <#
     Context 'Removing Remote Instance' {
 
         It 'Removing remote instance <_> from the central repository should not throw' -ForEach $RemoteInstances -Skip {
@@ -89,5 +95,7 @@ Describe "$($SqlInstance): SqlWatchImport.exe" -Tag "SqlWatchImport" {
             { Invoke-SqlWatchCmd -Query $sql } | Should -Not -Throw
         }        
 
-    }
+    }    
+    #>
+
 }
