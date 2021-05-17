@@ -62,15 +62,16 @@ ADD EVENT sqlserver.execution_warning(
         and (not [sqlserver].[like_i_sql_unicode_string]([sqlserver].[sql_text],N'%whoisactive%'))
         and (not [sqlserver].[like_i_sql_unicode_string]([sqlserver].[sql_text],N'%WhoIsActive%'))        
     ) ,
-ADD EVENT sqlserver.hash_spill_details(
-    ACTION(sqlserver.database_name,sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.nt_username,sqlserver.plan_handle,sqlserver.sql_text,sqlserver.username)
-    WHERE ([sqlserver].[is_system]=(0)) 
-        and ([sqlserver].[client_app_name]<>N'Microsoft SQL Server Management Studio')
-        and ([sqlserver].[client_app_name]<>N'SQLServerCEIP')
-        and ([sqlserver].[client_app_name]<>N'DacFx Deploy')   
-        and (not [sqlserver].[like_i_sql_unicode_string]([sqlserver].[sql_text],N'%whoisactive%'))
-        and (not [sqlserver].[like_i_sql_unicode_string]([sqlserver].[sql_text],N'%WhoIsActive%'))        
-    ) ,
+--https://github.com/appveyor/ci/issues/3678
+--ADD EVENT sqlserver.hash_spill_details(
+--    ACTION(sqlserver.database_name,sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.nt_username,sqlserver.plan_handle,sqlserver.sql_text,sqlserver.username)
+--    WHERE ([sqlserver].[is_system]=(0)) 
+--        and ([sqlserver].[client_app_name]<>N'Microsoft SQL Server Management Studio')
+--        and ([sqlserver].[client_app_name]<>N'SQLServerCEIP')
+--        and ([sqlserver].[client_app_name]<>N'DacFx Deploy')   
+--        and (not [sqlserver].[like_i_sql_unicode_string]([sqlserver].[sql_text],N'%whoisactive%'))
+--        and (not [sqlserver].[like_i_sql_unicode_string]([sqlserver].[sql_text],N'%WhoIsActive%'))        
+--    ) ,
 ADD EVENT sqlserver.hash_warning(
     ACTION(sqlserver.database_name,sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.nt_username,sqlserver.plan_handle,sqlserver.sql_text,sqlserver.username)
     WHERE ([sqlserver].[is_system]=(0)) 
