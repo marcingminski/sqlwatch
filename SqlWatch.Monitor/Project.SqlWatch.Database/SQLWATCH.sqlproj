@@ -60,7 +60,7 @@
     <DefineTrace>true</DefineTrace>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <RunSqlCodeAnalysis>False</RunSqlCodeAnalysis>
+    <RunSqlCodeAnalysis>True</RunSqlCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
@@ -303,17 +303,6 @@
     <Build Include="dbo\Tables\dbachecksResults.sql" />
     <Build Include="dbo\Tables\sqlwatch_stage_repository_tables_to_import.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_repository_populate_tables_to_import.sql" />
-    <None Include="Scripts\Data Migrations\fix_trim_perf_counter.sql" />
-    <None Include="Scripts\Data Migrations\migrate_database_name_to_sqlwatch_database_id.sql" />
-    <None Include="Scripts\Data Migrations\migrate_perf_counter_to_perf_counter_id.sql" />
-    <None Include="Scripts\Data Migrations\migrate_wait_type_to_wait_type_id.sql" />
-    <None Include="Scripts\Data Migrations\normalise_file_stats.sql" />
-    <None Include="Scripts\Data Migrations\migrate_snapshot_time_to_utc.sql" />
-    <None Include="Scripts\Data Migrations\fix_performance_counter_column_types.sql" />
-    <None Include="Scripts\Tools\SSIS Helpers\SSIS_generate__merge.sql" />
-    <None Include="Scripts\Tools\SSIS Helpers\SSIS_generate_import_tables.sql" />
-    <None Include="Scripts\Tools\SSIS Helpers\SSIS_generate_statements.sql" />
-    <None Include="Scripts\Tools\SSIS Helpers\SSIS_generate_snapshot_time_variables.sql" />
     <Build Include="dbo\Tables\sqlwatch_logger_xes_wait_event.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_parse_client_app_name.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_get_servername.sql" />
