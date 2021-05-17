@@ -371,6 +371,7 @@
     <Build Include="dbo\Functions\ufn_sqlwatch_get_agent_status.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_clean_sql_text.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_parse_xes_event_data.sql" />
+    <Build Include="dbo\Extended Events\SQLWATCH_health.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
