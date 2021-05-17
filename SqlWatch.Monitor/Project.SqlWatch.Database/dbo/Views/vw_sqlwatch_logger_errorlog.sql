@@ -10,7 +10,8 @@ SELECT le.[sql_instance]
 	  , ea.attribute_name
 	  , ea.attribute_value
 	  , et.errorlog_text
-      , ek.keyword
+      , ek.keyword1
+	  , ek.keyword2
   FROM [dbo].[sqlwatch_logger_errorlog] le
   inner join [dbo].[sqlwatch_meta_errorlog_attribute] ea
 	on ea.[sql_instance] = le.sql_instance
@@ -20,4 +21,4 @@ SELECT le.[sql_instance]
 	and et.[errorlog_text_id] = le.[errorlog_text_id]
   inner join dbo.sqlwatch_meta_errorlog_keyword ek
 	on ek.sql_instance = le.sql_instance
-	and ek.keyword_id = le.keyword_id
+	and ek.keyword_id = le.keyword_id;
