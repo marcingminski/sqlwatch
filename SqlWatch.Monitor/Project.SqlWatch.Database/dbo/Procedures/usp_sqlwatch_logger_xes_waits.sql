@@ -157,11 +157,6 @@ begin tran;
 
 		commit transaction;
 
-		--update execution count
-		exec [dbo].[usp_sqlwatch_internal_update_xes_query_count] 
-				@session_name = @session_name
-			, @execution_count = @execution_count;
-
 	end try
 	begin catch
 		if @@TRANCOUNT > 0

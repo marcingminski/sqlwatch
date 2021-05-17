@@ -101,7 +101,16 @@ where event_time > @xes_last_captured_event_time;
 select @xes_current_last_event_time = max(event_time)
 from @results;
 
---update execution count:
+--update execution count
+--this is quite optimistic here as once we have gotten the xes data out of xml, 
+--we are going to update the table so the next pull will be from this point.
+--However, if calling logger query fails and does not insert the data into the logger table
+--we could lose this data. It is important to handle transactions in a way that everything is 
+--rolled back when error occurs.
+--An alternative would be to run this update after the data has been inserted (which we actually used to do) 
+--but it would require two things: to remember to do it (yay repetition), 
+--and to get the last event time which is not available in the calling query this is balancing a risk vs convinience. 
+--maybe you should not be taking an example from this if you're building a nuclear reactor management system.
 update [dbo].[sqlwatch_stage_xes_exec_count]
 set  execution_count = @xes_current_execution_count
 	, last_event_time = isnull(@xes_current_last_event_time,getutcdate())
