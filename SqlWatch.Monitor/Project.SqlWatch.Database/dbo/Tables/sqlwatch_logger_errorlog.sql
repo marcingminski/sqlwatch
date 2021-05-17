@@ -17,9 +17,9 @@
 
 	constraint fk_sqlwatch_logger_errorlog_snapshot foreign key ([snapshot_time], [sql_instance], [snapshot_type_id])
 		references dbo.sqlwatch_logger_snapshot_header ([snapshot_time], [sql_instance], [snapshot_type_id]) on delete cascade
-)
+);
 go
 
 create nonclustered index idx_sqlwatch_logger_errorlog_1 on [dbo].[sqlwatch_logger_errorlog] (
 	keyword_id, log_type_id, sql_instance
-	) include (log_date)
+	) include (log_date);

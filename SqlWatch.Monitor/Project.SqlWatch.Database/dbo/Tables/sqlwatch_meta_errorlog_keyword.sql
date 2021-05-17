@@ -1,9 +1,10 @@
 ﻿CREATE TABLE [dbo].[sqlwatch_meta_errorlog_keyword]
 (
 	sql_instance varchar(32) not null,
-	keyword_id smallint identity(1,1) not null,
+	keyword_id smallint not null,-- identity(1,1) ,
 	log_type_id int not null,
-	keyword nvarchar(255),
+	keyword1 nvarchar(255),
+	keyword2 nvarchar(255),
 	[date_updated] datetime not null constraint df_sqlwatch_meta_errorlog_keyword_updated default (getutcdate()),
 	constraint pk_sqlwatch_meta_errorlog_keyword primary key clustered (
 		sql_instance, keyword_id, log_type_id
@@ -13,7 +14,7 @@
 )
 go
 
-create nonclustered index idx_sqlwatch_meta_errorlog_keyword_1 on [dbo].[sqlwatch_meta_errorlog_keyword] (keyword)
+create nonclustered index idx_sqlwatch_meta_errorlog_keyword_1 on [dbo].[sqlwatch_meta_errorlog_keyword] (keyword1)
 	include (sql_instance, keyword_id, log_type_id)
 go
 

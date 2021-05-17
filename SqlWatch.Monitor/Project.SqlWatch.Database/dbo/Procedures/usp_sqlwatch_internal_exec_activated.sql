@@ -191,8 +191,8 @@ begin
                                             --exec dbo.usp_sqlwatch_logger_disk_utilisation;
 
                                             --trends:
-                                            exec dbo.usp_sqlwatch_trend_perf_os_performance_counters @interval_minutes = 1, @valid_days = 7
-                                            exec dbo.usp_sqlwatch_trend_perf_os_performance_counters @interval_minutes = 5, @valid_days = 90
+                                            exec dbo.usp_sqlwatch_trend_perf_os_performance_counters @interval_minutes = 1, @valid_days = 7;
+                                            exec dbo.usp_sqlwatch_trend_perf_os_performance_counters @interval_minutes = 5, @valid_days = 90;
                                             exec dbo.usp_sqlwatch_trend_perf_os_performance_counters @interval_minutes = 60, @valid_days = 720;
                                         end try
                                         begin catch
@@ -214,6 +214,7 @@ begin
                                         exec [dbo].[usp_sqlwatch_internal_exec_activated_async] @procedure_name = 'dbo.usp_sqlwatch_internal_purge_deleted_items';
                                         exec [dbo].[usp_sqlwatch_internal_exec_activated_async] @procedure_name = 'dbo.usp_sqlwatch_internal_expand_checks';
                                         exec [dbo].[usp_sqlwatch_internal_exec_activated_async] @procedure_name = 'dbo.usp_sqlwatch_internal_add_index_missing';
+                                        exec [dbo].[usp_sqlwatch_internal_exec_activated_async] @procedure_name = 'dbo.usp_sqlwatch_logger_errorlog';
 
                                         set @process_message = 'Message Type: ' + convert(varchar(4000),@message_type_name) + '; Timer: ' + convert(varchar(5),@timer) + '; Time Taken: ' + convert(varchar(100),datediff(ms,@timestart,SYSDATETIME()))  + 'ms'
 

@@ -2912,4 +2912,18 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="last_event_time" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="5de2882f-1651-47d0-b8a0-2e3880897931" ChangeDateTime="05/17/2021 11:55:37">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_config_include_errorlog_keywords].[keyword]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_config_include_errorlog_keywords]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="keyword1" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="4a0d5d0d-5dba-4720-be0f-37b1edbee718" ChangeDateTime="05/17/2021 13:51:07">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_meta_errorlog_keyword].[keyword]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_meta_errorlog_keyword]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="keyword1" />
+  </Operation>
 </Operations>
