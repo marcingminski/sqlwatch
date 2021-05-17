@@ -37,7 +37,7 @@ where m.sql_instance = @@SERVERNAME;
 
 open c_parse_errorlog
 
-fetch next from c_parse_errorlog into @keyword_id, @keyword1, @keyword2, @log_type_id
+fetch next from c_parse_errorlog into @keyword_id, @keyword1, @keyword2, @log_type_id;
 
 while @@FETCH_STATUS = 0
 	begin
