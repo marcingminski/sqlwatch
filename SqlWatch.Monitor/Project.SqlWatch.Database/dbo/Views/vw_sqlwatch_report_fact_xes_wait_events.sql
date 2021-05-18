@@ -36,7 +36,7 @@ select e.[event_time]
 
     left join dbo.[sqlwatch_meta_query_plan_hash] qph
         on qph.sql_instance = qp.sql_instance
-        and qph.query_plan_hash = qph.query_plan_hash
+        and qph.query_plan_hash = qp.query_plan_hash
         
     left join dbo.[sqlwatch_meta_database] db 
         on db.sqlwatch_database_id = qp.sqlwatch_database_id
