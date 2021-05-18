@@ -19,9 +19,16 @@ Print ''Purged '' + convert(varchar(10),@rows_affected) + '' rows from ' + TABLE
  from INFORMATION_SCHEMA.COLUMNS
 /*	I should have been more careful when naming columns, I ended up having all these variations.
 	The exception is base_object_date_last_seen which is different to date_last_seen as it referes to a parent object rather than row in the actual table */
-WHERE COLUMN_NAME in ('deleted_when', 'date_deleted', 'last_seen','last_seen_date','date_last_seen','base_object_date_last_seen')
-AND TABLE_NAME LIKE 'sqlwatch_meta%'
+WHERE (
+	COLUMN_NAME in ('deleted_when', 'date_deleted', 'last_seen','last_seen_date','date_last_seen')
+	AND TABLE_NAME LIKE 'sqlwatch_meta%'
+	)
+OR
+	(
+	COLUMN_NAME in ('base_object_date_last_seen')
+	AND TABLE_NAME = 'sqlwatch_config_check'
+	);
 
-set nocount on
+set nocount on;
 
-exec (@sql)
+exec (@sql);
