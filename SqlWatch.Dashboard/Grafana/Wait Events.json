@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 27,
-  "iteration": 1618865855471,
+  "iteration": 1621335177766,
   "links": [
     {
       "asDropdown": true,
@@ -183,8 +183,8 @@
           },
           "links": [
             {
-              "title": "SQL Query Text",
-              "url": "/d/sqlwatch-wait-events/wait-events?${__url_time_range}&var-DataSource=${DataSource}&var-sql_instance=${sql_instance}&var-SqlWatchQueryId=${__data.fields.sqlwatch_query_id}&${Waits:queryparam}"
+              "title": "Show Query",
+              "url": "/d/sqlwatch-wait-events/wait-events?${__url_time_range}﻿﻿&${DataSource:queryparam}&${sql_instance:queryparam}&﻿﻿&var-Waits=Category&${WaitCalc:queryparam}&var-QueryPlanHash=﻿﻿${__data.fields.query_plan_hash}"
             }
           ],
           "mappings": [],
@@ -202,7 +202,29 @@
             ]
           }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "sql_text"
+            },
+            "properties": [
+              {
+                "id": "custom.displayMode",
+                "value": "json-view"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "title": "Show Query",
+                    "url": "/d/sqlwatch-wait-events/wait-events?﻿${DataSource:queryparam}"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 6,
@@ -225,7 +247,7 @@
         {
           "alias": "",
           "format": "table",
-          "rawSql": "select \t event_time\t\n\t,wait_type\t\n\t,wait_category\t\n\t,duration\t\n\t,signal_duration\t\n\t,session_id\t\n\t,username\t\n\t,client_hostname\t\n\t,client_app_name\t\n\t,database_name\t\n\t,sql_instance\t\n\t,snapshot_time\t\n\t,snapshot_type_id\n\t,sqlwatch_query_id\nfrom [dbo].[vw_sqlwatch_report_fact_xes_wait_events] \nWHERE [sql_instance] = '$sql_instance'\nAND $__timeFilter(event_time)",
+          "rawSql": "select \t event_time\t\n\t,wait_type\t\n\t,wait_category\t\n\t,duration\t\n\t,signal_duration\t\n\t,session_id\t\n\t,username\t\n\t,client_hostname\t\n\t,client_app_name\t\n\t,database_name\t\n\t,sql_instance\t\n\t,snapshot_time\t\n\t,sql_text\n\t,query_plan_hash=convert(varchar(max),query_plan_hash,2)\nfrom [dbo].[vw_sqlwatch_report_fact_xes_wait_events] \nWHERE [sql_instance] = '$sql_instance'\nAND $__timeFilter(event_time)",
           "refId": "A"
         }
       ],
@@ -292,7 +314,7 @@
           "alias": "",
           "format": "table",
           "queryType": "randomWalk",
-          "rawSql": "select time=getdate(),convert(varchar(max),sql_text)\nfrom [dbo].[sqlwatch_meta_query_text]\nwhere [sqlwatch_query_id] = '$SqlWatchQueryId'",
+          "rawSql": "select distinct time=getdate(),convert(varchar(max),sql_text)\nfrom [dbo].[vw_sqlwatch_report_fact_xes_wait_events] \nwhere $__timeFilter(event_time)\nand convert(varchar(max),query_plan_hash,2) = right('$QueryPlanHash',len('$QueryPlanHash')-2)",
           "refId": "A"
         }
       ],
@@ -310,9 +332,9 @@
     "list": [
       {
         "current": {
-          "selected": false,
-          "text": "SQL2012STD",
-          "value": "SQL2012STD"
+          "selected": true,
+          "text": "SQL-2",
+          "value": "SQL-2"
         },
         "description": null,
         "error": null,
@@ -333,8 +355,8 @@
         "allValue": null,
         "current": {
           "selected": false,
-          "text": "SQL-2\\SQL2012STD",
-          "value": "SQL-2\\SQL2012STD"
+          "text": "SQL-2",
+          "value": "SQL-2"
         },
         "datasource": "$DataSource",
         "definition": "SELECT [servername] FROM [dbo].[sqlwatch_meta_server]",
@@ -363,8 +385,8 @@
         "auto_min": "1s",
         "current": {
           "selected": false,
-          "text": "",
-          "value": ""
+          "text": "auto",
+          "value": "$__auto_interval_aggregation"
         },
         "description": null,
         "error": null,
@@ -373,7 +395,7 @@
         "name": "aggregation",
         "options": [
           {
-            "selected": false,
+            "selected": true,
             "text": "auto",
             "value": "$__auto_interval_aggregation"
           },
@@ -511,6 +533,10 @@
           {
             "selected": false,
             "text": "CPU - Parallelism"
+          },
+          {
+            "selected": false,
+            "text": "Lock"
           }
         ],
         "tagsQuery": "select distinct wc.wait_category from  [dbo].[sqlwatch_logger_xes_wait_event] ws   inner join dbo.vw_sqlwatch_meta_wait_stats_category wc on wc.wait_type_id = ws.wait_type_id where $__timeFilter(event_time)",
@@ -547,15 +573,7 @@
         "tags": [
           {
             "selected": false,
-            "text": "Always On"
-          },
-          {
-            "selected": false,
-            "text": "Always On - Secondary Synch"
-          },
-          {
-            "selected": false,
-            "text": "Backup IO"
+            "text": "In-Memory OLTP Logging"
           },
           {
             "selected": false,
@@ -563,39 +581,7 @@
           },
           {
             "selected": false,
-            "text": "Buffer Latch"
-          },
-          {
-            "selected": false,
-            "text": "CPU"
-          },
-          {
-            "selected": false,
-            "text": "CPU - Parallelism"
-          },
-          {
-            "selected": false,
-            "text": "CPU - Unavailable Worker Threads"
-          },
-          {
-            "selected": false,
-            "text": "External APIs or XPs"
-          },
-          {
-            "selected": false,
-            "text": "FileTable"
-          },
-          {
-            "selected": false,
-            "text": "Full Text Search"
-          },
-          {
-            "selected": false,
-            "text": "In-Memory OLTP"
-          },
-          {
-            "selected": false,
-            "text": "Latch"
+            "text": "Network IO"
           },
           {
             "selected": false,
@@ -603,23 +589,43 @@
           },
           {
             "selected": false,
+            "text": "Latch"
+          },
+          {
+            "selected": false,
+            "text": "Log Rate Governor"
+          },
+          {
+            "selected": false,
+            "text": "Full Text Search"
+          },
+          {
+            "selected": false,
+            "text": "CPU - Unavailable Worker Threads"
+          },
+          {
+            "selected": false,
+            "text": "CPU"
+          },
+          {
+            "selected": false,
             "text": "Memory"
           },
           {
             "selected": false,
-            "text": "Memory - Compilation"
+            "text": "User Wait"
           },
           {
             "selected": false,
-            "text": "Mirroring"
+            "text": "Columnstore"
           },
           {
             "selected": false,
-            "text": "Network IO"
+            "text": "FileTable"
           },
           {
             "selected": false,
-            "text": "Other"
+            "text": "External APIs or XPs"
           },
           {
             "selected": false,
@@ -627,11 +633,11 @@
           },
           {
             "selected": false,
-            "text": "Replication"
+            "text": "Always On - Secondary Synch"
           },
           {
             "selected": false,
-            "text": "Service Broker"
+            "text": "Buffer Latch"
           },
           {
             "selected": false,
@@ -639,7 +645,51 @@
           },
           {
             "selected": false,
+            "text": "Service Broker"
+          },
+          {
+            "selected": false,
+            "text": "Mirroring"
+          },
+          {
+            "selected": false,
+            "text": "Query Store"
+          },
+          {
+            "selected": false,
+            "text": "Parallel Redo"
+          },
+          {
+            "selected": false,
             "text": "Tracing"
+          },
+          {
+            "selected": false,
+            "text": "Backup IO"
+          },
+          {
+            "selected": false,
+            "text": "CPU - Parallelism"
+          },
+          {
+            "selected": false,
+            "text": "Replication"
+          },
+          {
+            "selected": false,
+            "text": "Other"
+          },
+          {
+            "selected": false,
+            "text": "Memory - Compilation"
+          },
+          {
+            "selected": false,
+            "text": "Always On"
+          },
+          {
+            "selected": false,
+            "text": "In-Memory OLTP"
           },
           {
             "selected": false,
@@ -648,10 +698,6 @@
           {
             "selected": false,
             "text": "Transaction"
-          },
-          {
-            "selected": false,
-            "text": "User Wait"
           }
         ],
         "tagsQuery": "select distinct wait_category from [dbo].[vw_sqlwatch_meta_wait_stats_category] ",
@@ -688,12 +734,8 @@
         "allValue": null,
         "current": {
           "selected": false,
-          "text": [
-            ""
-          ],
-          "value": [
-            ""
-          ]
+          "text": "All",
+          "value": "$__all"
         },
         "datasource": "$DataSource",
         "definition": "select distinct database_name \nfrom [dbo].[vw_sqlwatch_report_fact_xes_wait_events] \nwhere [sql_instance] = '$sql_instance'\nand $__timeFilter(event_time)",
@@ -763,30 +805,24 @@
       {
         "current": {
           "selected": false,
-          "text": "3",
-          "value": "3"
+          "text": "﻿﻿C947B51BE1F49136",
+          "value": "﻿﻿C947B51BE1F49136"
         },
         "description": null,
         "error": null,
         "hide": 0,
-        "label": "Query ID",
-        "name": "SqlWatchQueryId",
-        "options": [
-          {
-            "selected": false,
-            "text": "",
-            "value": ""
-          }
-        ],
-        "query": "3",
+        "label": "Query Plan Hash",
+        "name": "QueryPlanHash",
+        "options": [],
+        "query": "﻿﻿C947B51BE1F49136",
         "skipUrlSync": false,
         "type": "textbox"
       }
     ]
   },
   "time": {
-    "from": "now-15m",
-    "to": "now"
+    "from": "now-24h",
+    "to": "now﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿"
   },
   "timepicker": {
     "refresh_intervals": [
@@ -804,5 +840,5 @@
   "timezone": "utc",
   "title": "Wait Events",
   "uid": "sqlwatch-wait-events",
-  "version": 51
+  "version": 102
 }
