@@ -12,6 +12,8 @@ ADD EVENT sqlserver.sp_cache_miss(
         I would not surprised if this behaviour was different across different versions of SSMS. Tested with SQL Server Management Studio 15.0.18333.0
         You may want to run some tests in your environment to see if this is true for you */
         and ([sqlserver].[client_app_name]<>N'Microsoft SQL Server Management Studio')
+        --excelude intellisense:
+        and ([sqlserver].[client_app_name]<>N'Microsoft SQL Server Management Studio - Transact-SQL IntelliSense')
 
         -- exclude SQL Server Telemetry Events
         and ([sqlserver].[client_app_name]<>N'SQLServerCEIP')
@@ -27,6 +29,7 @@ ADD EVENT sqlserver.page_split(
     ACTION(sqlserver.database_name,sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.nt_username,sqlserver.plan_handle,sqlserver.sql_text,sqlserver.username)
     WHERE ([sqlserver].[is_system]=(0)) 
         and ([sqlserver].[client_app_name]<>N'Microsoft SQL Server Management Studio')
+        and ([sqlserver].[client_app_name]<>N'Microsoft SQL Server Management Studio - Transact-SQL IntelliSense')
         and ([sqlserver].[client_app_name]<>N'SQLServerCEIP')
         and ([sqlserver].[client_app_name]<>N'DacFx Deploy') 
         and ([sqlserver].[database_name]<>N'master')
@@ -39,6 +42,7 @@ ADD EVENT sqlserver.additional_memory_grant(
     ACTION(sqlserver.database_name,sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.nt_username,sqlserver.plan_handle,sqlserver.sql_text,sqlserver.username)
     WHERE ([sqlserver].[is_system]=(0)) 
         and ([sqlserver].[client_app_name]<>N'Microsoft SQL Server Management Studio')
+        and ([sqlserver].[client_app_name]<>N'Microsoft SQL Server Management Studio - Transact-SQL IntelliSense')
         and ([sqlserver].[client_app_name]<>N'SQLServerCEIP')
         and ([sqlserver].[client_app_name]<>N'DacFx Deploy')    
         and (not [sqlserver].[like_i_sql_unicode_string]([sqlserver].[sql_text],N'%whoisactive%'))
@@ -48,6 +52,7 @@ ADD EVENT sqlserver.exchange_spill(
     ACTION(sqlserver.database_name,sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.nt_username,sqlserver.plan_handle,sqlserver.sql_text,sqlserver.username)
     WHERE ([sqlserver].[is_system]=(0)) 
         and ([sqlserver].[client_app_name]<>N'Microsoft SQL Server Management Studio')
+        and ([sqlserver].[client_app_name]<>N'Microsoft SQL Server Management Studio - Transact-SQL IntelliSense')
         and ([sqlserver].[client_app_name]<>N'SQLServerCEIP')
         and ([sqlserver].[client_app_name]<>N'DacFx Deploy')   
         and (not [sqlserver].[like_i_sql_unicode_string]([sqlserver].[sql_text],N'%whoisactive%'))
@@ -57,6 +62,7 @@ ADD EVENT sqlserver.execution_warning(
     ACTION(sqlserver.database_name,sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.nt_username,sqlserver.plan_handle,sqlserver.sql_text,sqlserver.username)
     WHERE ([sqlserver].[is_system]=(0)) 
         and ([sqlserver].[client_app_name]<>N'Microsoft SQL Server Management Studio')
+        and ([sqlserver].[client_app_name]<>N'Microsoft SQL Server Management Studio - Transact-SQL IntelliSense')
         and ([sqlserver].[client_app_name]<>N'SQLServerCEIP')
         and ([sqlserver].[client_app_name]<>N'DacFx Deploy')   
         and (not [sqlserver].[like_i_sql_unicode_string]([sqlserver].[sql_text],N'%whoisactive%'))
@@ -76,6 +82,7 @@ ADD EVENT sqlserver.hash_warning(
     ACTION(sqlserver.database_name,sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.nt_username,sqlserver.plan_handle,sqlserver.sql_text,sqlserver.username)
     WHERE ([sqlserver].[is_system]=(0)) 
         and ([sqlserver].[client_app_name]<>N'Microsoft SQL Server Management Studio')
+        and ([sqlserver].[client_app_name]<>N'Microsoft SQL Server Management Studio - Transact-SQL IntelliSense')
         and ([sqlserver].[client_app_name]<>N'SQLServerCEIP')
         and ([sqlserver].[client_app_name]<>N'DacFx Deploy')   
         and (not [sqlserver].[like_i_sql_unicode_string]([sqlserver].[sql_text],N'%whoisactive%'))
@@ -85,6 +92,7 @@ ADD EVENT sqlserver.long_io_detected(
     ACTION(sqlserver.database_name,sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.nt_username,sqlserver.plan_handle,sqlserver.sql_text,sqlserver.username)
     WHERE ([sqlserver].[is_system]=(0)) 
         and ([sqlserver].[client_app_name]<>N'Microsoft SQL Server Management Studio')
+        and ([sqlserver].[client_app_name]<>N'Microsoft SQL Server Management Studio - Transact-SQL IntelliSense')
         and ([sqlserver].[client_app_name]<>N'SQLServerCEIP')
         and ([sqlserver].[client_app_name]<>N'DacFx Deploy')  
         and (not [sqlserver].[like_i_sql_unicode_string]([sqlserver].[sql_text],N'%whoisactive%'))
@@ -96,6 +104,7 @@ ADD EVENT sqlserver.missing_column_statistics(
     ACTION(sqlserver.database_name,sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.nt_username,sqlserver.plan_handle,sqlserver.sql_text,sqlserver.username)
     WHERE ([sqlserver].[is_system]=(0) 
         and [sqlserver].[client_app_name]<>N'Microsoft SQL Server Management Studio' 
+        and ([sqlserver].[client_app_name]<>N'Microsoft SQL Server Management Studio - Transact-SQL IntelliSense')
         and [sqlserver].[client_app_name]<>N'SQLServerCEIP' 
         and [sqlserver].[client_app_name]<>N'DacFx Deploy')
         and (not [sqlserver].[like_i_sql_unicode_string]([sqlserver].[sql_text],N'%whoisactive%'))
@@ -115,6 +124,7 @@ ADD EVENT sqlserver.optimizer_timeout(
     ACTION(sqlserver.database_name,sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.nt_username,sqlserver.plan_handle,sqlserver.sql_text,sqlserver.username)
       WHERE ([sqlserver].[is_system]=(0)) 
         and ([sqlserver].[client_app_name]<>N'Microsoft SQL Server Management Studio')
+        and ([sqlserver].[client_app_name]<>N'Microsoft SQL Server Management Studio - Transact-SQL IntelliSense')
         and ([sqlserver].[client_app_name]<>N'SQLServerCEIP')
         and ([sqlserver].[client_app_name]<>N'DacFx Deploy')  
         and (not [sqlserver].[like_i_sql_unicode_string]([sqlserver].[sql_text],N'%whoisactive%'))
@@ -124,6 +134,7 @@ ADD EVENT sqlserver.plan_affecting_convert(
     ACTION(sqlserver.database_name,sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.nt_username,sqlserver.plan_handle,sqlserver.sql_text,sqlserver.username)
      WHERE ([sqlserver].[is_system]=(0)) 
         and ([sqlserver].[client_app_name]<>N'Microsoft SQL Server Management Studio')
+        and ([sqlserver].[client_app_name]<>N'Microsoft SQL Server Management Studio - Transact-SQL IntelliSense')
         and ([sqlserver].[client_app_name]<>N'SQLServerCEIP')
         and ([sqlserver].[client_app_name]<>N'DacFx Deploy') 
         and ([sqlserver].[database_name]<>N'master')
@@ -135,6 +146,7 @@ ADD EVENT sqlserver.sort_warning(
     ACTION(sqlserver.database_name,sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.nt_username,sqlserver.plan_handle,sqlserver.sql_text,sqlserver.username)
     WHERE ([sqlserver].[is_system]=(0)) 
         and ([sqlserver].[client_app_name]<>N'Microsoft SQL Server Management Studio')
+        and ([sqlserver].[client_app_name]<>N'Microsoft SQL Server Management Studio - Transact-SQL IntelliSense')
         and ([sqlserver].[client_app_name]<>N'SQLServerCEIP')
         and ([sqlserver].[client_app_name]<>N'DacFx Deploy')    
         and (not [sqlserver].[like_i_sql_unicode_string]([sqlserver].[sql_text],N'%whoisactive%'))
@@ -144,6 +156,7 @@ ADD EVENT sqlserver.unmatched_filtered_indexes(
     ACTION(sqlserver.database_name,sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.nt_username,sqlserver.plan_handle,sqlserver.sql_text,sqlserver.username)
     WHERE ([sqlserver].[is_system]=(0)) 
         and ([sqlserver].[client_app_name]<>N'Microsoft SQL Server Management Studio')
+        and ([sqlserver].[client_app_name]<>N'Microsoft SQL Server Management Studio - Transact-SQL IntelliSense')
         and ([sqlserver].[client_app_name]<>N'SQLServerCEIP')
         and ([sqlserver].[client_app_name]<>N'DacFx Deploy')    
         and (not [sqlserver].[like_i_sql_unicode_string]([sqlserver].[sql_text],N'%whoisactive%'))
