@@ -114,7 +114,7 @@ begin
 						) d
 					where c.check_name = @check_name
 					and c.expand_by = @expand_by
-					and d.sql_instance = dbo.ufn_sqlwatch_get_servername()
+					and d.sql_instance = @sql_instance
 				end
 
 			if @expand_by = 'Job'
