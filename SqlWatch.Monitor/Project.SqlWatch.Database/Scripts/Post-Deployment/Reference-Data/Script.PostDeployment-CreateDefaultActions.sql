@@ -71,7 +71,7 @@ exec [dbo].[usp_sqlwatch_config_add_action]
 	 @action_id = -16
 	,@action_description = 'Send to Azure Log Monitor. Download cmdlet from https://www.powershellgallery.com/packages/Upload-AzMonitorLog/1.2'
 	,@action_exec_type = 'PowerShell'
-	,@action_exec = 'Invoke-Sqlcmd -ServerInstance localhost -Database $(DatabaseName) -Query "{BODY}" | C:\SQLWATCHPS\Upload-AzMonitorLog.ps1 -WorkspaceId YOURWORKSPACEID -WorkspaceKey YOURWORKSPACEKEY -LogTypeName "{SUBJECT}" -AddComputerName'
+	,@action_exec = 'Invoke-Sqlcmd -ServerInstance ''' + @@servername + ''' -Database $(DatabaseName) -Query "{BODY}" | C:\SQLWATCHPS\Upload-AzMonitorLog.ps1 -WorkspaceId YOURWORKSPACEID -WorkspaceKey YOURWORKSPACEKEY -LogTypeName "{SUBJECT}" -AddComputerName'
 	,@action_enabled = 0
 
 set identity_insert [dbo].[sqlwatch_config_action] off;
