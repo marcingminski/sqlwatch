@@ -11,6 +11,7 @@ Post-Deployment Script Template
 */
 disable trigger dbo.trg_sqlwatch_config_action_updated_U ON [dbo].[sqlwatch_config_action];
 set identity_insert [dbo].[sqlwatch_config_action] on;
+declare @param VARCHAR(4000);
 
 exec [dbo].[usp_sqlwatch_config_add_action]
 	 @action_id = -1
@@ -66,12 +67,13 @@ exec [dbo].[usp_sqlwatch_config_add_action]
 	,@action_exec_type = 'PowerShell'
 	,@action_exec = 'zabbix_sender.exe -z zabbix.yourcompany.com -s "SQL_INSTANCE" -k your.check.name -o "{BODY}"'
 	,@action_enabled = 0
-
+	
+set  @param = 'Invoke-Sqlcmd -ServerInstance ''' + @@servername + ''' -Database $(DatabaseName) -Query "{BODY}" | C:\SQLWATCHPS\Upload-AzMonitorLog.ps1 -WorkspaceId YOURWORKSPACEID -WorkspaceKey YOURWORKSPACEKEY -LogTypeName "{SUBJECT}" -AddComputerName'
 exec [dbo].[usp_sqlwatch_config_add_action]
 	 @action_id = -16
 	,@action_description = 'Send to Azure Log Monitor. Download cmdlet from https://www.powershellgallery.com/packages/Upload-AzMonitorLog/1.2'
 	,@action_exec_type = 'PowerShell'
-	,@action_exec = 'Invoke-Sqlcmd -ServerInstance localhost -Database $(DatabaseName) -Query "{BODY}" | C:\SQLWATCHPS\Upload-AzMonitorLog.ps1 -WorkspaceId YOURWORKSPACEID -WorkspaceKey YOURWORKSPACEKEY -LogTypeName "{SUBJECT}" -AddComputerName'
+	,@action_exec = @param
 	,@action_enabled = 0
 
 set identity_insert [dbo].[sqlwatch_config_action] off;
