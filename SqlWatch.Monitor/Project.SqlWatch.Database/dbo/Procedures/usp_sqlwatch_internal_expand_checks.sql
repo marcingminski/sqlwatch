@@ -295,7 +295,8 @@ begin
 			inner join [dbo].[sqlwatch_config_check_template_action] a
 				on a.check_name = ct.check_name
 			inner join [dbo].[sqlwatch_config_check] cc
-				on cc.check_name = ct.check_name
+				on cc.check_name = c.check_name
+				and cc.target_sql_instance = c.target_sql_instance
 			) as source
 		on source.check_id = target.check_id
 		and source.action_id = target.action_id
