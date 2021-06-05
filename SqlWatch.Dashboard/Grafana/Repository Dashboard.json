@@ -517,8 +517,8 @@
                 "id": "links",
                 "value": [
                   {
-                    "title": "Check Details",
-                    "url": "/d/sqlwatch-checks/checks?${__url_time_range}&var-DataSource=${DataSource}&var-sql_instance=${sql_instance}"
+                    "title": "$sql_instance Check Details",
+                    "url": "/d/sqlwatch-instance-overview/sql-instance-overview?${__url_time_range}&viewPanel=252&var-DataSource=${DataSource}&var-sql_instance=${sql_instance}"
                   }
                 ]
               }
@@ -1288,8 +1288,8 @@
                 "id": "links",
                 "value": [
                   {
-                    "title": "Check Details",
-                    "url": "/d/sqlwatch-checks/checks?${__url_time_range}&var-DataSource=${DataSource}&var-sql_instance=${sql_instance}"
+                    "title": "$sql_instance Check Details",
+                    "url": "/d/sqlwatch-instance-overview/sql-instance-overview?${__url_time_range}&viewPanel=252&var-DataSource=${DataSource}&var-sql_instance=${sql_instance}"
                   }
                 ]
               }
