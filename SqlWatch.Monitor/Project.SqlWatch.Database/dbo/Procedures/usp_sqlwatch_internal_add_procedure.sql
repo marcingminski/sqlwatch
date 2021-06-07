@@ -35,6 +35,7 @@ begin
 			,  [procedure_type] = 'A' --also a made up type to make sure we keep the separate
 			,  sql_instance = @sql_instance
 		from dbo.sqlwatch_meta_database d
+		where d.sql_instance = @sql_instance
 
 	) as source
 	on target.sql_instance = source.sql_instance
