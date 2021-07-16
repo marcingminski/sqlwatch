@@ -9,8 +9,6 @@ Project("{159641D6-6404-4A2A-AE62-294DE0FE8301}") = "SqlWatch Integration Servic
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlWatchImport", "Project.SqlWatchImport\SqlWatchImport.csproj", "{B228A424-9971-4A51-815E-A6AF37D560AA}"
 EndProject
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "SQLWATCH-TESTER", "Project.SqlWatch.Database-Tester\SQLWATCH-TESTER.sqlproj", "{1AAD106B-7E7B-4CC3-A242-38B881A3993F}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,15 +37,6 @@ Global
 		{B228A424-9971-4A51-815E-A6AF37D560AA}.Development|Any CPU.Build.0 = Debug|Any CPU
 		{B228A424-9971-4A51-815E-A6AF37D560AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B228A424-9971-4A51-815E-A6AF37D560AA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1AAD106B-7E7B-4CC3-A242-38B881A3993F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1AAD106B-7E7B-4CC3-A242-38B881A3993F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1AAD106B-7E7B-4CC3-A242-38B881A3993F}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{1AAD106B-7E7B-4CC3-A242-38B881A3993F}.Development|Any CPU.ActiveCfg = Debug|Any CPU
-		{1AAD106B-7E7B-4CC3-A242-38B881A3993F}.Development|Any CPU.Build.0 = Debug|Any CPU
-		{1AAD106B-7E7B-4CC3-A242-38B881A3993F}.Development|Any CPU.Deploy.0 = Debug|Any CPU
-		{1AAD106B-7E7B-4CC3-A242-38B881A3993F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1AAD106B-7E7B-4CC3-A242-38B881A3993F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1AAD106B-7E7B-4CC3-A242-38B881A3993F}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
