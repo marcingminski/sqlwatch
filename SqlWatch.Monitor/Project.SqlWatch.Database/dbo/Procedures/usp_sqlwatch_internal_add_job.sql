@@ -17,10 +17,6 @@ BEGIN TRAN
 	when matched then
 		update set
 			[date_last_seen] = GETUTCDATE()
-			
-	when not matched by source and target.sql_instance = @@SERVERNAME then
-		update set
-			[is_record_deleted] = 1
 	;
 
 	merge [dbo].[sqlwatch_meta_agent_job_step] as target
