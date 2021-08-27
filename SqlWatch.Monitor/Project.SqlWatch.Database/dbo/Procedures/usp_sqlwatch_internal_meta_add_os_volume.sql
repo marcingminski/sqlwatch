@@ -26,7 +26,7 @@ begin
 		capacity bigint
 	)
 	where volume_name not like '\\?\Volume%'
-	and filesystem <> 'CDFS'
+	and filesystem <> 'CDFS';
 
 	merge [dbo].[sqlwatch_meta_os_volume] as target
 	using (

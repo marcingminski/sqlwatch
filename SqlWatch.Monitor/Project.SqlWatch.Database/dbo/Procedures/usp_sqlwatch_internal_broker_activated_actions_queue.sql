@@ -36,6 +36,6 @@ begin
 				@proc_id = @@PROCID,
 				@process_stage = '42C07F6F-BFF7-44F9-BB41-CF23F0969FF3',
 				@process_message = @process_message ,
-				@process_message_type = 'ERROR'
+				@process_message_type = 'ERROR';
 		end;
 end;

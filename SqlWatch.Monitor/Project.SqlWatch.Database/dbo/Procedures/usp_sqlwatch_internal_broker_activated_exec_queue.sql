@@ -176,7 +176,7 @@ begin
 
                                                 else if @conversation_group_id in ('EFB8A583-B238-4468-AAEB-6EF8DE45029A','A44B4166-3D12-49D3-B8DA-F793B75AE159')
                                                     begin
-                                                        exec [dbo].[usp_sqlwatch_trend_perf_os_performance_counters] @timer_id = @conversation_group_id
+                                                        exec [dbo].[usp_sqlwatch_trend_perf_os_performance_counters] @timer_id = @conversation_group_id;
                                                     end;
 
                                                 -- Performance Collector. Runs only if we do not use SqlWatchCollect.exe

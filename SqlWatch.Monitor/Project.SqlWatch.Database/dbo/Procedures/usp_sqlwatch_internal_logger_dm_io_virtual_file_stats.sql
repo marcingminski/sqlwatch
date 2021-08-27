@@ -111,7 +111,7 @@ begin
 		,[io_stall_write_ms] bigint
 		,[size_on_disk_bytes] bigint
 		,[physical_name] nvarchar(260)
-		,[file_name] sysname
+		,[file_name] nvarchar(128)
 	) fs
 
 	inner join [dbo].[sqlwatch_meta_database] sd 
@@ -122,8 +122,8 @@ begin
 	inner join [dbo].[sqlwatch_meta_master_file] mf
 		on mf.sql_instance = @sql_instance
 		and mf.sqlwatch_database_id = sd.sqlwatch_database_id
-		and mf.file_name = convert(nvarchar(128),fs.file_name) collate database_default
-		and mf.[file_physical_name] = convert(nvarchar(260),fs.physical_name) collate database_default
+		and mf.file_name = fs.file_name
+		and mf.[file_physical_name] = fs.physical_name
 
 	left join @prev_fs prevfs
 		on prevfs.sql_instance = @sql_instance

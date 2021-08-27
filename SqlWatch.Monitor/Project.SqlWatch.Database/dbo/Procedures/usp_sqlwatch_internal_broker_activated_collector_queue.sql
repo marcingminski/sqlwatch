@@ -69,7 +69,7 @@ begin
                 if @@ROWCOUNT = 0
                     begin
                         --break loop if no messages to process
-                        commit transaction
+                        commit transaction;
                         break;
                     end;
 

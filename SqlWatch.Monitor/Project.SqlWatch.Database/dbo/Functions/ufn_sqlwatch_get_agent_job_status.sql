@@ -18,4 +18,4 @@ BEGIN
 		end;
 
 	return @status;
-END
+END;

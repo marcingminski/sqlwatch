@@ -16,7 +16,7 @@ declare cur_database cursor
 LOCAL FORWARD_ONLY STATIC READ_ONLY
 FOR 
 select distinct sdb.name
-from dbo.vw_sqlwatch_sys_databases sdb
+from dbo.vw_sqlwatch_sys_databases sdb;
 
 open cur_database
 fetch next from cur_database into @db;

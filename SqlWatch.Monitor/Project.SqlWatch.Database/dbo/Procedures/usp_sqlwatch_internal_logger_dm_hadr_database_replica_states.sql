@@ -80,4 +80,4 @@ begin
 			[last_commit_time] datetime2(3)
 		)	
 	option (keep plan);
-end
+end;

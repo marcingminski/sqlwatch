@@ -50,6 +50,5 @@ begin
 	from #t t
 	inner join dbo.sqlwatch_meta_os_volume ov
 		on ov.volume_name = t.volume_name
-		and ov.sql_instance = @sql_instance
+		and ov.sql_instance = @sql_instance;
 end;
-
