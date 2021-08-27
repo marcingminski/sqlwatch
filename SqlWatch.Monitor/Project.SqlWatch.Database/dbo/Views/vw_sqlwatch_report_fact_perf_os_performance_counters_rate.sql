@@ -1,25 +1,8 @@
 ﻿CREATE VIEW [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters_rate] with schemabinding
-	as
-/*
--------------------------------------------------------------------------------------------------------------------
- View:
-	vw_sqlwatch_report_fact_perf_os_performance_counters_rate
-
- Description:
-	Rate calculations are a combination of various counters to give a specific rate.
-	We are going to pivot counters of interest for easy divide then unpivot back in the original format.
-	There may be more efficient ways but this is quite easy and transparent, also quite quick < 9ms exec time.
-	
- Author:
-	Marcin Gminski
-
- Change Log:
-	1.0		2019-12-25		- Marcin Gminski, Initial version
--------------------------------------------------------------------------------------------------------------------
-*/
+as
 
 with cte_pivot as (
-	select sql_instance, snapshot_time, report_time
+	select sql_instance, snapshot_time, report_time, snapshot_type_id
 		, [Full Scan Rate] = case when [Index Searches/sec] > 0 then [Full Scans/sec] / [Index Searches/sec] else 0 end
 		, [SQL Compilations Rate] = case when [Batch Requests/Sec] > 0 then [SQL Compilations/sec] / [Batch Requests/Sec] else 0 end
 		, [SQL Re-Compilation Rate] = case when [SQL Compilations/sec] > 0 then [SQL Re-Compilations/sec] / [SQL Compilations/sec] else 0 end
@@ -27,7 +10,7 @@ with cte_pivot as (
 		, [Page Lookups Rate] = case when [Batch Requests/Sec] > 0 then [Page lookups/sec] / [Batch Requests/Sec] else 0 end
 	from  
 	(	
-		select sql_instance, snapshot_time, counter_name, cntr_value_calculated, report_time
+		select sql_instance, snapshot_time, counter_name, cntr_value_calculated, report_time, snapshot_type_id
 		from [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]
 	) as src  
 	pivot  
@@ -50,6 +33,7 @@ select [sql_instance]
 	, [cntr_value_calculated]
 	, [counter_name]
 	, [report_time]
+	, snapshot_type_id
 from 
    (select [sql_instance]
 	, [snapshot_time]
@@ -59,6 +43,7 @@ from
 	, [Page Split Rate]
 	, [Page Lookups Rate]
 	, [report_time]
+	, snapshot_type_id
    from cte_pivot) p  
 unpivot  
    (cntr_value_calculated for counter_name IN   
@@ -70,4 +55,4 @@ unpivot
 		, [Page Lookups Rate]
 		)  
 ) as unpvt;  
-GO  
+GO

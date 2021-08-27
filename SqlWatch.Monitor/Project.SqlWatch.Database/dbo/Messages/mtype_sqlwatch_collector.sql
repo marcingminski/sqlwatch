@@ -1,0 +1,2 @@
+﻿CREATE MESSAGE TYPE [mtype_sqlwatch_collector]
+	VALIDATION = WELL_FORMED_XML;

@@ -41,4 +41,4 @@
 		when wait_type like N'PARALLEL_REDO%' then N'Parallel Redo'
 		when wait_type like N'COLUMNSTORE%' then N'Columnstore'
 	else N'Other' end 
-	from [dbo].[sqlwatch_meta_wait_stats]
+	from [dbo].[sqlwatch_meta_dm_os_wait_stats]

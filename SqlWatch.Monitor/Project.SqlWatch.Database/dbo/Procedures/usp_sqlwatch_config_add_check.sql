@@ -20,7 +20,6 @@
 )
 as
 
-set xact_abort on;
 set nocount on;
 
 if @check_id < 0

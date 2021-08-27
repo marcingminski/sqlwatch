@@ -62,7 +62,7 @@ commit tran
 -- sqlwatch_config_exclude_xes_long_query
 --------------------------------------------------------------------------------------
 begin tran
-	merge sqlwatch_config_exclude_xes_long_query as target
+	merge [sqlwatch_config_exclude_logger_dm_exec_requests_long_requests] as target
 	using (
 		--exclude internal process DatabaseMail 
 		select	

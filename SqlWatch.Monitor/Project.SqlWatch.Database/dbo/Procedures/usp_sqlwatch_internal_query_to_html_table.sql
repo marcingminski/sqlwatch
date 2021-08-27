@@ -37,7 +37,7 @@
 
 			set @error_message = 'Executing initial query'
 
-			exec [dbo].[usp_sqlwatch_internal_log]
+			exec [dbo].[usp_sqlwatch_internal_app_log_add_message]
 				@proc_id = @@PROCID,
 				@process_stage = '77EF7172-3573-46B7-91E6-9BF0259B2DAC',
 				@process_message = @error_message,
@@ -59,7 +59,7 @@
 			set @has_errors = 1
 
 			set @error_message = 'Building html content.'
-			exec [dbo].[usp_sqlwatch_internal_log]
+			exec [dbo].[usp_sqlwatch_internal_app_log_add_message]
 				@proc_id = @@PROCID,
 				@process_stage = '52357550-B447-4352-9E0C-16353A967709',
 				@process_message = @error_message,

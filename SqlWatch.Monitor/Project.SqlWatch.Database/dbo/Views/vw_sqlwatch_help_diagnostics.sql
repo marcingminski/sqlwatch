@@ -128,11 +128,5 @@ select sqlwatch_diagnostics = (
 			for xml raw, type
 		)
 
-		, action_queue_stats = (
-			SELECT [exec_status], count=count(*)
-			  FROM [dbo].[sqlwatch_meta_action_queue]
-			group by [exec_status]
-			for xml raw, type
-		)
 	for xml path('diagnostics'), type
 )

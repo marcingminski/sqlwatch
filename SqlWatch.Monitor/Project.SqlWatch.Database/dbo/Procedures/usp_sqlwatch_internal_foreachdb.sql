@@ -7,33 +7,6 @@
    @ignore_global_exclusion bit = 0
 as
 
-/*
--------------------------------------------------------------------------------------------------------------------
- Procedure:
-	usp_sqlwatch_internal_foreachdb
-
- Description:
-	Iterate through databases i.e. improved replacement for sp_msforeachdb.
-
- Parameters
-	@command	-	command to execute against each db, same as in sp_msforeachdb
-	@snapshot_type_id	-	additionaly, if we are executing this in a collector, we can pass snapshot_id 
-							in order to apply database/snapshot exlusion. This approach will prevent it
-							from even accessing the database in the first place.
-	@exlude_databases	-	list of comma separated database names to exclude from the loop
-	
- Author:
-	Marcin Gminski
-
- Change Log:
-	1.0		2019-12		- Marcin Gminski, Initial version
-	1.1		2019-12-10	- Marcin Gminski, database exclusion
-	1.2		2019-12-23	- Marcin Gminski, added error handling and additional messaging
-	1.3		2020-03-22	- Marcin Gminski, improved logging
-	1.4		2020-03-23	- Marcin Gminski, added excplicit include 
-	1.5		2020-06-26	- Marcin Gminski, print exec time
--------------------------------------------------------------------------------------------------------------------
-*/
 begin
 	set nocount on;
 	declare @sql nvarchar(max),
@@ -47,7 +20,7 @@ begin
 			@timetaken bigint
 
 	set @process_message = 'Invoked by: [' + isnull(OBJECT_NAME(@calling_proc_id),'UNKNOWN') + '], @databases=' + @databases
-	exec [dbo].[usp_sqlwatch_internal_log]
+	exec [dbo].[usp_sqlwatch_internal_app_log_add_message]
 			@proc_id = @@PROCID,
 			@process_stage = '5D318A4A-1F8A-4D44-B8B9-FFE2ECF62975',
 			@process_message = @process_message,
@@ -124,7 +97,7 @@ begin
 
 										if dbo.ufn_sqlwatch_get_config_value(7, null) = 1
 											begin
-												exec [dbo].[usp_sqlwatch_internal_log]
+												exec [dbo].[usp_sqlwatch_internal_app_log_add_message]
 														@proc_id = @@PROCID,
 														@process_stage = '53BFB442-44CD-404F-8C2E-9203A04024D7',
 														@process_message = @process_message,
@@ -136,7 +109,7 @@ begin
 										if @@trancount > 0
 											rollback
 
-										exec [dbo].[usp_sqlwatch_internal_log]
+										exec [dbo].[usp_sqlwatch_internal_app_log_add_message]
 												@proc_id = @@PROCID,
 												@process_stage = 'F445D2BC-2CF3-4F41-9284-A4C3ACA513EB',
 												@process_message = @sql,

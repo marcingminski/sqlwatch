@@ -30,7 +30,7 @@ inner join sys.schemas s
 where i.is_not_trusted = 1
 and i.is_not_for_replication = 0
 
-exec (@sql)
+exec (@sql);
 
 set @sql = ''
 
@@ -41,3 +41,5 @@ inner join sys.schemas s
 inner join sys.check_constraints c
   on t.object_id = c.parent_object_id
 where c.is_not_trusted = 1
+
+exec (@sql);

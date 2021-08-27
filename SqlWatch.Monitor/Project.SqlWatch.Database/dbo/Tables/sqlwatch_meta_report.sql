@@ -26,7 +26,6 @@ create trigger trg_sqlwatch_meta_report_last_updated
 	as
 	begin
 		set nocount on;
-		set xact_abort on;
 
 		update t
 			set date_updated = getutcdate()

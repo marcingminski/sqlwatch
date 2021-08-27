@@ -9,17 +9,17 @@ Post-Deployment Script Template
                SELECT * FROM [$(TableName)]					
 --------------------------------------------------------------------------------------
 */
+declare @sql varchar(max)
+
+-------------------------------------------------------------------------------------
+-- Load Global Config
+-------------------------------------------------------------------------------------
+:r .\Scripts\Post-Deployment\Reference-Data\Script.PostDeployment-LoadConfig-Global.sql
 
 --------------------------------------------------------------------------------------
--- THIS MUST BE THE FIRST STEP:
--- Load local server to satisfy RI
+-- Load local metadata to satisfy RI
 --------------------------------------------------------------------------------------
 :r .\Scripts\Post-Deployment\Reference-Data\Script.PostDeployment-LoadMeta-Server.sql
-
---------------------------------------------------------------------------------------
--- Add Databases to the reference tables
---------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_internal_add_database]
 
 --------------------------------------------------------------------------------------
 -- Load Default Performance Counters
@@ -39,7 +39,7 @@ exec [dbo].[usp_sqlwatch_internal_add_database]
 --------------------------------------------------------------------------------------
 -- DATA FIX: Se default Last Seen Dates When migrating from >2.0
 --------------------------------------------------------------------------------------
-:r .\Scripts\Post-Deployment\Data-Fixes\Script.PostDeployment-DataFix-SetDefaultLastSeenDates.sql
+--:r .\Scripts\Post-Deployment\Data-Fixes\Script.PostDeployment-DataFix-SetDefaultLastSeenDates.sql
 
 --------------------------------------------------------------------------------------
 -- load default report styles:
@@ -71,36 +71,20 @@ exec [dbo].[usp_sqlwatch_internal_add_database]
 :r .\Scripts\Post-Deployment\Reference-Data\Script.PostDeployment-CreateDefaultChecks.sql
 
 -------------------------------------------------------------------------------------
--- Load Global Config
--------------------------------------------------------------------------------------
-:r .\Scripts\Post-Deployment\Reference-Data\Script.PostDeployment-LoadConfig-Global.sql
-
--------------------------------------------------------------------------------------
 -- Load Errorlog Default Collectoin
 -------------------------------------------------------------------------------------
 :r .\Scripts\Post-Deployment\Reference-Data\Script.PostDeployment-LoadConfig-DefaultErrorLog.sql
 
 -------------------------------------------------------------------------------------
--- start XES
--------------------------------------------------------------------------------------
-exec [dbo].[usp_sqlwatch_internal_start_xes]
-
--------------------------------------------------------------------------------------
 -- Migrate Data
 -------------------------------------------------------------------------------------
-:r .\Scripts\Post-Deployment\Data-Fixes\Script.PostDeployment-DataFix-MigrateReportTime.sql
+--:r .\Scripts\Post-Deployment\Data-Fixes\Script.PostDeployment-DataFix-MigrateReportTime.sql
 
---------------------------------------------------------------------------------------
--- populate central repository tables to import
--- this will have no meaning on the remote instance but it will mean less steps
--- when turning it into a central repository
---------------------------------------------------------------------------------------
---more than one record in the sql_instance table assumes we're running central repository:
-if (select count(*) from [dbo].[sqlwatch_config_sql_instance]) > 1
-	begin
-		Print 'Looks like this is a central repository so we''re going to populate tabels to import'
-		exec [dbo].[usp_sqlwatch_repository_populate_tables_to_import]
-	end
+-------------------------------------------------------------------------------------
+-- populate tables to import (only used by SqlWatchImport.exe on the central repository)
+-- it will have no meaning on the remote instance
+-------------------------------------------------------------------------------------
+exec [dbo].[usp_sqlwatch_repository_populate_tables_to_import];
 
 -------------------------------------------------------------------------------------
 -- THIS MUST BE LAST STATEMENT IN THE PROCESS SO WE CAN RUN DATA-MIGRATIONS BASED
@@ -125,35 +109,45 @@ if (select case when @@VERSION like '%Express Edition%' then 1 else 0 end) = 0
 :r .\Scripts\Post-Deployment\Data-Fixes\Script.PostDeployment-FixNonTrustedConstraints.sql
 
 -------------------------------------------------------------------------------------
--- Retart queues
-------------------------------------------------------------------------------------- 
--- don't start queues on install until version 4.x exec [dbo].[usp_sqlwatch_internal_restart_queues]
-
--------------------------------------------------------------------------------------
 -- reset session counts
 -------------------------------------------------------------------------------------
-merge [dbo].[sqlwatch_stage_xes_exec_count] as target
-using (
-	select session_name = name
-	from sys.dm_xe_session_targets t
-	inner join sys.dm_xe_sessions s
-	on t.event_session_address = s.address
-	where t.target_name = 'event_file'
-	and (
-			s.name like 'SQLWATCH%'
-		or	s.name = 'system_health'
-		)
-) as source
-on source.session_name = target.session_name collate database_default
+exec [dbo].[usp_sqlwatch_internal_create_xes];
 
-when matched then update
-	set	  execution_count = 0
-		, last_event_time = null
+--merge [dbo].[sqlwatch_stage_xes_exec_count] as target
+--using (
+--	select session_name = name
+--	from sys.dm_xe_session_targets t
+--	inner join sys.dm_xe_sessions s
+--	on t.event_session_address = s.address
+--	where t.target_name = 'event_file'
+--	and (
+--			s.name like 'SQLWATCH%'
+--		or	s.name = 'system_health'
+--		)
+--) as source
+--on source.session_name = target.session_name collate database_default
 
---remove any non existing sessions from our count table:
-when not matched by source then
-	delete
+--when matched then update
+--	set	  execution_count = 0
+--		, last_event_time = null
 
-when not matched then
-	insert (session_name, execution_count, last_event_time)
-	values (source.session_name, 0, null);
+
+
+----remove any non existing sessions from our count table:
+--when not matched by source then
+--	delete
+
+--when not matched then
+--	insert (session_name, execution_count, last_event_time)
+--	values (source.session_name, 0, null);
+
+-------------------------------------------------------------------------------------
+-- Enqueue Metadata into the collection queue
+------------------------------------------------------------------------------------- 
+exec [dbo].[usp_sqlwatch_local_meta_add];
+
+-------------------------------------------------------------------------------------
+-- seed exec and collection timers
+-------------------------------------------------------------------------------------
+exec [dbo].[usp_sqlwatch_config_broker_seed_internal_exec_timers];
+exec [dbo].[usp_sqlwatch_config_broker_seed_collection_exec_timers];

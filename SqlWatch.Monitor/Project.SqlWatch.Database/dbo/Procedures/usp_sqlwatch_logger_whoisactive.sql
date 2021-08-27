@@ -54,7 +54,7 @@ set xact_abort on;
 			-- snapshot_time and enforce referential integrity with the header table and
 			-- to apply any additional filtering:
 
-			exec [dbo].[usp_sqlwatch_internal_insert_header] 
+			exec [dbo].[usp_sqlwatch_internal_logger_new_header] 
 				@snapshot_time_new = @snapshot_time OUTPUT,
 				@snapshot_type_id = @snapshot_type_id;
 
@@ -78,7 +78,7 @@ set xact_abort on;
 		end;
 	else
 		begin
-				exec [dbo].[usp_sqlwatch_internal_log]
+				exec [dbo].[usp_sqlwatch_internal_app_log_add_message]
 					@proc_id = @@PROCID,
 					@process_stage = '9EB9405D-C924-4E92-88E1-1CB5E24F3733',
 					@process_message = 'sp_WhoIsActive is not found',

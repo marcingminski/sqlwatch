@@ -13,7 +13,6 @@
 )
 as
 
-set xact_abort on;
 set nocount on;
 
 set @report_style_id = case 

@@ -32,7 +32,6 @@ create trigger trg_sqlwatch_meta_server_last_updated
 	as
 	begin
 		set nocount on;
-		set xact_abort on;
 
 		update t
 			set date_updated = getutcdate()
@@ -50,7 +49,6 @@ create trigger dbo.trg_sqlwatch_meta_server_delete_import_status
 	as
 	begin
 		set nocount on;
-		set xact_abort on;
 
 		delete from [dbo].[sqlwatch_meta_repository_import_status]
 		where [sql_instance] in (
@@ -67,7 +65,6 @@ create trigger dbo.trg_sqlwatch_meta_server_delete_header
 	as
 	begin
 		set nocount on;
-		set xact_abort on;
 
 		declare @rowcount bigint = 1,
 				@rowcounttotal bigint = 0,

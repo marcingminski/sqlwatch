@@ -13,8 +13,6 @@ Post-Deployment Script Template
 --------------------------------------------------------------------------------------
 -- set baseline for empty last_seen dates (when upgrading from previous versions)
 --------------------------------------------------------------------------------------
-declare @sql varchar(max)
-
 set @sql = ''
 
 select @sql = @sql + '

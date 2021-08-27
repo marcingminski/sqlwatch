@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[sqlwatch_logger_system_configuration]
 (
 	sql_instance varchar(32) not null default @@SERVERNAME,
-	sqlwatch_configuration_id smallint not null,
+	sqlwatch_configuration_id int not null,
 	value int not null,
 	value_in_use int not null,
 	snapshot_time datetime2(0),

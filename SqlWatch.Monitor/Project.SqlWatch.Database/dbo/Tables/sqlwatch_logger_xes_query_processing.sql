@@ -18,7 +18,3 @@
 		references [dbo].[sqlwatch_meta_server] ([servername]) on delete cascade
 );
 go
-
-create unique nonclustered index idx_sqlwatch_xes_query_processing_event_time
-	on [dbo].[sqlwatch_logger_xes_query_processing] ([event_time]);
-go

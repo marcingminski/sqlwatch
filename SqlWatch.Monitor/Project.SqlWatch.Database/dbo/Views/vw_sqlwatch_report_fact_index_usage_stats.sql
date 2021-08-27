@@ -22,7 +22,7 @@ select [sqlwatch_database_id], [sqlwatch_table_id], [sqlwatch_index_id], [used_p
 , d.snapshot_time
 , show_usage_stats = convert(bit,1)
 , d.snapshot_type_id
-from [dbo].[sqlwatch_logger_index_usage_stats] d
+from [dbo].[sqlwatch_logger_dm_db_index_usage_stats] d
   	inner join dbo.sqlwatch_logger_snapshot_header h
 		on  h.snapshot_time = d.[snapshot_time]
 		and h.snapshot_type_id = d.snapshot_type_id

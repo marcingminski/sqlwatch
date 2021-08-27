@@ -147,12 +147,13 @@ begin
 					   ,[use_baseline]
 					from [dbo].[sqlwatch_config_check_template] c
 					cross apply (
-						select *
+						select *, is_current=ROW_NUMBER() over (partition by job_name order by job_create_date desc)
 						from [dbo].[vw_sqlwatch_report_dim_agent_job]
 						where sql_instance = @sql_instance
 						) d
 					where c.check_name = @check_name
 					and c.expand_by = @expand_by
+					and d.is_current = 1
 				end
 
 			if @expand_by = 'Database'
@@ -209,7 +210,6 @@ begin
 
 	close cur_expand_by_server
 	deallocate cur_expand_by_server;
-
 
 	;merge [dbo].[sqlwatch_config_check] as target 
 	using @checks as source
@@ -289,13 +289,14 @@ begin
 			   ,[date_created]=GETUTCDATE()
 			   ,[date_updated]=GETUTCDATE()
 		
-			from @checks c
+			from [dbo].[sqlwatch_config_check] cc
+
 			inner join [dbo].[sqlwatch_config_check_template]  ct
-				on ct.check_template_id = c.check_template_id
+				on ct.check_template_id = cc.check_template_id
+
 			inner join [dbo].[sqlwatch_config_check_template_action] a
 				on a.check_name = ct.check_name
-			inner join [dbo].[sqlwatch_config_check] cc
-				on cc.check_name = ct.check_name
+			
 			) as source
 		on source.check_id = target.check_id
 		and source.action_id = target.action_id

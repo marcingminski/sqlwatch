@@ -15,7 +15,7 @@ declare @sql nvarchar(max),
 	where sql_instance = @@SERVERNAME
 	and snapshot_type_id = @snapshot_type_id
 
-	exec [dbo].[usp_sqlwatch_internal_insert_header] 
+	exec [dbo].[usp_sqlwatch_internal_app_log_add_messageger_new_header] 
 		@snapshot_time_new = @snapshot_time OUTPUT,
 		@snapshot_type_id = @snapshot_type_id
 
@@ -27,7 +27,7 @@ declare @tablecount bigint,
 select @tablecount = count(*) from [?].INFORMATION_SCHEMA.TABLES where TABLE_TYPE = ''BASE TABLE''
 set @process_message = ''Collecting table size for database [?]. Total tables: '' + convert(varchar(10),@tablecount) + ''.''
 
-exec [dbo].[usp_sqlwatch_internal_log]
+exec [dbo].[usp_sqlwatch_internal_app_log_add_message]
 	@proc_id = ' + convert(varchar(10),@@PROCID) + ',
 	@process_stage = ''5A046B12-0CF5-4D14-8777-48AAEC8CAA70'',
 	@process_message = @process_message,

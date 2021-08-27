@@ -7,6 +7,7 @@
 	[procedure_type] char(1) not null,
 	[date_first_seen] datetime not null,
 	[date_last_seen] datetime not null,
+	last_usage_stats_snapshot_time datetime2(0)
 
 	constraint pk_sqlwatch_meta_procedure primary key clustered (
 		[sql_instance], [sqlwatch_database_id], [sqlwatch_procedure_id]

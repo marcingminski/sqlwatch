@@ -33,7 +33,3 @@
 		on delete cascade on update cascade
 )
 go
-
---CREATE NONCLUSTERED INDEX idx_sqlwatch_disk_util_database_001
---ON [dbo].[sqlwatch_logger_disk_utilisation_database] ([sql_instance])
---INCLUDE ([snapshot_time],[snapshot_type_id])

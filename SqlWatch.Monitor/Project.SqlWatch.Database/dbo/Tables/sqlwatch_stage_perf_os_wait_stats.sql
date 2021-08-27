@@ -6,8 +6,9 @@
 	[max_wait_time_ms] [bigint] NOT NULL,
 	[signal_wait_time_ms] [bigint] NOT NULL,
 	snapshot_time datetime2(0),
-	wait_type_id smallint not null, 
+	wait_type_id int not null, 
+	sql_instance varchar(32) not null default @@SERVERNAME
 	constraint pk_sqlwatch_stage_perf_os_wait_stats primary key clustered (
-		snapshot_time, wait_type_id
+		snapshot_time, wait_type_id, sql_instance
 		)
 )

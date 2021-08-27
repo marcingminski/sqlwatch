@@ -11,6 +11,7 @@
 	cpu_time real not null,
 	reads real not null,
 	writes real not null,
+	memory_usage real,
 
 	constraint pk_sqlwatch_logger_dm_exec_sessions  primary key clustered
 	(

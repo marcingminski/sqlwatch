@@ -84,7 +84,7 @@ declare @snapshot_type_id tinyint = 18,
 
 declare @mail_return_code int
 
-exec [dbo].[usp_sqlwatch_internal_insert_header] 
+exec [dbo].[usp_sqlwatch_internal_logger_new_header] 
 	@snapshot_time_new = @snapshot_time OUTPUT,
 	@snapshot_type_id = @snapshot_type_id
 
@@ -184,7 +184,7 @@ SET ANSI_WARNINGS OFF
 
 				select FAILED_QUERY = @check_query, ERROR_MESSAGE = ERROR_MESSAGE()				
 
-				exec [dbo].[usp_sqlwatch_internal_log]
+				exec [dbo].[usp_sqlwatch_internal_app_log_add_message]
 					@proc_id = @@PROCID,
 					@process_stage = '5980A79A-D6BC-4BA0-8B86-A388E8DB621D',
 					@process_message = @error_message,
@@ -192,7 +192,7 @@ SET ANSI_WARNINGS OFF
 			end
 		else
 			begin
-				exec [dbo].[usp_sqlwatch_internal_log]
+				exec [dbo].[usp_sqlwatch_internal_app_log_add_message]
 					@proc_id = @@PROCID,
 					@process_stage = 'ED7B7EC1-6F0A-4B23-909E-7BB1D37B300D',
 					@process_message = @error_message,
@@ -242,7 +242,7 @@ SET ANSI_WARNINGS OFF
 			if (dbo.ufn_sqlwatch_get_config_value(11,null) = 1)
 				begin
 					set @error_message = 'Check (Id: ' + convert(varchar(10),@check_id) + ') is flapping.'
-					exec [dbo].[usp_sqlwatch_internal_log]
+					exec [dbo].[usp_sqlwatch_internal_app_log_add_message]
 							@proc_id = @@PROCID,
 							@process_stage = '040D0A86-83B8-4543-A34C-9F328DAE5488',
 							@process_message = @error_message,
@@ -398,11 +398,11 @@ If the check satisfies either of these thresholds we are going to set the check 
 
 					--we have baseline, use it
 					--set @error_message = 'Check (Id: ' + convert(varchar(10),@check_id) + ') baseline value (' + @check_critical_threshold_baseline + ')'
-					exec [dbo].[usp_sqlwatch_internal_log]
+					exec [dbo].[usp_sqlwatch_internal_app_log_add_message]
 							@proc_id = @@PROCID,
 							@process_stage = '55C51822-5204-42B0-97A6-039608B9ACB8',
 							@process_message = @error_message,
-							@process_message_type = 'INFO'
+							@process_message_type = 'VERBOSE'
 
 				end
 	end try
@@ -431,7 +431,7 @@ dbo.ufn_sqlwatch_get_config_value ( 16, null ): %i
 			,@check_warning_threshold
 		)
 
-		exec [dbo].[usp_sqlwatch_internal_log]
+		exec [dbo].[usp_sqlwatch_internal_app_log_add_message]
 			@proc_id = @@PROCID,
 			@process_stage = 'D17BF7E2-55FC-4B96-ABE3-8BD299924B6B',
 			@process_message = @error_message,
@@ -488,7 +488,7 @@ dbo.ufn_sqlwatch_get_config_value ( 16, null ): %i
 						/*	logging header here so we only get one header for the batch of actions
 							datetime2(0) has a resolution of 1 second and if we had multuple actions, the below
 							procedure would have iterated quicker that that causing PK violation on insertion of the subsequent action headers	*/
-							exec [dbo].[usp_sqlwatch_internal_insert_header] 
+							exec [dbo].[usp_sqlwatch_internal_logger_new_header] 
 								@snapshot_time_new = @snapshot_time_action OUTPUT,
 								@snapshot_type_id = @snapshot_type_id_action
 
@@ -519,7 +519,7 @@ dbo.ufn_sqlwatch_get_config_value ( 16, null ): %i
 							--28B7A898-27D7-44C0-B6EB-5238021FD855
 							set @has_errors = 1				
 							set @error_message = 'Errors when processing Action (Id: ' + convert(varchar(10),@action_id) + ') for Check (Id: ' + convert(varchar(10),@check_id) + ')'
-							exec [dbo].[usp_sqlwatch_internal_log]
+							exec [dbo].[usp_sqlwatch_internal_app_log_add_message]
 								@proc_id = @@PROCID,
 								@process_stage = '28B7A898-27D7-44C0-B6EB-5238021FD855',
 								@process_message = @error_message,

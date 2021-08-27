@@ -71,5 +71,4 @@ else
 			begin
 				print @msg
 			end
-	end
-
+	end;

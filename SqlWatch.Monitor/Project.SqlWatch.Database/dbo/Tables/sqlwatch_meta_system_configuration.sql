@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[sqlwatch_meta_system_configuration]
 (
-	[sqlwatch_configuration_id] smallint identity(1,1) not null,
+	[sqlwatch_configuration_id] int identity(1,1) not null,
 	[sql_instance] varchar(32) not null constraint df_sqlwatch_meta_system_configuration_sql_instance default (@@SERVERNAME),
 	[configuration_id] int not null,
 	[name] nvarchar(128) not null,
@@ -28,7 +28,6 @@ create trigger trg_sqlwatch_meta_system_configuration_last_updated
 	as
 	begin
 		set nocount on;
-		set xact_abort on;
 
 		update t
 			set date_updated = getutcdate()

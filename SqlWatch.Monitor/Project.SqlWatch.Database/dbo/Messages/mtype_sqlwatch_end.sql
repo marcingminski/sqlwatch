@@ -1,0 +1,2 @@
+﻿CREATE MESSAGE TYPE [mtype_sqlwatch_end]
+	VALIDATION = NONE

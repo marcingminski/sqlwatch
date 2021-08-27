@@ -2,7 +2,7 @@
 (
 	@type varchar(50)
 )
-returns decimal(10,2) as
+returns decimal(10,2) with schemabinding as
 begin
 	return (select case 
 		when upper(@type) = 'MAJOR' then substring(product_version, 1,charindex('.', product_version) + 1 )

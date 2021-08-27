@@ -248,7 +248,7 @@ close c_index
 deallocate c_index 
 
 
-	exec [dbo].[usp_sqlwatch_internal_insert_header] 
+	exec [dbo].[usp_sqlwatch_internal_logger_new_header] 
 		@snapshot_time_new = @snapshot_time OUTPUT,
 		@snapshot_type_id = @snapshot_type_id
 

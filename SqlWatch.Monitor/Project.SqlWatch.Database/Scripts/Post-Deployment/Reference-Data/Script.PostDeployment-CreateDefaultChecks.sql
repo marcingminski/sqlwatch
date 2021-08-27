@@ -197,7 +197,7 @@ It would not be enough to just check the last outcome, we have to check the hist
 
 		--[check_query]
 		,'select @output = count(distinct l.sqlwatch_job_id) 
-  from [dbo].[sqlwatch_logger_agent_job_history] l
+  from [dbo].[sqlwatch_logger_sysjobhistory] l
   inner join sqlwatch_meta_agent_job m
   on m.sql_instance = l.sql_instance
   and m.sqlwatch_job_id = l.sqlwatch_job_id
@@ -427,16 +427,19 @@ In the Cloud, where CPUs are expesinve we will aim at high utilistaion for BAU w
 On-prem utilisation, where adding new nodes is not so easy we must account for spikes and therefore BAU utilisation should be low.'
 
 		--[check_query]
-		,'select @output=avg(q.cntr_value_calculated)
-from (select pc.snapshot_time, sum(pc.cntr_value_calculated) cntr_value_calculated from  [dbo].[sqlwatch_logger_perf_os_performance_counters] pc
-inner join [dbo].[sqlwatch_meta_performance_counter] mpc
-	on pc.sql_instance = mpc.sql_instance
-	and pc.performance_counter_id = mpc.performance_counter_id
-where mpc.sql_instance = ''{SQL_INSTANCE}''
-  and object_name = ''Win32_PerfFormattedData_PerfOS_Processor''
-  and counter_name = ''Processor Time %''
-  and snapshot_time > ''{LAST_CHECK_DATE}'' 
-group by pc.snapshot_time ) q
+		,'select @output=avg(q.cntr_value_calculated_avg)
+from (select pc.snapshot_time, sum(pc.cntr_value_calculated_avg) cntr_value_calculated_avg 
+	from  [dbo].[sqlwatch_trend_logger_dm_os_performance_counters] pc
+	inner join [dbo].[sqlwatch_meta_dm_os_performance_counters] mpc
+		on pc.sql_instance = mpc.sql_instance
+		and pc.performance_counter_id = mpc.performance_counter_id
+	where mpc.sql_instance = ''{SQL_INSTANCE}''
+	  and object_name = ''Win32_PerfFormattedData_PerfOS_Processor''
+	  and counter_name = ''Processor Time %''
+	  and snapshot_time > ''{LAST_CHECK_DATE}'' 
+	  and snapshot_type_id = 33
+	group by pc.snapshot_time 
+	) q
 '
 
 		, 5 --[check_frequency_minutes]
@@ -467,6 +470,7 @@ from [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters_rate]
 where counter_name = ''Full Scan Rate''
 and sql_instance = ''{SQL_INSTANCE}''
 and snapshot_time > ''{LAST_CHECK_DATE}''
+and snapshot_type_id = 33
 '
 
 		, 15 --[check_frequency_minutes]
@@ -498,6 +502,7 @@ from [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters_rate]
 where counter_name = ''SQL Compilations Rate''
 and sql_instance = ''{SQL_INSTANCE}''
 and snapshot_time > ''{LAST_CHECK_DATE}''
+and snapshot_type_id = 33
 '
 
 		, 15 --[check_frequency_minutes]
@@ -529,6 +534,7 @@ from [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters_rate]
 where counter_name = ''SQL Re-Compilation Rate''
 and sql_instance = ''{SQL_INSTANCE}''
 and snapshot_time > ''{LAST_CHECK_DATE}''
+and snapshot_type_id = 33
 '
 
 		, 15 --[check_frequency_minutes]
@@ -559,6 +565,7 @@ from [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters_rate]
 where counter_name = ''Page Split Rate''
 and sql_instance = ''{SQL_INSTANCE}''
 and snapshot_time > ''{LAST_CHECK_DATE}''
+and snapshot_type_id = 33
 '
 
 		, 15 --[check_frequency_minutes]
@@ -583,14 +590,15 @@ Any value above 2 means SQL Server needs more memory.number of requests per seco
 The recomended value is < 2'
 
 		--[check_query]
-		,'select @output=avg(pc.cntr_value_calculated)
-from [dbo].[sqlwatch_logger_perf_os_performance_counters] pc
-inner join [dbo].[sqlwatch_meta_performance_counter] mpc
+		,'select @output=avg(pc.cntr_value_calculated_avg)
+from [dbo].[sqlwatch_trend_logger_dm_os_performance_counters] pc
+inner join [dbo].[sqlwatch_meta_dm_os_performance_counters] mpc
 	on pc.sql_instance = mpc.sql_instance
 	and pc.performance_counter_id = mpc.performance_counter_id
 where mpc.sql_instance = ''{SQL_INSTANCE}''
   and counter_name = ''Free list stalls/sec''
 and snapshot_time > ''{LAST_CHECK_DATE}''
+and snapshot_type_id = 33
 '
 
 		, 15 --[check_frequency_minutes]
@@ -615,14 +623,15 @@ Lower is better with zero being ideal. When greater than 20, this counter indica
 The recomended value is < 20'
 
 		--[check_query]
-		,'select @output=avg(pc.cntr_value_calculated)
-from [dbo].[sqlwatch_logger_perf_os_performance_counters] pc
-inner join [dbo].[sqlwatch_meta_performance_counter] mpc
+		,'select @output=avg(pc.cntr_value_calculated_avg)
+from [dbo].[sqlwatch_trend_logger_dm_os_performance_counters] pc
+inner join [dbo].[sqlwatch_meta_dm_os_performance_counters] mpc
 	on pc.sql_instance = mpc.sql_instance
 	and pc.performance_counter_id = mpc.performance_counter_id
 where mpc.sql_instance = ''{SQL_INSTANCE}''
   and counter_name = ''Lazy writes/sec''
 and snapshot_time > ''{LAST_CHECK_DATE}''
+and snapshot_type_id = 33
 '
 
 		, 15 --[check_frequency_minutes]
@@ -647,14 +656,15 @@ Normal OLTP workloads support 80 – 90 per second, but higher values may be a y
 The recomended value is < 90'
 
 		--[check_query]
-		,'select @output=avg(pc.cntr_value_calculated)
-from [dbo].[sqlwatch_logger_perf_os_performance_counters] pc
-inner join [dbo].[sqlwatch_meta_performance_counter] mpc
+		,'select @output=avg(pc.cntr_value_calculated_avg)
+from [dbo].[sqlwatch_trend_logger_dm_os_performance_counters] pc
+inner join [dbo].[sqlwatch_meta_dm_os_performance_counters] mpc
 	on pc.sql_instance = mpc.sql_instance
 	and pc.performance_counter_id = mpc.performance_counter_id
 where mpc.sql_instance = ''{SQL_INSTANCE}''
   and counter_name = ''Page reads/sec''
 and snapshot_time > ''{LAST_CHECK_DATE}''
+and snapshot_type_id = 33
 '
 
 		, 15 --[check_frequency_minutes]
@@ -684,6 +694,8 @@ from [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters_rate]
 where counter_name = ''Page Lookups Rate''
 and sql_instance = ''{SQL_INSTANCE}''
 and snapshot_time > ''{LAST_CHECK_DATE}''
+and snapshot_type_id = 33
+
 '
 
 		, 15 --[check_frequency_minutes]
@@ -709,14 +721,15 @@ If the other counters are also high, then it may indicate insufficient memory.
 The recomended value is < 90'
 
 		--[check_query]
-		,'select @output=avg(pc.cntr_value_calculated)
-from [dbo].[sqlwatch_logger_perf_os_performance_counters] pc
-inner join [dbo].[sqlwatch_meta_performance_counter] mpc
+		,'select @output=avg(pc.cntr_value_calculated_avg)
+from [dbo].[sqlwatch_trend_logger_dm_os_performance_counters] pc
+inner join [dbo].[sqlwatch_meta_dm_os_performance_counters] mpc
 	on pc.sql_instance = mpc.sql_instance
 	and pc.performance_counter_id = mpc.performance_counter_id
 where mpc.sql_instance = ''{SQL_INSTANCE}''
   and counter_name in (''Page writes/sec'')
 and snapshot_time > ''{LAST_CHECK_DATE}''
+and snapshot_type_id = 33
 '
 
 		, 15 --[check_frequency_minutes]
@@ -742,14 +755,15 @@ This value should generally correlate to "Lock Waits/sec" and move up or down wi
 The recomended value is <500'
 
 		--[check_query]
-		,'select @output=avg(pc.cntr_value_calculated)
-from [dbo].[sqlwatch_logger_perf_os_performance_counters] pc
-inner join [dbo].[sqlwatch_meta_performance_counter] mpc
+		,'select @output=avg(pc.cntr_value_calculated_avg)
+from [dbo].[sqlwatch_trend_logger_dm_os_performance_counters] pc
+inner join [dbo].[sqlwatch_meta_dm_os_performance_counters] mpc
 	on pc.sql_instance = mpc.sql_instance
 	and pc.performance_counter_id = mpc.performance_counter_id
 where mpc.sql_instance = ''{SQL_INSTANCE}''
   and counter_name in (''Average Wait Time (ms)'')
 and snapshot_time > ''{LAST_CHECK_DATE}''
+and snapshot_type_id = 33
 '
 
 		, 15 --[check_frequency_minutes]
@@ -775,14 +789,15 @@ Values > 1000 may indicate queries are accessing very large numbers of rows and 
 The recomended value is < 1000'
 
 		--[check_query]
-		,'select @output=avg(pc.cntr_value_calculated)
-from [dbo].[sqlwatch_logger_perf_os_performance_counters] pc
-inner join [dbo].[sqlwatch_meta_performance_counter] mpc
+		,'select @output=avg(pc.cntr_value_calculated_avg)
+from [dbo].[sqlwatch_trend_logger_dm_os_performance_counters] pc
+inner join [dbo].[sqlwatch_meta_dm_os_performance_counters] mpc
 	on pc.sql_instance = mpc.sql_instance
 	and pc.performance_counter_id = mpc.performance_counter_id
 where mpc.sql_instance = ''{SQL_INSTANCE}''
   and counter_name in (''Lock Requests/sec'')
 and snapshot_time > ''{LAST_CHECK_DATE}''
+and snapshot_type_id = 33
 '
 
 		, 15 --[check_frequency_minutes]
@@ -807,14 +822,15 @@ A value greater than zero might indicate that user queries are not completing. T
 The recomended value is <1'
 
 		--[check_query]
-		,'select @output=avg(pc.cntr_value_calculated)
-from [dbo].[sqlwatch_logger_perf_os_performance_counters] pc
-inner join [dbo].[sqlwatch_meta_performance_counter] mpc
+		,'select @output=avg(pc.cntr_value_calculated_avg)
+from [dbo].[sqlwatch_trend_logger_dm_os_performance_counters] pc
+inner join [dbo].[sqlwatch_meta_dm_os_performance_counters] mpc
 	on pc.sql_instance = mpc.sql_instance
 	and pc.performance_counter_id = mpc.performance_counter_id
 where mpc.sql_instance = ''{SQL_INSTANCE}''
   and counter_name in (''Lock Timeouts/sec'')
 and snapshot_time > ''{LAST_CHECK_DATE}''
+and snapshot_type_id = 33
 '
 
 		, 15 --[check_frequency_minutes]
@@ -840,14 +856,15 @@ As with "Lock Wait Time", lock waits are not recorded by PerfMon until after the
 The recomended value is 0'
 
 		--[check_query]
-		,'select @output=avg(pc.cntr_value_calculated)
-from [dbo].[sqlwatch_logger_perf_os_performance_counters] pc
-inner join [dbo].[sqlwatch_meta_performance_counter] mpc
+		,'select @output=avg(pc.cntr_value_calculated_avg)
+from [dbo].[sqlwatch_trend_logger_dm_os_performance_counters] pc
+inner join [dbo].[sqlwatch_meta_dm_os_performance_counters] mpc
 	on pc.sql_instance = mpc.sql_instance
 	and pc.performance_counter_id = mpc.performance_counter_id
 where mpc.sql_instance = ''{SQL_INSTANCE}''
   and counter_name in (''Lock Waits/sec'')
 and snapshot_time > ''{LAST_CHECK_DATE}''
+and snapshot_type_id = 33
 '
 
 		, 15 --[check_frequency_minutes]
@@ -872,15 +889,16 @@ If this value is makes up even a sizeable minority of total Page Reads/sec (say,
 The recomended value is < 20% of Page Reads/ sec'
 
 		--[check_query]
-		,'select @output=case when avg(case when counter_name = ''Page reads/sec'' then pc.cntr_value_calculated else null end) > 0 then 
-	avg(case when counter_name = ''Readahead pages/sec'' then pc.cntr_value_calculated else null end) / avg(case when counter_name = ''Page reads/sec'' then pc.cntr_value_calculated else null end) else 0 end
-from [dbo].[sqlwatch_logger_perf_os_performance_counters] pc
-inner join [dbo].[sqlwatch_meta_performance_counter] mpc
+		,'select @output=case when avg(case when counter_name = ''Page reads/sec'' then pc.cntr_value_calculated_avg else null end) > 0 then 
+	avg(case when counter_name = ''Readahead pages/sec'' then pc.cntr_value_calculated_avg else null end) / avg(case when counter_name = ''Page reads/sec'' then pc.cntr_value_calculated_avg else null end) else 0 end
+from [dbo].[sqlwatch_trend_logger_dm_os_performance_counters] pc
+inner join [dbo].[sqlwatch_meta_dm_os_performance_counters] mpc
 	on pc.sql_instance = mpc.sql_instance
 	and pc.performance_counter_id = mpc.performance_counter_id
 where mpc.sql_instance = ''{SQL_INSTANCE}''
   and counter_name in (''Readahead pages/sec'',''Page reads/sec'')
 and snapshot_time > ''{LAST_CHECK_DATE}''
+and snapshot_type_id = 33
 '
 
 		, 15 --[check_frequency_minutes]
@@ -906,14 +924,15 @@ Excessive deadlocking indicates a table or index design error or bad application
 The recomended value is <1'
 
 		--[check_query]
-		,'select @output=avg(pc.cntr_value_calculated)
-from [dbo].[sqlwatch_logger_perf_os_performance_counters] pc
-inner join [dbo].[sqlwatch_meta_performance_counter] mpc
+		,'select @output=avg(pc.cntr_value_calculated_avg)
+from [dbo].[sqlwatch_trend_logger_dm_os_performance_counters] pc
+inner join [dbo].[sqlwatch_meta_dm_os_performance_counters] mpc
 	on pc.sql_instance = mpc.sql_instance
 	and pc.performance_counter_id = mpc.performance_counter_id
 where mpc.sql_instance = ''{SQL_INSTANCE}''
   and counter_name in (''Number of Deadlocks/sec'')
 and snapshot_time > ''{LAST_CHECK_DATE}''
+and snapshot_type_id = 33
 '
 
 		, 15 --[check_frequency_minutes]
@@ -937,14 +956,15 @@ and snapshot_time > ''{LAST_CHECK_DATE}''
 The recomended value is < 1'
 
 		--[check_query]
-		,'select @output=avg(pc.cntr_value_calculated)
-from [dbo].[sqlwatch_logger_perf_os_performance_counters] pc
-inner join [dbo].[sqlwatch_meta_performance_counter] mpc
+		,'select @output=avg(pc.cntr_value_calculated_avg)
+from [dbo].[sqlwatch_trend_logger_dm_os_performance_counters] pc
+inner join [dbo].[sqlwatch_meta_dm_os_performance_counters] mpc
 	on pc.sql_instance = mpc.sql_instance
 	and pc.performance_counter_id = mpc.performance_counter_id
 where mpc.sql_instance = ''{SQL_INSTANCE}''
   and counter_name in (''Memory Grants Outstanding'')
 and snapshot_time > ''{LAST_CHECK_DATE}''
+and snapshot_type_id = 33
 '
 
 		, 15 --[check_frequency_minutes]
@@ -968,14 +988,15 @@ and snapshot_time > ''{LAST_CHECK_DATE}''
 The recomended value is < 1'
 
 		--[check_query]
-		,'select @output=avg(pc.cntr_value_calculated)
-from [dbo].[sqlwatch_logger_perf_os_performance_counters] pc
-inner join [dbo].[sqlwatch_meta_performance_counter] mpc
+		,'select @output=avg(pc.cntr_value_calculated_avg)
+from [dbo].[sqlwatch_trend_logger_dm_os_performance_counters] pc
+inner join [dbo].[sqlwatch_meta_dm_os_performance_counters] mpc
 	on pc.sql_instance = mpc.sql_instance
 	and pc.performance_counter_id = mpc.performance_counter_id
 where mpc.sql_instance = ''{SQL_INSTANCE}''
   and counter_name in (''Memory Grants Pending'')
 and snapshot_time > ''{LAST_CHECK_DATE}''
+and snapshot_type_id = 33
 '
 
 		, 15 --[check_frequency_minutes]
@@ -1003,14 +1024,15 @@ Only be concerned by this counter if it''s value is regularly below 90 (for OLTP
 The recomended value is 100'
 
 		--[check_query]
-		,'select @output=avg(pc.cntr_value_calculated)
-from [dbo].[sqlwatch_logger_perf_os_performance_counters] pc
-inner join [dbo].[sqlwatch_meta_performance_counter] mpc
+		,'select @output=avg(pc.cntr_value_calculated_avg)
+from [dbo].[sqlwatch_trend_logger_dm_os_performance_counters] pc
+inner join [dbo].[sqlwatch_meta_dm_os_performance_counters] mpc
 	on pc.sql_instance = mpc.sql_instance
 	and pc.performance_counter_id = mpc.performance_counter_id
 where mpc.sql_instance = ''{SQL_INSTANCE}''
   and counter_name in (''Buffer cache hit ratio'')
 and snapshot_time > ''{LAST_CHECK_DATE}''
+and snapshot_type_id = 33
 '
 
 		, 15 --[check_frequency_minutes]
@@ -1036,14 +1058,15 @@ When under 300, this may indicate poor index design (leading to increased disk I
 The recomended value is >300'
 
 		--[check_query]
-		,'select @output=avg(pc.cntr_value_calculated)
-from [dbo].[sqlwatch_logger_perf_os_performance_counters] pc
-inner join [dbo].[sqlwatch_meta_performance_counter] mpc
+		,'select @output=avg(pc.cntr_value_calculated_avg)
+from [dbo].[sqlwatch_trend_logger_dm_os_performance_counters] pc
+inner join [dbo].[sqlwatch_meta_dm_os_performance_counters] mpc
 	on pc.sql_instance = mpc.sql_instance
 	and pc.performance_counter_id = mpc.performance_counter_id
 where mpc.sql_instance = ''{SQL_INSTANCE}''
   and counter_name in (''Page life expectancy'')
 and snapshot_time > ''{LAST_CHECK_DATE}''
+and snapshot_type_id = 33
 '
 
 		, 15 --[check_frequency_minutes]
@@ -1067,14 +1090,15 @@ and snapshot_time > ''{LAST_CHECK_DATE}''
 The recomended value is <2'
 
 		--[check_query]
-		,'select @output=avg(pc.cntr_value_calculated)
-from [dbo].[sqlwatch_logger_perf_os_performance_counters] pc
-inner join [dbo].[sqlwatch_meta_performance_counter] mpc
+		,'select @output=avg(pc.cntr_value_calculated_avg)
+from [dbo].[sqlwatch_trend_logger_dm_os_performance_counters] pc
+inner join [dbo].[sqlwatch_meta_dm_os_performance_counters] mpc
 	on pc.sql_instance = mpc.sql_instance
 	and pc.performance_counter_id = mpc.performance_counter_id
 where mpc.sql_instance = ''{SQL_INSTANCE}''
   and counter_name in (''Logins/sec'')
 and snapshot_time > ''{LAST_CHECK_DATE}''
+and snapshot_type_id = 33
 '
 
 		, 15 --[check_frequency_minutes]
@@ -1099,15 +1123,16 @@ Since these are severe errors, they should occur very infrequently.
 The recomended value is 0'
 
 		--[check_query]
-		,'select @output=avg(pc.cntr_value_calculated)
-from [dbo].[sqlwatch_logger_perf_os_performance_counters] pc
-inner join [dbo].[sqlwatch_meta_performance_counter] mpc
+		,'select @output=avg(pc.cntr_value_calculated_avg)
+from [dbo].[sqlwatch_trend_logger_dm_os_performance_counters] pc
+inner join [dbo].[sqlwatch_meta_dm_os_performance_counters] mpc
 	on pc.sql_instance = mpc.sql_instance
 	and pc.performance_counter_id = mpc.performance_counter_id
 where mpc.sql_instance = ''{SQL_INSTANCE}''
   and counter_name in (''Errors/sec'')
   and instance_name <> ''User Errors''
 and snapshot_time > ''{LAST_CHECK_DATE}''
+and snapshot_type_id = 33
 '
 
 		, 15 --[check_frequency_minutes]
@@ -1137,14 +1162,15 @@ To be notified about every grow event, we can set @action_every_failure = 1 but 
 The recomended value is 0'
 
 		--[check_query]
-		,'select @output=avg(pc.cntr_value_calculated)
-from [dbo].[sqlwatch_logger_perf_os_performance_counters] pc
-inner join [dbo].[sqlwatch_meta_performance_counter] mpc
+		,'select @output=avg(pc.cntr_value_calculated_avg)
+from [dbo].[sqlwatch_trend_logger_dm_os_performance_counters] pc
+inner join [dbo].[sqlwatch_meta_dm_os_performance_counters] mpc
 	on pc.sql_instance = mpc.sql_instance
 	and pc.performance_counter_id = mpc.performance_counter_id
 where mpc.sql_instance = ''{SQL_INSTANCE}''
   and counter_name in (''Log Growths'')
 and snapshot_time > ''{LAST_CHECK_DATE}''
+and snapshot_type_id = 33
 '
 
 		, 15 --[check_frequency_minutes]
@@ -1180,90 +1206,7 @@ where Result = ''Failed'' AND [Date] >= ''{LAST_CHECK_DATE}''
 		,null --[expand_by]
 		,0 -- use_baseline
 		)
-	------------------------------------------------------------------------------------------------------------------------------------
-	-- Queued actions not processed
-	------------------------------------------------------------------------------------------------------------------------------------
-	,
-	(
-		--[check_name]
-		'Queued actions not processed'
-	
-		--[check_description]
-		,'There is one or more actions that have not been processed for more than 1 hour. 
-This could indicate problems with the action processing mechanism.'
 
-		--[check_query]
-		,'select @output=count(*)
-from [dbo].[sqlwatch_meta_action_queue]
-where exec_status is null
-and sql_instance = ''{SQL_INSTANCE}''
-and time_queued < dateadd(hour,-1,SYSDATETIME())
-'
-
-		, 15 --[check_frequency_minutes]
-		,null --[check_threshold_warning]
-		,'>0'  --[check_threshold_critical]
-		,1 --[check_enabled]	
-		,0 --[ignore_flapping]
-		,null --[expand_by]
-		,0 -- use_baseline
-		)
-	------------------------------------------------------------------------------------------------------------------------------------
-	-- Action queue pending items
-	------------------------------------------------------------------------------------------------------------------------------------
-	,
-	(
-		--[check_name]
-		'Action queue pending items'
-	
-		--[check_description]
-		,'There is a large number of items awaiting action. 
-This could indicate a problem with the action mechanism. 
-Note that in this context, the succesful action means that the item was succesfuly executed, for example sp_send_dbmail and not that the email was delivered.'
-
-		--[check_query]
-		,'select @output=count(*) 
-from dbo.sqlwatch_meta_action_queue 
-where (exec_status is null or exec_status not in (''OK'',''ERROR'',''FAILED''))
-and sql_instance = ''{SQL_INSTANCE}''
-and time_queued < dateadd(minute,-2,getdate())
-'
-
-		, 15 --[check_frequency_minutes]
-		,null --[check_threshold_warning]
-		,'>10'  --[check_threshold_critical]
-		,1 --[check_enabled]	
-		,0 --[ignore_flapping]
-		,null --[expand_by]
-		,0 -- use_baseline
-		)
-	------------------------------------------------------------------------------------------------------------------------------------
-	-- Action queue failed items
-	------------------------------------------------------------------------------------------------------------------------------------
-	,
-	(
-		--[check_name]
-		'Action queue failed items'
-	
-		--[check_description]
-		,'There is one or more failed items in the action queue.'
-
-		--[check_query]
-		,'select @output=count(*) 
-from dbo.sqlwatch_meta_action_queue 
-where exec_status in (''ERROR'',''FAILED'') 
-and [exec_time_end] >= dateadd(second,-1,''{LAST_CHECK_DATE}'')
-and sql_instance = ''{SQL_INSTANCE}''
-'
-
-		, 15 --[check_frequency_minutes]
-		,null --[check_threshold_warning]
-		,'>5'  --[check_threshold_critical]
-		,1 --[check_enabled]	
-		,0 --[ignore_flapping]
-		,null --[expand_by]
-		,0 -- use_baseline
-		)
 	------------------------------------------------------------------------------------------------------------------------------------
 	-- Check execution time
 	------------------------------------------------------------------------------------------------------------------------------------
@@ -1283,7 +1226,7 @@ You can view average check execution time in [dbo].[vw_sqlwatch_report_dim_check
 		--[check_query]
 		,'select @output=max([avg_check_exec_time_ms])
 from [dbo].[vw_sqlwatch_report_dim_check]
-where sql_instance = ''{SQL_INSTANCE}''
+where target_sql_instance = ''{SQL_INSTANCE}''
 '
 		, 15 --[check_frequency_minutes]
 		,null --[check_threshold_warning]
@@ -1348,240 +1291,29 @@ where snapshot_time >= ''{LAST_CHECK_DATE}'''
 
 --------------------------------------------------------------------------------------
 
---exec [dbo].[usp_sqlwatch_config_add_check]
---	 @check_id = -4
---	,@check_name = 'SQL Server Uptime'
---	,@check_description = 'SQL Server Uptime Minutes is lower than expected. The server could have been restared in the last 60 minutes.'
---	,@check_query = 'select @output=datediff(minute,sqlserver_start_time,getdate()) from sys.dm_os_sys_info'
---	,@check_frequency_minutes = 10
---	,@check_threshold_warning = NULL
---	,@check_threshold_critical = '<60'
---	,@check_enabled = 1
---	,@check_action_id = -1
---
---	,@action_every_failure = 0
---	,@action_recovery = 0
---	,@action_repeat_period_minutes = NULL
---	,@action_hourly_limit = 10
---	,@action_template_id = -3
-
---------------------------------------------------------------------------------------
-
-
-
---------------------------------------------------------------------------------------
-
-
---------------------------------------------------------------------------------------
-
-
-
--------------------------------------------------------------------------------------
-
-
-
---------------------------------------------------------------------------------------
-
--- this check is not very useful as long open transactions do not mean anything unless they are causing blocking, which we cover in another check.
---exec [dbo].[usp_sqlwatch_config_add_check]
---	 @check_id = -21
---	,@check_name = 'Long Running Open Transactions'
---	,@check_description = 'There is one or more long explicitly open transaction. This means that someone is running long queries with explicit BEGIN TRANSACTION. Whilst this may not necessarily be a problem, long open transactions can cause blocking and ultimately lead to an outage. This is especially important in OLTP systems, if you are running Data Warehouse you can probbaly ignore this alert or adjust threshold accordingly.'
---	,@check_query = 'select @output=isnull(max(datediff(second,transaction_begin_time,getdate())),0)
---from sys.dm_tran_active_transactions at
---inner join sys.dm_tran_session_transactions st
---	on at.transaction_id = st.transaction_id
---left join sys.dm_exec_requests r
---		on r.session_id = st.session_id
---	where st.session_id <> @@SPID
---	and st.session_id > 50
---	and r.last_wait_type not in (''BROKER_RECEIVE_WAITFOR'')'
---	,@check_frequency_minutes = null
---	,@check_threshold_warning = null 
---	,@check_threshold_critical = '>60' --seconds
---	,@check_enabled = 1
---	,@check_action_id = -15
---
---	,@action_every_failure = 1
---	,@action_recovery = 0
---	,@action_repeat_period_minutes = 1 
---	,@action_hourly_limit = 6
---	,@action_template_id = -2
-
---------------------------------------------------------------------------------------
-
-
-
---------------------------------------------------------------------------------------
-
-
-
---------------------------------------------------------------------------------------
-
-
-
---------------------------------------------------------------------------------------
-
-
-
---------------------------------------------------------------------------------------
-
-
-
---------------------------------------------------------------------------------------
-
-
-
---------------------------------------------------------------------------------------
-
-
-
---------------------------------------------------------------------------------------
-
-
-
---------------------------------------------------------------------------------------
-
-
-
---------------------------------------------------------------------------------------
-
-
-
---------------------------------------------------------------------------------------
-
-
-
---------------------------------------------------------------------------------------
-
-
-
---------------------------------------------------------------------------------------
-
-
-
---------------------------------------------------------------------------------------
-
-
-
---------------------------------------------------------------------------------------
-
-
-
---------------------------------------------------------------------------------------
-
-
-
---------------------------------------------------------------------------------------
-
-
-
---------------------------------------------------------------------------------------
-
-
-
---------------------------------------------------------------------------------------
-
-
-
---------------------------------------------------------------------------------------
-
-
-
---------------------------------------------------------------------------------------
-
-
-
---------------------------------------------------------------------------------------
-
---exec [dbo].[usp_sqlwatch_config_add_check]
---	 @check_id = -44
---	,@check_name = 'Snapshot age'
---	,@check_description = 'This could indicate that the data is not being collected.
---If this alerts on central repository, it could indicate that the remote data is no longer being imported but the remote collection is enabled.
---Disabled snapshots on the local instance are ignored but if you have disabled snapshots that are being collected by central repository, you will need to modify this check and exclude them, or delete any previously collected snapshots that are no longer collected from the central repository header table.
---You can use [dbo].[vw_sqlwatch_help_last_snapshot_time] to see latest snapshot time. '
---	,@check_query = 'select @output=max(snapshot_age_minutes)
---from [dbo].[vw_sqlwatch_help_last_snapshot_time]
---where snapshot_type_id in (1,6,7,8,10,18)'
---	,@check_frequency_minutes = 15
---	,@check_threshold_warning = '>10'
---	,@check_threshold_critical = '>60' 
---	,@check_enabled = 1
---	,@check_action_id = -1
-
---	,@action_every_failure = 0
---	,@action_recovery = 1
---	,@action_repeat_period_minutes = null 
---	,@action_hourly_limit = 6
---	,@action_template_id = -3
-
---------------------------------------------------------------------------------------
-
---exec [dbo].[usp_sqlwatch_config_add_check]
---	 @check_id = -45
---	,@check_name = 'Central Repository Import Errors'
---	,@check_description = 'Applies to central repository only. Checks for any objects in the [dbo].[sqlwatch_meta_repository_import_status] table that have import status of ERROR'
---	,@check_query = 'select @output=count(*)
---  from [dbo].[sqlwatch_meta_repository_import_status]
---  where import_status = ''ERROR'''
---	,@check_frequency_minutes = 15
---	,@check_threshold_warning = null
---	,@check_threshold_critical = '>0' 
---	,@check_enabled = 1
---	,@check_action_id = -1
---
---	,@action_every_failure = 0
---	,@action_recovery = 1
---	,@action_repeat_period_minutes = null 
---	,@action_hourly_limit = 6
---	,@action_template_id = -3
-
---------------------------------------------------------------------------------------
-
---xec [dbo].[usp_sqlwatch_config_add_check]
---	 @check_id = -46
---	,@check_name = 'Central Repository Import Age'
---	,@check_description = 'Applies to central repository only. Checks for import age of objects in the [dbo].[sqlwatch_meta_repository_import_status]'
---	,@check_query = 'select @output=isnull(max([import_age_minutes]),0)
--- from [dbo].[sqlwatch_meta_repository_import_status]'
---	,@check_frequency_minutes = 15
---	,@check_threshold_warning = '>15'
---	,@check_threshold_critical = '>60' 
---	,@check_enabled = 1
---	,@check_action_id = -1
---
---	,@action_every_failure = 0
---	,@action_recovery = 1
---	,@action_repeat_period_minutes = null 
---	,@action_hourly_limit = 6
---	,@action_template_id = -3
-
---------------------------------------------------------------------------------------
-
---exec [dbo].[usp_sqlwatch_config_add_check]
---	 @check_id = -47
---	,@check_name = 'SQLWATCH Errors'
---	,@check_description = 'Logger Log table is a central place for SQLWATCH to log execution messages. Any errors in this table could indicate serious problems with any SQLWATCH component.'
---	,@check_query = 'select @output=count(*) from [dbo].[sqlwatch_app_log]
---where [process_message_type] = ''ERROR''
---and [event_time] > ''{LAST_CHECK_DATE}'''
---	,@check_frequency_minutes = 60
---	,@check_threshold_warning = null
---	,@check_threshold_critical = '>0' 
---	,@check_enabled = 1
---	,@check_action_id = -1
---
---	,@action_every_failure = 0
---	,@action_recovery = 0
---	,@action_repeat_period_minutes = null 
---	,@action_hourly_limit = 6
---	,@action_template_id = -3
-
---------------------------------------------------------------------------------------
-
-
-
+merge [dbo].[sqlwatch_config_check_template_action] as target
+using @check_template as source
+on source.[check_name] = target.[check_name]
+
+when not matched then
+	insert (
+		[check_name]
+      ,[action_id]
+      ,[action_every_failure]
+      ,[action_recovery]
+      ,[action_repeat_period_minutes]
+      ,[action_hourly_limit]
+      ,[action_template_id]
+	  )
+	values (
+		source.check_name,
+		-3,
+		0,
+		1,
+		600,
+		2,
+		-4
+	);
 
 set identity_insert [dbo].[sqlwatch_config_check] off;
 --enable trigger dbo.trg_sqlwatch_config_check_U on [dbo].[sqlwatch_config_check];

@@ -41,6 +41,7 @@ set @sql = ''
 create table ##sqlwatch_jobs (
 	job_id tinyint identity (1,1),
 	job_name sysname primary key,
+	job_description nvarchar(2000),
 	freq_type int, 
 	freq_interval int, 
 	freq_subday_type int, 
@@ -57,175 +58,103 @@ create table ##sqlwatch_jobs (
 
 create table ##sqlwatch_steps (
 	step_name sysname,
-	step_id int,
+	step_id int identity(1,1),
 	job_name sysname,
 	step_subsystem sysname,
 	step_command varchar(max)
 	)
 
 declare @enabled tinyint = 1
-set @enabled = case when object_id('master.dbo.sp_whoisactive') is not null or object_id('dbo.sp_whoisactive') is not null then 1 else 0 end
 
 /* job definition must be in the right order as they are executed as part of deployment */
-insert into ##sqlwatch_jobs 
-			( job_name,							freq_type,	freq_interval,	freq_subday_type,	freq_subday_interval,	freq_relative_interval, freq_recurrence_factor,		active_start_date,	active_end_date,	active_start_time,	active_end_time,	job_enabled )
+insert into ##sqlwatch_jobs
+			( job_name,							job_description,	freq_type,	freq_interval,	freq_subday_type,	freq_subday_interval,	freq_relative_interval, freq_recurrence_factor	,	active_start_time,	job_enabled )
 	values	
-			('SQLWATCH-INTERNAL-CONFIG',		4,			1,				8,					1,						0,						1,							20180101,			99991231,			26,					235959,				1),
-
-			('SQLWATCH-LOGGER-PERFORMANCE',		4,			1,				2,					10,						0,						1,							20180101,			99991231,			12,					235959,				1),
-			('SQLWATCH-LOGGER-XES',				4,			1,				4,					1,						0,						1,							20180101,			99991231,			12,					235959,				1),
-			('SQLWATCH-LOGGER-AG',				4,			1,				4,					1,						0,						1,							20180101,			99991231,			12,					235959,				1),
-
-			('SQLWATCH-LOGGER-DISK-UTILISATION',4,			1,				8,					1,						0,						1,							20180101,			99991231,			437,				235959,				1),
-			('SQLWATCH-LOGGER-INDEXES',			4,			1,				1,					24,						0,						1,							20180101,			99991231,			1500,				235959,				1),
-			('SQLWATCH-LOGGER-AGENT-HISTORY',	4,			1,				4,					10,						0,						1,							20180101,			99991231,			0,					235959,				1),
-
-			('SQLWATCH-INTERNAL-RETENTION',		4,			1,				8,					1,						0,						1,							20180101,			99991231,			20,					235959,				1),
-			('SQLWATCH-INTERNAL-TRENDS',		4,			1,				4,					60,						0,						1,							20180101,			99991231,			150,				235959,				1),
-
-			('SQLWATCH-INTERNAL-ACTIONS',		4,			1,				2,					15,						0,						1,							20180101,			99991231,			2,					235959,				1),
-
-			('SQLWATCH-REPORT-AZMONITOR',		4,			1,				4,					10,						0,						1,							20180101,			99991231,			21,					235959,				1),
-			('SQLWATCH-LOGGER-WHOISACTIVE',		4,			1,				2,					15,						0,						0,							20180101,			99991231,			0,					235959,				@enabled),
-
-			('SQLWATCH-INTERNAL-CHECKS',		4,			1,				4,					1,						0,						1,							20180101,			99991231,			43,					235959,				1),
-			('SQLWATCH-LOGGER-SYSCONFIG',		4,			1,				1,					1,						0,						1,							20180101,			99991231,			0,					235959,				1)
-
-			--('SQLWATCH-USER-REPORTS',			4,		1,			1,				0,				0,					1,					20180101,	99991231, 80000,		235959,		1)
-			,('SQLWATCH-LOGGER-PROCS',			4,			1,				4,					10,						0,						0,							20180101,			99991231,			30,					235959,				1)
+			 ('SQLWATCH-DISK-UTILISATION',		'This job requires access to PowerShell and WMI to gather OS disk utilistaion. This is not something we can do via T-SQL without hacking xp_cmdshell.',
+																	4,			1,				8,					1,						0,						1,							437,				1)
+			,('SQLWATCH-PROCESS-ACTIONS',		'This job has no schedule and its invoked on demand by SQLWATCH. Do not add schedule and do not disable this job otherwise the queue will fill up if actions are enabled. To stop processing actions, disable individual actions in the config table.',				
+																	null,		null,			null,				null,					null,					null,						null,				1)
+			,('SQLWATCH-REPORT-AZMONITOR',		null,				4,			1,				4,					10,						0,						1,							21,					1)
 
 /* step definition */
 
-/*  Normally, the SQLWATCH-INTERNAL-META-CONFIG runs any metadata config procedures that collect reference data every hour. by reference data
-	we mean list of databases, tables, jobs, indexes etc. this is to reduce load during more frequent collectors such as the performance collector.
-	For obvious reasons, we would not want to collect list of tables every minute as that would be pointless however, in case of less frequent jobs such as disk collector 
-	and index collection, or those more time consuming and resource heavy, by exception, we will run meta data collection part of the data collector job rather than the standard meta-config job 
-	SQLWATCH tries to be as lightweight as possible and will not collect any data unles required.
-*/
+insert into ##sqlwatch_steps (step_name, job_name, step_subsystem, step_command) 
+	values
+			/* step name											job_name							subsystem,	command */
+			('dbo.usp_sqlwatch_internal_process_reports',			'SQLWATCH-REPORT-AZMONITOR',		'TSQL',		'exec dbo.usp_sqlwatch_internal_process_reports @report_batch_id = ''AzureLogMonitor-1'''),
+			('Process Actions',										'SQLWATCH-PROCESS-ACTIONS',			'PowerShell',N'
+$queueitem = "x";
 
-insert into ##sqlwatch_steps
-			/* step name											step_id,	job_name							subsystem,	command */
-	values	('dbo.usp_sqlwatch_logger_whoisactive',					1,			'SQLWATCH-LOGGER-WHOISACTIVE',		'TSQL',		'exec dbo.usp_sqlwatch_logger_whoisactive'),
+while ($queueitem -ne $null) 
+{
+    $queueitem = Invoke-Sqlcmd -ServerInstance "' + @server + '" -Database ' + '$(DatabaseName)' + ' -MaxCharLength 2147483647 -Query "
+		waitfor (
+			receive top (1)
+				conversation_handle,
+				CAST(message_body AS xml) as message_body,
+				message_type_name
+			from [dbo].[sqlwatch_actions]
+		), timeout = 300000;
+    ";
 
-			('dbo.usp_sqlwatch_logger_performance',					1,			'SQLWATCH-LOGGER-PERFORMANCE',		'TSQL',		'exec dbo.usp_sqlwatch_logger_performance'),
-			('dbo.usp_sqlwatch_logger_requests_and_sessions',		2,			'SQLWATCH-LOGGER-PERFORMANCE',		'TSQL',		'exec dbo.usp_sqlwatch_logger_requests_and_sessions'),
-			('dbo.usp_sqlwatch_logger_xes_blockers',				3,			'SQLWATCH-LOGGER-PERFORMANCE',		'TSQL',		'exec dbo.usp_sqlwatch_logger_xes_blockers'),
-			
-			('dbo.usp_sqlwatch_logger_xes_waits',					1,			'SQLWATCH-LOGGER-XES',				'TSQL',		'exec dbo.usp_sqlwatch_logger_xes_waits'),
-			('dbo.usp_sqlwatch_logger_xes_diagnostics',				2,			'SQLWATCH-LOGGER-XES',				'TSQL',		'exec dbo.usp_sqlwatch_logger_xes_diagnostics'),
-			('dbo.usp_sqlwatch_logger_xes_long_queries',			3,			'SQLWATCH-LOGGER-XES',				'TSQL',		'exec dbo.usp_sqlwatch_logger_xes_long_queries'),
+    if ($queueitem -ne $null) 
+    {
+        if ($queueitem.message_type_name -like "mtype_sqlwatch_action*")
+        {
+            [xml]$message_body_xml = $queueitem.message_body;
 
-			('dbo.usp_sqlwatch_logger_hadr_database_replica_states',1,			'SQLWATCH-LOGGER-AG',				'TSQL',		'exec dbo.usp_sqlwatch_logger_hadr_database_replica_states'),
+            if ( $message_body_xml.action.data.row.action_exec_type -eq "PowerShell" )
+            {
+                $output = Invoke-Expression $message_body_xml.action.data.row.action_exec -ErrorAction "Stop" ;
 
+                ##TODO TO DO we will compare the actual output with expected output here
+            }
+            elseif ( $message_body_xml.action.data.row.action_exec_type -eq "T-SQL" )
+            {
+                $output = Invoke-Sqlcmd -ServerInstance "' + @server + '" -Database ' + '$(DatabaseName)' + ' -MaxCharLength 2147483647 -Query $message_body_xml.action.data.row.action_exec;
+            }
+        }
+        else 
+        {
+            Invoke-Sqlcmd -ServerInstance SQL-2 -Database SQLWATCH_5_0 -Query "end conversation ''$queueitem.conversation_handle'';"
+        }
+    }
+};
+'),
 
-			('1 minute trend',										1,			'SQLWATCH-INTERNAL-TRENDS',			'TSQL',		'exec dbo.usp_sqlwatch_trend_perf_os_performance_counters @interval_minutes = 1, @valid_days = 7'),
-			('5 minutes trend',										2,			'SQLWATCH-INTERNAL-TRENDS',			'TSQL',		'exec dbo.usp_sqlwatch_trend_perf_os_performance_counters @interval_minutes = 5, @valid_days = 90'),
-			('60 minutes trend',									3,			'SQLWATCH-INTERNAL-TRENDS',			'TSQL',		'exec dbo.usp_sqlwatch_trend_perf_os_performance_counters @interval_minutes = 60, @valid_days = 720'),
+			('Get-WMIObject Win32_Volume',		'SQLWATCH-DISK-UTILISATION',	'PowerShell', N'
+$SnapshotTime = (Get-Date).ToUniversalTime();
+$xml = "<CollectionSnapshot>`n";
+$xml += "<snapshot_header>`n";
+$xml += "<row snapshot_time=`"$SnapshotTime`" snapshot_type_id=`"17`" sql_instance=`"' + @server + '`" />\n";
+$xml += "</snapshot_header>`n";
+$xml += "<disk_space_usage>`n";
 
-			--('dbo.usp_sqlwatch_internal_process_reports',1,			'SQLWATCH-USER-REPORTS',			'TSQL',		'exec dbo.usp_sqlwatch_internal_process_reports @report_batch_id = 1'),
-
-			('dbo.usp_sqlwatch_internal_process_checks',			1,			'SQLWATCH-INTERNAL-CHECKS',			'TSQL',		'exec dbo.usp_sqlwatch_internal_process_checks'),
-			('dbo.usp_sqlwatch_internal_process_reports',			1,			'SQLWATCH-REPORT-AZMONITOR',		'TSQL',		'exec dbo.usp_sqlwatch_internal_process_reports @report_batch_id = ''AzureLogMonitor-1'''),
-
-
-			('Process Actions',										1,			'SQLWATCH-INTERNAL-ACTIONS',		'PowerShell','
-$output = "x"
-while ($output -ne $null) { 
-	$output = Invoke-SqlCmd -ServerInstance "' + @server + '" -Database ' + '$(DatabaseName)' + ' -MaxCharLength 2147483647 -Query "exec [dbo].[usp_sqlwatch_internal_action_queue_get_next]"
-
-	$status = ""
-	$queue_item_id = $output.queue_item_id
-    $operation = ""
-	$ErrorOutput = ""
-	$MsgType = "OK"
-	
-	if ( $output -ne $null) {
-		if ( $output.action_exec_type -eq "T-SQL" ) {
-			try {
-				$ErrorOutput = Invoke-SqlCmd -ServerInstance "' + @server + '" -Database ' + '$(DatabaseName)' + ' -ErrorAction "Stop" -Query $output.action_exec -MaxCharLength 2147483647
-			}
-			catch {
-				$ErrorOutput = $error[0] -replace "''", "''''"
-				$MsgType = "ERROR"
-			}
-		}
-
-		if ( $output.action_exec_type -eq "PowerShell" ) {
-			try {
-				$ErrorOutput = Invoke-Expression $output.action_exec -ErrorAction "Stop" 
-			}
-			catch {
-				$ErrorOutput = $_.Exception.Message -replace "''", "''''"
-				$MsgType = "ERROR"
-			}
-		}
-		Invoke-SqlCmd -ServerInstance "' + @server + '" -Database ' + '$(DatabaseName)' + ' -ErrorAction "Stop" -Query "exec [dbo].[usp_sqlwatch_internal_action_queue_update]
-					@queue_item_id = $queue_item_id,
-					@error = ''$ErrorOutput'',
-					@exec_status = ''$MsgType''"
-	}
-}'),
-			
-			('dbo.usp_sqlwatch_logger_agent_job_history', 1,		'SQLWATCH-LOGGER-AGENT-HISTORY',	'TSQL',		'exec dbo.usp_sqlwatch_logger_agent_job_history'),
-
-			('dbo.usp_sqlwatch_internal_retention',		1,			'SQLWATCH-INTERNAL-RETENTION',		'TSQL',		'exec dbo.usp_sqlwatch_internal_retention'),
-			('dbo.usp_sqlwatch_internal_purge_deleted_items',2,		'SQLWATCH-INTERNAL-RETENTION',		'TSQL',		'exec dbo.usp_sqlwatch_internal_purge_deleted_items'),
-
-			('dbo.usp_sqlwatch_logger_disk_utilisation',1,			'SQLWATCH-LOGGER-DISK-UTILISATION',	'TSQL',		'exec dbo.usp_sqlwatch_logger_disk_utilisation'),
-			('dbo.usp_sqlwatch_logger_disk_utilisation_table',3,	'SQLWATCH-LOGGER-DISK-UTILISATION', 'TSQL',		'exec dbo.usp_sqlwatch_logger_disk_utilisation_table'),
-
-			('Get-WMIObject Win32_Volume',		2,					'SQLWATCH-LOGGER-DISK-UTILISATION',	'PowerShell', N'
-#https://msdn.microsoft.com/en-us/library/aa394515(v=vs.85).aspx
-#driveType 3 = Local disk
 Get-WMIObject Win32_Volume | ?{$_.DriveType -eq 3 -And $_.Name -notlike "\\?\Volume*" } | %{
+
     $VolumeName = $_.Name
     $FreeSpace = $_.Freespace
     $Capacity = $_.Capacity
     $VolumeLabel = $_.Label
     $FileSystem = $_.Filesystem
     $BlockSize = $_.BlockSize
-    Invoke-SqlCmd -ServerInstance "' + @server + '" -Database ' + '$(DatabaseName)' + ' -Query "
-	 exec [dbo].[usp_sqlwatch_internal_add_os_volume] 
-		@volume_name = ''$VolumeName'', 
-		@label = ''$VolumeLabel'', 
-		@file_system = ''$FileSystem'', 
-		@block_size = ''$BlockSize'';
-	 exec [dbo].[usp_sqlwatch_logger_disk_utilisation_os_volume] 
-		@volume_name = ''$VolumeName'',
-		@volume_free_space_bytes = $FreeSpace,
-		@volume_total_space_bytes = $Capacity
-    " 
-}'),
 
-			('dbo.usp_sqlwatch_internal_add_index',			1,		'SQLWATCH-LOGGER-INDEXES',		'TSQL', 'exec dbo.usp_sqlwatch_internal_add_index'),
-			('dbo.usp_sqlwatch_internal_add_index_missing',	2,		'SQLWATCH-LOGGER-INDEXES',		'TSQL', 'exec dbo.usp_sqlwatch_internal_add_index_missing'),	
-			('dbo.usp_sqlwatch_logger_missing_index_stats',	3,		'SQLWATCH-LOGGER-INDEXES',		'TSQL', 'exec dbo.usp_sqlwatch_logger_missing_index_stats'),
-			('dbo.usp_sqlwatch_logger_index_usage_stats',	4,		'SQLWATCH-LOGGER-INDEXES',		'TSQL', 'exec dbo.usp_sqlwatch_logger_index_usage_stats'),
-			('dbo.usp_sqlwatch_logger_index_histogram',		5,		'SQLWATCH-LOGGER-INDEXES',		'TSQL', 'exec dbo.usp_sqlwatch_logger_index_histogram'),
-			
-			('dbo.usp_sqlwatch_internal_add_database',				1,	'SQLWATCH-INTERNAL-CONFIG','TSQL', 'exec dbo.usp_sqlwatch_internal_add_database'),
-			('dbo.usp_sqlwatch_internal_add_master_file',			2,	'SQLWATCH-INTERNAL-CONFIG','TSQL', 'exec dbo.usp_sqlwatch_internal_add_master_file'),
-			('dbo.usp_sqlwatch_internal_add_table',					3,	'SQLWATCH-INTERNAL-CONFIG','TSQL', 'exec dbo.usp_sqlwatch_internal_add_table'),
-			('dbo.usp_sqlwatch_internal_add_job',					4,	'SQLWATCH-INTERNAL-CONFIG','TSQL', 'exec dbo.usp_sqlwatch_internal_add_job'),
-			('dbo.usp_sqlwatch_internal_add_performance_counter',	5,	'SQLWATCH-INTERNAL-CONFIG','TSQL', 'exec dbo.usp_sqlwatch_internal_add_performance_counter'),
-			('dbo.usp_sqlwatch_internal_add_memory_clerk',			6,	'SQLWATCH-INTERNAL-CONFIG','TSQL', 'exec dbo.usp_sqlwatch_internal_add_memory_clerk'),
-			('dbo.usp_sqlwatch_internal_add_wait_type',				7,	'SQLWATCH-INTERNAL-CONFIG','TSQL', 'exec dbo.usp_sqlwatch_internal_add_wait_type'),
-			('dbo.usp_sqlwatch_internal_expand_checks',				8,	'SQLWATCH-INTERNAL-CONFIG','TSQL', 'exec dbo.usp_sqlwatch_internal_expand_checks'),
-			('dbo.usp_sqlwatch_internal_add_procedure',				9,	'SQLWATCH-INTERNAL-CONFIG','TSQL', 'exec dbo.usp_sqlwatch_internal_add_procedure'),
-			
-			
-			('dbo.usp_sqlwatch_internal_add_system_configuration',	1,	'SQLWATCH-LOGGER-SYSCONFIG','TSQL', 'exec dbo.usp_sqlwatch_internal_add_system_configuration'),
-			('dbo.usp_sqlwatch_logger_system_configuration',	    2,	'SQLWATCH-LOGGER-SYSCONFIG','TSQL', 'exec dbo.usp_sqlwatch_logger_system_configuration')
+    $xml += "<row volume_name=`"$VolumeName`" freespace=`"$FreeSpace`" capacity=`"$Capacity`" label=`"$VolumeLabel`" filesystem=`"$FileSystem`" blocksize=`"$BlockSize`" />\n";
+}
 
-			,('dbo.usp_sqlwatch_logger_procedure_stats',		1,		'SQLWATCH-LOGGER-PROCS',		'TSQL', 'exec dbo.usp_sqlwatch_logger_procedure_stats')
+$xml += "</disk_space_usage>`n";
+$xml += "</CollectionSnapshot>`n";
 
 
-	if [dbo].[ufn_sqlwatch_get_config_value] ( 13 , null ) = 0
-		begin
-			exec [dbo].[usp_sqlwatch_internal_create_agent_job]
-				@print_WTS_command = @print_WTS_command, @job_owner = @job_owner
-		end
-	else
-		begin
-			Print 'This SQLWATCH instance is using broker for data collection. Jobs will not be deployed'
-		end
+$sql = "declare @cid uniqueidentifier;
+exec [dbo].[usp_sqlwatch_internal_broker_dialog_new] @cid = @cid output;
+
+DECLARE @xml XML = cast (''$xml'' as xml); SEND ON CONVERSATION @cid MESSAGE TYPE [mtype_sqlwatch_collector] (@xml);
+"
+
+Invoke-Sqlcmd -ServerInstance "' + @server + '" -Database ' + '$(DatabaseName)' + ' -MaxCharLength 2147483647 -Query $sql			
+			')
+
+
+	exec [dbo].[usp_sqlwatch_internal_create_agent_job]
+		@print_WTS_command = @print_WTS_command, @job_owner = @job_owner;

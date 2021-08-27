@@ -3,6 +3,8 @@ AS
 
 set nocount on;
 
+--this procedure builds a list of tables to import for SqlWatchImport.exe and only applies if you are importing data from remote sqlwatch instances.
+--It does not apply if you are using SqlWatchCollect.exe.
 truncate table dbo.sqlwatch_stage_repository_tables_to_import;
 
 --list of tables to exclude from the import:

@@ -103,7 +103,7 @@ left join (
 on c.text = t.errorlog_text collate database_default
 and sql_instance = @@SERVERNAME;
 
-exec [dbo].[usp_sqlwatch_internal_insert_header] 
+exec [dbo].[usp_sqlwatch_internal_logger_new_header] 
 	@snapshot_time_new = @snapshot_time OUTPUT,
 	@snapshot_type_id = @snapshot_type_id;
 

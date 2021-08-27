@@ -13,6 +13,7 @@
 	[action_enabled] bit not null default 1,
 	[date_created] datetime not null constraint df_sqlwatch_config_action_date_created default (getdate()),
 	[date_updated] datetime null,
+	[expected_output] nvarchar(2000),
 
 	/* primary key */
 	constraint pk_sqlwatch_config_delivery_target primary key clustered ([action_id]),

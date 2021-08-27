@@ -3,6 +3,7 @@
 	[config_id] int not null,
 	[config_name] varchar(255) not null,
 	[config_value] smallint not null,
+	[config_description] nvarchar(max),
 	constraint pk_sqlwatch_config primary key clustered (config_id)
 )
 go

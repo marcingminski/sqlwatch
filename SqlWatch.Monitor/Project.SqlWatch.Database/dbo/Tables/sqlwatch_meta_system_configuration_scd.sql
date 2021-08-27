@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[sqlwatch_meta_system_configuration_scd]
 (
 	sql_instance varchar(32) not null default @@SERVERNAME,
-	sqlwatch_configuration_id smallint not null,
+	sqlwatch_configuration_id int not null,
 	value int not null,
 	value_in_use int not null,
 	valid_from datetime not null constraint sqlwatch_logger_system_configuration_scd_valid_from default(getutcdate()),
@@ -24,7 +24,6 @@ create trigger trg_sqlwatch_meta_system_configuration_scd_last_updated
 	as
 	begin
 		set nocount on;
-		set xact_abort on;
 
 		update t
 			set date_updated = getutcdate()

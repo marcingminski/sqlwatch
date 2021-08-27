@@ -55,7 +55,6 @@ create trigger trg_sqlwatch_meta_last_updated
 	as
 	begin
 		set nocount on;
-		set xact_abort on;
 
 		update t
 			set date_updated = getutcdate()
@@ -73,7 +72,6 @@ create trigger trg_sqlwatch_meta_check_delete
 	as
 	begin
 		set nocount on;
-		set xact_abort on;
 
 		/* prevent orphan meta records and abort deletion if there is an existing check_id in config */
 		if exists (

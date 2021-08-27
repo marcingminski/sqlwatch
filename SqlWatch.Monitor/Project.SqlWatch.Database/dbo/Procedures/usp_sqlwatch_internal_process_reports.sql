@@ -61,7 +61,7 @@ declare @sqlwatch_logger_report_action table (
 	,[error_message] xml
 )
 
-exec [dbo].[usp_sqlwatch_internal_insert_header] 
+exec [dbo].[usp_sqlwatch_internal_logger_new_header] 
 	@snapshot_time_new = @snapshot_time OUTPUT,
 	@snapshot_type_id = @snapshot_type_id
 
@@ -161,7 +161,7 @@ while @@FETCH_STATUS = 0
 				begin catch
 					set @has_errored = 1
 					set @error_message = 'Error when executing Query Report (usp_sqlwatch_internal_query_to_html_table), @report_batch_id: ' + isnull(convert(varchar(max),@report_batch_id),'NULL') + ', @report_id: ' + isnull(convert(varchar(max),@report_id),'NULL')
-					exec [dbo].[usp_sqlwatch_internal_log]
+					exec [dbo].[usp_sqlwatch_internal_app_log_add_message]
 							@proc_id = @@PROCID,
 							@process_stage = '31FF6B08-735E-45F9-BAAB-D1F7E446BB1B',
 							@process_message = @error_message,
@@ -185,7 +185,7 @@ while @@FETCH_STATUS = 0
 					--E3796F4B-3C89-450E-8FC7-09926979074F
 					set @has_errored = 1
 					set @error_message = 'Error when executing Template Report (usp_sqlwatch_internal_query_to_html_table), @report_batch_id: ' + isnull(convert(varchar(max),@report_batch_id),'NULL') + ', @report_id: ' + isnull(convert(varchar(max),@report_id),'NULL')
-					exec [dbo].[usp_sqlwatch_internal_log]
+					exec [dbo].[usp_sqlwatch_internal_app_log_add_message]
 							@proc_id = @@PROCID,
 							@process_stage = 'E3796F4B-3C89-450E-8FC7-09926979074F',
 							@process_message = @error_message,

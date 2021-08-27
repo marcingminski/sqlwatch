@@ -1,0 +1,13 @@
+﻿--CREATE FUNCTION [dbo].[ufn_sqlwatch_get_xes_address]
+--(
+--	@session_name nvarchar(256)
+--)
+--RETURNS varbinary(8)
+--AS
+--BEGIN
+--		return (
+--			select address 
+--			from sys.dm_xe_sessions with (nolock)
+--			where name = @session_name
+--		);
+--END

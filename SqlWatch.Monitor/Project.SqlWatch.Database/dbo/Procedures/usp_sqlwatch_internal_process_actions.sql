@@ -54,7 +54,12 @@ declare @action_type varchar(200) = 'NONE',
 		@has_errors bit = 0,
 		@action_template_type varchar(max),
 		@action_exec_type varchar(max),
-		@error_message_xml xml
+		@error_message_xml xml,
+		@message_body xml,
+		@cid uniqueidentifier,
+		@message_type nvarchar(128),
+		@success_output nvarchar(2000)
+		;
 
 --need to this so we can detect the caller in [usp_sqlwatch_internal_process_reports] to avoid circular ref.
 select @content_info = convert(varbinary(128),convert(varchar(max),@action_id))
@@ -70,6 +75,7 @@ select
 	,	@action_hourly_limit = cca.[action_hourly_limit]
 	,	@action_template_id = cca.[action_template_id]
 	,	@action_exec_type = ca.[action_exec_type]
+	,	@success_output = ca.[expected_output]
 from [dbo].[sqlwatch_config_check_action] cca
 	inner join [dbo].[sqlwatch_config_action] ca
 		on ca.action_id = cca.action_id
@@ -97,7 +103,7 @@ if @is_flapping = 1
 			begin
 				--information only:
 				set @error_message = 'Check (Id: ' + convert(varchar(10),@check_id) + ') Is flapping. Action (Id: ' + convert(varchar(10),@action_id) + ') is skipped.'
-				exec [dbo].[usp_sqlwatch_internal_log]
+				exec [dbo].[usp_sqlwatch_internal_app_log_add_message]
 						@proc_id = @@PROCID,
 						@process_stage = '1D779244-0524-44B1-A00B-19BDA355D4EE',
 						@process_message = @error_message,
@@ -107,7 +113,7 @@ if @is_flapping = 1
 		else
 			begin
 				set @error_message = 'Check (Id: ' + convert(varchar(10),@check_id) + ') Is flapping but @action_every_failure is set to 1. Action (Id: ' + convert(varchar(10),@action_id) + ') will be performed.'
-				exec [dbo].[usp_sqlwatch_internal_log]
+				exec [dbo].[usp_sqlwatch_internal_app_log_add_message]
 						@proc_id = @@PROCID,
 						@process_stage = '43A6F442-2272-4953-81E7-B7014212BA29',
 						@process_message = @error_message,
@@ -120,9 +126,8 @@ if @is_flapping = 1
 -------------------------------------------------------------------------------------------------------------------
 if @action_count_last_hour > @action_hourly_limit
 	begin
-		--information only:
 		set @error_message = 'Check (Id: ' + convert(varchar(10),@check_id) + '): Action (Id: ' + convert(varchar(10),@action_id) + ') has exceeded hourly allowed limit and it will not be performed.'
-		exec [dbo].[usp_sqlwatch_internal_log]
+		exec [dbo].[usp_sqlwatch_internal_app_log_add_message]
 				@proc_id = @@PROCID,
 				@process_stage = '76C7745B-CDD2-4545-AF42-A3A5636D3F46',
 				@process_message = @error_message,
@@ -291,12 +296,64 @@ if @action_type  <> 'NONE'
 		where cc.check_id = @check_id
 		and cc.sql_instance = @@SERVERNAME
 
-		insert into [dbo].[sqlwatch_meta_action_queue] (sql_instance, [action_exec_type], [action_exec])
-		select @@SERVERNAME, [action_exec_type], replace(replace([action_exec],'{SUBJECT}',@subject),'{BODY}',@body)
-		from [dbo].[sqlwatch_config_action]
-		where action_id = @action_id
-		and [action_enabled] = 1
-		and [action_exec] is not null --null action exec can only be for reports but they are processed below
+		select @message_body = (
+				select 
+					sql_instance = @@SERVERNAME,
+					action_exec_type = action_exec_type,
+					action_exec = replace(replace([action_exec],'{SUBJECT}',@subject),'{BODY}',@body),
+					[expected_output],
+					retry_count = 0
+				from [dbo].[sqlwatch_config_action]
+				where action_id = @action_id
+				and [action_enabled] = 1
+				and [action_exec] is not null --null action exec can only be for reports but they are processed below
+				for xml raw, type
+			) 
+
+		if @message_body is not null
+			begin;
+
+				select @message_body = (
+					select data = @message_body
+					for xml path ('action')
+					);
+
+				exec [dbo].[usp_sqlwatch_internal_broker_dialog_new]
+					@from_service = 'sqlwatch_actions',
+					@to_service = 'sqlwatch_actions',
+					@contract = 'sqlwatch_actions',
+					@cid = @cid output
+
+				set @error_message = FORMATMESSAGE('Queueing new action for action_id: %i, check_id: %i',@action_id, @check_id);
+
+				exec [dbo].[usp_sqlwatch_internal_app_log_add_message]
+						@proc_id = @@PROCID,
+						@process_stage = '56B91169-62F2-4406-8839-DC472A388A21',
+						@process_message = @error_message,
+						@process_message_type = 'VERBOSE'
+
+				set @message_type = case when @action_exec_type = 'T-SQL' then 'mtype_sqlwatch_action_tsql' else 'mtype_sqlwatch_action_external' end;
+
+				SEND ON CONVERSATION @cid
+						MESSAGE TYPE @message_type (@message_body);
+			end
+		else
+			begin
+				set @error_message = FORMATMESSAGE('The @message_body was null for action_id: %i, check_id: %i',@action_id, @check_id);
+
+				exec [dbo].[usp_sqlwatch_internal_app_log_add_message]
+						@proc_id = @@PROCID,
+						@process_stage = '56B91169-62F2-4406-8839-DC472A388A21',
+						@process_message = @error_message,
+						@process_message_type = 'VERBOSE'
+			end;
+
+		--insert into [dbo].[sqlwatch_meta_action_queue] (sql_instance, [action_exec_type], [action_exec])
+		--select @@SERVERNAME, [action_exec_type], replace(replace([action_exec],'{SUBJECT}',@subject),'{BODY}',@body)
+		--from [dbo].[sqlwatch_config_action]
+		--where action_id = @action_id
+		--and [action_enabled] = 1
+		--and [action_exec] is not null --null action exec can only be for reports but they are processed below
 
 		--is this action calling a report or an arbitrary exec?
 		select @report_id = action_report_id 
@@ -319,7 +376,7 @@ if @action_type  <> 'NONE'
 				begin catch
 					set @has_errors = 1		
 					set @error_message = 'Action (Id:' + convert(varchar(10),@action_id) + ') calling Report (Id: ' + convert(varchar(10),@report_id) + ')'
-					exec [dbo].[usp_sqlwatch_internal_log]
+					exec [dbo].[usp_sqlwatch_internal_app_log_add_message]
 						@proc_id = @@PROCID,
 						@process_stage = 'F7A4AA65-1BE9-4D0B-8B1F-054CA1E24A6E',
 						@process_message = @error_message,

@@ -2,10 +2,12 @@
 (
 	[sql_instance] varchar(32) not null,
 	[job_name] nvarchar(128) not null,
-	[job_create_date] datetime not null,
+	[job_create_date] datetime2(3) not null,
 	[sqlwatch_job_id] smallint identity(1,1),
 	[date_last_seen] datetime null constraint df_sqlwatch_meta_agent_job_last_seen default (getutcdate()),
-	[is_record_deleted] bit
+	[is_record_deleted] bit,
+	[job_id] uniqueidentifier null,
+
 	constraint pk_sqlwatch_meta_agent_job primary key (
 		[sql_instance], [sqlwatch_job_id]
 		),

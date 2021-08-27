@@ -5,7 +5,7 @@
 	[process_name]			nvarchar(512),
 	[process_stage]			nvarchar(max),
 	[process_message]		nvarchar(max),
-	[process_message_type]	varchar(50),
+	[process_message_type]	varchar(7),
 	[spid]					int,
 	[process_login]			nvarchar(512),
 	[process_user]			nvarchar(512),
@@ -15,13 +15,14 @@
 	[ERROR_PROCEDURE]		nvarchar(max),
 	[ERROR_LINE]			int,
 	[ERROR_MESSAGE]			nvarchar(max),
+	message_payload			xml,
 	
 	constraint pk_sqlwatch_sys_log primary key clustered (
 		[event_sequence], [sql_instance]
 	),
 	constraint fk_sqlwatch_sys_log foreign key (sql_instance)
 		references dbo.sqlwatch_meta_server (servername) on delete cascade,
-	constraint chk_sqlwatch_logger_log_message_type check (([process_message_type] = 'INFO' or [process_message_type] = 'WARNING' or [process_message_type] = 'ERROR'))
+	constraint chk_sqlwatch_logger_log_message_type check (([process_message_type] = 'INFO' or [process_message_type] = 'WARNING' or [process_message_type] = 'ERROR' or [process_message_type] = 'VERBOSE' or [process_message_type] = 'DEBUG'))
 )
 go
 

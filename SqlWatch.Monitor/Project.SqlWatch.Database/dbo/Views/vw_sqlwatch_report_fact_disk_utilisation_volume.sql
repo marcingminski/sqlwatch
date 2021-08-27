@@ -7,6 +7,7 @@ SELECT d.[sqlwatch_volume_id]
       ,[volume_total_space_bytes]
       ,h.report_time
       ,d.[sql_instance]
+	  ,volume_label = v.label
  --for backward compatibility with existing pbi, this column will become report_time as we could be aggregating many snapshots in a report_period
 , d.snapshot_time
 , d.snapshot_type_id

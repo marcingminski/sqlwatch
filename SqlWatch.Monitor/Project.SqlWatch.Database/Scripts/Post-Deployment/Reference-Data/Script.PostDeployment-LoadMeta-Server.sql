@@ -9,31 +9,24 @@ Post-Deployment Script Template
                SELECT * FROM [$(TableName)]					
 --------------------------------------------------------------------------------------
 */
-begin transaction
-	/* add local instance to server config so we can satify relations */
-	merge dbo.sqlwatch_config_sql_instance as target
-	using (select [servername] = @@SERVERNAME, [repo_collector_is_active] = 0) as source
-	on target.sql_instance = source.[servername]
-	when not matched then
-		insert (sql_instance, [repo_collector_is_active])
-		values (source.[servername], source.[repo_collector_is_active]);
 
-	merge [dbo].[sqlwatch_meta_server] as target
-	using (
-		select [physical_name] = convert(sysname,SERVERPROPERTY('ComputerNamePhysicalNetBIOS'))
-			, [servername] = convert(sysname,@@SERVERNAME)
-			, [service_name] = convert(sysname,@@SERVICENAME)
-			, [local_net_address] = convert(varchar(50),local_net_address)
-			, [local_tcp_port] = convert(varchar(50),local_tcp_port)
-			, [utc_offset_minutes] = DATEDIFF(mi, GETUTCDATE(), GETDATE())
-			, [sql_version] = @@VERSION
-		from sys.dm_exec_connections where session_id = @@spid
-		) as source
-	on target.[servername] = source.[servername]
+merge dbo.sqlwatch_config_sql_instance as target
+using (select [servername] = @@SERVERNAME, [repo_collector_is_active] = 0) as source
+on target.sql_instance = source.[servername]
+when not matched then
+	insert (sql_instance, [repo_collector_is_active])
+	values (source.[servername], source.[repo_collector_is_active]);
 
-	when not matched then
-		insert ([physical_name],[servername], [service_name], [local_net_address], [local_tcp_port], [utc_offset_minutes], [sql_version])
-		values (source.[physical_name],source.[servername], source.[service_name], source.[local_net_address], source.[local_tcp_port], source.[utc_offset_minutes], source.[sql_version])
 
-		;
-commit transaction
+exec  [dbo].[usp_sqlwatch_local_meta_add];
+
+declare @i tinyint = 0
+
+while (select count(*) from [dbo].[sqlwatch_meta_server]) = 0 and @i <= 12
+	begin
+		Print 'Waiting for queue to process metadata...';
+
+		waitfor delay '00:00:05';
+
+		set @i = @i + 1;
+	end;

@@ -9,9 +9,9 @@ SELECT [report_time]
  --for backward compatibility with existing pbi, this column will become report_time as we could be aggregating many snapshots in a report_period
 , omc.snapshot_time
 , omc.sqlwatch_mem_clerk_id
-  FROM [dbo].[sqlwatch_logger_perf_os_memory_clerks] omc
+  FROM [dbo].[sqlwatch_logger_dm_os_memory_clerks] omc
 	
-	inner join [dbo].[sqlwatch_meta_memory_clerk] mdc
+	inner join [dbo].[sqlwatch_meta_dm_os_memory_clerk] mdc
 		on mdc.sql_instance = omc.sql_instance
 		and mdc.sqlwatch_mem_clerk_id = omc.sqlwatch_mem_clerk_id
 

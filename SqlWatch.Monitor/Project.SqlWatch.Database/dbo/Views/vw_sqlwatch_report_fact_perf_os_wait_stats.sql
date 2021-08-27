@@ -9,7 +9,8 @@ select report_time, d.[sql_instance], m.wait_type
 , d.snapshot_type_id
 , d.wait_type_id
 , wait_time_ms_per_second = wait_time_ms_delta / [delta_seconds]
-from [dbo].[sqlwatch_logger_perf_os_wait_stats] d
+, d.[wait_time_percentage]
+from [dbo].[sqlwatch_logger_dm_os_wait_stats] d
   	
 	inner join dbo.sqlwatch_logger_snapshot_header h
 		on  h.snapshot_time = d.[snapshot_time]

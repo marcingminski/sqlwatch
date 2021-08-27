@@ -4,11 +4,17 @@
     <IncludeCompositeObjects>True</IncludeCompositeObjects>
     <TargetDatabaseName>SQLWATCH</TargetDatabaseName>
     <DeployScriptFileName>SQLWATCH.sql</DeployScriptFileName>
-    <TargetConnectionString>Data Source=SQLWATCH-TEST-1;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Connect Timeout=60;Encrypt=False;TrustServerCertificate=False</TargetConnectionString>
+    <TargetConnectionString>Data Source=SQLWATCH-REPO;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Connect Timeout=60;Encrypt=False;TrustServerCertificate=False</TargetConnectionString>
     <BlockOnPossibleDataLoss>False</BlockOnPossibleDataLoss>
+    <IgnoreTableOptions>True</IgnoreTableOptions>
+    <IgnoreIndexOptions>True</IgnoreIndexOptions>
+    <ProfileVersionNumber>1</ProfileVersionNumber>
     <DropObjectsNotInSource>True</DropObjectsNotInSource>
+    <DoNotDropCredentials>True</DoNotDropCredentials>
+    <DoNotDropDatabaseScopedCredentials>False</DoNotDropDatabaseScopedCredentials>
+    <DoNotDropDatabaseRoles>True</DoNotDropDatabaseRoles>
+    <DoNotDropLogins>True</DoNotDropLogins>
     <DoNotDropPermissions>True</DoNotDropPermissions>
     <DoNotDropUsers>True</DoNotDropUsers>
-    <ProfileVersionNumber>1</ProfileVersionNumber>
   </PropertyGroup>
 </Project>

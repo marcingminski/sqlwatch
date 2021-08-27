@@ -21,11 +21,12 @@ select
 	, report_action_exec_type=rca.action_exec_type
 	, report_action_exec=rca.action_exec
 from [dbo].[sqlwatch_config_check] cc
-inner join [dbo].[sqlwatch_config_check_action] cca
+
+left join [dbo].[sqlwatch_config_check_action] cca
 	on cc.check_id = cca.check_id
-inner join [dbo].[sqlwatch_config_action] ca
+left join [dbo].[sqlwatch_config_action] ca
 	on ca.action_id = cca.action_id
-inner join [dbo].[sqlwatch_config_check_action_template] at
+left join [dbo].[sqlwatch_config_check_action_template] at
 	on at.action_template_id = cca.action_template_id
 left join [dbo].[sqlwatch_config_report] cr
 	on cr.report_id = ca.action_report_id

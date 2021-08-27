@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[sqlwatch_meta_database]
 (
 	[database_name] nvarchar(128) not null,
-	[database_create_date] datetime not null constraint df_sqlwatch_meta_database_db_create_data default ('1970-01-01'),
+	[database_create_date] datetime2(3) not null constraint df_sqlwatch_meta_database_db_create_data default ('1970-01-01'),
 	[sql_instance] varchar(32) not null constraint df_sqlwatch_meta_database_sql_instance default (@@SERVERNAME),
 	[sqlwatch_database_id] smallint identity(1,1),
 	[date_last_seen] datetime null constraint df_sqlwatch_meta_database_last_seen default (getutcdate()),

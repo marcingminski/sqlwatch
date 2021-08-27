@@ -68,7 +68,7 @@ select
 	, [last_commit_time]
 	, [snapshot_time]
 	, rs.[sql_instance]
-from [dbo].[sqlwatch_logger_hadr_database_replica_states] rs
+from [dbo].[sqlwatch_logger_dm_hadr_database_replica_states] rs
 --inner join dbo.sqlwatch_meta_database db
 --on db.sqlwatch_database_id = rs.sqlwatch_database_id
 --and db.sql_instance = rs.sql_instance

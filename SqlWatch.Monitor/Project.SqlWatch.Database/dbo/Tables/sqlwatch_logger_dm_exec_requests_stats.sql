@@ -13,6 +13,7 @@
 	cpu_time real null,
 	waiting_tasks real null,
 	waiting_tasks_wait_duration_ms real null,
+	backups_in_progress smallint,
 
 	constraint pk_sqlwatch_logger_dm_exec_requests 
 		primary key clustered ([type], snapshot_time, sql_instance, snapshot_type_id),

@@ -15,16 +15,6 @@
 	To work around this we can drop sessions manually however, doing it here, in the pre-deployment script is too late.
 	At this point the deployment is planned and if we drop sessions now they will not be re-created. To work around this, 
 	there is similar step in Post-deployment script */
---Print 'Stoppring SQLWATCH XE Sessions'
---declare @sqlstmt varchar(4000) = ''
-
---select @sqlstmt = @sqlstmt + 'DROP EVENT SESSION [' + name + '] ON SERVER;' + char(10) 
---from sys.server_event_sessions 
---where name in (	'SQLWATCH_blockers', 'SQLWATCH_waits','SQLWATCH_long_queries')
-
---exec (@sqlstmt)
-
-
 Print 'Getting Dac Version'
 :r .\Scripts\Pre-Deployment\SetDacVersion.sql
 

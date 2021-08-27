@@ -11,8 +11,7 @@
     <ProjectGuid>{dfac46ef-72eb-4a88-96ab-f7d1a96e9e1c}</ProjectGuid>
     <DSP>Microsoft.Data.Tools.Schema.Sql.Sql110DatabaseSchemaProvider</DSP>
     <OutputType>Database</OutputType>
-    <RootPath>
-    </RootPath>
+    <RootPath />
     <RootNamespace>SqlWatchDatabase</RootNamespace>
     <AssemblyName>SqlWatchDatabase</AssemblyName>
     <ModelCollation>1033,CI</ModelCollation>
@@ -36,7 +35,8 @@
     <ServiceBrokerOption>EnableBroker</ServiceBrokerOption>
     <Trustworthy>True</Trustworthy>
     <EnableFullTextSearch>False</EnableFullTextSearch>
-    <PermissionSet>UNSAFE</PermissionSet>
+    <PermissionSet>SAFE</PermissionSet>
+    <AutoUpdateStatisticsAsynchronously>True</AutoUpdateStatisticsAsynchronously>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -64,7 +64,6 @@
   </PropertyGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
-    <!-- Default to the v11.0 targets path if the targets file for the current VS version is not found -->
     <SSDTExists Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets')">True</SSDTExists>
     <VisualStudioVersion Condition="'$(SSDTExists)' == ''">11.0</VisualStudioVersion>
   </PropertyGroup>
@@ -84,89 +83,78 @@
     <Folder Include="Scripts\Extended Properties" />
     <Folder Include="Scripts\Post-Deployment\Data-Fixes" />
     <Folder Include="Scripts\Post-Deployment\Reference-Data" />
-    <Folder Include="Scripts\Tools" />
-    <Folder Include="Scripts\HotFixes" />
-    <Folder Include="Scripts\Data Migrations" />
-    <Folder Include="Scripts\Tools\SSIS Helpers" />
     <Folder Include="dbo\Queues" />
     <Folder Include="dbo\Services" />
     <Folder Include="dbo\Messages" />
-    <Folder Include="dbo\Functions\CLR" />
-    <Folder Include="dbo\Procedures\CLR" />
     <Folder Include="dbo\Types" />
+    <Folder Include="dbo\XML Schemas" />
+    <Folder Include="dbo\Contracts" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\sqlwatch_logger_snapshot_header.sql" />
     <Build Include="dbo\Tables\sqlwatch_meta_database.sql" />
     <Build Include="dbo\Tables\sqlwatch_meta_server.sql" />
-    <Build Include="dbo\Tables\sqlwatch_logger_perf_file_stats.sql" />
-    <Build Include="dbo\Tables\sqlwatch_logger_perf_os_memory_clerks.sql" />
-    <Build Include="dbo\Tables\sqlwatch_logger_perf_os_wait_stats.sql" />
-    <Build Include="dbo\Tables\sqlwatch_logger_perf_os_performance_counters.sql" />
+    <Build Include="dbo\Tables\sqlwatch_logger_dm_io_virtual_file_stats.sql" />
+    <Build Include="dbo\Tables\sqlwatch_logger_dm_os_memory_clerks.sql" />
+    <Build Include="dbo\Tables\sqlwatch_logger_dm_os_wait_stats.sql" />
+    <Build Include="dbo\Tables\sqlwatch_logger_dm_os_performance_counters.sql" />
     <Build Include="dbo\Tables\sqlwatch_logger_whoisactive.sql" />
     <Build Include="dbo\Tables\sqlwatch_config_performance_counters.sql" />
-    <Build Include="dbo\Tables\sqlwatch_logger_perf_os_process_memory.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_logger_performance.sql" />
+    <Build Include="dbo\Tables\sqlwatch_logger_dm_os_process_memory.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_retention.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_internal_add_database.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_meta_add_database.sql" />
     <Build Include="dbo\Tables\sqlwatch_config_snapshot_type.sql" />
     <Build Include="dbo\Tables\sqlwatch_meta_master_file.sql" />
     <Build Include="dbo\Tables\sqlwatch_logger_disk_utilisation_database.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_logger_disk_utilisation.sql" />
     <Build Include="dbo\Tables\sqlwatch_logger_disk_utilisation_volume.sql" />
-    <Build Include="dbo\Tables\sqlwatch_logger_index_missing_stats.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_logger_missing_index_stats.sql" />
+    <Build Include="dbo\Tables\sqlwatch_logger_dm_db_missing_index_details.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_logger_dm_db_missing_index_details.sql" />
     <Build Include="dbo\Tables\sqlwatch_logger_xes_query_processing.sql" />
     <Build Include="dbo\Tables\sqlwatch_logger_xes_iosubsystem.sql" />
-    <Build Include="dbo\Tables\sqlwatch_logger_perf_os_schedulers.sql" />
-    <Build Include="dbo\Tables\sqlwatch_logger_xes_long_queries.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_logger_xes_long_queries.sql" />
+    <Build Include="dbo\Tables\sqlwatch_logger_dm_os_schedulers.sql" />
+    <Build Include="dbo\Tables\sqlwatch_logger_dm_exec_requests_long_requests.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_logger_xes_long_queries.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_time_intervals.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_get_product_version.sql" />
-    <Build Include="dbo\Extended Events\SQLWATCH_long_queries.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_logger_xes_blockers.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_logger_xes_blockers_and_deadlocks.sql" />
     <Build Include="dbo\Tables\sqlwatch_logger_xes_blockers.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_logger_xes_diagnostics.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_logger_xes_diagnostics.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_get_xes_target_file.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_logger_xes_waits.sql" />
-    <Build Include="dbo\Extended Events\SQLWATCH_waits.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_logger_xes_waits.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_logger_whoisactive.sql" />
-    <Build Include="dbo\Extended Events\SQLWATCH_blockers.sql" />
-    <Build Include="dbo\Tables\sqlwatch_logger_index_usage_stats.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_logger_index_usage_stats.sql" />
+    <Build Include="dbo\Tables\sqlwatch_logger_dm_db_index_usage_stats.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_logger_dm_db_index_usage_stats.sql" />
     <Build Include="dbo\Tables\sqlwatch_logger_index_usage_stats_histogram.sql" />
     <Build Include="dbo\Tables\sqlwatch_config_sql_instance.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_config_sqlserver_set_blocked_proc_threshold.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_config_create_default_agent_jobs.sql" />
     <Build Include="dbo\Tables\sqlwatch_meta_agent_job.sql" />
     <Build Include="dbo\Tables\sqlwatch_meta_agent_job_step.sql" />
-    <Build Include="dbo\Tables\sqlwatch_logger_agent_job_history.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_internal_add_job.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_logger_agent_job_history.sql" />
-    <Build Include="dbo\Views\vw_sqlwatch_report_fact_agent_job_history.sql" />
-    <Build Include="dbo\Tables\sqlwatch_meta_wait_stats.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_internal_add_wait_type.sql" />
+    <Build Include="dbo\Tables\sqlwatch_logger_sysjobhistory.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_meta_add_job.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_logger_sysjobhistory.sql" />
+    <Build Include="dbo\Views\vw_sqlwatch_report_fact_sysjobhistory.sql" />
+    <Build Include="dbo\Tables\sqlwatch_meta_dm_os_wait_stats.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_meta_add_dm_os_wait_stats.sql" />
     <Build Include="dbo\Views\vw_sqlwatch_report_fact_perf_os_wait_stats.sql" />
-    <Build Include="dbo\Tables\sqlwatch_meta_performance_counter.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_internal_add_performance_counter.sql" />
+    <Build Include="dbo\Tables\sqlwatch_meta_dm_os_performance_counters.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_meta_add_dm_os_performance_counters.sql" />
     <Build Include="dbo\Views\vw_sqlwatch_report_fact_perf_os_performance_counters.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_internal_add_master_file.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_internal_purge_deleted_items.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_meta_add_master_file.sql" />
     <Build Include="dbo\Tables\sqlwatch_meta_os_volume.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_internal_add_os_volume.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_logger_disk_utilisation_os_volume.sql" />
-    <Build Include="dbo\Tables\sqlwatch_meta_memory_clerk.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_internal_add_memory_clerk.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_meta_add_os_volume.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_logger_space_usage_os_volume.sql" />
+    <Build Include="dbo\Tables\sqlwatch_meta_dm_os_memory_clerk.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_meta_add_dm_os_memory_clerks.sql" />
     <Build Include="dbo\Tables\sqlwatch_meta_table.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_internal_add_table.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_meta_add_table.sql" />
     <Build Include="dbo\Tables\sqlwatch_meta_index.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_internal_add_index.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_meta_add_index.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_logger_index_histogram.sql" />
     <Build Include="dbo\Tables\sqlwatch_meta_index_missing.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_internal_add_index_missing.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_meta_add_index_missing.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_config_enable_compression_sqlwatch_tables.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_internal_get_last_snapshot_time.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_internal_get_last_snapshot_time_in_tables.sql" />
     <Build Include="dbo\Views\vw_sqlwatch_report_fact_perf_file_stats.sql" />
     <Build Include="dbo\Views\vw_sqlwatch_report_dim_time.sql" />
     <Build Include="dbo\Views\vw_sqlwatch_report_fact_disk_utilisation_database.sql" />
@@ -203,10 +191,8 @@
     <Build Include="dbo\Tables\sqlwatch_meta_check.sql" />
     <Build Include="dbo\Views\vw_sqlwatch_report_dim_check.sql" />
     <Build Include="dbo\Tables\sqlwatch_config_action.sql" />
-    <Build Include="dbo\Tables\sqlwatch_meta_action_queue.sql" />
-    <Build Include="dbo\Tables\sqlwatch_trend_perf_os_performance_counters.sql" />
+    <Build Include="dbo\Tables\sqlwatch_trend_logger_dm_os_performance_counters.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_trend_perf_os_performance_counters.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_internal_add_check.sql" />
     <Build Include="dbo\Tables\sqlwatch_config_report.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_query_to_html_table.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_process_reports.sql" />
@@ -233,9 +219,7 @@
     <Build Include="dbo\Views\vw_sqlwatch_report_config_check_action.sql" />
     <Build Include="dbo\Views\vw_sqlwatch_report_fact_check_status_change.sql" />
     <Build Include="dbo\Tables\sqlwatch_app_log.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_internal_log.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_internal_action_queue_get_next.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_internal_action_queue_update.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_app_log_add_message.sql" />
     <Build Include="dbo\Tables\sqlwatch_config_include_index_histogram.sql" />
     <Build Include="dbo\Tables\sqlwatch_meta_report.sql" />
     <None Include="Scripts\Pre-Deployment\SetDacVersion.sql" />
@@ -252,21 +236,14 @@
     <None Include="Scripts\Post-Deployment\Reference-Data\Script.PostDeployment-LoadConfig-PerformanceCounters.sql" />
     <None Include="Scripts\Post-Deployment\Reference-Data\Script.PostDeployment-LoadConfig-SnapshotTypes.sql" />
     <None Include="Scripts\Post-Deployment\Reference-Data\Script.PostDeployment-LoadMeta-Server.sql" />
-    <Build Include="dbo\Views\vw_sqlwatch_help_action_queue_failures.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_get_file_type_desc.sql" />
-    <Build Include="dbo\Tables\sqlwatch_config_exclude_xes_long_query.sql" />
+    <Build Include="dbo\Tables\sqlwatch_config_exclude_logger_dm_exec_requests_long_requests.sql" />
     <Build Include="dbo\Tables\sqlwatch_config_exclude_wait_stats.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_internal_insert_header.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_logger_new_header.sql" />
     <Build Include="dbo\Tables\sqlwatch_app_version.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_get_version.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_repository_get_remote_data.sql" />
     <Build Include="dbo\Tables\sqlwatch_meta_repository_import_queue.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_repository_remote_table_enqueue.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_repository_remote_table_dequeue.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_repository_remote_table_import.sql" />
     <Build Include="dbo\Views\vw_sqlwatch_internal_table_snapshot.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_config_repository_create_linked_server.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_repository_remote_table_import_worker.sql" />
     <Build Include="dbo\Views\vw_sqlwatch_help_logger_log_failures.sql" />
     <Build Include="dbo\Tables\sqlwatch_meta_repository_import_status.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_config_repository_add_remote_instance.sql" />
@@ -284,7 +261,6 @@
     <Build Include="dbo\Tables\sqlwatch_config.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_get_config_value.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_run_job.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_internal_start_xes.sql" />
     <Build Include="dbo\Tables\sqlwatch_config_include_errorlog_keywords.sql" />
     <Build Include="dbo\Tables\sqlwatch_meta_errorlog_attribute.sql" />
     <Build Include="dbo\Tables\sqlwatch_meta_errorlog_text.sql" />
@@ -295,9 +271,9 @@
     <Build Include="dbo\Tables\sqlwatch_logger_system_configuration.sql" />
     <Build Include="dbo\Tables\sqlwatch_meta_system_configuration.sql" />
     <Build Include="dbo\Tables\sqlwatch_meta_system_configuration_scd.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_internal_add_system_configuration.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_meta_add_system_configuration.sql" />
     <Build Include="dbo\Views\vw_sqlwatch_sys_configurations.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_logger_system_configuration.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_logger_system_configuration.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_get_server_utc_offset.sql" />
     <Build Include="dbo\Tables\dbachecksChecks.sql" />
     <Build Include="dbo\Tables\dbachecksResults.sql" />
@@ -307,34 +283,25 @@
     <Build Include="dbo\Functions\ufn_sqlwatch_parse_client_app_name.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_get_servername.sql" />
     <Build Include="dbo\Tables\sqlwatch_meta_procedure.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_internal_add_procedure.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_logger_procedure_stats.sql" />
-    <Build Include="dbo\Tables\sqlwatch_logger_perf_procedure_stats.sql" />
-    <Build Include="dbo\Tables\sqlwatch_meta_query_plan_hash.sql" />
-    <Build Include="dbo\Tables\sqlwatch_logger_perf_query_stats.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_logger_query_stats.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_meta_add_procedure.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_logger_dm_exec_procedure_stats.sql" />
+    <Build Include="dbo\Tables\sqlwatch_logger_dm_exec_procedure_stats.sql" />
+    <Build Include="dbo\Tables\sqlwatch_logger_dm_exec_query_stats.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_logger_dm_exec_query_stats.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_get_time_utc.sql" />
     <Build Include="dbo\Tables\sqlwatch_config_exclude_procedure.sql" />
     <Build Include="dbo\Views\vw_sqlwatch_report_fact_perf_procedure_stats.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_expand_checks.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_purge_orphaned_snapshots.sql" />
     <Build Include="dbo\Tables\sqlwatch_config_check_template.sql" />
     <Build Include="dbo\Tables\sqlwatch_config_check_template_action.sql" />
-    <Build Include="dbo\Tables\sqlwatch_logger_hadr_database_replica_states.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_logger_hadr_database_replica_states.sql" />
+    <Build Include="dbo\Tables\sqlwatch_logger_dm_hadr_database_replica_states.sql" />
     <Build Include="dbo\Views\vw_sqlwatch_report_hadr_database_replica_states.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_internal_exec_activated.sql" />
-    <Build Include="dbo\Tables\sqlwatch_config_activated_procedures.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_internal_exec_activated_async.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_restart_queues.sql" />
     <Build Include="dbo\Tables\sqlwatch_stage_ring_buffer.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_convert_datetimeoffset_to_local.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_migrate_jobs_to_queues.sql" />
     <Build Include="dbo\Tables\sqlwatch_logger_dm_exec_requests_stats.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_logger_requests_and_sessions.sql" />
-    <Build Include="dbo\Queues\sqlwatch_exec.sql" />
-    <Build Include="dbo\Services\sqlwatch_exec.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_internal_broker_diagnostics.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_help_diagnostics.sql" />
     <Build Include="dbo\Tables\sqlwatch_config_baseline.sql" />
     <Build Include="dbo\Tables\sqlwatch_meta_baseline.sql" />
     <Build Include="dbo\Tables\sqlwatch_meta_snapshot_header_baseline.sql" />
@@ -343,7 +310,6 @@
     <Build Include="dbo\Tables\sqlwatch_stage_xes_exec_count.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_get_blocking_chains.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_get_xes_exec_count.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_internal_update_xes_query_count.sql" />
     <Build Include="dbo\Extended Events\SQLWATCH_query_problems.sql" />
     <Build Include="dbo\Tables\sqlwatch_logger_xes_query_problems.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_logger_xes_query_problems.sql" />
@@ -352,12 +318,10 @@
     <Build Include="dbo\Functions\ufn_sqlwatch_get_threshold_comparator.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_get_threshold_deviation.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_get_sql_version.sql" />
-    <Build Include="dbo\Tables\sqlwatch_meta_performance_counter_instance.sql" />
+    <Build Include="dbo\Tables\sqlwatch_meta_dm_os_performance_counters_instance.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_get_clr_status.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_get_clr_collector_status.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_internal_tester.sql" />
     <Build Include="dbo\Types\utype_plan_handle.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_internal_get_query_plans.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_get_database_create_date.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_parse_job_name.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_get_xes_exec_time.sql" />
@@ -365,13 +329,86 @@
     <Build Include="dbo\Functions\ufn_sqlwatch_get_xes_timestamp.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_parse_job_id.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_get_delta_value.sql" />
-    <Build Include="dbo\Tables\sqlwatch_meta_query_plan.sql" />
-    <Build Include="dbo\Procedures\usp_sqlwatch_internal_get_xes_data.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_get_data_xes.sql" />
     <Build Include="dbo\Types\utype_event_data.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_get_agent_status.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_clean_sql_text.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_parse_xes_event_data.sql" />
     <Build Include="dbo\Extended Events\SQLWATCH_health.sql" />
+    <Build Include="dbo\Types\utype_sqlwatch_sys_dm_os_wait_stats.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_meta_add_server.sql" />
+    <Build Include="dbo\Types\utype_sqlwatch_sys_dm_os_memory_clerks.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_logger_dm_os_memory_clerks.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_logger_dm_io_virtual_file_stats.sql" />
+    <Build Include="dbo\Functions\ufn_sqlwatch_get_previous_snapshot_time.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_logger_dm_os_performance_counters.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_logger_dm_os_wait_stats.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_get_data_metadata_snapshot_xml.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_create_xes.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_broker_activated_exec_queue.sql" />
+    <Build Include="dbo\Services\sqlwatch_exec.sql" />
+    <Build Include="dbo\Queues\sqlwatch_exec.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_execute_proc_async.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_local_meta_add.sql" />
+    <Build Include="dbo\Tables\sqlwatch_stage_meta_table.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_foreachsqlwatchdb.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_logger_space_usage_database.sql" />
+    <Build Include="dbo\Tables\sqlwatch_stage_table_stats.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_logger_space_usage_table.sql" />
+    <Build Include="dbo\Queues\sqlwatch_collector.sql" />
+    <Build Include="dbo\Services\sqlwatch_collector.sql" />
+    <Build Include="dbo\Contracts\sqlwatch_collector.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_broker_activated_collector_queue.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_logger_dm_exec_sessions.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_logger_dm_exec_requests.sql" />
+    <Build Include="dbo\Messages\mtype_sqlwatch_collector.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_logger_ring_buffer_scheduler_monitor.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_get_data_collection_snapshot_xml.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_logger_dm_os_process_memory.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_logger_dm_os_schedulers.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_logger_dm_hadr_database_replica_states.sql" />
+    <Build Include="dbo\Messages\mtype_sqlwatch_meta.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_broker_dialog_new.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_conversation_dialog_end.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_broker_dialog_get.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_broker_dialog_cleanup.sql" />
+    <Build Include="dbo\Functions\ufn_sqlwatch_convert_local_to_utctime.sql" />
+    <Build Include="dbo\Functions\ufn_sqlwatch_get_sql_statement.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_meta_add_sql_query.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_local_logger_enqueue_collection_snapshot.sql" />
+    <Build Include="dbo\Tables\sqlwatch_config_timer.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_local_logger_enqueue_metadata_snapshot.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_config_broker_seed_internal_exec_timers.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_config_broker_seed_collection_exec_timers.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_broker_dialog_end.sql" />
+    <Build Include="dbo\Messages\mtype_sqlwatch_end.sql" />
+    <Build Include="dbo\Tables\sqlwatch_logger_broker_queue_size.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_logger_broker_queue.sql" />
+    <Build Include="dbo\Views\vw_sqlwatch_sql_config_for_sqlwatch_repository.sql" />
+    <Build Include="dbo\Tables\sqlwatch_logger_sqlserver_sla.sql" />
+    <Build Include="dbo\Tables\sqlwatch_logger_xes_deadlocks.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_broker_update_queue_status.sql" />
+    <Build Include="dbo\Functions\ufn_sqlwatch_get_xes_address.sql" />
+    <Build Include="dbo\Functions\ufn_sqlwatch_convert_pages_to_bytes.sql" />
+    <Build Include="dbo\Types\utype_sqlwatch_dm_exec_requests.sql" />
+    <Build Include="dbo\Types\utype_sqlwatch_sql_query.sql" />
+    <Build Include="dbo\Tables\sqlwatch_meta_sql_query_plan.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_meta_add_sql_query_plan.sql" />
+    <Build Include="dbo\Types\utype_sqlwatch_sql_query_plan.sql" />
+    <Build Include="dbo\Functions\ufn_sqlwatch_create_hash.sql" />
+    <Build Include="dbo\Functions\ufn_sqlwatch_convert_xes_hash.sql" />
+    <Build Include="dbo\Queues\sqlwatch_actions.sql" />
+    <Build Include="dbo\Services\sqlwatch_actions.sql" />
+    <Build Include="dbo\Messages\mtype_sqlwatch_action_tsql.sql" />
+    <Build Include="dbo\Contracts\sqlwatch_actions.sql" />
+    <Build Include="dbo\Messages\mtype_sqlwatch_action_external.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_internal_broker_activated_actions_queue.sql" />
+    <Build Include="dbo\Functions\ufn_sqlwatch_get_agent_job_status.sql" />
+    <Build Include="dbo\Tables\sqlwatch_stage_app_log_last_read_event.sql" />
+    <Build Include="dbo\Procedures\usp_sqlwatch_help_get_new_app_log_entries.sql" />
+    <Build Include="dbo\Views\vw_sqlwatch_report_fact_dm_exec_requests_long_requests.sql" />
+    <Build Include="dbo\Views\vw_sqlwatch_report_fact_dm_db_index_usage_stats.sql" />
+    <Build Include="dbo\Views\vw_sqlwatch_report_fact_dm_db_missing_index_details.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
@@ -391,11 +428,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="dbo\Functions\CLR\ReadPerformanceCounterFormatted.cs" />
-    <Compile Include="dbo\Functions\CLR\ReadPerformanceCounterCategories.cs" />
-    <Compile Include="dbo\Functions\CLR\GetPerformanceCounterData.cs" />
-    <Compile Include="dbo\Procedures\CLR\StreamPerformanceCounters.cs" />
-    <Compile Include="dbo\Functions\CLR\ReadWMI.cs" />
   </ItemGroup>
   <ItemGroup>
     <PreDeploy Include="Script.PreDeployment2.sql" />
@@ -414,7 +446,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="SQLWATCH.publish.xml" />
-    <None Include="Scripts\Pre-Deployment\DropXES.sql" />
+    <None Include="SQLWATCH_1.publish.xml" />
   </ItemGroup>
   <Target Name="SetDacVersionToAssemblyVersion" AfterTargets="CoreCompile">
     <GetAssemblyIdentity AssemblyFiles="$(IntermediateTargetFullFileName)">
