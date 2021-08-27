@@ -15,13 +15,13 @@ begin
     where far_service like 'sqlwatch%'
     and state_desc <> 'CLOSED'; -- these will be cleaned up by SQL Server
 
-    exec (@sql)
+    exec (@sql);
 
-    waitfor delay '00:00:02'
+    waitfor delay '00:00:02';
 
-    exec (@sql)
+    exec (@sql);
 
-    waitfor delay '00:00:02'
+    waitfor delay '00:00:02';
 
     --reseed timer queues
     declare @conversation_handle uniqueidentifier;

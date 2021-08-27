@@ -8,7 +8,7 @@ as
 begin
 	set nocount on;
 
-	declare @sqlwatch_sql_query_plan [dbo].[utype_sqlwatch_sql_query_plan]
+	declare @sqlwatch_sql_query_plan [dbo].[utype_sqlwatch_sql_query_plan];
 
 	insert into @sqlwatch_sql_query_plan (
 		query_hash,

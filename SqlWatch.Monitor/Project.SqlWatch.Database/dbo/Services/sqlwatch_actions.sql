@@ -2,4 +2,4 @@
 	ON QUEUE dbo.sqlwatch_actions
 	(
 		[sqlwatch_actions]
-	)
+	);

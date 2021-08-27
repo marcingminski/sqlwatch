@@ -70,7 +70,7 @@ begin
 				, case when @process_message_type <> 'INFO' then ERROR_LINE() else null end
 				, case when @process_message_type <> 'INFO' then ERROR_MESSAGE() else null end
 				, @message_payload
-		)
+		);
 
 	end try
 	begin catch
@@ -86,5 +86,5 @@ begin
 		) else null end);
 		raiserror (@message,16,1);
 		print @message;
-	end catch
+	end catch;
 end;

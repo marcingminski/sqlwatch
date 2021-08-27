@@ -27,7 +27,7 @@ begin
 			, [value] int
 			, [value_in_use] int
 			, [description] nvarchar(255)
-		)
+		);
 
 	INSERT INTO [dbo].[sqlwatch_logger_system_configuration] (sql_instance, sqlwatch_configuration_id, value, value_in_use, snapshot_time, snapshot_type_id)
 	SELECT v.sql_instance, m.sqlwatch_configuration_id, v.value, v.value_in_use, @snapshot_time, @snapshot_type_id
@@ -51,7 +51,7 @@ begin
 			) n
 	   ON curr.sql_instance = n.sql_instance
 	  AND curr.sqlwatch_configuration_id = n.sqlwatch_configuration_id
-	 WHERE n.sql_instance IS NULL OR curr.value <> n.value OR curr.value_in_use <> n.value_in_use
+	 WHERE n.sql_instance IS NULL OR curr.value <> n.value OR curr.value_in_use <> n.value_in_use;
 
 	-- Add the new ones or the changed:
 	INSERT INTO [dbo].[sqlwatch_meta_system_configuration_scd] (sql_instance, sqlwatch_configuration_id, value, value_in_use, valid_from, valid_until)
@@ -63,5 +63,5 @@ begin
 	 LEFT JOIN [dbo].[sqlwatch_meta_system_configuration_scd] curr
 	   ON curr.sql_instance = v.sql_instance
 	  AND curr.sqlwatch_configuration_id = m.sqlwatch_configuration_id
-	WHERE curr.sql_instance IS NULL OR curr.value <> v.value OR curr.value_in_use <> v.value_in_use
+	WHERE curr.sql_instance IS NULL OR curr.value <> v.value OR curr.value_in_use <> v.value_in_use;
 end;

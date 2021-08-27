@@ -7,5 +7,5 @@ begin
 	from sys.conversation_endpoints i with (nolock)
 	where i.is_initiator = 1
 	and state_desc = 'CONVERSING'
-	order by i.lifetime desc
+	order by i.lifetime desc;
 end;

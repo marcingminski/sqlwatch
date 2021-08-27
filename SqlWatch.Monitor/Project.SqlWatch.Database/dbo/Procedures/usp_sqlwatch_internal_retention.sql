@@ -153,7 +153,7 @@ begin
 		exec (@sql);
 
 		--purge orphaned snapshots. There should not be any becuase of referential integrity but in case keys have become untrusted:
-		set @sql = 'declare @rows_affected bigint;'
+		set @sql = 'declare @rows_affected bigint;';
 
 		select @sql+='
 		set @rows_affected = 1;
@@ -173,6 +173,6 @@ begin
 		and TABLE_NAME not like '%config%'
 		and TABLE_TYPE = 'BASE TABLE';
 
-		exec (@sql)
+		exec (@sql);
 
 end;

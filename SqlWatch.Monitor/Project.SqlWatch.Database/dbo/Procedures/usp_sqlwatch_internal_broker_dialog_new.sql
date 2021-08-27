@@ -8,7 +8,7 @@ AS
 begin
 
     declare @process_message nvarchar(255),
-            @cid_txt nvarchar(128)
+            @cid_txt nvarchar(128);
 
     BEGIN DIALOG @cid
         FROM SERVICE @from_service

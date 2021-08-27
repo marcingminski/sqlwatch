@@ -4,7 +4,7 @@
 AS
 begin
 	set nocount on;
-	declare @message_body xml
+	declare @message_body xml;
 
 	--this procedure is only intended to run for local collection when SqlWatchCollect is not used.
 	if dbo.ufn_sqlwatch_get_config_value(24,null) = 0

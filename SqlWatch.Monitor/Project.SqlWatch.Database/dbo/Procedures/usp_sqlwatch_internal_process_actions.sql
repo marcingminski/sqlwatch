@@ -322,7 +322,7 @@ if @action_type  <> 'NONE'
 					@from_service = 'sqlwatch_actions',
 					@to_service = 'sqlwatch_actions',
 					@contract = 'sqlwatch_actions',
-					@cid = @cid output
+					@cid = @cid output;
 
 				set @error_message = FORMATMESSAGE('Queueing new action for action_id: %i, check_id: %i',@action_id, @check_id);
 
@@ -345,7 +345,7 @@ if @action_type  <> 'NONE'
 						@proc_id = @@PROCID,
 						@process_stage = '56B91169-62F2-4406-8839-DC472A388A21',
 						@process_message = @error_message,
-						@process_message_type = 'VERBOSE'
+						@process_message_type = 'VERBOSE';
 			end;
 
 		--insert into [dbo].[sqlwatch_meta_action_queue] (sql_instance, [action_exec_type], [action_exec])
