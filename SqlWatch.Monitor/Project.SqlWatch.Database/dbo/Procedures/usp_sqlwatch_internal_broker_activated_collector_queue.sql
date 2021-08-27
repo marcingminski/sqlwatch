@@ -114,7 +114,7 @@ begin
 	                                snapshot_type_id tinyint,
 	                                sql_instance varchar(32),
                                     timezoneoffset int
-                                )
+                                );
 
                                 if @snapshot_time is not null
                                     begin
@@ -347,7 +347,7 @@ begin
                                                     --otheriwse a single broken message may hold up the queue if we keep rolling back
                                                     --and since its a performance data, we do not care about losing few snapshots
                                                     --but we do care about not blowing the database and server
-                                                    commit transaction
+                                                    commit transaction;
                                                 end;
 
                                             else if XACT_STATE() = -1 and @@TRANCOUNT > 0
@@ -531,7 +531,7 @@ begin
     end try
     begin catch
         select  @error_number = ERROR_NUMBER(),
-                @error_message = ERROR_MESSAGE()
+                @error_message = ERROR_MESSAGE();
                     
         if XACT_STATE() = -1 and @@TRANCOUNT > 0
             begin

@@ -105,7 +105,7 @@ begin
 					declare cur_job_steps cursor for
 					select step_name, step_id = ROW_NUMBER() OVER (ORDER BY step_id), step_subsystem, step_command
 					from ##sqlwatch_steps
-					where job_name = @job_name
+					where job_name = @job_name;
 
 					open cur_job_steps
 
@@ -129,7 +129,7 @@ begin
 								@database_name = @database_name;
 
 							fetch next from cur_job_steps
-							into @step_name, @step_id, @step_subsystem, @step_command
+							into @step_name, @step_id, @step_subsystem, @step_command;
 						end;
 
 					close cur_job_steps;
@@ -154,12 +154,8 @@ begin
 								@active_start_date=20180101,
 								@active_end_date=99991231,
 								@active_start_time=@active_start_time,
-								@active_end_time=235959
+								@active_end_time=235959;
 						end;
-
-
-
-
 				end;
 
 				fetch next from cur_jobs
@@ -172,7 +168,7 @@ begin
 						@freq_relative_interval , 
 						@freq_recurrence_factor , 
 						@active_start_time , 
-						@freq_type
+						@freq_type;
 		end;
 
 	close cur_jobs;

@@ -30,15 +30,17 @@ begin
 	if @event_sequence is not null
 		begin
 			insert into @app_log
-			select * 
+			select [event_sequence], [sql_instance], [event_time], [process_name], [process_stage], [process_message], [process_message_type], [spid], [process_login]
+			, [process_user], [ERROR_NUMBER], [ERROR_SEVERITY], [ERROR_STATE], [ERROR_PROCEDURE], [ERROR_LINE], [ERROR_MESSAGE], [message_payload] 
 			from dbo.sqlwatch_app_log
 			where event_sequence > @event_sequence;
 		end
 	else
 		begin
 			insert into @app_log
-			select * 
-			from dbo.sqlwatch_app_log
+			select [event_sequence], [sql_instance], [event_time], [process_name], [process_stage], [process_message], [process_message_type], [spid], [process_login]
+			, [process_user], [ERROR_NUMBER], [ERROR_SEVERITY], [ERROR_STATE], [ERROR_PROCEDURE], [ERROR_LINE], [ERROR_MESSAGE], [message_payload] 
+			from dbo.sqlwatch_app_log;
 		end;
 
 	select @event_sequence = max(event_sequence)
@@ -52,7 +54,8 @@ begin
 			values ( @event_sequence );
 		end;
 
-	select *
+	select [event_sequence], [sql_instance], [event_time], [process_name], [process_stage], [process_message], [process_message_type], [spid], [process_login]
+	, [process_user], [ERROR_NUMBER], [ERROR_SEVERITY], [ERROR_STATE], [ERROR_PROCEDURE], [ERROR_LINE], [ERROR_MESSAGE], [message_payload]
 	from @app_log
 	where process_message_type = isnull(@process_message_type,process_message_type)
 	order by event_sequence desc;

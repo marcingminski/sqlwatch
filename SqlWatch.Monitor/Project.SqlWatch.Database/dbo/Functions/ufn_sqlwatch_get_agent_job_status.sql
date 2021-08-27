@@ -5,7 +5,7 @@
 RETURNS smallint
 AS
 BEGIN
-	declare @status smallint
+	declare @status smallint;
 
 	--does the job exist?
 	select @status = enabled

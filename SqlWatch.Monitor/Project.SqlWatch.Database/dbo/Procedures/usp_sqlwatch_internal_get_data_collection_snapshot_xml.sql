@@ -521,7 +521,7 @@ begin
 					on d.database_id = s.database_id
 					for xml raw, type
 				)
-			'
+			';
 		end;
 
 	else if @snapshot_type_id = 16
@@ -608,7 +608,7 @@ begin
 					for xml raw, type
 					--for xml path (''row''), root(''table_space_usage''), ELEMENTS XSINIL, type
 				)
-			'
+			';
 		end;
 
 	else if @snapshot_type_id = 26
@@ -777,7 +777,7 @@ begin
 					order by total_worker_time desc
 					for xml raw, type
 				)
-			'
+			';
 		end;
 
 	else if @snapshot_type_id = 29
@@ -1079,7 +1079,7 @@ begin
 					exec sp_executesql @sql,
 						@parameters, 
 						@snapshot_type_id = @snapshot_type_id,
-						@xmlout = @snapshot_data_xml output
+						@xmlout = @snapshot_data_xml output;
 				end
 		end;
 	return;

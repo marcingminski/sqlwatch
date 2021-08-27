@@ -28,7 +28,7 @@ begin
             where t.timer_type = 'C'
             and a.cnt = 0;
 
-            open @conversation_cursor
+            open @conversation_cursor;
             fetch next from @conversation_cursor into @timer_id;
 
             while @@FETCH_STATUS = 0

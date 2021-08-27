@@ -20,7 +20,7 @@ begin
 
 	if [dbo].[ufn_sqlwatch_get_product_version]('major') < 11
 		begin
-			raiserror('Product version must be 11 or higher to use Extended Events',16,1)
+			raiserror('Product version must be 11 or higher to use Extended Events',16,1);
 			return;
 		end;
 
@@ -92,7 +92,7 @@ begin
 
 			if @xes_address is null
 				begin
-					declare @error_message varchar(1024)
+					declare @error_message varchar(1024);
 					set @error_message = FORMATMESSAGE('The session %s does not exist.',@session_name);
 					raiserror(@error_message, 16, 1);
 					return;

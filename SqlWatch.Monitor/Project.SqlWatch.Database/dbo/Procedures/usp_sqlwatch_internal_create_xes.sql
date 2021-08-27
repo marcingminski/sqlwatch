@@ -15,7 +15,7 @@ declare @sql varchar(max) = '';
 							begin
 								DROP EVENT SESSION [SQLWATCH_long_queries] ON SERVER;
 							end;
-					'
+					';
 				end
 		end
 

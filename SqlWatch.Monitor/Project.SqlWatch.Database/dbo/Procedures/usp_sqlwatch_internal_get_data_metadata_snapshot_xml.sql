@@ -314,7 +314,7 @@ select
 					) x
 					for xml raw, type
 				)
-			'
+			';
 		end;
 
 	else if @metadata = 'dm_exec_text_query_plan'

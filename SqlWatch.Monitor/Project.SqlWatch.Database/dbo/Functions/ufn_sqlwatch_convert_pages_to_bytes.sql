@@ -5,5 +5,5 @@
 RETURNS bigint with schemabinding
 AS
 BEGIN
-	RETURN (@pages * 8 * 1024)
+	RETURN (@pages * 8 * 1024);
 END;

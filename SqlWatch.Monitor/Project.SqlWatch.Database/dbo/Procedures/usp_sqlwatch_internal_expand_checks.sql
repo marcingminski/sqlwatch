@@ -108,7 +108,7 @@ begin
 					   ,[use_baseline]
 					from [dbo].[sqlwatch_config_check_template] c
 					cross apply (
-						select *
+						select [sql_instance], [sqlwatch_volume_id], [volume_name], [label], [file_system], [volume_block_size_bytes], [date_created], [date_updated], [date_last_seen], [is_record_deleted]
 						from [dbo].[sqlwatch_meta_os_volume]
 						where sql_instance = @sql_instance
 						) d
@@ -147,13 +147,14 @@ begin
 					   ,[use_baseline]
 					from [dbo].[sqlwatch_config_check_template] c
 					cross apply (
-						select *, is_current=ROW_NUMBER() over (partition by job_name order by job_create_date desc)
+						select [sql_instance], [job_name], [job_create_date], [sqlwatch_job_id], [date_last_seen], [is_record_deleted]
+						, is_current=ROW_NUMBER() over (partition by job_name order by job_create_date desc)
 						from [dbo].[vw_sqlwatch_report_dim_agent_job]
 						where sql_instance = @sql_instance
 						) d
 					where c.check_name = @check_name
 					and c.expand_by = @expand_by
-					and d.is_current = 1
+					and d.is_current = 1;
 				end
 
 			if @expand_by = 'Database'
@@ -187,7 +188,7 @@ begin
 					   ,[use_baseline]
 					from [dbo].[sqlwatch_config_check_template] c
 					cross apply (
-						select *
+						select [database_name], [database_create_date], [sql_instance], [sqlwatch_database_id], [date_last_seen], [is_auto_close_on], [is_auto_shrink_on], [is_auto_update_stats_on], [user_access], [state], [snapshot_isolation_state], [is_read_committed_snapshot_on], [recovery_model], [page_verify_option], [is_current]
 						from [dbo].[sqlwatch_meta_database]
 						where sql_instance = @sql_instance
 						and is_current = 1

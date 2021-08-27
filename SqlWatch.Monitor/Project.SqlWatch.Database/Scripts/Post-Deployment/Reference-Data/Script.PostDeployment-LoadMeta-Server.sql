@@ -20,7 +20,7 @@ when not matched then
 
 exec  [dbo].[usp_sqlwatch_local_meta_add];
 
-declare @i tinyint = 0
+declare @i tinyint = 0;
 
 while (select count(*) from [dbo].[sqlwatch_meta_server]) = 0 and @i <= 12
 	begin

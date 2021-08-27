@@ -16,4 +16,4 @@ return(
 	and snapshot_time < @snapshot_time 
 	order by [snapshot_time] desc
 );
-END
+END;

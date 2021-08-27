@@ -9,11 +9,11 @@ Post-Deployment Script Template
                SELECT * FROM [$(TableName)]					
 --------------------------------------------------------------------------------------
 */
-declare @active_days varchar(27) = 'Mon,Tue,Wed,Thu,Fri,Sat,Sun'
-declare @active_hours varchar(5) = '00-23'
-declare @timer_valid_from datetime2(0) = '1970-01-01'
-declare @timer_valid_to datetime2(0) = '2099-12-31'
-
+declare @active_days varchar(27) = 'Mon,Tue,Wed,Thu,Fri,Sat,Sun',
+		@active_hours varchar(5) = '00-23',
+		@timer_valid_from datetime2(0) = '1970-01-01',
+		@timer_valid_to datetime2(0) = '2099-12-31'
+		;
 ;merge [dbo].[sqlwatch_config_timer] as target 
 using (
 	

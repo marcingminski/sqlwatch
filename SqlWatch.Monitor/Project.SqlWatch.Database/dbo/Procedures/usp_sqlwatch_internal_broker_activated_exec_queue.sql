@@ -313,7 +313,7 @@ begin
                             
                         if XACT_STATE() in (-1,1)
                             begin
-                                rollback transaction
+                                rollback transaction;
                             end 
 
                         set @process_message = FORMATMESSAGE('Error whilst processing message (%s) in Group %s',@conversation_handle_txt, @conversation_group_id_txt);
