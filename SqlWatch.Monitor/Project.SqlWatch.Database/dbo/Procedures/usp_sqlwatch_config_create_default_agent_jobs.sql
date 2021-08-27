@@ -154,6 +154,7 @@ DECLARE @xml XML = cast (''$xml'' as xml); SEND ON CONVERSATION @cid MESSAGE TYP
 
 Invoke-Sqlcmd -ServerInstance "' + @server + '" -Database ' + '$(DatabaseName)' + ' -MaxCharLength 2147483647 -Query $sql			
 			')
+			;
 
 
 	exec [dbo].[usp_sqlwatch_internal_create_agent_job]

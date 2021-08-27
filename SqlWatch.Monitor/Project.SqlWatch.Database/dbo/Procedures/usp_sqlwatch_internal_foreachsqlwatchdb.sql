@@ -18,7 +18,8 @@ FOR
 select distinct sdb.name
 from dbo.vw_sqlwatch_sys_databases sdb;
 
-open cur_database
+open cur_database;
+
 fetch next from cur_database into @db;
 
 while @@FETCH_STATUS = 0

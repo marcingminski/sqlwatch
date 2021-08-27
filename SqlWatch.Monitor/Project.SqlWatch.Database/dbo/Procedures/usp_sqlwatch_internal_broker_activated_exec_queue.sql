@@ -350,5 +350,5 @@ begin
                         end;
                 end
             raiserror(N'Error whilst executing SQLWATCH Procedure %s: %i: %s', 16, 10, @this_procedure_name, @error_number, @error_message);
-        end catch
+        end catch;
 end

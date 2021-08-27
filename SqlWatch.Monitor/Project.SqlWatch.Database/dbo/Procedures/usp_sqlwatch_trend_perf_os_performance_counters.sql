@@ -71,7 +71,7 @@ begin
 	group by  
 		pc.[performance_counter_id]
 		, pc.[instance_name]
-		, pc.[sql_instance]  
+		, pc.[sql_instance]  ;
 	end;
 
 --declare		@snapshot_time datetime2(0),

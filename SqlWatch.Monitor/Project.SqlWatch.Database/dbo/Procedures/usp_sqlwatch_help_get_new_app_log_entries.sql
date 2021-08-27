@@ -25,7 +25,7 @@ begin
 		[ERROR_LINE] [int] NULL,
 		[ERROR_MESSAGE] [nvarchar](max) NULL,
 		[message_payload] [xml] NULL
-	)
+	);
 
 	if @event_sequence is not null
 		begin
