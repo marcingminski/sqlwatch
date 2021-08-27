@@ -308,7 +308,7 @@ if @action_type  <> 'NONE'
 				and [action_enabled] = 1
 				and [action_exec] is not null --null action exec can only be for reports but they are processed below
 				for xml raw, type
-			) 
+			) ;
 
 		if @message_body is not null
 			begin;

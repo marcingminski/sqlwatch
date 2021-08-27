@@ -33,7 +33,7 @@ begin
 			@freq_type int
 			;
 
-	set @server = @@SERVERNAME
+	set @server = @@SERVERNAME;
 
 	/* fixed job ownership originally submmited by SvenLowry
 		https://github.com/marcingminski/sqlwatch/pull/101/commits/8772e56df3aa80849b1dac85405641feb6112e5c 

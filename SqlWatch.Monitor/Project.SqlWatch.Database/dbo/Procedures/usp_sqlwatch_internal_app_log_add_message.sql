@@ -41,7 +41,7 @@ begin
 
 		if @process_name is null and @proc_id is not null
 			begin
-				set @process_name = OBJECT_NAME(@proc_id)
+				set @process_name = OBJECT_NAME(@proc_id);
 			end
 
 		insert into dbo.[sqlwatch_app_log] (

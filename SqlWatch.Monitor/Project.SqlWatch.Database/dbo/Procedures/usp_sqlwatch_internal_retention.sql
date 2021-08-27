@@ -105,11 +105,12 @@ begin
 		----- purge removed items
 		declare @sql varchar(max),
 				@purge_after_days tinyint,
-				@row_batch_size int
+				@row_batch_size int;
 
-		set @purge_after_days = [dbo].[ufn_sqlwatch_get_config_value]  (2, null)
-		set @row_batch_size = [dbo].[ufn_sqlwatch_get_config_value]  (5, null)
-		set @sql = 'declare @rows_affected bigint;'
+		select 
+			@purge_after_days = [dbo].[ufn_sqlwatch_get_config_value]  (2, null),
+			@row_batch_size = [dbo].[ufn_sqlwatch_get_config_value]  (5, null),
+			@sql = 'declare @rows_affected bigint;';
 
 		select @sql+= '
 		set @rows_affected = 1;

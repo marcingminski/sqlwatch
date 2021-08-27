@@ -396,7 +396,7 @@ begin
 						on db.name = PARSENAME(statement,3)
 					for xml raw, type
 				)
-			'
+			';
 		end;
 
 	else if @snapshot_type_id = 14

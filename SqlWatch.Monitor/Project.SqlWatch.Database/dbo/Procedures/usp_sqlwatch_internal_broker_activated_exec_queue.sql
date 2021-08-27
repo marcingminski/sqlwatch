@@ -309,7 +309,7 @@ begin
                             end;
 
                         select  @error_number = ERROR_NUMBER(),
-                                @error_message = ERROR_MESSAGE()
+                                @error_message = ERROR_MESSAGE();
                             
                         if XACT_STATE() in (-1,1)
                             begin
