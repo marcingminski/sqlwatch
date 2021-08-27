@@ -402,7 +402,7 @@ If the check satisfies either of these thresholds we are going to set the check 
 							@proc_id = @@PROCID,
 							@process_stage = '55C51822-5204-42B0-97A6-039608B9ACB8',
 							@process_message = @error_message,
-							@process_message_type = 'VERBOSE'
+							@process_message_type = 'VERBOSE';
 
 				end
 	end try

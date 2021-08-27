@@ -624,7 +624,7 @@ begin
 					from dbo.vw_sqlwatch_sys_configurations v
 					for xml raw, type
 				)
-			'
+			';
 		end;
 
 	else if @snapshot_type_id = 27
@@ -1064,7 +1064,7 @@ begin
 					set @sql+= N'
 						for xml path (''CollectionSnapshot'')
 					)
-					option (keep plan);'
+					option (keep plan);';
 
 					if @prep_sql is not null
 						begin

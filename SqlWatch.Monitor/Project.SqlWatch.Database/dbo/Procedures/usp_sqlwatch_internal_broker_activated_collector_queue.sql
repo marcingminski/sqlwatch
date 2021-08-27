@@ -353,7 +353,7 @@ begin
                                             else if XACT_STATE() = -1 and @@TRANCOUNT > 0
                                                 begin
                                                     --only rollback if the transaction is broken
-                                                    rollback transaction
+                                                    rollback transaction;
                                                 end;
 
                                             exec sp_xml_removedocument @xdoc;
@@ -394,7 +394,7 @@ begin
 	                                meta_data nvarchar(50),
                                     snapshot_time datetime2(0),
 	                                sql_instance varchar(32)
-                                )
+                                );
 
                                 begin try
 
@@ -462,7 +462,7 @@ begin
                                             --otheriwse a single broken message may hold up the queue if we keep rolling back
                                             --and since its a performance data, we do not care about losing few snapshots
                                             --but we do care about not blowing the database and server
-                                            commit transaction
+                                            commit transaction;
                                         end;
 
                                     else if XACT_STATE() = -1 and @@TRANCOUNT > 0

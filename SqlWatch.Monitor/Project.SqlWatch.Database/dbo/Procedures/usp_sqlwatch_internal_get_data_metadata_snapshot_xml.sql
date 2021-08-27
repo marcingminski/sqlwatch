@@ -361,7 +361,7 @@ select
 
 					for xml raw, type
 				)
-			'
+			';
 		end;
 
 	--else if @metadata = 'sys_configurations'

@@ -244,7 +244,7 @@ begin
 
                                             end;
 
-                                        set @process_message = formatmessage('Scheduling timer %s with timeout %i',@conversation_group_id_txt, @timer)
+                                        set @process_message = formatmessage('Scheduling timer %s with timeout %i',@conversation_group_id_txt, @timer);
 
                                         exec [dbo].[usp_sqlwatch_internal_app_log_add_message]
 					                        @proc_id = @@PROCID,
@@ -322,24 +322,24 @@ begin
 					        @proc_id = @@PROCID,
 					        @process_stage = '963690C9-4DBC-49DE-8E6F-B4C39EF32B1D',
 					        @process_message = @process_message,
-					        @process_message_type = 'ERROR'
+					        @process_message_type = 'ERROR';
 
                         end conversation @conversation_handle;
 
-                    end catch
+                    end catch;
                 end
             else
                 begin
                     if XACT_STATE() = 1
                         begin
                             --commit queue and remove the message:
-                            commit transaction
+                            commit transaction;
                         end
                 end
         end try
         begin catch
             select  @error_number = ERROR_NUMBER(),
-                    @error_message = ERROR_MESSAGE()
+                    @error_message = ERROR_MESSAGE();
                     
             if XACT_STATE() in (-1,1)
                 begin
@@ -351,4 +351,4 @@ begin
                 end
             raiserror(N'Error whilst executing SQLWATCH Procedure %s: %i: %s', 16, 10, @this_procedure_name, @error_number, @error_message);
         end catch;
-end
+end;

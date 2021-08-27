@@ -63,7 +63,7 @@ begin
 			freq_recurrence_factor , 
 			active_start_time , 
 			freq_type
-	from ##sqlwatch_jobs
+	from ##sqlwatch_jobs;
 
 	open cur_jobs;
 

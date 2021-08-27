@@ -45,9 +45,9 @@ declare @sql varchar(max) = '';
 						;
 						
 						ALTER EVENT SESSION [SQLWATCH_blockers] ON SERVER STATE = START;
-					'
-				end
-		end
+					';
+				end;
+		end;
 
 	if @session_name = 'SQLWATCH_waits' or @session_name  is null
 		begin
