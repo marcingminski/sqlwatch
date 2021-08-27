@@ -25,6 +25,6 @@ begin
 			@proc_id = @@PROCID,
 			@process_stage = '34E4CEF2-599E-41FE-B779-02722084E8AB',
 			@process_message = @process_message,
-			@process_message_type = 'VERBOSE'
+			@process_message_type = 'VERBOSE';
 
 end;

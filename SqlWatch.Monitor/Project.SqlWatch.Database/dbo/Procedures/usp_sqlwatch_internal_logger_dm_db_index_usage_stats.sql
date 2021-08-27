@@ -12,7 +12,9 @@ begin
 		@xdoc = @xdoc,
 		@sql_instance = @sql_instance;
 
-	select t.*
+	select [t].[used_page_count], [t].[user_seeks], [t].[user_scans], [t].[user_lookups], [t].[user_updates], [t].[last_user_seek], [t].[last_user_scan], [t].[last_user_lookup]
+		, [t].[last_user_update], [t].[stats_date], [t].[is_disabled], [t].[partition_id], [t].[partition_count], [t].[database_name], [t].[database_create_date], [t].[table_name]
+		, [t].[index_name], [t].[index_id]
 		, mdb.sqlwatch_database_id
 		, mt.sqlwatch_table_id
 		, mi.sqlwatch_index_id

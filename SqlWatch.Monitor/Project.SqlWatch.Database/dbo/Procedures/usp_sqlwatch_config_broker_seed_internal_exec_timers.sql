@@ -23,7 +23,7 @@ begin
 	            where conversation_group_id = t.timer_id 
 	            ) a
             where t.timer_type = 'I'
-            and a.cnt = 0
+            and a.cnt = 0;
 
             open @conversation_cursor
             fetch next from @conversation_cursor into @timer_id;

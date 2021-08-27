@@ -16,7 +16,7 @@ begin
 				@messagelevel int
 				;
 
-		set @logginglevel = dbo.ufn_sqlwatch_get_config_value(7, null)
+		set @logginglevel = dbo.ufn_sqlwatch_get_config_value(7, null);
 
 		/*
 			0 - Off - Output no tracing and debugging messages.
@@ -32,7 +32,7 @@ begin
 			when 'INFO' then 3
 			when 'VERBOSE' then 4
 			when 'DEBUG' then 4 -- common alias for VERBOSE
-		else 5 end
+		else 5 end;
 
 		if	@messagelevel > @logginglevel
 			begin

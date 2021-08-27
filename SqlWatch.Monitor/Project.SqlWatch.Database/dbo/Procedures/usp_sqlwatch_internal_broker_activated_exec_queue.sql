@@ -286,7 +286,7 @@ begin
 					                @proc_id = @@PROCID,
 					                @process_stage = '38BCE6CF-B833-4730-9BB3-DB1F69D213E2',
 					                @process_message = @process_message,
-					                @process_message_type = 'ERROR'
+					                @process_message_type = 'ERROR';
 
                                 end conversation @conversation_handle;
                             end;
