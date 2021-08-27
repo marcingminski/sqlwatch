@@ -47,7 +47,7 @@ begin
         --while @message_count > 0
         while 1=1
             begin
-                begin transaction
+                begin transaction;
 	                waitfor (
                         receive top(1)
                               @conversation_handle = [conversation_handle]

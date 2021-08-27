@@ -65,7 +65,7 @@ begin
 			freq_type
 	from ##sqlwatch_jobs
 
-	open cur_jobs
+	open cur_jobs;
 
 	fetch next from cur_jobs
 	into @job_name,

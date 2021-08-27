@@ -324,7 +324,7 @@ begin
 					        @process_message = @process_message,
 					        @process_message_type = 'ERROR'
 
-                        end conversation @conversation_handle
+                        end conversation @conversation_handle;
 
                     end catch
                 end

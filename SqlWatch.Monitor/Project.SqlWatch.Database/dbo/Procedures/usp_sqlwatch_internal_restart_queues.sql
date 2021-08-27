@@ -8,12 +8,12 @@ begin
     -- end all conversations:
     -- Stop and clean all sqlwatch conversations in the database. 
     -- Whilst this is not normally recommended as it may abrubtly stopped all conversations, it is safe here as we have stopped all queues above.
-    set @sql = ''
+    set @sql = '';
     select @sql = @sql + '
     end conversation ''' + convert(varchar(max),conversation_handle) + ''';'
     from sys.conversation_endpoints
     where far_service like 'sqlwatch%'
-    and state_desc <> 'CLOSED' -- these will be cleaned up by SQL Server
+    and state_desc <> 'CLOSED'; -- these will be cleaned up by SQL Server
 
     exec (@sql)
 
