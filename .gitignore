@@ -65,3 +65,5 @@ SqlWatch.Monitor/Project.SqlWatch.Database/obj/SQLWATCHDATABASE.generated.sql
 /RELEASE/SQLWATCH Latest
 /SqlWatch.Monitor/Project.SqlWatch.Database-Tester/obj/Release
 /SqlWatch.Test/Pester.Results
+/SqlWatch.Monitor/Project.SqlWatchCollect/obj/Debug
+/SqlWatch.Monitor/Project.SqlWatchCollect/bin/Debug
