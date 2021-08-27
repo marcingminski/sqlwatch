@@ -23,17 +23,14 @@ RETURNS @returntable TABLE
 	[sequence] [bigint] NULL,
 	sql_instance varchar(32),
 	snapshot_time datetime2(0),
-	snapshot_type_id tinyint
+	snapshot_type_id tinyint,
+	blocking_start_time datetime2(0)
 ) with schemabinding
 AS
 BEGIN
+		set @sql_instance= case when @sql_instance is null then dbo.ufn_sqlwatch_get_servername() else @sql_instance end;
 
-		if @sql_instance is null
-			begin
-				set @sql_instance= dbo.ufn_sqlwatch_get_servername();
-			end;
-
-		with cte_block_headers AS
+		;with cte_block_headers AS
 		(
 			select 
 				  session_id = blocking_spid
@@ -53,7 +50,7 @@ BEGIN
 				, ecid = blocked_ecid
 				, monitor_loop
 			from [dbo].[sqlwatch_logger_xes_blockers]
-			where event_time between @start_date and @end_date
+			where blocking_start_time between @start_date and @end_date
 			and sql_instance = @sql_instance
 		), 
 
@@ -89,7 +86,7 @@ BEGIN
 				on b.monitor_loop = h.monitor_loop
 				and b.blocking_spid = h.session_id
 				and b.blocking_ecid = h.ecid
-			where b.event_time between @start_date and @end_date
+			where b.blocking_start_time between @start_date and @end_date
 			and sql_instance = @sql_instance
 		)
 		
@@ -108,7 +105,7 @@ BEGIN
 			, session_id = h.session_id
 			, blocking_session_id = nullif(h.blocking_spid ,0)
 			, [database name] = case when bproc.blocking_spid is not null then bproc.[blocked_currentdbname] else bhead.[blocking_currentdbname] end -- isnull(,bht.[database name])
-			, [lock_mode] = isnull(bproc.[lockMode], bhead.[lockMode])
+			, [lock_mode] = isnull(bproc.[lock_mode], bhead.[lock_mode])
 			, [blocking_duration_ms] = isnull(bproc.[blocking_duration_ms], bhead.[blocking_duration_ms])
 			, [appname]= case when h.blocking_level = 0 then bhead.blocking_clientapp else bproc.blocked_clientapp end
 			, [hostname]= case when h.blocking_level = 0 then bhead.[blocking_hostname] else bproc.[blocked_hostname] end
@@ -118,6 +115,7 @@ BEGIN
 			, sql_instance = @sql_instance
 			, snapshot_time = isnull(bproc.snapshot_time,bhead.snapshot_time)
 			, snapshot_type_id = isnull(bproc.snapshot_type_id,bhead.snapshot_type_id)
+			, bproc.blocking_start_time
 		from cte_blocking_hierarchy h
 
 		--block process details
@@ -125,7 +123,7 @@ BEGIN
 			on bproc.monitor_loop = h.monitor_loop
 			and bproc.blocked_spid = h.session_id
 			and bproc.blocked_ecid = h.ecid
-			and bproc.event_time between @start_date and @end_date
+			and bproc.blocking_start_time between @start_date and @end_date
 			and sql_instance = @sql_instance
 
 		--blocked header details
@@ -138,7 +136,7 @@ BEGIN
 				, [blocking_ecid]
 				, [blocking_spid]
 				, [report_xml]
-				, [lockMode]
+				, [lock_mode]
 				, [blocked_clientapp]
 				, [blocked_currentdbname]
 				, [blocked_hostname]
@@ -152,13 +150,14 @@ BEGIN
 				, [blocking_duration_ms]
 				, [snapshot_time]
 				, [snapshot_type_id]
-				, [sql_instance] 
+				, [sql_instance]
+				, blocking_start_time
 			from [dbo].[sqlwatch_logger_xes_blockers] bheadt 
 			where bheadt.monitor_loop = h.monitor_loop
 			and bheadt.blocking_spid = h.session_id
 			and bheadt.blocking_ecid = h.ecid
 			and h.blocking_level=0
-			and bheadt.event_time between @start_date and @end_date
+			and bheadt.blocking_start_time between @start_date and @end_date
 			and bheadt.sql_instance = @sql_instance
 
 

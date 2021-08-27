@@ -10,7 +10,7 @@
 	
 	[report_xml] xml not null,
 
-	[lockMode] nvarchar(128),
+	[lock_mode] nvarchar(128),
 	[blocked_clientapp] nvarchar(128),
 	[blocked_currentdbname] nvarchar(128),
 	[blocked_hostname] nvarchar(128),
@@ -28,9 +28,18 @@
 	[snapshot_time] datetime2(0) not null,
 	[snapshot_type_id] tinyint not null,
 	[sql_instance] varchar(32) not null,
+
+	[activity_id] varchar(60) not null,
+
+	transaction_name nvarchar(128),
+
+	blocking_start_time datetime2(0) not null,
+	blocked_process_id varchar(256) not null,
+
+	instance_count int, --number of times the chain has been logged in xes.
 	
 	constraint pk_logger_perf_xes_blockers 
-		primary key clustered ([event_time], [monitor_loop], [blocked_spid], blocked_ecid, [blocking_spid], blocking_ecid, [sql_instance], [snapshot_time], [snapshot_type_id]),
+		primary key clustered ([event_time], [monitor_loop], [activity_id], [sql_instance], [snapshot_time], [snapshot_type_id]),
 
 	constraint fk_logger_perf_xes_blockers 
 		foreign key ([snapshot_time],[sql_instance],[snapshot_type_id]) 
