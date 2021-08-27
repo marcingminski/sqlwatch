@@ -75,7 +75,7 @@ begin
 	end try
 	begin catch
 		--fatal error in the error loggin procedure
-		declare @message nvarchar(max)
+		declare @message nvarchar(max);
 		set @message = (select case when ERROR_MESSAGE() is not null then (
 		select 'ERROR_NUMBER=' + isnull(convert(nvarchar(max),ERROR_NUMBER()),'') + char(10) + 
 'ERROR_SEVERITY=' + isnull(convert(nvarchar(max),ERROR_SEVERITY()),'') + char(10) + 
@@ -83,8 +83,8 @@ begin
 'ERROR_PROCEDURE=''' + isnull(convert(nvarchar(max),ERROR_PROCEDURE()),'') + '''' + char(10) + 
 'ERROR_LINE=' + isnull(convert(nvarchar(max),ERROR_LINE()),'') + char(10) + 
 'ERROR_MESSAGE=''' + isnull(convert(nvarchar(max),ERROR_MESSAGE()),'') + ''''
-		) else null end)
-		raiserror (@message,16,1)
-		print @message
+		) else null end);
+		raiserror (@message,16,1);
+		print @message;
 	end catch
 end;

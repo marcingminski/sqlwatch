@@ -10,13 +10,16 @@ begin
 			@action_queue_retention_days_failed smallint,
 			@action_queue_retention_days_success smallint,
 			@application_log_retention_days smallint,
-			@sql_instance varchar(32) = dbo.ufn_sqlwatch_get_servername();
+			@sql_instance varchar(32) = dbo.ufn_sqlwatch_get_servername(),
+			@event_time datetime2(3)
+			;
 
-	select @batch_size = [dbo].[ufn_sqlwatch_get_config_value](6, null)
-	select @action_queue_retention_days_failed = [dbo].[ufn_sqlwatch_get_config_value](3, null)
-	select @action_queue_retention_days_success = [dbo].[ufn_sqlwatch_get_config_value](4, null)
-	select @application_log_retention_days = [dbo].[ufn_sqlwatch_get_config_value](1, null)
-	select @row_count = 1 -- initalitzaion, otherwise loop will not be entered
+	select @batch_size = [dbo].[ufn_sqlwatch_get_config_value](6, null),
+			@action_queue_retention_days_failed = [dbo].[ufn_sqlwatch_get_config_value](3, null),
+			@action_queue_retention_days_success = [dbo].[ufn_sqlwatch_get_config_value](4, null),
+			@application_log_retention_days = [dbo].[ufn_sqlwatch_get_config_value](1, null),
+			@row_count = 1 -- initalitzaion, otherwise loop will not be entered
+			;
 
 	declare @cutoff_dates as table (
 		snapshot_time datetime2(0),
@@ -70,18 +73,20 @@ begin
 					where sql_instance = h.sql_instance
 					)
 
-				set @row_count = @@ROWCOUNT
+				set @row_count = @@ROWCOUNT;
 				print 'Deleted ' + convert(varchar(max),@row_count) + ' records from [dbo].[sqlwatch_logger_snapshot_header]'
 			commit tran
 		end
 
 	/* Application log retention */
 	set @row_count = 1
+	set @event_time = dateadd(day,-@application_log_retention_days, SYSDATETIME());
+
 	while @row_count > 0
 		begin
 			delete top (@batch_size)
 			from dbo.sqlwatch_app_log
-			where event_time < dateadd(day,-@application_log_retention_days, SYSDATETIME())
+			where event_time < @event_time;
 
 			set @row_count = @@ROWCOUNT
 			Print 'Deleted ' + convert(varchar(max),@@ROWCOUNT) + ' records from [dbo].[sqlwatch_app_log]'

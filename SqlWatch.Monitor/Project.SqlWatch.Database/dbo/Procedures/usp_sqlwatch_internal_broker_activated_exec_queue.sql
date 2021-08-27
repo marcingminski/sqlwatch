@@ -208,7 +208,7 @@ begin
                                                         and snapshot_type_id != 17 --wmi colletor must be done at the OS level, cannot do via T-SQL.
                                                         and [collect] = 1;
 
-                                                        open @snapshots_cursor
+                                                        open @snapshots_cursor;
                                                         fetch next from @snapshots_cursor into @snapshot_type_id;
 
                                                         while @@FETCH_STATUS = 0
