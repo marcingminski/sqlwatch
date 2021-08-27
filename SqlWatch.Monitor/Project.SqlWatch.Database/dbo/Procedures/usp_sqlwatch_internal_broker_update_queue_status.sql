@@ -15,7 +15,8 @@ begin
 
 	if @queue_status = 0
 		begin
-			set @process_message = FORMATMESSAGE('The receiving queue %s is disabled.', @queue_name)
+			set @process_message = FORMATMESSAGE('The receiving queue %s is disabled.', @queue_name);
+
             exec [dbo].[usp_sqlwatch_internal_app_log_add_message]
 				@proc_id = @@PROCID,
 				@process_stage = '5F225003-35A1-4287-888A-1307B8E2629B',
@@ -24,7 +25,8 @@ begin
 		end
 	else
 		begin
-			set @process_message = FORMATMESSAGE('The receiving queue %s is enabled.', @queue_name)
+			set @process_message = FORMATMESSAGE('The receiving queue %s is enabled.', @queue_name);
+
             exec [dbo].[usp_sqlwatch_internal_app_log_add_message]
 				@proc_id = @@PROCID,
 				@process_stage = '5F225003-35A1-4287-888A-1307B8E2629B',

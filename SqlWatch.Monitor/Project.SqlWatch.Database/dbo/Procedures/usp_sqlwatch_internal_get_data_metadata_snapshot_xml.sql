@@ -94,7 +94,7 @@ select
 					on d.[database_name] = t.[database_name]
 				for xml raw, type
 				)
-			'
+			';
 		end
 		
 	--else if @metadata = 'sys_missing_indexes'

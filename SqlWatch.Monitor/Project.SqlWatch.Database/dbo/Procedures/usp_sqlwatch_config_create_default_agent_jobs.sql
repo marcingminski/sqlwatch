@@ -76,6 +76,7 @@ insert into ##sqlwatch_jobs
 																	null,		null,			null,				null,					null,					null,						null,				1)
 			,('SQLWATCH-REPORT-AZMONITOR',		null,				4,			1,				4,					10,						0,						1,							21,					1)
 
+			;
 /* step definition */
 
 insert into ##sqlwatch_steps (step_name, job_name, step_subsystem, step_command) 

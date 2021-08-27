@@ -171,7 +171,7 @@ begin
 		from INFORMATION_SCHEMA.TABLES
 		where TABLE_NAME like '%logger%'
 		and TABLE_NAME not like '%config%'
-		and TABLE_TYPE = 'BASE TABLE'
+		and TABLE_TYPE = 'BASE TABLE';
 
 		exec (@sql)
 

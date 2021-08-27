@@ -140,7 +140,7 @@ begin
 
 		where t.event_time is null
 		and w.wait_type not in (
-				select wait_type from sqlwatch_config_exclude_wait_stats
+				select wait_type from dbo.sqlwatch_config_exclude_wait_stats
 			);
 
 end;

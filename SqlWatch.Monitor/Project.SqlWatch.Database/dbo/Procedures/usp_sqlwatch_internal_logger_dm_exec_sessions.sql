@@ -45,28 +45,5 @@ begin
 			memory_usage int
 		)	
 	group by is_user_process
-	--select
-	--	[type]
-	--	,running
-	--	,sleeping
-	--	,dormant
-	--	,preconnect
-	--	,cpu_time
-	--	,reads
-	--	,writes
-	--	,snapshot_time = @snapshot_time
-	--	,snapshot_type_id = @snapshot_type_id
-	--	,sql_instance = @sql_instance
-	--from openxml (@xdoc, '/CollectionSnapshot/dm_exec_sessions/row',1) 
-	--	with (
-	--		[type] bit 
-	--		,running real 
-	--		,sleeping real 
-	--		,dormant real 
-	--		,preconnect real 
-	--		,cpu_time real 
-	--		,reads real 
-	--		,writes real
-	--	)	
 	option (maxdop 1, keep plan);
-end
+end;

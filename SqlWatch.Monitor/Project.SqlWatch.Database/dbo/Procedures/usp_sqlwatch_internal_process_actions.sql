@@ -330,7 +330,7 @@ if @action_type  <> 'NONE'
 						@proc_id = @@PROCID,
 						@process_stage = '56B91169-62F2-4406-8839-DC472A388A21',
 						@process_message = @error_message,
-						@process_message_type = 'VERBOSE'
+						@process_message_type = 'VERBOSE';
 
 				set @message_type = case when @action_exec_type = 'T-SQL' then 'mtype_sqlwatch_action_tsql' else 'mtype_sqlwatch_action_external' end;
 
