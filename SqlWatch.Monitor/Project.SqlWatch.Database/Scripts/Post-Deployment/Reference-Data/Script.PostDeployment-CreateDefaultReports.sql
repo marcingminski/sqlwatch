@@ -35,7 +35,7 @@ INNER JOIN sys.indexes i ON (ips.object_id = i.object_id) AND (ips.index_id = i.
 WHERE avg_fragmentation_in_percent > 30
 and page_count > 1000'
 	,@report_definition_type = 'Table'
-	,@report_action_id  = -1
+	,@report_action_id  = -1;
 
 --Agent Jobs failed in the last 5 minutes
 exec [dbo].[usp_sqlwatch_config_add_report] 

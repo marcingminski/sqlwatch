@@ -11,7 +11,7 @@ Post-Deployment Script Template
 */
 
 
-Print 'Populating dbo.sqlwatch_config...'
+raiserror( 'Populating dbo.sqlwatch_config...', 10, 1);
 
 declare @config table (
 	config_id int,

@@ -13,5 +13,5 @@ BEGIN
 					when @bytes / 1024.0 / 1024.0 / 1024.0 < 1000 then convert(varchar(100),convert(decimal(10,2),@bytes / 1024.0 / 1024.0 / 1024.0)) + ' GB' 
 					else convert(varchar(100),convert(decimal(10,2),@bytes / 1024.0 / 1024.0 / 1024.0 / 1024.0)) + ' TB' 
 					end
-	)
-END
+	);
+END;

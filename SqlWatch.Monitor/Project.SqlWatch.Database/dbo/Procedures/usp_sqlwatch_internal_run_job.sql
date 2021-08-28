@@ -3,7 +3,7 @@
 	@fail_on_error bit = 1
 as
 
-set nocount on 
+set nocount on ;
 
 declare @job_id uniqueidentifier,
 		@job_owner sysname
@@ -32,8 +32,8 @@ exec master.dbo.xp_sqlagent_enum_jobs 1, @job_owner, @job_id
 if exists (select top 1 * FROM @xp_results where running = 1)
 	begin
 		--job is running, quit
-		raiserror('Job ''%s'' is already running.',10, 1, @job_name)
-        return
+		raiserror('Job ''%s'' is already running.',10, 1, @job_name);
+        return;
 	end
 
 declare @startime datetime2(7) = current_timestamp

@@ -149,7 +149,7 @@ begin
 	-- execute check and log output in variable:
 	-- APP_STAGE: 5980A79A-D6BC-4BA0-8B86-A388E8DB621D
 	-------------------------------------------------------------------------------------------------------------------
-	set @check_start_time = SYSUTCDATETIME()
+	set @check_start_time = SYSUTCDATETIME();
 
 	begin try
 		set @check_query = 'SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
@@ -157,7 +157,7 @@ SET NOCOUNT ON
 SET ANSI_WARNINGS OFF
 ' + replace(@check_query,'{LAST_CHECK_DATE}',convert(varchar(23),@previous_check_date,121))
 		exec sp_executesql @check_query, N'@output decimal(28,5) OUTPUT', @output = @check_value output;
-		set @check_end_time = SYSUTCDATETIME()
+		set @check_end_time = SYSUTCDATETIME();
 		set @check_exec_time_ms = convert(real,datediff(MICROSECOND,@check_start_time,@check_end_time) / 1000.0 )
 		if @check_value is null
 			begin
@@ -196,7 +196,7 @@ SET ANSI_WARNINGS OFF
 					@proc_id = @@PROCID,
 					@process_stage = 'ED7B7EC1-6F0A-4B23-909E-7BB1D37B300D',
 					@process_message = @error_message,
-					@process_message_type = 'WARNING'
+					@process_message_type = 'WARNING';
 			end
 
 
@@ -204,7 +204,7 @@ SET ANSI_WARNINGS OFF
 		set last_check_date = isnull(@check_end_time,SYSUTCDATETIME()),
 			last_check_status = 'CHECK ERROR'
 		where [check_id] = @check_id
-		and sql_instance = @sql_instance
+		and sql_instance = @sql_instance;
 
 		set @error_message = 'CheckID : ' + convert(varchar(10),@check_id)
 						
@@ -276,7 +276,7 @@ SET ANSI_WARNINGS OFF
 				--The baseline will take precedence over values in [check_threshold_warning] and [check_threshold_critical].
 				if @use_baseline = 1 
 					begin
-						set @error_message = @error_message + ' We will try to use baseline data.'
+						set @error_message = @error_message + ' We will try to use baseline data.';
 						-- If we are asked to use the baseline and if have a default baseline, get value from the baseline data 
 						-- (in this case, the baseline data means the check that had previously run and has been baselined:
 						-- when using baseline, we're going to set it as critical. in the future we will also set warning based on % of baseline or even based on another baseline
@@ -315,13 +315,13 @@ SET ANSI_WARNINGS OFF
 										-- if strict baselining, only compare baseline check with no variance:
 										if [dbo].[ufn_sqlwatch_get_check_status] ( @check_critical_threshold_baseline, @check_value, 1 ) = 1
 											begin
-												set @error_message = @error_message + FORMATMESSAGE(' Setting @check_status to CRITICAL.')
-												set @check_status = 'CRITICAL'
+												set @error_message = @error_message + FORMATMESSAGE(' Setting @check_status to CRITICAL.');
+												set @check_status = 'CRITICAL';
 											end
 										else
 											begin
-												set @error_message = @error_message + FORMATMESSAGE(' Setting @check_status to OK.')
-												set @check_status = 'OK'
+												set @error_message = @error_message + FORMATMESSAGE(' Setting @check_status to OK.');
+												set @check_status = 'OK';
 											end
 									end
 								else
@@ -351,13 +351,13 @@ If the check satisfies either of these thresholds we are going to set the check 
 										if [dbo].[ufn_sqlwatch_get_check_status] ( @check_critical_threshold_baseline, @check_value, @check_baseline_variance ) = 0
 										or [dbo].[ufn_sqlwatch_get_check_status] ( @check_critical_threshold, @check_value, @check_variance ) = 0
 											begin
-												set @error_message = @error_message + FORMATMESSAGE(' Either the baseline or the default check has returned OK.')
-												set @check_status = 'OK'
+												set @error_message = @error_message + FORMATMESSAGE(' Either the baseline or the default check has returned OK.');
+												set @check_status = 'OK';
 											end
 										else
 											begin
-												set @error_message = @error_message + FORMATMESSAGE(' Neither the baseline nor the default check has returned OK so setting CRITICAL.')
-												set  @check_status =  'CRITICAL'
+												set @error_message = @error_message + FORMATMESSAGE(' Neither the baseline nor the default check has returned OK so setting CRITICAL.');
+												set  @check_status =  'CRITICAL';
 											end
 									end
 							end
@@ -380,8 +380,8 @@ If the check satisfies either of these thresholds we are going to set the check 
 
 							if [dbo].[ufn_sqlwatch_get_check_status] ( @check_critical_threshold, @check_value, 1 ) = 1
 								begin
-									set @error_message = @error_message + FORMATMESSAGE(' The final result is CRITICAL.')
-									set @check_status =  'CRITICAL'
+									set @error_message = @error_message + FORMATMESSAGE(' The final result is CRITICAL.');
+									set @check_status =  'CRITICAL';
 								end
 							else if [dbo].[ufn_sqlwatch_get_check_status] ( @check_warning_threshold, @check_value, 1 ) = 1
 								begin
@@ -496,7 +496,7 @@ dbo.ufn_sqlwatch_get_config_value ( 16, null ): %i
 					end
  
 				fetch next from cur_actions 
-				into @action_id
+				into @action_id;
 
 				while @@FETCH_STATUS = 0  
 					begin

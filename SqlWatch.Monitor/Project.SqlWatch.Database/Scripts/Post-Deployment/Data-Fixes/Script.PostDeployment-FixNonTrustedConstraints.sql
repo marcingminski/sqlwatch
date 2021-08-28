@@ -18,8 +18,8 @@ Post-Deployment Script Template
 
 --I hate doing this but not sure why VS fails to make them trusted?
 
-Print 'Making Constraints Trusted Again'
-set @sql = ''
+raiserror( 'Making Constraints Trusted Again', 10, 1 )
+set @sql = '';
 
 select @sql = @sql + 'alter table ' + quotename(s.name) + '.' + quotename(o.name) + ' with check check constraint ' + quotename(i.name) + char(10)
 from sys.foreign_keys i
@@ -28,7 +28,7 @@ inner join sys.objects o
 inner join sys.schemas s
 	on o.schema_id = s.schema_id
 where i.is_not_trusted = 1
-and i.is_not_for_replication = 0
+and i.is_not_for_replication = 0;
 
 exec (@sql);
 

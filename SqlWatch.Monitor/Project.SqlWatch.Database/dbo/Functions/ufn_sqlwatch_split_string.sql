@@ -11,28 +11,28 @@ RETURNS @output TABLE
 as
 begin
 
-      declare @string nvarchar(max)
-      declare @cnt Int 
-	  declare @rn smallint = 1
+      declare @string nvarchar(max);
+      declare @cnt Int ;
+	  declare @rn smallint = 1;
 
       if(@input_string is not null) 
 
       begin
-            set @cnt = charindex(@delimiter,@input_string) 
+            set @cnt = charindex(@delimiter,@input_string) ;
             while @cnt > 0 
             begin 
-                  set @string = substring(@input_string,1,@cnt-1) 
-                  set @input_string = substring(@input_string,@cnt+1,len(@input_string)-@cnt) 
+                  set @string = substring(@input_string,1,@cnt-1) ;
+                  set @input_string = substring(@input_string,@cnt+1,len(@input_string)-@cnt) ;
 
-                  insert into @output values (@string,@rn) 
-                  set @cnt = charindex(@delimiter,@input_string) 
-				  set @rn = @rn + 1
+                  insert into @output values (@string,@rn) ;
+                  set @cnt = charindex(@delimiter,@input_string) ;
+				  set @rn = @rn + 1;
             end 
 
 
-            set @string = @input_string 
+            set @string = @input_string ;
 
-            insert into @output values (@string,@rn) 
+            insert into @output values (@string,@rn) ;
       end
-      return
-end
+      return;
+end;

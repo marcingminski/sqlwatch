@@ -27,8 +27,8 @@ begin
 			@process_message_type = 'INFO'
 
 
-	declare @excludedbs table ([name] sysname)
-	declare @includedbs table ([name] sysname)
+	declare @excludedbs table ([name] sysname);
+	declare @includedbs table ([name] sysname);
 
 	insert into @excludedbs
 	select [value]
@@ -38,7 +38,7 @@ begin
 	insert into @includedbs
 	select [value]
 	from [dbo].[ufn_sqlwatch_split_string] (@databases,',') s
-	where s.[value] not like '-%' collate database_default			
+	where s.[value] not like '-%' collate database_default	;		
 
 	declare cur_database cursor
 	LOCAL FORWARD_ONLY STATIC READ_ONLY
@@ -47,7 +47,7 @@ begin
 	from dbo.vw_sqlwatch_sys_databases sdb
 
 	open cur_database
-	fetch next from cur_database into @db
+	fetch next from cur_database into @db;
 
 	while @@FETCH_STATUS = 0
 		begin
@@ -86,14 +86,14 @@ begin
 
 										if datediff(s,@timestart,@timeend) <= 2147483648
 											begin
-												set @process_message  = @process_message  + convert(varchar(100),datediff(ms,@timestart,@timeend)) + 'ms'
+												set @process_message  = @process_message  + convert(varchar(100),datediff(ms,@timestart,@timeend)) + 'ms';
 											end
 										else
 											begin
-												set @process_message  = @process_message  + convert(varchar(100),datediff(s,@timestart,@timeend)) + 's'
+												set @process_message  = @process_message  + convert(varchar(100),datediff(s,@timestart,@timeend)) + 's';
 											end
 
-										Print @process_message
+										raiserror( @process_message, 10, 1);
 
 										if dbo.ufn_sqlwatch_get_config_value(7, null) = 1
 											begin

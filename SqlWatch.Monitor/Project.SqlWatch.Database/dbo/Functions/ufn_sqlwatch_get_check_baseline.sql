@@ -28,5 +28,5 @@ BEGIN
 
 		where b.baseline_id = @baseline_id
 			and lc.check_id = @check_id
-		)
-END
+		);
+END;

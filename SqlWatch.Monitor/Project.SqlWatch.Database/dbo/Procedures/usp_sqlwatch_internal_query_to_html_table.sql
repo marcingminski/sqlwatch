@@ -24,8 +24,8 @@
 		
 		set nocount on;
 
-		set @tmp_table = '##'+replace(convert(varchar(max),newid()),'-','')
-		set @order_by = case when @order_by is null then '' else replace(@order_by, '''', '''''') end
+		set @tmp_table = '##'+replace(convert(varchar(max),newid()),'-','');
+		set @order_by = case when @order_by is null then '' else replace(@order_by, '''', '''''') end;
 
 		set @sql = 'select * into ' + @tmp_table + ' from (' + @query + ') t;'
 
@@ -49,10 +49,10 @@
 		where object_id = object_id('tempdb..' + @tmp_table)
 		order by column_id;
 
-		set @cols = 'set @html = cast(( select ' + @cols + ' from ' + @tmp_table + ' ' + @order_by + ' for xml path (''tr''), elements) as nvarchar(max))'    
+		set @cols = 'set @html = cast(( select ' + @cols + ' from ' + @tmp_table + ' ' + @order_by + ' for xml path (''tr''), elements) as nvarchar(max))'    ;
 
 		begin try
-			exec sys.sp_executesql @cols, N'@html nvarchar(max) OUTPUT', @html=@html output
+			exec sys.sp_executesql @cols, N'@html nvarchar(max) OUTPUT', @html=@html output;
 		end try
 		begin catch
 

@@ -36,7 +36,7 @@ begin
 			, si.sql_instance
 			, st.snapshot_type_id
 		from [dbo].[sqlwatch_config_snapshot_type] st
-		cross join [dbo].[sqlwatch_config_sql_instance] si
+		cross join [dbo].[sqlwatch_config_sql_instance] si;
 
 	/*	Once we have a list of snapshots and dates, 
 		we can get max snapshot for the rest - to avoid excesive scanning

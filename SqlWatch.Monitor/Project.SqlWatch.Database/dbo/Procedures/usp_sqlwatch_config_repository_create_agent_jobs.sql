@@ -84,13 +84,13 @@ insert into ##sqlwatch_steps
 
 while @threads_count < @threads
 	begin
-		set @threads_count = @threads_count + 1
-		set @start_time = @start_time + 1
-		set @job_name = 'SQLWATCH-REPOSITORY-IMPORT-T' + convert(varchar(10),@threads_count)
+		set @threads_count = @threads_count + 1;
+		set @start_time = @start_time + 1;
+		set @job_name = 'SQLWATCH-REPOSITORY-IMPORT-T' + convert(varchar(10),@threads_count);
 		insert into ##sqlwatch_jobs
 
 					/* JOB_NAME		freq:		type,	interval,	subday_type,	subday_intrval, relative_interval,	recurrence_factor,	start_date, end_date, start_time,	end_time,	enabled */
-			values	(@job_name,					4,		1,			4,				1,				0,					1,					20180101,	99991231, @start_time,	235959,		@enabled)
+			values	(@job_name,					4,		1,			4,				1,				0,					1,					20180101,	99991231, @start_time,	235959,		@enabled);
 
 		insert into ##sqlwatch_steps
 					/* step name													step_id,	job_name	subsystem,	command */

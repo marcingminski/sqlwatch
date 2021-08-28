@@ -468,7 +468,7 @@ begin
                                     else if XACT_STATE() = -1 and @@TRANCOUNT > 0
                                         begin
                                             --only rollback if the transaction is broken
-                                            rollback transaction
+                                            rollback transaction;
                                         end;
 
                                     exec sp_xml_removedocument @xdoc;

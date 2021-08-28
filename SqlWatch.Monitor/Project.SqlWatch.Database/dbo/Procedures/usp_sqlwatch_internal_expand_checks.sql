@@ -202,7 +202,7 @@ begin
 				into @check_name, @expand_by, @check_template_id
 		end
 
-		close cur_expand_check
+		close cur_expand_check;
 		deallocate cur_expand_check;
 
 		fetch next from cur_expand_by_server
