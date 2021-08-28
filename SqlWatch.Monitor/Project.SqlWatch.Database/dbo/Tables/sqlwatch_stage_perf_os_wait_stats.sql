@@ -11,4 +11,4 @@
 	constraint pk_sqlwatch_stage_perf_os_wait_stats primary key clustered (
 		snapshot_time, wait_type_id, sql_instance
 		)
-)
+);

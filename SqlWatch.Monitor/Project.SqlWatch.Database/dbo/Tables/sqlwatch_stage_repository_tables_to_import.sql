@@ -9,4 +9,4 @@
 	[joins] [nvarchar](max) NULL,
 	[updatecolumns] [nvarchar](max) NULL,
 	[allcolumns] [nvarchar](max) NULL
-)
+);

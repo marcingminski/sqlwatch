@@ -17,14 +17,14 @@ begin
 			@timestart datetime2(7),
 			@timeend datetime2(7),
 			@process_message nvarchar(max),
-			@timetaken bigint
+			@timetaken bigint;
 
-	set @process_message = 'Invoked by: [' + isnull(OBJECT_NAME(@calling_proc_id),'UNKNOWN') + '], @databases=' + @databases
+	set @process_message = 'Invoked by: [' + isnull(OBJECT_NAME(@calling_proc_id),'UNKNOWN') + '], @databases=' + @databases;
 	exec [dbo].[usp_sqlwatch_internal_app_log_add_message]
 			@proc_id = @@PROCID,
 			@process_stage = '5D318A4A-1F8A-4D44-B8B9-FFE2ECF62975',
 			@process_message = @process_message,
-			@process_message_type = 'INFO'
+			@process_message_type = 'INFO';
 
 
 	declare @excludedbs table ([name] sysname);
@@ -33,7 +33,7 @@ begin
 	insert into @excludedbs
 	select [value]
 	from [dbo].[ufn_sqlwatch_split_string] (@databases,',') s
-	where s.[value] like '-%' collate database_default
+	where s.[value] like '-%' collate database_default;
 
 	insert into @includedbs
 	select [value]
@@ -82,7 +82,7 @@ begin
 										exec sp_executesql @sql;
 										set @timeend = SYSDATETIME();
 
-										set @process_message = 'Processed database: [' + @db + '], @snapshot_type_id: ' + isnull(convert(nvarchar(max),@snapshot_type_id),'NULL') + '. Invoked by: [' + isnull(OBJECT_NAME(@calling_proc_id),'UNKNOWN') + '], time taken: '
+										set @process_message = 'Processed database: [' + @db + '], @snapshot_type_id: ' + isnull(convert(nvarchar(max),@snapshot_type_id),'NULL') + '. Invoked by: [' + isnull(OBJECT_NAME(@calling_proc_id),'UNKNOWN') + '], time taken: ';
 
 										if datediff(s,@timestart,@timeend) <= 2147483648
 											begin

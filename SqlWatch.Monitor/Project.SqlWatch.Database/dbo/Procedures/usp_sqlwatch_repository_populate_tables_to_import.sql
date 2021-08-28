@@ -10,29 +10,29 @@ truncate table dbo.sqlwatch_stage_repository_tables_to_import;
 --list of tables to exclude from the import:
 declare @exclude_tables table (
 	table_name nvarchar(512)
-)
+);
 
 --exclude tables that have mo meaning outside of the original SQL Instance:
 insert into @exclude_tables
 values	('sqlwatch_meta_action_queue'),
 		('sqlwatch_meta_repository_import_queue'),
 		('sqlwatch_meta_repository_import_status'),
-		('sqlwatch_meta_repository_import_thread')
+		('sqlwatch_meta_repository_import_thread');
 
 -- exclude tables that break the import that need fixing:
 insert into @exclude_tables
 values	('sqlwatch_logger_whoisactive'),
-		('sqlwatch_logger_system_configuration_scd')
+		('sqlwatch_logger_system_configuration_scd');
 
 
 declare @include_tables table (
 	table_name nvarchar(512)
-)
+);
 
 insert into @include_tables
 select name
 from sys.tables
-where name like 'sqlwatch_meta%' or	name like 'sqlwatch_logger%'
+where name like 'sqlwatch_meta%' or	name like 'sqlwatch_logger%';
 
 
 ;with cte_base_tables (lvl, object_id, name, schema_Name) as (

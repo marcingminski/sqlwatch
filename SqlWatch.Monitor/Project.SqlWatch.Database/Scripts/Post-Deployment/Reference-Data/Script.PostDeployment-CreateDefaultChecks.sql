@@ -23,7 +23,7 @@ declare @check_template table (
 	[ignore_flapping] [bit] NOT NULL,
 	[expand_by] [varchar](50) NULL,
 	[use_baseline] bit null
-)
+);
 
 insert into @check_template
 	values 
@@ -1287,7 +1287,7 @@ where snapshot_time >= ''{LAST_CHECK_DATE}'''
 	,@action_recovery = 0
 	,@action_repeat_period_minutes = 1
 	,@action_hourly_limit = 60
-	,@action_template_id = -2
+	,@action_template_id = -2;
 
 --------------------------------------------------------------------------------------
 

@@ -10,10 +10,10 @@
 		),
 	constraint fk_sqlwatch_meta_errorlog_attributes_server foreign key (sql_instance)
 		references dbo.sqlwatch_meta_server (servername) on delete cascade
-)
+);
 go
 
-create nonclustered index idx_sqlwatch_meta_errorlog_attribute_1 on [dbo].[sqlwatch_meta_errorlog_attribute] ([date_updated])
+create nonclustered index idx_sqlwatch_meta_errorlog_attribute_1 on [dbo].[sqlwatch_meta_errorlog_attribute] ([date_updated]);
 go
 
 create trigger trg_sqlwatch_meta_errorlog_attribute_last_updated
@@ -29,6 +29,6 @@ create trigger trg_sqlwatch_meta_errorlog_attribute_last_updated
 		inner join inserted i
 			on i.sql_instance = t.sql_instance
 			and i.attribute_id = t.attribute_id
-			and i.sql_instance = @@SERVERNAME
+			and i.sql_instance = @@SERVERNAME;
 	end
 go

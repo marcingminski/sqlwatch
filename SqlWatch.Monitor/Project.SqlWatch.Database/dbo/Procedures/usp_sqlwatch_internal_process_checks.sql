@@ -385,13 +385,13 @@ If the check satisfies either of these thresholds we are going to set the check 
 								end
 							else if [dbo].[ufn_sqlwatch_get_check_status] ( @check_warning_threshold, @check_value, 1 ) = 1
 								begin
-									set @error_message = @error_message + FORMATMESSAGE(' The final result is WARNING.')
-									set @check_status =  'WARNING'
+									set @error_message = @error_message + FORMATMESSAGE(' The final result is WARNING.');
+									set @check_status =  'WARNING';
 								end
 							else
 								begin
-									set @error_message = @error_message + FORMATMESSAGE(' The final result is OK.')
-									set @check_status =  'OK'
+									set @error_message = @error_message + FORMATMESSAGE(' The final result is OK.');
+									set @check_status =  'OK';
 								end
 						end;
 

@@ -36,7 +36,7 @@ and name not like 'SQLWATCH-REPOSITORY-%';
 		Print 'Existing default SQLWATCH jobs deleted';
 	end;
 
-set @sql = ''
+set @sql = '';
 create table ##sqlwatch_jobs (
 	job_id tinyint identity (1,1),
 	job_name sysname primary key,

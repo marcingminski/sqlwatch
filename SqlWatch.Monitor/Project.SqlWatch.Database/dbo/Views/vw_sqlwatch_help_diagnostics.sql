@@ -101,16 +101,6 @@ select sqlwatch_diagnostics = (
 			for xml raw, type
 		)
 
-		, central_repo_import_status = (
-			select sql_instance_anonym = master.dbo.fn_varbintohexstr(HashBytes('MD5', [sql_instance]))
-				  ,[object_name]
-				  ,[import_status]
-				  ,[import_end_time]
-				  ,[exec_proc]
-			  from [dbo].[sqlwatch_meta_repository_import_status]
-			  for xml raw, type
-		)
-
 		, enabled_actions = (
 			select action_id 
 			from [dbo].[sqlwatch_config_action]
