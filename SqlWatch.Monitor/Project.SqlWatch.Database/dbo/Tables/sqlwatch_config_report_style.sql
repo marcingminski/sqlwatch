@@ -7,7 +7,7 @@
 	constraint pk_sqlwatch_config_report_style primary key clustered (
 		[report_style_id]
 	)
-)
+);
 go
 
 create trigger dbo.trg_sqlwatch_config_report_style_updated_U
@@ -20,6 +20,6 @@ create trigger dbo.trg_sqlwatch_config_report_style_updated_U
 			set date_updated = getdate()
 		from [dbo].[sqlwatch_config_report_style] t
 		inner join inserted i
-		on i.[report_style_id] = t.[report_style_id]
-	end
+		on i.[report_style_id] = t.[report_style_id];
+	end;
 go

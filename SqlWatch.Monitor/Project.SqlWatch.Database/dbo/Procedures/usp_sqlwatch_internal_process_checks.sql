@@ -217,7 +217,7 @@ SET ANSI_WARNINGS OFF
 		values (@sql_instance, @snapshot_time, @snapshot_type_id, @check_id, null, 'CHECK ERROR', @check_exec_time_ms);
 			
 		goto ProcessNextCheck
-	end catch
+	end catch;
 
 
 	-------------------------------------------------------------------------------------------------------------------
@@ -245,7 +245,7 @@ SET ANSI_WARNINGS OFF
 			--warning only:
 			if (dbo.ufn_sqlwatch_get_config_value(11,null) = 1)
 				begin
-					set @error_message = 'Check (Id: ' + convert(varchar(10),@check_id) + ') is flapping.'
+					set @error_message = 'Check (Id: ' + convert(varchar(10),@check_id) + ') is flapping.';
 					exec [dbo].[usp_sqlwatch_internal_app_log_add_message]
 							@proc_id = @@PROCID,
 							@process_stage = '040D0A86-83B8-4543-A34C-9F328DAE5488',
@@ -287,7 +287,7 @@ SET ANSI_WARNINGS OFF
 						select @check_baseline=[dbo].[ufn_sqlwatch_get_check_baseline](
 							@check_id
 							,null --get default baseline
-							,@sql_instance)		
+							,@sql_instance)		;
 
 						if @check_baseline is not null
 							begin

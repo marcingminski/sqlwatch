@@ -58,7 +58,7 @@ begin
 
 	while @row_count > 0
 		begin
-			begin tran
+			begin tran;
 				delete top (@batch_size) h
 				from dbo.[sqlwatch_logger_snapshot_header] h (readpast)
 				inner join @cutoff_dates c 
@@ -71,7 +71,7 @@ begin
 					select snapshot_time
 					from [dbo].[sqlwatch_meta_snapshot_header_baseline]
 					where sql_instance = h.sql_instance
-					)
+					);
 
 				set @row_count = @@ROWCOUNT;
 				print 'Deleted ' + convert(varchar(max),@row_count) + ' records from [dbo].[sqlwatch_logger_snapshot_header]';

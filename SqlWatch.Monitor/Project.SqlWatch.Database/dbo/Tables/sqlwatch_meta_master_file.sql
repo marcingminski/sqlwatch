@@ -17,4 +17,4 @@
 		references [dbo].[sqlwatch_meta_database](
 			[sql_instance],[sqlwatch_database_id]
 		) on delete cascade,
-)
+);

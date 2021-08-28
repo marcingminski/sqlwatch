@@ -4,4 +4,4 @@
 	[query_hash] varbinary(8) not null ,
 	[query_plan_hash] varbinary(8) not null ,
 	[action] varchar(50)
-)
+);

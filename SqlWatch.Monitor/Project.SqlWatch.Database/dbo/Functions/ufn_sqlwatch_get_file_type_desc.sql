@@ -22,5 +22,5 @@ File type:
 			when 2 then 'FILESTREAM'
 			when 3 then '3'
 			when 4 then 'Full-text'
-		else 'UNKNOWN' end
-END
+		else 'UNKNOWN' end;
+END;

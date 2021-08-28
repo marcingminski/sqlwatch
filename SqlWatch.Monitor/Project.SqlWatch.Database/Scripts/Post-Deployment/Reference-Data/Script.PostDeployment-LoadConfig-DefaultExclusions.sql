@@ -95,7 +95,7 @@ and isnull(source.[client_app_name],'') = isnull(target.[client_app_name],'')
 when not matched then
 	insert ([statement], [sql_text], [username], [client_hostname], [client_app_name])
 	values (source.[statement], source.[sql_text], source.[username], source.[client_hostname], source.[client_app_name]);
-commit tran
+commit tran;
 
 --------------------------------------------------------------------------------------
 -- sqlwatch_config_exclude_wait_stats

@@ -27,7 +27,7 @@
 		of the template if there are actions using it */
 	constraint fk_sqlwatch_config_check_action_template foreign key ([action_template_id])
 		references [dbo].[sqlwatch_config_check_action_template] ([action_template_id])
-)
+);
 go
 
 create trigger dbo.trg_sqlwatch_config_check_action_updated_date_U
@@ -41,8 +41,8 @@ create trigger dbo.trg_sqlwatch_config_check_action_updated_date_U
 		from [dbo].[sqlwatch_config_check_action] t
 		inner join inserted i
 			on i.[check_id] = t.[check_id]
-			and i.[action_id] = t.[action_id]
-	end
+			and i.[action_id] = t.[action_id];
+	end;
 go
 
 create trigger dbo.trg_sqlwatch_config_check_action_D
@@ -58,5 +58,5 @@ create trigger dbo.trg_sqlwatch_config_check_action_D
 		inner join deleted d
 			on t.action_id = d.action_id
 			and t.sql_instance = @@SERVERNAME;
-	end
+	end;
 go

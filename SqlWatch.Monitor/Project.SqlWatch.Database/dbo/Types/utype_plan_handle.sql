@@ -4,4 +4,4 @@
 	statement_start_offset int,
 	statement_end_offset int,
 	[sql_handle] varbinary(64) null
-)
+);

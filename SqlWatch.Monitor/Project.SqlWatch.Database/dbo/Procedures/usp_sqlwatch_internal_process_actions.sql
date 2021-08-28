@@ -371,7 +371,7 @@ if @action_type  <> 'NONE'
 						,@subject = @subject
 						,@body = @body
 						,@check_threshold_warning = @check_threshold_warning
-						,@check_threshold_critical = @check_threshold_critical
+						,@check_threshold_critical = @check_threshold_critical;
 				end try
 				begin catch
 					set @has_errors = 1		;

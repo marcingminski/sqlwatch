@@ -2,7 +2,7 @@
 as
 
 
-set nocount on
+set nocount on;
 
 /*
 
