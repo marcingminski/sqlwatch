@@ -74,7 +74,7 @@ begin
 
 	close cur_insert;
 	deallocate cur_insert;
-end
+end;
 go
 
 create trigger trg_sqlwatch_config_baseline_meta_remove
@@ -90,7 +90,7 @@ begin
 	on m.baseline_id = d.baseline_id
 	and m.sql_instance = @sql_instance;
 
-end
+end;
 go
 
 create trigger trg_sqlwatch_config_baseline_meta_update

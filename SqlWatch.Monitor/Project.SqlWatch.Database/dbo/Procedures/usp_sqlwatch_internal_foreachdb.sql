@@ -115,7 +115,7 @@ begin
 												@process_message = @sql,
 												@process_message_type = 'ERROR';
 										GoTo NextDatabase
-									end catch
+									end catch;
 								end
 							else
 								begin

@@ -14,4 +14,4 @@
 		primary key clustered (
 			session_name
 		)
-)
+);

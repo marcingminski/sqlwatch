@@ -10,5 +10,4 @@ from [dbo].[sqlwatch_app_version]
 where [install_sequence] = (
 	select max([install_sequence])
 	from [dbo].[sqlwatch_app_version]
-	)
-	;
+	);

@@ -12,10 +12,10 @@
 		),
 	constraint fk_sqlwatch_logger_system_configuration_scd_keyword foreign key (sql_instance, sqlwatch_configuration_id) 
 		references dbo.sqlwatch_meta_system_configuration (sql_instance, sqlwatch_configuration_id)on delete cascade
-)
+);
 go
 
-create nonclustered index idx_sqlwatch_meta_system_configuration_scd_1 on [dbo].[sqlwatch_meta_system_configuration_scd] ([date_updated])
+create nonclustered index idx_sqlwatch_meta_system_configuration_scd_1 on [dbo].[sqlwatch_meta_system_configuration_scd] ([date_updated]);
 go
 
 create trigger trg_sqlwatch_meta_system_configuration_scd_last_updated
@@ -32,6 +32,6 @@ create trigger trg_sqlwatch_meta_system_configuration_scd_last_updated
 			on i.sqlwatch_configuration_id = t.sqlwatch_configuration_id
 			and i.sql_instance = t.sql_instance
 			and i.valid_from = t.valid_from
-			and i.sql_instance = @@SERVERNAME
-	end
+			and i.sql_instance = @@SERVERNAME;
+	end;
 go

@@ -24,5 +24,4 @@ outer apply (
 		and snapshot_time > l1.snapshot_time
 		and status_change = 0
 ) t
-where l1.status_change = 1
-;
+where l1.status_change = 1;

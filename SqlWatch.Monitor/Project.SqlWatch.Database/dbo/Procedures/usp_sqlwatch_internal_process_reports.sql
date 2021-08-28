@@ -171,7 +171,7 @@ while @@FETCH_STATUS = 0
 					select @@SERVERNAME,@snapshot_time,@snapshot_type_id,@report_id,@action_id;
 
 					GoTo NextReport
-				end catch
+				end catch;
 			end;
 
 		/*	Template type is complex template that must produce an output ready to be passed into action, 

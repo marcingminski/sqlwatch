@@ -11,6 +11,6 @@
 	constraint fk_sqlwatch_meta_snapshot_header_baseline_meta
 		foreign key ([baseline_id], [sql_instance])
 		references dbo.sqlwatch_meta_baseline ([baseline_id], [sql_instance]) on delete cascade
-)
+);
 go
 

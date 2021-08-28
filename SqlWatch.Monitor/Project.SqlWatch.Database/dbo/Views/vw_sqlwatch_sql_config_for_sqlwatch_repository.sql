@@ -6,5 +6,4 @@ from sys.configurations
 where name in (
 	'blocked process threshold (s)', -- should be set to 5s
 	'optimize for ad hoc workloads' -- shuold be set to 1 (for grafana mainly)
-	)
-	;
+	);

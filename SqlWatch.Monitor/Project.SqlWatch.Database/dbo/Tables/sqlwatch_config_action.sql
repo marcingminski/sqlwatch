@@ -68,6 +68,6 @@ create trigger [dbo].[trg_sqlwatch_config_action_report_circular]
 			begin
 			  raiserror ('You cannot call a report that is calling this action as this would create circular reference.' ,16,1);
 			  rollback transaction;
-			end
-    end
+			end;
+    end;
 go

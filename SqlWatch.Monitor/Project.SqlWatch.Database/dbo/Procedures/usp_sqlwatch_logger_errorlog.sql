@@ -10,7 +10,7 @@ CREATE TABLE #sqlwatch_logger_errorlog (
 	text nvarchar(max),
 	keyword_id smallint,
 	log_type_id int
-)
+);
 
 declare @keyword_id smallint, 
 		@keyword1 nvarchar(255), 
