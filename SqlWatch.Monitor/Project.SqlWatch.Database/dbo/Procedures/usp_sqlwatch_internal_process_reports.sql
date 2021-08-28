@@ -195,7 +195,7 @@ while @@FETCH_STATUS = 0
 					select @@SERVERNAME,@snapshot_time,@snapshot_type_id,@report_id,@action_id;
 
 					GoTo NextReport
-				end catch
+				end catch;
 			end
 
 		select @css, @html;
@@ -279,4 +279,4 @@ if @has_errored = 1
 	begin
 		set @error_message = 'Errors during execution of (' + OBJECT_NAME(@@PROCID) + '). Please review action log.';
 		raiserror ('%s',16,1,@error_message);
-	end
+	end;

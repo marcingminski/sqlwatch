@@ -2,5 +2,4 @@
 	AS 
 select [sql_instance], [sqlwatch_database_id], [sqlwatch_table_id], [sqlwatch_index_id], [index_name], [index_id], [index_type_desc]
 	, date_first_seen, [date_last_seen], [is_record_deleted]
-from dbo.sqlwatch_meta_index
-;
+from dbo.sqlwatch_meta_index;

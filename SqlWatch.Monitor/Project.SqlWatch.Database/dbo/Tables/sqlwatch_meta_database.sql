@@ -29,6 +29,6 @@
 	 ),
 	 constraint fk_sqlwatch_meta_database_server foreign key ([sql_instance]) 
 		references [dbo].[sqlwatch_meta_server] ([servername]) on delete cascade
-)
+);
 GO
 

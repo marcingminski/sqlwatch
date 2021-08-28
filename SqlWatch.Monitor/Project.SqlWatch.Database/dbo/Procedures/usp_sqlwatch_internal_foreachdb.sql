@@ -140,5 +140,5 @@ begin
 				set @error_message = 'Errors during execution (' + OBJECT_NAME(@@PROCID) + ')';
 				raiserror ('%s',16,1,@error_message);
 			end
-end
+end;
 

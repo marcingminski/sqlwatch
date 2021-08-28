@@ -13,5 +13,5 @@
 		references dbo.sqlwatch_meta_system_configuration (sql_instance, sqlwatch_configuration_id)on delete cascade,
 	constraint fk_sqlwatch_logger_system_configuration_snapshot foreign key ([snapshot_time], [sql_instance], [snapshot_type_id])
 		references dbo.sqlwatch_logger_snapshot_header ([snapshot_time], [sql_instance], [snapshot_type_id]) on delete cascade
-)
+);
 go

@@ -27,10 +27,10 @@ CREATE TRIGGER [dbo].[trg_sqlwatch_config_check_action_template_modify]
     FOR UPDATE
     AS
     BEGIN
-        SET NoCount ON
+        SET NoCount ON;
 		update t
 			set [date_updated] = getdate()
 		from [dbo].[sqlwatch_config_check_action_template] t
 		inner join inserted u
-		on u.[action_template_id] = t.[action_template_id]
+		on u.[action_template_id] = t.[action_template_id];
     END

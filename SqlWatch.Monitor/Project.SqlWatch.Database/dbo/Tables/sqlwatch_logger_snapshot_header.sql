@@ -28,7 +28,7 @@
 		*/
 	--constraint fk_snapshot_header_sql_instance foreign key (sql_instance) 
 	--	references dbo.sqlwatch_meta_server (servername) on delete cascade on update cascade
-)
+);
 go
 
 --create trigger dbo.trg_sqlwatch_logger_snapshot_header_calc_report_time
@@ -49,9 +49,9 @@ go
 --	end
 
 create nonclustered index idx_sqlwatch_logger_snapshot_header_report_time 
-	on [dbo].[sqlwatch_logger_snapshot_header] ([report_time])
+	on [dbo].[sqlwatch_logger_snapshot_header] ([report_time]);
 
 go
 
 create nonclustered index idx_sqlwatch_logger_snapshot_header_type_id
-	on [dbo].[sqlwatch_logger_snapshot_header] ([snapshot_type_id])
+	on [dbo].[sqlwatch_logger_snapshot_header] ([snapshot_type_id]);

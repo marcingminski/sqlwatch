@@ -35,7 +35,7 @@ create trigger dbo.trg_sqlwatch_config_check_negative_id
 		set nocount on;
 		if (select count(*) from inserted where check_id < 0) > 0
 			begin
-				raiserror('Negative IDs are for checks shipped with SQLWATCH and may be overwritten in the future.',16,1)
+				raiserror('Negative IDs are for checks shipped with SQLWATCH and may be overwritten in the future.',16,1);
 				if @@TRANCOUNT > 0
 					ROLLBACK TRAN;
 			end;

@@ -24,7 +24,7 @@ where [' + COLUMN_NAME + '] is null
 /*	I should have been more careful when naming columns, I ended up having all these variations.
 	Yes, I know....*/
 WHERE COLUMN_NAME in ('deleted_when', 'date_deleted', 'last_seen','last_seen_date','date_last_seen')
-AND TABLE_NAME LIKE 'sqlwatch_meta%'
+AND TABLE_NAME LIKE 'sqlwatch_meta%';
 
 
-exec (@sql)
+exec (@sql);

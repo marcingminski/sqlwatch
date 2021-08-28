@@ -55,7 +55,7 @@ create trigger dbo.trg_sqlwatch_meta_server_delete_import_status
 			select [sql_instance]
 			from deleted
 			);
-	end
+	end;
 go
 
 --https://support.microsoft.com/en-us/help/321843/error-message-1785-occurs-when-you-create-a-foreign-key-constraint-tha

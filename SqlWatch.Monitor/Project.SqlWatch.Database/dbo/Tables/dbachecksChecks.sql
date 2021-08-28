@@ -7,5 +7,5 @@
 	[Config] [nvarchar](max) NULL,
 	[Description] [nvarchar](max) NULL,
 	[Describe] [nvarchar](max) NULL
-)
+);
 GO
