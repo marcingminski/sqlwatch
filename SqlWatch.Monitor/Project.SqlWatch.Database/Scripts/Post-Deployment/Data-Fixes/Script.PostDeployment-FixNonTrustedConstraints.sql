@@ -18,7 +18,7 @@ Post-Deployment Script Template
 
 --I hate doing this but not sure why VS fails to make them trusted?
 
-raiserror( 'Making Constraints Trusted Again', 10, 1 )
+raiserror( 'Making Constraints Trusted Again', 10, 1 );
 set @sql = '';
 
 select @sql = @sql + 'alter table ' + quotename(s.name) + '.' + quotename(o.name) + ' with check check constraint ' + quotename(i.name) + char(10)

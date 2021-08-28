@@ -19,13 +19,13 @@ as
 	1.0 2019-11-03 - Marcin Gminski
 -------------------------------------------------------------------------------------------------------------------
 */
-SET NOCOUNT ON 
-SET ANSI_NULLS ON
+SET NOCOUNT ON ;
+SET ANSI_NULLS ON;
 
 
 if @report_batch_id is null and @report_id is null
 	begin
-		raiserror('Either @report_batch_id or @report_id required',16,1)
+		raiserror('Either @report_batch_id or @report_id required',16,1);
 	end
 
 declare @sql_instance varchar(32),
@@ -50,7 +50,7 @@ declare @sql_instance varchar(32),
 		@has_errored bit = 0,
 		@report_last_run_date datetime,
 		@report_current_run_date datetime,
-		@report_current_run_date_utc datetime
+		@report_current_run_date_utc datetime;
 
 declare @sqlwatch_logger_report_action table (
 	 [sql_instance] varchar(32)
@@ -59,11 +59,11 @@ declare @sqlwatch_logger_report_action table (
 	,[report_id] smallint
 	,[action_id] smallint
 	,[error_message] xml
-)
+);
 
 exec [dbo].[usp_sqlwatch_internal_logger_new_header] 
 	@snapshot_time_new = @snapshot_time OUTPUT,
-	@snapshot_type_id = @snapshot_type_id
+	@snapshot_type_id = @snapshot_type_id;
 
 declare cur_reports cursor for
 select cr.[report_id]
@@ -107,27 +107,27 @@ select cr.[report_id]
 	case when @report_batch_id is null then convert(varchar(255),cr.[report_id]) else cr.[report_batch_id] end
 
 
-order by cr.report_id
+order by cr.report_id;
 
-open cur_reports
+open cur_reports;
 
 fetch next from cur_reports
-into @report_id, @report_title, @report_description, @report_definition, @definition_type, @action_exec, @action_exec_type, @css, @action_id, @report_last_run_date
+into @report_id, @report_title, @report_description, @report_definition, @definition_type, @action_exec, @action_exec_type, @css, @action_id, @report_last_run_date;
 
 while @@FETCH_STATUS = 0  
 	begin
 
-		delete from @sqlwatch_logger_report_action
-		set @html = ''
+		delete from @sqlwatch_logger_report_action;
+		set @html = '';
 
-		select @report_current_run_date = GETDATE(), @report_current_run_date_utc = GETUTCDATE()
+		select @report_current_run_date = GETDATE(), @report_current_run_date_utc = GETUTCDATE();
 
 		select @report_definition = replace(
 										replace(
 											replace(@report_definition,'{REPORT_LAST_RUN_DATE}',convert(varchar(23),@report_last_run_date,121)
 											),'{REPORT_CURRENT_RUN_DATE}',convert(varchar(23),@report_current_run_date,121)
 										),'{REPORT_CURRENT_RUN_DATE_UTC}',convert(varchar(23),@report_current_run_date_utc,121)
-									)
+									);
 		 
 		/*	Query type does not get processed but is being passed straight into action for further processing i.e.
 			in case we want to extract data to file:
@@ -137,7 +137,7 @@ while @@FETCH_STATUS = 0
 			begin
 				select 
 					@body = @report_definition,
-					@subject = @report_title
+					@subject = @report_title;;
 
 					GoTo QueueAction
 			end
@@ -149,30 +149,30 @@ while @@FETCH_STATUS = 0
 				set @report_definition = case 
 					when @check_status = 'CRITICAL' and @check_threshold_critical is not null then replace(@report_definition,'{THRESHOLD}',@check_threshold_critical)
 					when @check_status = 'WARNING' and @check_threshold_warning is not null then replace(@report_definition,'{THRESHOLD}',@check_threshold_warning)
-					else @report_definition end
+					else @report_definition end;
 			end
 
 		/*	Table type must be a single T-SQL query that will be converted into a HTML table	*/
 		if @definition_type in ('HTML-Table','Table')
 			begin
 				begin try
-					exec [dbo].[usp_sqlwatch_internal_query_to_html_table] @html = @html output, @query = @report_definition
+					exec [dbo].[usp_sqlwatch_internal_query_to_html_table] @html = @html output, @query = @report_definition;
 				end try
 				begin catch
-					set @has_errored = 1
+					set @has_errored = 1;
 					set @error_message = 'Error when executing Query Report (usp_sqlwatch_internal_query_to_html_table), @report_batch_id: ' + isnull(convert(varchar(max),@report_batch_id),'NULL') + ', @report_id: ' + isnull(convert(varchar(max),@report_id),'NULL')
 					exec [dbo].[usp_sqlwatch_internal_app_log_add_message]
 							@proc_id = @@PROCID,
 							@process_stage = '31FF6B08-735E-45F9-BAAB-D1F7E446BB1B',
 							@process_message = @error_message,
-							@process_message_type = 'ERROR'
+							@process_message_type = 'ERROR';
 
 					insert into @sqlwatch_logger_report_action ([sql_instance],[snapshot_time],[snapshot_type_id],[report_id],[action_id])
-					select @@SERVERNAME,@snapshot_time,@snapshot_type_id,@report_id,@action_id
+					select @@SERVERNAME,@snapshot_time,@snapshot_type_id,@report_id,@action_id;
 
 					GoTo NextReport
 				end catch
-			end
+			end;
 
 		/*	Template type is complex template that must produce an output ready to be passed into action, 
 			i.e. a complete html report	*/
@@ -183,13 +183,13 @@ while @@FETCH_STATUS = 0
 				end try
 				begin catch
 					--E3796F4B-3C89-450E-8FC7-09926979074F
-					set @has_errored = 1
+					set @has_errored = 1;
 					set @error_message = 'Error when executing Template Report (usp_sqlwatch_internal_query_to_html_table), @report_batch_id: ' + isnull(convert(varchar(max),@report_batch_id),'NULL') + ', @report_id: ' + isnull(convert(varchar(max),@report_id),'NULL');
 					exec [dbo].[usp_sqlwatch_internal_app_log_add_message]
 							@proc_id = @@PROCID,
 							@process_stage = 'E3796F4B-3C89-450E-8FC7-09926979074F',
 							@process_message = @error_message,
-							@process_message_type = 'ERROR'
+							@process_message_type = 'ERROR';
 
 					insert into @sqlwatch_logger_report_action ([sql_instance],[snapshot_time],[snapshot_type_id],[report_id],[action_id])
 					select @@SERVERNAME,@snapshot_time,@snapshot_type_id,@report_id,@action_id;
@@ -198,8 +198,8 @@ while @@FETCH_STATUS = 0
 				end catch
 			end
 
-		select @css, @html
-		set @html = '<html><head><style>' + @css + '</style><body>' + @html
+		select @css, @html;
+		set @html = '<html><head><style>' + @css + '</style><body>' + @html;
 
 		--if @check_name is NOT null it means report has been triggered by a check action. Therefore, we need to respect the check action template:
 		if charindex('{REPORT_CONTENT}',isnull(@body,'')) = 0
@@ -214,7 +214,7 @@ while @@FETCH_STATUS = 0
 								replace(
 									replace(@body,'{REPORT_CONTENT}',isnull(@html,'Report Id: ' + convert(varchar(10),@report_id) + ' contains no data.'))
 								,'{REPORT_TITLE}',@report_title)
-							,'{REPORT_DESCRIPTION}',@report_description)
+							,'{REPORT_DESCRIPTION}',@report_description);
 							
 				set @subject = replace(@subject,'{REPORT_TITLE}',@report_title);
 			end
@@ -228,55 +228,55 @@ while @@FETCH_STATUS = 0
 		if @definition_type = 'Table' and @check_name is null 
 			begin
 				set @body = @body + '<p>Email sent from SQLWATCH on host: ' + @@SERVERNAME +'
-		<a href="https://sqlwatch.io">https://sqlwatch.io</a></p></body></html>'
-			end
+		<a href="https://sqlwatch.io">https://sqlwatch.io</a></p></body></html>';
+			end;
 
 		QueueAction:
 
 		update [dbo].[sqlwatch_meta_report]
 			set [report_last_run_date] = @report_current_run_date_utc
 		where [sql_instance] = @@SERVERNAME
-		and [report_id] = @report_id
+		and [report_id] = @report_id;
 
 		set @action_exec = case @action_exec_type 
 			/* for sql actions we have to escape quotes */
 			when 'T-SQL' then replace(replace(@action_exec,'{BODY}', replace(@body,'''','''''')),'{SUBJECT}',@subject)
 			else replace(replace(@action_exec,'{BODY}',@body),'{SUBJECT}',@subject)
-		end
+		end;
 
 		if @action_exec is null
 			begin
-				Print 'Report (Id: ' + convert(varchar(255),@report_id) + ') @action_exec is NULL (Id: ' + convert(varchar(255),@action_id) + ')'
+				Print 'Report (Id: ' + convert(varchar(255),@report_id) + ') @action_exec is NULL (Id: ' + convert(varchar(255),@action_id) + ')';
 				GoTo NextReport
 			end
 
 		--now insert into the delivery queue for further processing:
 		insert into [dbo].[sqlwatch_meta_action_queue] ([sql_instance], [time_queued], [action_exec_type], [action_exec])
-		values (@@SERVERNAME, sysdatetime(), @action_exec_type, @action_exec)
+		values (@@SERVERNAME, sysdatetime(), @action_exec_type, @action_exec);
 
-		Print 'Item ( Id: ' + convert(varchar(10),SCOPE_IDENTITY()) + ' ) queued.'
+		Print 'Item ( Id: ' + convert(varchar(10),SCOPE_IDENTITY()) + ' ) queued.';
 
 		--E3796F4B-3C89-450E-8FC7-09926979074F
 		insert into @sqlwatch_logger_report_action ([sql_instance],[snapshot_time],[snapshot_type_id],[report_id],[action_id])
-		select @@SERVERNAME,@snapshot_time,@snapshot_type_id,@report_id,@action_id
+		select @@SERVERNAME,@snapshot_time,@snapshot_type_id,@report_id,@action_id;
 
 		NextReport:
 
 		insert into [dbo].[sqlwatch_logger_report_action]
 		select [sql_instance], [snapshot_time], [snapshot_type_id], [report_id], [action_id] 
-		from @sqlwatch_logger_report_action
+		from @sqlwatch_logger_report_action;
 
 		fetch next from cur_reports 
-		into @report_id, @report_title, @report_description, @report_definition, @definition_type, @action_exec, @action_exec_type, @css, @action_id, @report_last_run_date
+		into @report_id, @report_title, @report_description, @report_definition, @definition_type, @action_exec, @action_exec_type, @css, @action_id, @report_last_run_date;
 
-	end
-
-close cur_reports
-deallocate cur_reports
+	end;
+	
+close cur_reports;
+deallocate cur_reports;
 
 
 if @has_errored = 1
 	begin
-		set @error_message = 'Errors during execution of (' + OBJECT_NAME(@@PROCID) + '). Please review action log.'
-		raiserror ('%s',16,1,@error_message)
+		set @error_message = 'Errors during execution of (' + OBJECT_NAME(@@PROCID) + '). Please review action log.';
+		raiserror ('%s',16,1,@error_message);
 	end

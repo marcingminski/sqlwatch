@@ -37,7 +37,7 @@ Critical threshold: {THRESHOLD_CRITICAL}
 Sent from SQLWATCH on host: {SQL_INSTANCE}
 https://docs.sqlwatch.io
 
-{SQL_VERSION}'
+{SQL_VERSION}';
 
 declare @action_template_report_html nvarchar(max) = '<html>
   <head>

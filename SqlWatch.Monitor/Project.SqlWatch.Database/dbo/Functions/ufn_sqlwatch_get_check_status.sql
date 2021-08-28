@@ -12,60 +12,60 @@ BEGIN
 			@variance_percent_dec_min decimal(10,2) = (1-(@variance_percent * 1.0 / 100)),
 			@return bit = 0,
 			@threshold_value decimal(28,5) = [dbo].[ufn_sqlwatch_get_threshold_value](@threshold),
-			@threshold_comparator varchar(2) = [dbo].[ufn_sqlwatch_get_threshold_comparator](@threshold)
+			@threshold_comparator varchar(2) = [dbo].[ufn_sqlwatch_get_threshold_comparator](@threshold);
 
 	if @threshold_comparator = '<='
 		begin
 			if @value  <= @threshold_value * @variance_percent_dec_min
 				begin
-					set @return = 1
+					set @return = 1;
 				end
 		end
 	else if @threshold_comparator = '>='
 		begin
 			if @value >= @threshold_value * @variance_percent_dec_max
 				begin
-					set @return = 1
+					set @return = 1;
 				end
 		end
 	else if @threshold_comparator = '<>'
 		begin
 			if @value <> @threshold_value
 				begin
-					set @return = 1
+					set @return = 1;
 				end
 		end
 	else if @threshold_comparator = '<'
 		begin
 			if @value < @threshold_value * @variance_percent_dec_min
 				begin
-					set @return = 1
+					set @return = 1;
 				end
 		end
 	else if @threshold_comparator = '>'
 		begin
 			if @value > @threshold_value * @variance_percent_dec_max
 				begin
-					set @return = 1
+					set @return = 1;
 				end
 		end
 	else if @threshold_comparator = '='
 		begin
 			if @value = @threshold_value
 				begin
-					set @return = 1
+					set @return = 1;
 				end
 		end
 	else if @value = @threshold_value
 		begin
 				begin
-					set @return = 1
+					set @return = 1;
 				end
 		end
 	else
 		begin
-			set @return = 0
+			set @return = 0;
 		end
 
-	return @return
-END
+	return @return;
+END;
