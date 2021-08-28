@@ -20,10 +20,9 @@ if [dbo].[ufn_sqlwatch_get_agent_status]() = 0
 	end
 
 /* create jobs */
-declare @sql varchar(max)
-
-declare @server nvarchar(255)
-set @server = @@SERVERNAME
+declare @sql varchar(max),
+	@server nvarchar(255);
+set @server = @@SERVERNAME;
 
 
 set @sql = ''

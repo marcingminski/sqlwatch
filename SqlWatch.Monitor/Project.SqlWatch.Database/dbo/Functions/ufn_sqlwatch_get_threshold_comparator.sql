@@ -32,5 +32,5 @@ BEGIN
 			set @return = '='
 		end
 
-		return @return
-END
+		return @return;
+END;

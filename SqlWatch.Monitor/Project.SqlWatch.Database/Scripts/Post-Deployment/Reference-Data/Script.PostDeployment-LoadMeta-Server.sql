@@ -24,7 +24,7 @@ declare @i tinyint = 0;
 
 while (select count(*) from [dbo].[sqlwatch_meta_server]) = 0 and @i <= 12
 	begin
-		Print 'Waiting for queue to process metadata...';
+		raiserror( 'Waiting for queue to process metadata...', 10, 1);
 
 		waitfor delay '00:00:05';
 

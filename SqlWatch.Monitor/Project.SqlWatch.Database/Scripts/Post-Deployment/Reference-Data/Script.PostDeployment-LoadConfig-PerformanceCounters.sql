@@ -19,7 +19,7 @@ create table #sql_perf_mon_config_perf_counters (
 		[object_name] , [instance_name], [counter_name]
 	)
 )
-create nonclustered index tmp_idx_sql_perf_mon_perf_counters_types on #sql_perf_mon_config_perf_counters ([collect]) include ([object_name],[instance_name],[counter_name],[base_counter_name])
+create nonclustered index tmp_idx_sql_perf_mon_perf_counters_types on #sql_perf_mon_config_perf_counters ([collect]) include ([object_name],[instance_name],[counter_name],[base_counter_name]);
 
 /* based on https://blogs.msdn.microsoft.com/dfurman/2015/04/02/collecting-performance-counter-values-from-a-sql-azure-database/ */	
 insert into #sql_perf_mon_config_perf_counters([collect],[object_name],[counter_name], [instance_name],[base_counter_name]) 
@@ -294,4 +294,4 @@ left join [dbo].[sqlwatch_config_performance_counters] t
 on s.[object_name] = t.[object_name] collate database_default
 and s.[instance_name] = t.[instance_name] collate database_default
 and s.[counter_name] = t.[counter_name] collate database_default
-where t.[counter_name] is null
+where t.[counter_name] is null;

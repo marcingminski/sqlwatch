@@ -53,4 +53,4 @@ from [dbo].[sqlwatch_trend_logger_dm_os_performance_counters] d
 		on m.sql_instance = d.sql_instance
 		and m.performance_counter_id = d.performance_counter_id
 
-	where m.cntr_type <> 1073939712
+	where m.cntr_type <> 1073939712;

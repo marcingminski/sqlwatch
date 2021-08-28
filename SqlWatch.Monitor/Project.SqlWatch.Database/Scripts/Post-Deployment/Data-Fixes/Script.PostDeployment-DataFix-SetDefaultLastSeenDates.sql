@@ -13,7 +13,7 @@ Post-Deployment Script Template
 --------------------------------------------------------------------------------------
 -- set baseline for empty last_seen dates (when upgrading from previous versions)
 --------------------------------------------------------------------------------------
-set @sql = ''
+set @sql = '';
 
 select @sql = @sql + '
 update ' + TABLE_SCHEMA + '.' + TABLE_NAME + '

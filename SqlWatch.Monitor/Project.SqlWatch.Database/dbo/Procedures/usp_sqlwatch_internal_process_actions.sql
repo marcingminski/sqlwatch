@@ -117,7 +117,7 @@ if @is_flapping = 1
 						@proc_id = @@PROCID,
 						@process_stage = '43A6F442-2272-4953-81E7-B7014212BA29',
 						@process_message = @error_message,
-						@process_message_type = 'INFO'
+						@process_message_type = 'INFO';
 			end
 	end
 

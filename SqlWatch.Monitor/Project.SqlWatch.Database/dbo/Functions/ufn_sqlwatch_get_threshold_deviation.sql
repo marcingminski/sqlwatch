@@ -26,4 +26,4 @@ BEGIN
 
 
 	return @return;
-END
+END;

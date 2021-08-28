@@ -33,4 +33,4 @@ select e.[event_time]
 		on sq.sql_instance = e.sql_instance
 		and sq.query_hash = e.query_hash
         and sq.sqlwatch_database_id = e.sqlwatch_database_id
-        and sq.sqlwatch_procedure_id = e.sqlwatch_procedure_id
+        and sq.sqlwatch_procedure_id = e.sqlwatch_procedure_id;

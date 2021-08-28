@@ -184,7 +184,7 @@ while @@FETCH_STATUS = 0
 				begin catch
 					--E3796F4B-3C89-450E-8FC7-09926979074F
 					set @has_errored = 1
-					set @error_message = 'Error when executing Template Report (usp_sqlwatch_internal_query_to_html_table), @report_batch_id: ' + isnull(convert(varchar(max),@report_batch_id),'NULL') + ', @report_id: ' + isnull(convert(varchar(max),@report_id),'NULL')
+					set @error_message = 'Error when executing Template Report (usp_sqlwatch_internal_query_to_html_table), @report_batch_id: ' + isnull(convert(varchar(max),@report_batch_id),'NULL') + ', @report_id: ' + isnull(convert(varchar(max),@report_id),'NULL');
 					exec [dbo].[usp_sqlwatch_internal_app_log_add_message]
 							@proc_id = @@PROCID,
 							@process_stage = 'E3796F4B-3C89-450E-8FC7-09926979074F',

@@ -13,7 +13,7 @@ Post-Deployment Script Template
 --------------------------------------------------------------------------------------
 -- [sqlwatch_config_exclude_database]
 --------------------------------------------------------------------------------------
-begin tran
+begin tran;
 	merge [dbo].[sqlwatch_config_exclude_database] as target
 	using (
 		select [database_name_pattern] = '%ReportServer%', [snapshot_type_id] = 3
@@ -39,7 +39,7 @@ begin tran
 	when not matched then
 		insert ([database_name_pattern], [snapshot_type_id])
 		values (source.[database_name_pattern], source.[snapshot_type_id]);
-commit tran
+commit tran;
 
 --------------------------------------------------------------------------------------
 -- [sqlwatch_config_include_index_histogram]
