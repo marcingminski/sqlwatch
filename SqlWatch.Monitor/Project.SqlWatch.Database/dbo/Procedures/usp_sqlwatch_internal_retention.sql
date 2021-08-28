@@ -54,7 +54,7 @@ begin
 		group by sh.sql_instance, sh.snapshot_type_id
 		) t
 	on t.sql_instance = c.sql_instance collate database_default
-	and t.snapshot_type_id = c.snapshot_type_id
+	and t.snapshot_type_id = c.snapshot_type_id;
 
 	while @row_count > 0
 		begin

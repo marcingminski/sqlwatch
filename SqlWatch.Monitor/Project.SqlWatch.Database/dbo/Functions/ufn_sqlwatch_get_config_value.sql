@@ -11,4 +11,4 @@ BEGIN
 			from dbo.[sqlwatch_config]
 			where config_id = @config_id
 		);
-END
+END;

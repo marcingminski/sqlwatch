@@ -11,7 +11,8 @@ Post-Deployment Script Template
 */
 if not exists (select * from [dbo].[sqlwatch_config_report_style] where [report_style_id] = -1)
 	begin
-		set identity_insert [dbo].[sqlwatch_config_report_style] on
+		set identity_insert [dbo].[sqlwatch_config_report_style] on;
+
 		insert into [dbo].[sqlwatch_config_report_style] ([report_style_id], [style])
 		values (-1,'body {font-family: "Trebuchet MS",Helvetica,sans-serif; font-size: 12px;}
 table.sqlwatchtbl { border: 1px solid #AAAAAA; background-color: #FEFEFE; width: 100%; text-align: left; border-collapse: collapse; }
@@ -21,6 +22,6 @@ table.sqlwatchtbl tr:nth-child(even) { background: #EEEEEE; }
 table.sqlwatchtbl thead { background: #7C008C; }
 table.sqlwatchtbl thead th { font-size: 12px; font-weight: bold; color: #FFFFFF;}
 .code {display:block;background:#ddd; margin-top:0.8em;padding-left:10px;padding-bottom:1em;white-space: pre;}'
-)
+);
 		set identity_insert [dbo].[sqlwatch_config_report_style] off;
-	end
+	end;

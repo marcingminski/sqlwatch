@@ -443,7 +443,7 @@ dbo.ufn_sqlwatch_get_config_value ( 16, null ): %i
 
 			goto ProcessNextCheck
 
-	end catch
+	end catch;
 
 
 	----if @check_status is still null then check if its warning, but we may not have warning so need to account for that:

@@ -30,5 +30,5 @@ create trigger trg_sqlwatch_meta_errorlog_attribute_last_updated
 			on i.sql_instance = t.sql_instance
 			and i.attribute_id = t.attribute_id
 			and i.sql_instance = @@SERVERNAME;
-	end
+	end;
 go

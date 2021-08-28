@@ -61,7 +61,7 @@ commit tran;
 --------------------------------------------------------------------------------------
 -- sqlwatch_config_exclude_xes_long_query
 --------------------------------------------------------------------------------------
-begin tran
+begin tran;
 	merge [sqlwatch_config_exclude_logger_dm_exec_requests_long_requests] as target
 	using (
 		--exclude internal process DatabaseMail 
@@ -100,7 +100,7 @@ commit tran;
 --------------------------------------------------------------------------------------
 -- sqlwatch_config_exclude_wait_stats
 --------------------------------------------------------------------------------------
-declare @waits_exclusion table ([wait_type] [nvarchar](60))
+declare @waits_exclusion table ([wait_type] [nvarchar](60));
 
 insert into @waits_exclusion ([wait_type])
 
@@ -127,9 +127,9 @@ PWAIT_ALL_COMPONENTS_INITIALIZED, PWAIT_DIRECTLOGCONSUMER_GETNEXT, QDS_ASYNC_QUE
 REDO_THREAD_PENDING_WORK, RESOURCE_QUEUE, SERVER_IDLE_CHECK,SLEEP_DBSTARTUP,SLEEP_DCOMSTARTUP, 
 SLEEP_MASTERDBREADY,SLEEP_MASTERMDREADY, SLEEP_MASTERUPGRADED, SLEEP_MSDBSTARTUP, SLEEP_TEMPDBSTARTUP, 
 SNI_HTTP_ACCEPT, SOS_WORK_DISPATCHER, SQLTRACE_INCREMENTAL_FLUSH_SLEEP, SQLTRACE_WAIT_ENTRIES, WAITFOR_TASKSHUTDOWN, 
-WAIT_XTP_RECOVERY, WAIT_XTP_HOST_WAIT, WAIT_XTP_CKPT_CLOSE',DEFAULT)
+WAIT_XTP_RECOVERY, WAIT_XTP_HOST_WAIT, WAIT_XTP_CKPT_CLOSE',DEFAULT);
 
-begin tran
+begin tran;
 	merge dbo.sqlwatch_config_exclude_wait_stats as target
 	using (
 			select distinct [wait_type] = rtrim(ltrim(replace(replace(s.[wait_type],char(10),''),char(13),''))) 
@@ -139,7 +139,7 @@ begin tran
 	when not matched then
 		insert ([wait_type])
 		values (source.[wait_type]);
-commit tran
+commit tran;
 
 
 --------------------------------------------------------------------------------------

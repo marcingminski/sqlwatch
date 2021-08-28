@@ -75,7 +75,7 @@ from cte_failed_jobs c1
 group by c1.[Job]
 for xml path(''''), type).value(''.'', ''nvarchar(MAX)'')'
 	,@report_definition_type = 'Template'
-	,@report_action_id  = -1
+	,@report_action_id  = -1;
 
 		--Blocked Processes in the last 5 minutes
 exec [dbo].[usp_sqlwatch_config_add_report] 
@@ -115,7 +115,7 @@ group by c1.blocking_spid, c1.[database_name], c1.blocking_client_app_name, c1.b
 order by rn
 for xml path(''''), type).value(''.'', ''nvarchar(MAX)'')'
 	,@report_definition_type = 'Template'
-	,@report_action_id  = -1
+	,@report_action_id  = -1;
 
 
 		--Disk utilisation report
@@ -335,7 +335,7 @@ where snapshot_time > ''{REPORT_LAST_RUN_DATE}''
 and snapshot_time <= ''{REPORT_CURRENT_RUN_DATE_UTC}'''
 	,@report_definition_type = 'Query'
 	,@report_action_id  = -16
-	,@report_batch_id = 'AzureLogMonitor-1'
+	,@report_batch_id = 'AzureLogMonitor-1';
 
 
 exec [dbo].[usp_sqlwatch_config_add_report] 
@@ -345,7 +345,7 @@ exec [dbo].[usp_sqlwatch_config_add_report]
 	,@report_definition = 'select * from [dbo].[vw_sqlwatch_report_dim_os_volume]'
 	,@report_definition_type = 'Query'
 	,@report_action_id  = -16
-	,@report_batch_id = 'AzureLogMonitor-1'
+	,@report_batch_id = 'AzureLogMonitor-1';
 
 
 exec [dbo].[usp_sqlwatch_config_add_report] 
@@ -361,7 +361,7 @@ where snapshot_time > ''{REPORT_LAST_RUN_DATE}''
 and snapshot_time <= ''{REPORT_CURRENT_RUN_DATE_UTC}'''
 	,@report_definition_type = 'Query'
 	,@report_action_id  = -16
-	,@report_batch_id = 'AzureLogMonitor-1'
+	,@report_batch_id = 'AzureLogMonitor-1';
 
 
 
@@ -378,7 +378,7 @@ where snapshot_time > ''{REPORT_LAST_RUN_DATE}''
 and snapshot_time <= ''{REPORT_CURRENT_RUN_DATE_UTC}'''
 	,@report_definition_type = 'Query'
 	,@report_action_id  = -16
-	,@report_batch_id = 'AzureLogMonitor-1'
+	,@report_batch_id = 'AzureLogMonitor-1';
 
 
 
@@ -393,7 +393,7 @@ where snapshot_time > ''{REPORT_LAST_RUN_DATE}''
 and snapshot_time <= ''{REPORT_CURRENT_RUN_DATE_UTC}'''
 	,@report_definition_type = 'Query'
 	,@report_action_id  = -16
-	,@report_batch_id = 'AzureLogMonitor-1'
+	,@report_batch_id = 'AzureLogMonitor-1';
 
 
 
@@ -404,7 +404,7 @@ exec [dbo].[usp_sqlwatch_config_add_report]
 	,@report_definition = 'select sql_instance=[servername],[service_name],[local_net_address],[local_tcp_port],[utc_offset_minutes],[sql_version] from [dbo].[sqlwatch_meta_server]'
 	,@report_definition_type = 'Query'
 	,@report_action_id  = -16
-	,@report_batch_id = 'AzureLogMonitor-1'
+	,@report_batch_id = 'AzureLogMonitor-1';
 
 
 
@@ -418,7 +418,7 @@ where run_date > ''{REPORT_LAST_RUN_DATE}''
 and run_date <= ''{REPORT_CURRENT_RUN_DATE_UTC}'''
 	,@report_definition_type = 'Query'
 	,@report_action_id  = -16
-	,@report_batch_id = 'AzureLogMonitor-1'
+	,@report_batch_id = 'AzureLogMonitor-1';
 
 
 /*	Azure adds a lot of overhead to the data we push and seems like normalisation on local side makes very little difference to the overall row size.

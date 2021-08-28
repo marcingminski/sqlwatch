@@ -385,7 +385,7 @@ if @action_type  <> 'NONE'
 					--select @error_message_xml = [dbo].[ufn_sqlwatch_get_error_detail_xml](
 					--	@@PROCID,'F7A4AA65-1BE9-4D0B-8B1F-054CA1E24A6E','exec [dbo].[usp_sqlwatch_internal_process_reports] @report_id=' + convert(varchar(10),@report_id) + ' @action_id=' + convert(varchar(10),@action_id)
 					--	)
-				end catch
+				end catch;
 			end
 	end
 
