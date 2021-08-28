@@ -14,14 +14,14 @@
 
 	constraint fk_sqlwatch_meta_retention_sql_instance foreign key (sql_instance)
 		references dbo.sqlwatch_meta_server (servername) on delete cascade
-)
+);
 GO
 
 CREATE UNIQUE INDEX idx_sqlwatch_meta_retention_default
     ON [dbo].[sqlwatch_meta_baseline] (sql_instance, [is_default])
-    WHERE [is_default] = 1
+    WHERE [is_default] = 1;
 GO
 
 CREATE UNIQUE INDEX idx_sqlwatch_meta_baseline_dates
-	ON [dbo].[sqlwatch_meta_baseline] (baseline_start, baseline_end, sql_instance)
+	ON [dbo].[sqlwatch_meta_baseline] (baseline_start, baseline_end, sql_instance);
 GO

@@ -20,4 +20,4 @@
 	statement_start_offset int,
 	statement_end_offset int,
 	last_wait_type nvarchar(60)
-)
+);

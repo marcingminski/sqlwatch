@@ -47,4 +47,4 @@ inner join dbo.sqlwatch_meta_table t
 
 inner join dbo.sqlwatch_meta_database d
 	on d.sql_instance = ius.sql_instance
-	and d.sqlwatch_database_id = ius.sqlwatch_database_id
+	and d.sqlwatch_database_id = ius.sqlwatch_database_id;

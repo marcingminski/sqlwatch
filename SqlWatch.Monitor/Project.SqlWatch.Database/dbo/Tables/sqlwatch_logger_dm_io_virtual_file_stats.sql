@@ -28,7 +28,7 @@
 	constraint pk_sql_perf_mon_file_stats primary key clustered (
 		[sql_instance], [snapshot_time], [sqlwatch_database_id], [sqlwatch_master_file_id], [snapshot_type_id]
 	)
-)
+);
 go
 
 --CREATE NONCLUSTERED INDEX idx_sqlwatch_perf_file_stats_001

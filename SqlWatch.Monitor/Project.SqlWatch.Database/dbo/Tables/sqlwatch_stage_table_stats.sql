@@ -14,4 +14,4 @@
 	constraint pk_sqlwatch_stage_table_stats primary key clustered (
 		sql_instance, [database_name], table_name
 	)
-)
+);

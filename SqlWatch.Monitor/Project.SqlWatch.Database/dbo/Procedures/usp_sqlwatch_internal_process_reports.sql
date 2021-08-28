@@ -191,7 +191,7 @@ while @@FETCH_STATUS = 0
 							@process_message = @error_message,
 							@process_message_type = 'ERROR'
 
-					insert into @sqlwatch_logger_report_action ([sql_instance],[snapshot_time],[snapshot_type_id],[report_id],[action_id]);
+					insert into @sqlwatch_logger_report_action ([sql_instance],[snapshot_time],[snapshot_type_id],[report_id],[action_id])
 					select @@SERVERNAME,@snapshot_time,@snapshot_type_id,@report_id,@action_id;
 
 					GoTo NextReport

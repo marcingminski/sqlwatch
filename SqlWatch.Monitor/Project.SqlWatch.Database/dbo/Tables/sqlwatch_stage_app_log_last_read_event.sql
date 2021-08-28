@@ -4,4 +4,4 @@
 
 	constraint pk_sqlwatch_stage_app_log_last_read_event 
 		primary key clustered (event_sequence)
-)
+);

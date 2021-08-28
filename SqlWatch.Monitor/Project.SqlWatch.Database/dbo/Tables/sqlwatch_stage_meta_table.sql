@@ -9,4 +9,4 @@
 	constraint pk_sqlwatch_stage_meta_table primary key clustered (
 		[sql_instance], [TABLE_CATALOG], [TABLE_NAME], [database_create_date]
 		)
-)
+);

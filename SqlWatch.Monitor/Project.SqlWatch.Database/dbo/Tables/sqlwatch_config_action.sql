@@ -34,7 +34,7 @@
 		(	[action_exec_type]='T-SQL' 
 		or	[action_exec_type]='PowerShell')
 		) 
-)
+);
 go
 
 create trigger dbo.trg_sqlwatch_config_action_updated_U
@@ -47,8 +47,8 @@ create trigger dbo.trg_sqlwatch_config_action_updated_U
 			set date_updated = getdate()
 		from [dbo].[sqlwatch_config_action] t
 		inner join inserted i
-		on i.action_id = t.action_id
-	end
+		on i.action_id = t.action_id;
+	end;
 go
 
 create trigger [dbo].[trg_sqlwatch_config_action_report_circular]

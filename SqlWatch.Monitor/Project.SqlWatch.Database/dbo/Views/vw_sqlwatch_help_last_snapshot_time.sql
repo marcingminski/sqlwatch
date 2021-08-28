@@ -24,3 +24,4 @@ and ( (t.collect = 1 and h.sql_instance = @@SERVERNAME) or h.sql_instance <> @@S
 	--)
 
 group by h.sql_instance, h.snapshot_type_id, t.snapshot_type_desc
+;

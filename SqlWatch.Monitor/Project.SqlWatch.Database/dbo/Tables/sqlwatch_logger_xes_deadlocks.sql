@@ -21,4 +21,4 @@
 		references [dbo].[sqlwatch_meta_server] ([servername]) 
 		on delete cascade
 
-)
+);

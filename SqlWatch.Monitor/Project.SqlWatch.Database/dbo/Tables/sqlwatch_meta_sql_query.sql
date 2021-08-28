@@ -19,5 +19,5 @@
 		foreign key (sql_instance, sqlwatch_database_id, sqlwatch_procedure_id) 
 		references dbo.sqlwatch_meta_procedure (sql_instance, sqlwatch_database_id, sqlwatch_procedure_id) 
 		on delete cascade
-)
+);
 go
