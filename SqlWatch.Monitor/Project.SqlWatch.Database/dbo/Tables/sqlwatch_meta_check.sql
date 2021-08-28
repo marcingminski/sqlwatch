@@ -40,13 +40,13 @@
 		meta_check will need to maintain itself same way as all other meta tables */
 	--constraint fk_sqlwatch_meta_alert_check foreign key ([check_id])
 	--	references [dbo].[sqlwatch_config_check] ([check_id]) on delete cascade
-)
+);
 go
 
-create nonclustered index idx_sqlwatch_meta_check_1 on [dbo].[sqlwatch_meta_check] ([date_updated])
+create nonclustered index idx_sqlwatch_meta_check_1 on [dbo].[sqlwatch_meta_check] ([date_updated]);
 go
 
-create nonclustered index idx_sqlwatch_meta_check_2 on [dbo].[sqlwatch_meta_check] ([target_sql_instance]) include (check_id)
+create nonclustered index idx_sqlwatch_meta_check_2 on [dbo].[sqlwatch_meta_check] ([target_sql_instance]) include (check_id);
 go
 
 create trigger trg_sqlwatch_meta_last_updated
@@ -62,8 +62,8 @@ create trigger trg_sqlwatch_meta_last_updated
 		inner join inserted i
 			on i.[sql_instance] = t.[sql_instance]
 			and i.[check_id] = t.[check_id]
-			and i.sql_instance = @@SERVERNAME
-	end
+			and i.sql_instance = @@SERVERNAME;
+	end;
 go
 
 create trigger trg_sqlwatch_meta_check_delete
@@ -82,11 +82,11 @@ create trigger trg_sqlwatch_meta_check_delete
 			and exists (select * from deleted where sql_instance = @@SERVERNAME)
 			)
 			begin
-				raiserror('Unable to delete meta record as there are existing config records. Please delete config first',16,1)
+				raiserror('Unable to delete meta record as there are existing config records. Please delete config first',16,1);
 				if @@TRANCOUNT > 0
 					begin
-						rollback transaction
-					end
-			end
+						rollback transaction;
+					end;
+			end;
 			
-	end
+	end;

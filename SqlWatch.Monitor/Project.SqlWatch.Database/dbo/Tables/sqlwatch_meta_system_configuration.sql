@@ -16,10 +16,10 @@
 		),
 	constraint fk_sqlwatch_meta_system_configuration foreign key ([sql_instance])
 		references [dbo].[sqlwatch_meta_server] ([servername]) on delete cascade
-)
+);
 go
 
-create nonclustered index idx_sqlwatch_meta_system_configuration_1 on [dbo].[sqlwatch_meta_system_configuration] ([date_updated])
+create nonclustered index idx_sqlwatch_meta_system_configuration_1 on [dbo].[sqlwatch_meta_system_configuration] ([date_updated]);
 go
 
 create trigger trg_sqlwatch_meta_system_configuration_last_updated
@@ -35,6 +35,6 @@ create trigger trg_sqlwatch_meta_system_configuration_last_updated
 		inner join inserted i
 			on i.[sql_instance] = t.[sql_instance]
 			and i.[sqlwatch_configuration_id] = t.[sqlwatch_configuration_id]
-			and i.sql_instance = @@SERVERNAME
-	end
+			and i.sql_instance = @@SERVERNAME;
+	end;
 go

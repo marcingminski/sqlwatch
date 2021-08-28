@@ -44,7 +44,7 @@ commit tran;
 --------------------------------------------------------------------------------------
 -- [sqlwatch_config_include_index_histogram]
 --------------------------------------------------------------------------------------
-begin tran
+begin tran;
 	merge [dbo].[sqlwatch_config_include_index_histogram] as target
 	using (
 		select	[object_name_pattern]	= '%.dbo.table%',
@@ -56,7 +56,7 @@ begin tran
 	when not matched then 
 		insert ([object_name_pattern], [index_name_pattern])
 		values (source.[object_name_pattern], source.[index_name_pattern]);
-commit tran
+commit tran;
 
 --------------------------------------------------------------------------------------
 -- sqlwatch_config_exclude_xes_long_query

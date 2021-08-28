@@ -6,4 +6,4 @@
 	constraint pk_sqlwatch_version primary key clustered (
 		[install_sequence]
 	)
-)
+);

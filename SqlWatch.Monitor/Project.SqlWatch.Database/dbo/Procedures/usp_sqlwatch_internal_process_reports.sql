@@ -191,8 +191,8 @@ while @@FETCH_STATUS = 0
 							@process_message = @error_message,
 							@process_message_type = 'ERROR'
 
-					insert into @sqlwatch_logger_report_action ([sql_instance],[snapshot_time],[snapshot_type_id],[report_id],[action_id])
-					select @@SERVERNAME,@snapshot_time,@snapshot_type_id,@report_id,@action_id
+					insert into @sqlwatch_logger_report_action ([sql_instance],[snapshot_time],[snapshot_type_id],[report_id],[action_id]);
+					select @@SERVERNAME,@snapshot_time,@snapshot_type_id,@report_id,@action_id;
 
 					GoTo NextReport
 				end catch
@@ -205,9 +205,9 @@ while @@FETCH_STATUS = 0
 		if charindex('{REPORT_CONTENT}',isnull(@body,'')) = 0
 			begin
 				--body content was either not passed or does not contain '{REPORT_CONTENT}'. In this case we are just going to include the report as the body.
-				set @body = @html + case when @report_description is not null then '<p>' + @report_description + '</p>' else '' end 
-				set @subject = @report_title
-			end
+				set @body = @html + case when @report_description is not null then '<p>' + @report_description + '</p>' else '' end ;
+				set @subject = @report_title;
+			end;
 		else
 			begin
 				set @body = replace(
@@ -216,7 +216,7 @@ while @@FETCH_STATUS = 0
 								,'{REPORT_TITLE}',@report_title)
 							,'{REPORT_DESCRIPTION}',@report_description)
 							
-				set @subject = replace(@subject,'{REPORT_TITLE}',@report_title)
+				set @subject = replace(@subject,'{REPORT_TITLE}',@report_title);
 			end
 
 		/*	If check is null it means we are not triggered report from the check.

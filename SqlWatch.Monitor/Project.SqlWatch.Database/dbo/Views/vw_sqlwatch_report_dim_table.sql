@@ -77,4 +77,4 @@ when 2 then 'PAGE'
 when 3 then 'COLUMNSTORE : Applies to: SQL Server 2012 (11.x) and later'
 when 4 then 'COLUMNSTORE_ARCHIVE : Applies to: SQL Server 2014 (12.x) and later'
 else 'UNKNOWN' end
-		from cte_table_growth
+		from cte_table_growth;

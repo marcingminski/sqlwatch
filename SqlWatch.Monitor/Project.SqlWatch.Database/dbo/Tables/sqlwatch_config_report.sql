@@ -38,7 +38,7 @@
 		deleting styles if assosiated with report */
 	constraint fk_sqlwatch_config_report_style foreign key ([report_style_id])
 		references [dbo].[sqlwatch_config_report_style] ([report_style_id]) on delete no action,
-)
+);
 go
 
 create trigger dbo.trg_sqlwatch_config_report_updated_U
@@ -51,8 +51,8 @@ create trigger dbo.trg_sqlwatch_config_report_updated_U
 			set date_updated = getdate()
 		from [dbo].[sqlwatch_config_report] t
 		inner join inserted i
-			on i.[report_id] = t.[report_id]
-	end
+			on i.[report_id] = t.[report_id];
+	end;
 go
 
 create trigger dbo.trg_trg_sqlwatch_config_report_D
@@ -64,8 +64,8 @@ create trigger dbo.trg_trg_sqlwatch_config_report_D
 		delete l from [dbo].[sqlwatch_logger_report_action] l
 		inner join deleted d
 		on l.report_id = d.report_id
-		and l.sql_instance = @@SERVERNAME
-	end
+		and l.sql_instance = @@SERVERNAME;
+	end;
 go
 
 
@@ -112,7 +112,7 @@ create trigger dbo.trg_sqlwatch_config_report_meta_IU
 					,[report_definition] = source.[report_definition]
 					,[report_definition_type] = source.[report_definition_type]
 		;
-	end
+	end;
 go
 
 create trigger dbo.trg_sqlwatch_config_report_meta_D
@@ -129,5 +129,5 @@ create trigger dbo.trg_sqlwatch_config_report_meta_D
 		left join inserted i
 			on i.[report_id] = m.[report_id]
 			and m.sql_instance = @@SERVERNAME
-		where i.[report_id] is null
-	end
+		where i.[report_id] is null;
+	end;

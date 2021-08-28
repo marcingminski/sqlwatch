@@ -17,4 +17,4 @@
 	),
 	constraint fk_sqlwatch_meta_index_missing_table foreign key ([sql_instance], [sqlwatch_database_id],  [sqlwatch_table_id]) 
 		references [dbo].[sqlwatch_meta_table] ([sql_instance], [sqlwatch_database_id],  [sqlwatch_table_id]) on delete cascade
-)
+);

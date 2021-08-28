@@ -9,9 +9,9 @@
 	[Instance] [nvarchar](255) NULL,
 	[Result] [nvarchar](10) NULL,
 	[FailureMessage] [nvarchar](max) NULL
-)
+);
 GO
 
 CREATE NONCLUSTERED INDEX idx_sqlwatch_dbachecks_failure_by_date ON [dbo].[dbachecksResults] ([Result],[Date])
-	WHERE [Result] = 'Failed'
+	WHERE [Result] = 'Failed';
 GO

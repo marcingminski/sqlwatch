@@ -18,7 +18,7 @@ create table #sql_perf_mon_config_perf_counters (
 	constraint tmp_pk_sql_perf_mon_config_perf_counters primary key (
 		[object_name] , [instance_name], [counter_name]
 	)
-)
+);
 create nonclustered index tmp_idx_sql_perf_mon_perf_counters_types on #sql_perf_mon_config_perf_counters ([collect]) include ([object_name],[instance_name],[counter_name],[base_counter_name]);
 
 /* based on https://blogs.msdn.microsoft.com/dfurman/2015/04/02/collecting-performance-counter-values-from-a-sql-azure-database/ */	
@@ -287,6 +287,7 @@ insert into #sql_perf_mon_config_perf_counters([collect],[object_name],[counter_
 		,(1,'Win32_PerfFormattedData_PerfOS_Processor','Processor Time %','SQL',NULL)
 		,(1,'Win32_PerfFormattedData_PerfOS_Processor','Idle Time %','SQL',NULL)
 		,(1,'Win32_PerfFormattedData_PerfOS_Processor','Processor Time %','System',NULL)
+		;
 
 insert into [dbo].[sqlwatch_config_performance_counters]
 select s.* from #sql_perf_mon_config_perf_counters s

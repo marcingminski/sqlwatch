@@ -9,16 +9,16 @@
 	constraint pk_sqlwatch_config_baseline 
 		primary key clustered (baseline_id)
 
-)
+);
 go
 
 CREATE UNIQUE INDEX idx_sqlwatch_config_baseline_default
     ON [dbo].[sqlwatch_config_baseline] ([is_default])
-    WHERE [is_default] = 1
+    WHERE [is_default] = 1;
 GO
 
 CREATE UNIQUE INDEX idx_sqlwatch_config_baseline_dates
-	ON [dbo].[sqlwatch_config_baseline] (baseline_start, baseline_end)
+	ON [dbo].[sqlwatch_config_baseline] (baseline_start, baseline_end);
 GO
 
 create trigger trg_sqlwatch_config_baseline_meta_add
@@ -36,23 +36,23 @@ begin
 		, inserted.is_default
 		, inserted.comments
 		, GETUTCDATE()
-	from inserted
+	from inserted;
 
 	--SQL Server does not support per-row triggers but we have to iterate through every inserted row here to load header based on baseline dates.
 	--Whilst cusors in triggers are genearally bad approach, this will not be run very often as the baselines should never change often.
 
 	declare @baseline_start datetime2(0),
 			@baseline_end datetime2(0),
-			@baseline_id smallint
+			@baseline_id smallint;
 
 	declare cur_insert cursor for
 
 	select baseline_id, baseline_start, baseline_end 
 	from inserted
 
-	open cur_insert 
+	open cur_insert ;
 	fetch next from cur_insert 
-	into @baseline_id, @baseline_start, @baseline_end
+	into @baseline_id, @baseline_start, @baseline_end;
 
 	while @@FETCH_STATUS = 0
 		begin
@@ -66,14 +66,14 @@ begin
 			select @baseline_id, snapshot_time, [snapshot_type_id], @sql_instance
 			from dbo.sqlwatch_logger_snapshot_header h
 			where sql_instance = @sql_instance
-			and snapshot_time between @baseline_start and @baseline_end
+			and snapshot_time between @baseline_start and @baseline_end;
 
 			fetch next from cur_insert 
-			into @baseline_id, @baseline_start, @baseline_end
+			into @baseline_id, @baseline_start, @baseline_end;
 		end
 
-	close cur_insert
-	deallocate cur_insert
+	close cur_insert;
+	deallocate cur_insert;
 end
 go
 
@@ -88,7 +88,7 @@ begin
 	from [dbo].[sqlwatch_meta_baseline] m
 	inner join deleted d
 	on m.baseline_id = d.baseline_id
-	and m.sql_instance = @sql_instance
+	and m.sql_instance = @sql_instance;
 
 end
 go
@@ -134,8 +134,8 @@ begin
 			from [dbo].[sqlwatch_meta_baseline] m
 			inner join inserted i
 			on m.baseline_id = i.baseline_id
-			and m.sql_instance = @sql_instance
+			and m.sql_instance = @sql_instance;
 
-		end
-end
+		end;
+end;
 go

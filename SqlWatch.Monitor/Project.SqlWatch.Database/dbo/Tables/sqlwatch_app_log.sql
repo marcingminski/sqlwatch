@@ -23,9 +23,9 @@
 	constraint fk_sqlwatch_sys_log foreign key (sql_instance)
 		references dbo.sqlwatch_meta_server (servername) on delete cascade,
 	constraint chk_sqlwatch_logger_log_message_type check (([process_message_type] = 'INFO' or [process_message_type] = 'WARNING' or [process_message_type] = 'ERROR' or [process_message_type] = 'VERBOSE' or [process_message_type] = 'DEBUG'))
-)
+);
 go
 
 
 CREATE NONCLUSTERED INDEX idx_sqlwatch_logger_log_message_type
-	ON [dbo].[sqlwatch_app_log] ([process_message_type])
+	ON [dbo].[sqlwatch_app_log] ([process_message_type]);

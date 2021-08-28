@@ -14,7 +14,7 @@
 	)
 as
 
-SET NOCOUNT ON 
+SET NOCOUNT ON ;
 
 /* 
 -------------------------------------------------------------------------------------------------------------------
@@ -62,8 +62,8 @@ declare @action_type varchar(200) = 'NONE',
 		;
 
 --need to this so we can detect the caller in [usp_sqlwatch_internal_process_reports] to avoid circular ref.
-select @content_info = convert(varbinary(128),convert(varchar(max),@action_id))
-set CONTEXT_INFO @content_info
+select @content_info = convert(varbinary(128),convert(varchar(max),@action_id));
+set CONTEXT_INFO @content_info;
 
 -------------------------------------------------------------------------------------------------------------------
 -- Get action parameters:
@@ -102,12 +102,12 @@ if @is_flapping = 1
 		if @action_every_failure = 0
 			begin
 				--information only:
-				set @error_message = 'Check (Id: ' + convert(varchar(10),@check_id) + ') Is flapping. Action (Id: ' + convert(varchar(10),@action_id) + ') is skipped.'
+				set @error_message = 'Check (Id: ' + convert(varchar(10),@check_id) + ') Is flapping. Action (Id: ' + convert(varchar(10),@action_id) + ') is skipped.';
 				exec [dbo].[usp_sqlwatch_internal_app_log_add_message]
 						@proc_id = @@PROCID,
 						@process_stage = '1D779244-0524-44B1-A00B-19BDA355D4EE',
 						@process_message = @error_message,
-						@process_message_type = 'WARNING'
+						@process_message_type = 'WARNING';
 				GoTo LogAction	
 			end
 		else
@@ -207,7 +207,7 @@ set @check_description =
 			replace(@check_description,
 				'<code>','<table border=0 width="100%" cellpadding="10" style="display:block;background:#ddd; margin-top:1em;white-space: pre;"><tr><td><pre>'),
 			'</code>','</pre></td></tr></table>')
-		else @check_description end
+		else @check_description end;
 
 -------------------------------------------------------------------------------------------------------------------
 -- set {SUBJECT} and {BODY}
@@ -294,7 +294,7 @@ if @action_type  <> 'NONE'
 
 		from [dbo].[sqlwatch_meta_check] cc
 		where cc.check_id = @check_id
-		and cc.sql_instance = @@SERVERNAME
+		and cc.sql_instance = @@SERVERNAME;
 
 		select @message_body = (
 				select 
