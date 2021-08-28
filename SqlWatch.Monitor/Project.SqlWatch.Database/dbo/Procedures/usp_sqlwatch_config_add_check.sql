@@ -166,4 +166,4 @@ if @check_action_id is not null
 				,[action_template_id] = source.action_template_id;
 
 		Print 'Check (Id: ' + convert(varchar(10),@check_id) + ') assosiated with action (Id: ' + convert(varchar(10),@check_action_id) + ').'
-	end
+	end;

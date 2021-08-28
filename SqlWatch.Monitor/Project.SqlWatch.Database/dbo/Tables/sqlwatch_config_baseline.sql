@@ -48,7 +48,7 @@ begin
 	declare cur_insert cursor for
 
 	select baseline_id, baseline_start, baseline_end 
-	from inserted
+	from inserted;
 
 	open cur_insert ;
 	fetch next from cur_insert 

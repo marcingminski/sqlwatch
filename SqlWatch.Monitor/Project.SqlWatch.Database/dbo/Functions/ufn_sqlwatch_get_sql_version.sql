@@ -4,7 +4,7 @@ AS
 BEGIN
     declare @return smallint,
             --ProductMajorVersion is only availabl since 2012 but its quicker to parse as it returns simple number:
-            @ProductMajorVersion tinyint = convert(tinyint,SERVERPROPERTY('ProductMajorVersion'))
+            @ProductMajorVersion tinyint = convert(tinyint,SERVERPROPERTY('ProductMajorVersion'));
 
     return (select case
         when @ProductMajorVersion is not null then 

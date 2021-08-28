@@ -7,7 +7,7 @@
 RETURNS real with schemabinding
 AS
 BEGIN
-	declare @default_baseline_id smallint
+	declare @default_baseline_id smallint;
 
 	if @baseline_id is null
 		begin

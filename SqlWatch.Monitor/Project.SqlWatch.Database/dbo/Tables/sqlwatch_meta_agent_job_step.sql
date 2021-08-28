@@ -11,4 +11,4 @@
 		),
 	constraint uq_sqlwatch_meta_agent_job_step_name unique ([sql_instance], [sqlwatch_job_id],step_name),
 	constraint fk_sqlwatch_meta_agent_job_id foreign key ([sql_instance],[sqlwatch_job_id]) references dbo.sqlwatch_meta_agent_job([sql_instance],[sqlwatch_job_id]) on delete cascade
-)
+);

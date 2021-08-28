@@ -18,7 +18,7 @@
 	),
 
 	constraint chk_sqlwatch_config_action_template_type check ([action_template_type] = 'TEXT' or [action_template_type] = 'HTML')
-)
+);
 
 GO
 
@@ -33,4 +33,4 @@ CREATE TRIGGER [dbo].[trg_sqlwatch_config_check_action_template_modify]
 		from [dbo].[sqlwatch_config_check_action_template] t
 		inner join inserted u
 		on u.[action_template_id] = t.[action_template_id];
-    END
+    END;

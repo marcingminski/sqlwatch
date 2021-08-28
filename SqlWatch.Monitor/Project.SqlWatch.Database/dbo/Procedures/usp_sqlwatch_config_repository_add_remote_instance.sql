@@ -12,7 +12,7 @@ as
 
 if @sql_instance = @@SERVERNAME
 	begin
-		raiserror ('Remote Instance is the same as local instance',16,1)
+		raiserror ('Remote Instance is the same as local instance',16,1);
 	end
 
 merge [dbo].[sqlwatch_config_sql_instance] as target
@@ -36,8 +36,8 @@ when not matched then
 IF @@ROWCOUNT > 0
 	begin
 		Print 'Added Remote SQL Instane (' + @sql_instance + ') to central repository.
-If you are using linked server for data collection, please make sure these are also created. If you are using SSIS there is no more setup required.'
-	end
+If you are using linked server for data collection, please make sure these are also created. If you are using SSIS there is no more setup required.';
+	end;
 
 if @linked_server_name is not null
 	begin
@@ -45,5 +45,5 @@ if @linked_server_name is not null
 			@sql_instance  = @sql_instance,
 			@linked_server = @linked_server_name,
 			@rmtuser = @rmtuser,
-			@rmtpassword = @rmtpassword
-	end
+			@rmtpassword = @rmtpassword;
+	end;

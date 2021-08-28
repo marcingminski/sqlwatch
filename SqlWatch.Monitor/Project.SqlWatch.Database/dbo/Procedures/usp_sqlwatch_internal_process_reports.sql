@@ -160,7 +160,7 @@ while @@FETCH_STATUS = 0
 				end try
 				begin catch
 					set @has_errored = 1;
-					set @error_message = 'Error when executing Query Report (usp_sqlwatch_internal_query_to_html_table), @report_batch_id: ' + isnull(convert(varchar(max),@report_batch_id),'NULL') + ', @report_id: ' + isnull(convert(varchar(max),@report_id),'NULL')
+					set @error_message = 'Error when executing Query Report (usp_sqlwatch_internal_query_to_html_table), @report_batch_id: ' + isnull(convert(varchar(max),@report_batch_id),'NULL') + ', @report_id: ' + isnull(convert(varchar(max),@report_id),'NULL');
 					exec [dbo].[usp_sqlwatch_internal_app_log_add_message]
 							@proc_id = @@PROCID,
 							@process_stage = '31FF6B08-735E-45F9-BAAB-D1F7E446BB1B',

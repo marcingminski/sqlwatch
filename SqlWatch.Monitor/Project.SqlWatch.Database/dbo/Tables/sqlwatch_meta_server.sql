@@ -78,7 +78,7 @@ create trigger dbo.trg_sqlwatch_meta_server_delete_header
 		select [servername] from deleted;
 
 		Print 'Begin batch delete from [dbo].[sqlwatch_logger_snapshot_header]. Terminating this batch may lead to orphaned records being left in child tables.
-If this happens, please re-add sql_instance to the config and meta tables and re-do the deletion.'
+If this happens, please re-add sql_instance to the config and meta tables and re-do the deletion.';
 		while @rowcount > 0
 			begin
 				delete top (100) h
