@@ -25,8 +25,8 @@ BEGIN
 				from [dbo].[sqlwatch_app_version]
 				order by [install_sequence] desc	
 			) v
-		) t
+		) t;
 
 
-	RETURN
-END
+	RETURN;
+END;

@@ -11,14 +11,16 @@
 		),
 	constraint fk_sqlwatch_meta_errorlog_keyword_server foreign key (sql_instance) 
 		references dbo.sqlwatch_meta_server (servername) on delete cascade
-)
+);
 go
 
-create nonclustered index idx_sqlwatch_meta_errorlog_keyword_1 on [dbo].[sqlwatch_meta_errorlog_keyword] (keyword1)
-	include (sql_instance, keyword_id, log_type_id)
+create nonclustered index idx_sqlwatch_meta_errorlog_keyword_1 
+	on [dbo].[sqlwatch_meta_errorlog_keyword] (keyword1)
+	include (sql_instance, keyword_id, log_type_id);
 go
 
-create nonclustered index idx_sqlwatch_meta_errorlog_keyword_2 on [dbo].[sqlwatch_meta_errorlog_keyword] ([date_updated])
+create nonclustered index idx_sqlwatch_meta_errorlog_keyword_2 
+	on [dbo].[sqlwatch_meta_errorlog_keyword] ([date_updated]);
 go
 
 create trigger trg_sqlwatch_meta_errorlog_keyword_last_updated
@@ -35,6 +37,6 @@ create trigger trg_sqlwatch_meta_errorlog_keyword_last_updated
 			on i.sql_instance = t.sql_instance
 			and i.keyword_id = t.keyword_id
 			and i.log_type_id = t.log_type_id
-			and i.sql_instance = @@SERVERNAME
-	end
+			and i.sql_instance = @@SERVERNAME;
+	end;
 go

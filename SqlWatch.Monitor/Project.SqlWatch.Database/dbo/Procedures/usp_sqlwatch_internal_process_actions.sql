@@ -80,7 +80,7 @@ from [dbo].[sqlwatch_config_check_action] cca
 	inner join [dbo].[sqlwatch_config_action] ca
 		on ca.action_id = cca.action_id
 where cca.[check_id] = @check_id
-and cca.[action_id] = @action_id
+and cca.[action_id] = @action_id;
 
 -------------------------------------------------------------------------------------------------------------------
 -- each check has limit of actions per hour to avoid flooding:
@@ -91,7 +91,7 @@ select
 from [dbo].[sqlwatch_logger_check_action]
 where [check_id] = @check_id
 and [action_id] = @action_id
-and sql_instance = @@SERVERNAME
+and sql_instance = @@SERVERNAME;
 
 
 -------------------------------------------------------------------------------------------------------------------
@@ -112,7 +112,7 @@ if @is_flapping = 1
 			end
 		else
 			begin
-				set @error_message = 'Check (Id: ' + convert(varchar(10),@check_id) + ') Is flapping but @action_every_failure is set to 1. Action (Id: ' + convert(varchar(10),@action_id) + ') will be performed.'
+				set @error_message = 'Check (Id: ' + convert(varchar(10),@check_id) + ') Is flapping but @action_every_failure is set to 1. Action (Id: ' + convert(varchar(10),@action_id) + ') will be performed.';
 				exec [dbo].[usp_sqlwatch_internal_app_log_add_message]
 						@proc_id = @@PROCID,
 						@process_stage = '43A6F442-2272-4953-81E7-B7014212BA29',
@@ -126,12 +126,12 @@ if @is_flapping = 1
 -------------------------------------------------------------------------------------------------------------------
 if @action_count_last_hour > @action_hourly_limit
 	begin
-		set @error_message = 'Check (Id: ' + convert(varchar(10),@check_id) + '): Action (Id: ' + convert(varchar(10),@action_id) + ') has exceeded hourly allowed limit and it will not be performed.'
+		set @error_message = 'Check (Id: ' + convert(varchar(10),@check_id) + '): Action (Id: ' + convert(varchar(10),@action_id) + ') has exceeded hourly allowed limit and it will not be performed.';
 		exec [dbo].[usp_sqlwatch_internal_app_log_add_message]
 				@proc_id = @@PROCID,
 				@process_stage = '76C7745B-CDD2-4545-AF42-A3A5636D3F46',
 				@process_message = @error_message,
-				@process_message_type = 'WARNING'
+				@process_message_type = 'WARNING';
 		GoTo LogAction
 	end
 
@@ -177,7 +177,7 @@ select @action_type = case
 	else 'NONE' end
 from [dbo].[sqlwatch_meta_check]
 where [check_id] = @check_id
-and sql_instance = @@SERVERNAME
+and sql_instance = @@SERVERNAME;
 
 -------------------------------------------------------------------------------------------------------------------
 -- now we know what action we are dealing with, we can build template:
@@ -195,7 +195,7 @@ select
 		else 'UNDEFINED' end
 	,@action_template_type = action_template_type
 from [dbo].[sqlwatch_config_check_action_template]
-where action_template_id = @action_template_id
+where action_template_id = @action_template_id;
 --and sql_instance = @@SERVERNAME
 
 /*  email clients do not handle <code> tags well so if we have any of these custom <codetable> in the description we will replace 
@@ -357,7 +357,7 @@ if @action_type  <> 'NONE'
 
 		--is this action calling a report or an arbitrary exec?
 		select @report_id = action_report_id 
-		from [dbo].[sqlwatch_config_action] where action_id = @action_id
+		from [dbo].[sqlwatch_config_action] where action_id = @action_id;
 
 		if @report_id is not null
 			begin
@@ -374,13 +374,13 @@ if @action_type  <> 'NONE'
 						,@check_threshold_critical = @check_threshold_critical
 				end try
 				begin catch
-					set @has_errors = 1		
-					set @error_message = 'Action (Id:' + convert(varchar(10),@action_id) + ') calling Report (Id: ' + convert(varchar(10),@report_id) + ')'
+					set @has_errors = 1		;
+					set @error_message = 'Action (Id:' + convert(varchar(10),@action_id) + ') calling Report (Id: ' + convert(varchar(10),@report_id) + ')';
 					exec [dbo].[usp_sqlwatch_internal_app_log_add_message]
 						@proc_id = @@PROCID,
 						@process_stage = 'F7A4AA65-1BE9-4D0B-8B1F-054CA1E24A6E',
 						@process_message = @error_message,
-						@process_message_type = 'ERROR'
+						@process_message_type = 'ERROR';
 
 					--select @error_message_xml = [dbo].[ufn_sqlwatch_get_error_detail_xml](
 					--	@@PROCID,'F7A4AA65-1BE9-4D0B-8B1F-054CA1E24A6E','exec [dbo].[usp_sqlwatch_internal_process_reports] @report_id=' + convert(varchar(10),@report_id) + ' @action_id=' + convert(varchar(10),@action_id)
@@ -398,7 +398,8 @@ if @action_type <> 'NONE'
 	begin
 		insert into [dbo].[sqlwatch_logger_check_action] ([sql_instance], [snapshot_type_id], [check_id], [action_id], [snapshot_time], [action_attributes])
 		select @@SERVERNAME, @snapshot_type_id, @check_id, @action_id, @snapshot_time, (
-			select *
+			select [ContentInfo], [ActionEveryFailure], [ActionRecovery], [ActionRepeatPeriodMinutes], [ActionHourlyLimit], [ActionTemplateId], [LastActionTime]
+			, [ActionCountLastHour], [ActionType], [ReportId], [Subject], [Body]
 			from (
 				select	'ContentInfo' = @action_id,
 						'ActionEveryFailure' = @action_every_failure,
@@ -413,14 +414,14 @@ if @action_type <> 'NONE'
 						'Subject' = @subject,
 						'Body' = @body
 			) a
-			for xml path('Attributes'))
+			for xml path('Attributes'));
 	end
 
 if @has_errors = 1
 	begin
 		set @error_message = 'Errors during action execution (' + OBJECT_NAME(@@PROCID) + '): 
-' + @error_message
+' + @error_message;
 
 		--print all errors and terminate the batch which will also fail the agent job for the attention:
-		raiserror ('%s',16,1,@error_message)
+		raiserror ('%s',16,1,@error_message);
 	end

@@ -15,7 +15,7 @@
 		any assosiations when the report is deleted */
 	constraint fk_sqlwatch_config_report_action_report foreign key ([report_id])
 		references [dbo].[sqlwatch_config_report] ([report_id]) on delete cascade
-)
+);
 
 GO
 
@@ -34,7 +34,7 @@ CREATE TRIGGER [dbo].[trg_sqlwatch_config_report_action_circular]
 				on ca.action_report_id = ra.report_id
 				and ca.action_id = ra.action_id)
 			begin
-			  raiserror ('You cannot call an action that is calling this report as this would create circular reference.' ,16,1)
-			  rollback transaction
+			  raiserror ('You cannot call an action that is calling this report as this would create circular reference.' ,16,1);
+			  rollback transaction;
 			end
     END

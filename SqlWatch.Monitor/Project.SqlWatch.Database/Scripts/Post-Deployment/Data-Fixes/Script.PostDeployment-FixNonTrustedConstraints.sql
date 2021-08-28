@@ -32,7 +32,7 @@ and i.is_not_for_replication = 0;
 
 exec (@sql);
 
-set @sql = ''
+set @sql = '';
 
 select @sql = @sql + 'alter table ' + quotename(s.name) + '.' + quotename(t.name) + ' with check check constraint ' + quotename(c.name) + char(10)
 from sys.tables t
@@ -40,6 +40,6 @@ inner join sys.schemas s
   on t.schema_id = s.schema_id
 inner join sys.check_constraints c
   on t.object_id = c.parent_object_id
-where c.is_not_trusted = 1
+where c.is_not_trusted = 1;
 
 exec (@sql);

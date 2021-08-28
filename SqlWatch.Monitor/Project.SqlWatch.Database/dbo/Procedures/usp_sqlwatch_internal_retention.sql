@@ -74,12 +74,12 @@ begin
 					)
 
 				set @row_count = @@ROWCOUNT;
-				print 'Deleted ' + convert(varchar(max),@row_count) + ' records from [dbo].[sqlwatch_logger_snapshot_header]'
+				print 'Deleted ' + convert(varchar(max),@row_count) + ' records from [dbo].[sqlwatch_logger_snapshot_header]';
 			commit tran
 		end
 
 	/* Application log retention */
-	set @row_count = 1
+	set @row_count = 1;
 	set @event_time = dateadd(day,-@application_log_retention_days, SYSDATETIME());
 
 	while @row_count > 0
@@ -88,8 +88,8 @@ begin
 			from dbo.sqlwatch_app_log
 			where event_time < @event_time;
 
-			set @row_count = @@ROWCOUNT
-			Print 'Deleted ' + convert(varchar(max),@@ROWCOUNT) + ' records from [dbo].[sqlwatch_app_log]'
+			set @row_count = @@ROWCOUNT;
+			Print 'Deleted ' + convert(varchar(max),@@ROWCOUNT) + ' records from [dbo].[sqlwatch_app_log]';
 		end
 
 		/*	Trend tables retention.

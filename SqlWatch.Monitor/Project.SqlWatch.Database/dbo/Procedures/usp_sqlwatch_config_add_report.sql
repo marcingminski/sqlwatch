@@ -18,7 +18,7 @@ set nocount on;
 set @report_style_id = case 
 	when @report_style_id is null and @report_definition_type <> 'Query' then -1 
 	when @report_style_id is not null and @report_definition_type = 'Query' then null
-	else @report_style_id end
+	else @report_style_id end;
 
 if @report_id < 0 
 	begin
@@ -106,8 +106,8 @@ else
 					,[report_style_id] = source.[report_style_id]
 		;
 
-		Print 'Report (Id: ' + convert(varchar(10),@report_id) + ') updated.'
-	end
+		Print 'Report (Id: ' + convert(varchar(10),@report_id) + ') updated.';
+	end;
 
 
 if @report_action_id is not null
@@ -125,11 +125,11 @@ if @report_action_id is not null
 			on t.report_id = s.[report_id]
 			and t.action_id = s.action_id
 
-		where t.action_id is null
+		where t.action_id is null;
 
 		if (@@ROWCOUNT > 0)
 			begin
-				Print 'Report (Id: ' + convert(varchar(10),@report_id) + ') assosiated with action (Id: ' + convert(varchar(10),@report_action_id) + ').'
-			end
+				Print 'Report (Id: ' + convert(varchar(10),@report_id) + ') assosiated with action (Id: ' + convert(varchar(10),@report_action_id) + ').';
+			end;
 
-	end
+	end;

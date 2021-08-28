@@ -242,10 +242,8 @@
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_logger_new_header.sql" />
     <Build Include="dbo\Tables\sqlwatch_app_version.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_get_version.sql" />
-    <Build Include="dbo\Tables\sqlwatch_meta_repository_import_queue.sql" />
     <Build Include="dbo\Views\vw_sqlwatch_internal_table_snapshot.sql" />
     <Build Include="dbo\Views\vw_sqlwatch_help_logger_log_failures.sql" />
-    <Build Include="dbo\Tables\sqlwatch_meta_repository_import_status.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_config_repository_add_remote_instance.sql" />
     <Build Include="dbo\Views\vw_sqlwatch_help_last_snapshot_time.sql" />
     <Build Include="dbo\Views\vw_sqlwatch_help_diagnostics.sql" />
@@ -253,7 +251,6 @@
     <Build Include="dbo\Procedures\usp_sqlwatch_logger_disk_utilisation_table.sql" />
     <Build Include="dbo\Views\vw_sqlwatch_report_fact_disk_utilisation_table.sql" />
     <Build Include="dbo\Functions\ufn_sqlwatch_format_bytes.sql" />
-    <Build Include="dbo\Tables\sqlwatch_meta_repository_import_thread.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_config_repository_create_agent_jobs.sql" />
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_create_agent_job.sql" />
     <Build Include="dbo\Views\vw_sqlwatch_report_fact_perf_os_performance_counters_rate.sql" />

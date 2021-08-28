@@ -14,8 +14,8 @@
 		foreign key ([sql_instance])
 		references [dbo].[sqlwatch_meta_server] ([servername]) 
 		on delete cascade
-)
+);
 go
 
 create unique index idx_sqlwatch_meta_program_name_id 
-	on [dbo].[sqlwatch_meta_program_name] ([program_name_id])
+	on [dbo].[sqlwatch_meta_program_name] ([program_name_id]);

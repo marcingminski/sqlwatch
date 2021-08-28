@@ -26,5 +26,5 @@ BEGIN
                 when convert(varchar(128), SERVERPROPERTY ('ProductVersion')) like '10.5%' then 2009
                 else 0000
             end
-    end)
-END
+    end);
+END;
