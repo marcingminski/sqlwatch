@@ -7,4 +7,4 @@
 	database_name nvarchar(128),
 	database_create_date datetime2(3),
 	procedure_name nvarchar(512)
-)
+);

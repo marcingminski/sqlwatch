@@ -22,5 +22,5 @@
 	constraint fk_sqlwatch_trend_perf_os_performance_counters_meta 
 		foreign key ([original_sql_instance], [performance_counter_id])
 		references [dbo].[sqlwatch_meta_dm_os_performance_counters] ([sql_instance], [performance_counter_id]) on delete cascade
-)
+);
 go

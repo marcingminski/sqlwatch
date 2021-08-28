@@ -12,4 +12,4 @@
 	snapshot_type_id tinyint,
 	snapshot_time datetime2(0),
 	sql_instance varchar(32)
-)
+);

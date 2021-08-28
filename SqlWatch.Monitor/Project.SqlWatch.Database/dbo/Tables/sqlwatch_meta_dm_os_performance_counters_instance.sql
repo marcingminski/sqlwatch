@@ -13,4 +13,4 @@
 	foreign key ([sql_instance], [performance_counter_id])
 	references [dbo].[sqlwatch_meta_dm_os_performance_counters] ([sql_instance], [performance_counter_id])
 	on delete cascade
-)
+);

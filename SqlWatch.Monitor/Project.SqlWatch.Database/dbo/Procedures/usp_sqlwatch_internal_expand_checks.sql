@@ -18,42 +18,44 @@ begin
 		else dbo.ufn_sqlwatch_get_servername()
 		end;
 
-	open cur_expand_by_server
+	open cur_expand_by_server;
 
 	fetch next from cur_expand_by_server
-		into @sql_instance
+		into @sql_instance;
 
 	while @@FETCH_STATUS = 0
 	begin
 
+		declare @checks table (	
+			[check_template_id] smallint,
+			[check_name] [nvarchar](255) NOT NULL,
+			[check_description] [nvarchar](2048) NULL,
+			[check_query] [nvarchar](max) NOT NULL,
+			[check_frequency_minutes] [smallint] NULL,
+			[check_threshold_warning] [varchar](100) NULL,
+			[check_threshold_critical] [varchar](100) NOT NULL,
+			[check_enabled] [bit] NOT NULL,
+			[ignore_flapping] [bit] NOT NULL,
+			[object_type] varchar(50),
+			[object_name] nvarchar(128),
+			[target_sql_instance] varchar(32),
+			[use_baseline] bit
+		);
+
 		declare cur_expand_check cursor LOCAL FAST_FORWARD for
 		select check_name, expand_by, check_template_id
 		from [dbo].[sqlwatch_config_check_template]
-		where template_enabled = 1
+		where template_enabled = 1;
 
-		open cur_expand_check 
+		open cur_expand_check ;
 	
 		fetch next from cur_expand_check 
-			into @check_name, @expand_by , @check_template_id
+			into @check_name, @expand_by , @check_template_id;
 	
 		while @@FETCH_STATUS = 0 
 		begin
 
-			declare @checks table (	
-				[check_template_id] smallint,
-				[check_name] [nvarchar](255) NOT NULL,
-				[check_description] [nvarchar](2048) NULL,
-				[check_query] [nvarchar](max) NOT NULL,
-				[check_frequency_minutes] [smallint] NULL,
-				[check_threshold_warning] [varchar](100) NULL,
-				[check_threshold_critical] [varchar](100) NOT NULL,
-				[check_enabled] [bit] NOT NULL,
-				[ignore_flapping] [bit] NOT NULL,
-				[object_type] varchar(50),
-				[object_name] nvarchar(128),
-				[target_sql_instance] varchar(32),
-				[use_baseline] bit
-			)
+			delete from @checks;
 
 			if @expand_by is null
 				begin
@@ -76,8 +78,8 @@ begin
 					   ,@sql_instance
 					   ,[use_baseline]
 					from [dbo].[sqlwatch_config_check_template] c
-					where c.check_name = @check_name
-				end
+					where c.check_name = @check_name;
+				end;
 
 			if @expand_by = 'Disk'
 				begin
@@ -114,8 +116,8 @@ begin
 						) d
 					where c.check_name = @check_name
 					and c.expand_by = @expand_by
-					and d.sql_instance = @sql_instance
-				end
+					and d.sql_instance = @sql_instance;
+				end;
 
 			if @expand_by = 'Job'
 				begin
@@ -155,7 +157,7 @@ begin
 					where c.check_name = @check_name
 					and c.expand_by = @expand_by
 					and d.is_current = 1;
-				end
+				end;
 
 			if @expand_by = 'Database'
 				begin
@@ -195,21 +197,21 @@ begin
 					) d
 					where c.check_name = @check_name
 					and c.expand_by = @expand_by
-					and d.sql_instance = @sql_instance
-				end
+					and d.sql_instance = @sql_instance;
+				end;
 
 			fetch next from cur_expand_check 
-				into @check_name, @expand_by, @check_template_id
+				into @check_name, @expand_by, @check_template_id;
 		end
 
 		close cur_expand_check;
 		deallocate cur_expand_check;
 
 		fetch next from cur_expand_by_server
-			into @sql_instance
+			into @sql_instance;
 	end
 
-	close cur_expand_by_server
+	close cur_expand_by_server;
 	deallocate cur_expand_by_server;
 
 	;merge [dbo].[sqlwatch_config_check] as target 

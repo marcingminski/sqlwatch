@@ -103,4 +103,4 @@ create trigger dbo.trg_sqlwatch_config_sql_instance_remove_meta
 		where sql_instance in (
 			select sql_instance from @deleted_instance
 			);
-	end
+	end;

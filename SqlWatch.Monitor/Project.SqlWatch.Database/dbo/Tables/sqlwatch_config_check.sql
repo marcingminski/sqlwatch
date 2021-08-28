@@ -21,7 +21,7 @@
 
 	/* primary key */
 	constraint pk_sqlwatch_config_check primary key clustered ([check_id])
-)
+);
 go
 
 /*	do not use negative IDs for user checks as they may be overwritten with the next release.
@@ -37,9 +37,9 @@ create trigger dbo.trg_sqlwatch_config_check_negative_id
 			begin
 				raiserror('Negative IDs are for checks shipped with SQLWATCH and may be overwritten in the future.',16,1)
 				if @@TRANCOUNT > 0
-					ROLLBACK TRAN
-			end
-	end
+					ROLLBACK TRAN;
+			end;
+	end;
 go
 
 /*	maintain meta table withouth having to run extra DML every time checks run
@@ -86,7 +86,7 @@ create trigger dbo.trg_sqlwatch_config_check_meta_IU
 				, [target_sql_instance] = source.[target_sql_instance]
 				
 		;
-	end
+	end;
 go
 
 create trigger dbo.trg_sqlwatch_config_check_meta_D
@@ -99,8 +99,8 @@ create trigger dbo.trg_sqlwatch_config_check_meta_D
 		from dbo.sqlwatch_meta_check t
 		where t.check_id in (select check_id from deleted)
 		and t.check_id not in (select check_id from inserted)
-		and t.sql_instance = @@SERVERNAME
-	end
+		and t.sql_instance = @@SERVERNAME;
+	end;
 go
 
 create trigger dbo.trg_sqlwatch_config_check_U
@@ -113,6 +113,6 @@ create trigger dbo.trg_sqlwatch_config_check_U
 			set date_updated = getutcdate()
 		from [dbo].[sqlwatch_config_check] t
 		inner join inserted i
-			on i.[check_id] = t.[check_id]
-	end
+			on i.[check_id] = t.[check_id];
+	end;
 go
