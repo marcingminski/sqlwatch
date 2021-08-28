@@ -24,7 +24,7 @@ CREATE TRIGGER [dbo].[trg_sqlwatch_config_report_action_circular]
     FOR INSERT, UPDATE
     AS
     BEGIN
-	    set nocount on
+	    set nocount on;
 		--prevent circular action to a report.
 		--we could create an action that calls report which is configured to call the same action
 		--this would result in a never ending loop.		
@@ -36,5 +36,5 @@ CREATE TRIGGER [dbo].[trg_sqlwatch_config_report_action_circular]
 			begin
 			  raiserror ('You cannot call an action that is calling this report as this would create circular reference.' ,16,1);
 			  rollback transaction;
-			end
-    END
+			end;
+    END;

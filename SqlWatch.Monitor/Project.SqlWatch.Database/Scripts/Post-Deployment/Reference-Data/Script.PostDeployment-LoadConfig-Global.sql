@@ -18,7 +18,8 @@ declare @config table (
 	config_name varchar(255),
 	config_value smallint,
 	config_description nvarchar(max)
-	)
+	);
+
 insert into @config (config_id, config_name, config_value, config_description)
 values
 	/*	How many days to keep in the app_log table	*/

@@ -424,4 +424,4 @@ if @has_errors = 1
 
 		--print all errors and terminate the batch which will also fail the agent job for the attention:
 		raiserror ('%s',16,1,@error_message);
-	end
+	end;

@@ -165,5 +165,5 @@ if @check_action_id is not null
 				,[action_hourly_limit] = source.action_hourly_limit
 				,[action_template_id] = source.action_template_id;
 
-		Print 'Check (Id: ' + convert(varchar(10),@check_id) + ') assosiated with action (Id: ' + convert(varchar(10),@check_action_id) + ').'
+		Print 'Check (Id: ' + convert(varchar(10),@check_id) + ') assosiated with action (Id: ' + convert(varchar(10),@check_action_id) + ').';
 	end;

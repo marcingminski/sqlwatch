@@ -519,7 +519,7 @@ dbo.ufn_sqlwatch_get_config_value ( 16, null ): %i
 								@snapshot_type_id = @snapshot_type_id_action,
 								@is_flapping = @is_flapping;
 						end try
-						begin catch
+						begin catch;
 							--28B7A898-27D7-44C0-B6EB-5238021FD855
 							set @has_errors = 1				;
 							set @error_message = 'Errors when processing Action (Id: ' + convert(varchar(10),@action_id) + ') for Check (Id: ' + convert(varchar(10),@check_id) + ')';
@@ -529,7 +529,7 @@ dbo.ufn_sqlwatch_get_config_value ( 16, null ): %i
 								@process_message = @error_message,
 								@process_message_type = 'ERROR';
 							GoTo NextAction
-						end catch
+						end catch;
 
 						NextAction:
 						fetch next from cur_actions 

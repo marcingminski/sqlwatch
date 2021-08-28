@@ -15,7 +15,7 @@ if [dbo].[ufn_sqlwatch_get_agent_status]() = 0
 		print 'SQL Agent is not running. SQLWATCH relies on Agent to collect performance data.
 		The database will be deployed but you will have to deploy jobs manually once you have enabled SQL Agent.
 		You can run "exec [dbo].[usp_sqlwatch_config_create_default_agent_jobs]" to create default jobs.
-		If you are running Express Edition you will be able to invoke collection via broker'
+		If you are running Express Edition you will be able to invoke collection via broker';
 		return;
 	end;
 

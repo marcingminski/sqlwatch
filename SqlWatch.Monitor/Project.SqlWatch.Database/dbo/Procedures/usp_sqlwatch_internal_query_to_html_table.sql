@@ -32,7 +32,7 @@
 		begin try
 			exec sp_executesql @sql ;
 		end try
-		begin catch
+		begin catch;
 			set @has_errors = 1;
 
 			set @error_message = 'Executing initial query';
@@ -42,7 +42,7 @@
 				@process_stage = '77EF7172-3573-46B7-91E6-9BF0259B2DAC',
 				@process_message = @error_message,
 				@process_message_type = 'ERROR';
-		end catch
+		end catch;
 
 		select @cols = coalesce(@cols + ', '''', ', '') + '[' + name + '] AS ''td'''
 		from tempdb.sys.columns 

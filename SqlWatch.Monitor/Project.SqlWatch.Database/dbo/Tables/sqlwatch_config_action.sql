@@ -56,7 +56,7 @@ create trigger [dbo].[trg_sqlwatch_config_action_report_circular]
     for insert, update
     as
     begin
-	    set nocount on
+	    set nocount on;
 		--prevent circular action to a report.
 		--we could create an action that calls report which is configured to call the same action
 		--this would result in a never ending loop.		

@@ -9,5 +9,5 @@ begin
 		when upper(@type) = 'MINOR' then parsename(convert(varchar(32), product_version), 2)
 		end
 	from (select product_version=convert(nvarchar(128),serverproperty('productversion'))) t
-	)
-end
+	);
+end;

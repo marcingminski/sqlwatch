@@ -75,7 +75,7 @@ begin
 
 				set @row_count = @@ROWCOUNT;
 				print 'Deleted ' + convert(varchar(max),@row_count) + ' records from [dbo].[sqlwatch_logger_snapshot_header]';
-			commit tran
+			commit tran;
 		end
 
 	/* Application log retention */

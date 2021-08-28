@@ -82,4 +82,4 @@ else
 					,source.[action_exec]
 					,source.[action_report_id]
 					,source.[action_enabled] );
-	end
+	end;

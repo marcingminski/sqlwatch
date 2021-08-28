@@ -15,5 +15,5 @@
 	[use_baseline] bit,
 
 	constraint pk_sqlwatch_config_check_template primary key clustered ([check_name])
-)
+);
 go

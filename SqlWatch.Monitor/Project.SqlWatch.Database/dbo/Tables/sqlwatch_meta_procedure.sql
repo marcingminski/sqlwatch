@@ -14,10 +14,10 @@
 	),
 	 constraint fk_sqlwatch_meta_procedure_server foreign key ([sql_instance]) 
 		references [dbo].[sqlwatch_meta_server] ([servername]) on delete cascade
-)
+);
 go
 
 create unique nonclustered index idx_sqlwatch_meta_procedure_1 
 	on [dbo].[sqlwatch_meta_procedure] ([sql_instance],[sqlwatch_database_id],[procedure_name])
-	include ([date_last_seen],[sqlwatch_procedure_id])
+	include ([date_last_seen],[sqlwatch_procedure_id]);
 	
