@@ -44,14 +44,14 @@ begin
 	LOCAL FORWARD_ONLY STATIC READ_ONLY
 	FOR 
 	select distinct sdb.name
-	from dbo.vw_sqlwatch_sys_databases sdb
+	from dbo.vw_sqlwatch_sys_databases sdb;
 
-	open cur_database
+	open cur_database;
 	fetch next from cur_database into @db;
 
 	while @@FETCH_STATUS = 0
 		begin
-			Print 'Processing database: ' + quotename(@db)
+			Print 'Processing database: ' + quotename(@db);
 			-- check if database is excluded in [dbo].[sqlwatch_config_exclude_database]
 			if not exists (
 				select * from [dbo].[sqlwatch_config_exclude_database]
@@ -70,17 +70,17 @@ begin
 								or (@databases <> 'ALL' and exists (select * from @includedbs where @db like [name]))
 								or (@databases <> 'ALL' and not exists (select * from @includedbs))
 								begin
-									set @sql = ''
-									set @sql = replace(@command,'?',@db)
-									Print 'Executing command for database: ' + quotename(@db)
+									set @sql = '';
+									set @sql = replace(@command,'?',@db);
+									Print 'Executing command for database: ' + quotename(@db);
 									begin try
 										if @debug = 1
 											begin
-												Print @sql
-											end
-										set @timestart = SYSDATETIME()
-										exec sp_executesql @sql
-										set @timeend = SYSDATETIME()
+												Print @sql;
+											end;
+										set @timestart = SYSDATETIME();
+										exec sp_executesql @sql;
+										set @timeend = SYSDATETIME();
 
 										set @process_message = 'Processed database: [' + @db + '], @snapshot_type_id: ' + isnull(convert(nvarchar(max),@snapshot_type_id),'NULL') + '. Invoked by: [' + isnull(OBJECT_NAME(@calling_proc_id),'UNKNOWN') + '], time taken: '
 
@@ -101,44 +101,44 @@ begin
 														@proc_id = @@PROCID,
 														@process_stage = '53BFB442-44CD-404F-8C2E-9203A04024D7',
 														@process_message = @process_message,
-														@process_message_type = 'INFO'
-											end
+														@process_message_type = 'INFO';
+											end;
 									end try
 									begin catch
-										set @has_errors = 1
+										set @has_errors = 1;
 										if @@trancount > 0
-											rollback
+											rollback;
 
 										exec [dbo].[usp_sqlwatch_internal_app_log_add_message]
 												@proc_id = @@PROCID,
 												@process_stage = 'F445D2BC-2CF3-4F41-9284-A4C3ACA513EB',
 												@process_message = @sql,
-												@process_message_type = 'ERROR'
+												@process_message_type = 'ERROR';
 										GoTo NextDatabase
 									end catch
 								end
 							else
 								begin
-									Print 'A7F70FE7-D836-4B2D-A1CC-9E25D5F65180 Database (' + @db + ') not included in @databases (' + @databases + ')'
+									Print 'A7F70FE7-D836-4B2D-A1CC-9E25D5F65180 Database (' + @db + ') not included in @databases (' + @databases + ')';
 								end
 							end
 						else
 							begin
-								Print 'A6DFE8E3-607E-4E95-8C36-C2E23228B9A3 Database (' + @db + ') excluded from collection in @databases (' + @databases + ')'
+								Print 'A6DFE8E3-607E-4E95-8C36-C2E23228B9A3 Database (' + @db + ') excluded from collection in @databases (' + @databases + ')';
 							end
 				end
 			else
 				begin
-					Print '2F9BBB27-3606-4166-B699-F794140711C7 Database (' + @db + ') excluded from collection (snapshot_type_id: ' + isnull(convert(varchar(10), @snapshot_type_id),'NULL') + ') due to global exclusion.'
+					Print '2F9BBB27-3606-4166-B699-F794140711C7 Database (' + @db + ') excluded from collection (snapshot_type_id: ' + isnull(convert(varchar(10), @snapshot_type_id),'NULL') + ') due to global exclusion.';
 				end
 			NextDatabase:
-			fetch next from cur_database into @db
+			fetch next from cur_database into @db;
 		end
 
 		if @has_errors <> 0
 			begin
-				set @error_message = 'Errors during execution (' + OBJECT_NAME(@@PROCID) + ')'
-				raiserror ('%s',16,1,@error_message)
+				set @error_message = 'Errors during execution (' + OBJECT_NAME(@@PROCID) + ')';
+				raiserror ('%s',16,1,@error_message);
 			end
 end
 

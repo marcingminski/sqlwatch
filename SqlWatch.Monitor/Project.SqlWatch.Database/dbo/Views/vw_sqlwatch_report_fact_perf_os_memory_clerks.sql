@@ -18,4 +18,4 @@ SELECT [report_time]
     inner join dbo.sqlwatch_logger_snapshot_header sh
 		on sh.sql_instance = omc.sql_instance
 		and sh.snapshot_time = omc.[snapshot_time]
-		and sh.snapshot_type_id = omc.snapshot_type_id
+		and sh.snapshot_type_id = omc.snapshot_type_id;

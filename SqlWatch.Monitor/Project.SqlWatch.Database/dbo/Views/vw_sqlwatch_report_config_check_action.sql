@@ -33,4 +33,4 @@ left join [dbo].[sqlwatch_config_report] cr
 left join [dbo].[sqlwatch_config_report_action] ra
 	on ra.report_id = cr.report_id
 left join [dbo].[sqlwatch_config_action] rca
-	on rca.action_id = ra.action_id
+	on rca.action_id = ra.action_id;

@@ -31,4 +31,4 @@ SELECT d.[sqlwatch_database_id]
 		where sql_instance = d.sql_instance
 		and snapshot_type_id = d.snapshot_type_id
 		group by sql_instance, snapshot_type_id
-		) t
+		) t;

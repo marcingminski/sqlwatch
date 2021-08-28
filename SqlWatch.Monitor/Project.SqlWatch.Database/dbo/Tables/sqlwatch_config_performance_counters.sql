@@ -8,8 +8,10 @@
 			constraint pk_sql_perf_mon_config_perf_counters primary key (
 				[object_name] , [instance_name], [counter_name]
 			)
-)
+);
 
 go
-	create nonclustered index idx_sql_perf_mon_perf_counters_types on dbo.[sqlwatch_config_performance_counters] ([collect]) include ([object_name],[instance_name],[counter_name],[base_counter_name])
+	create nonclustered index idx_sql_perf_mon_perf_counters_types 
+		on dbo.[sqlwatch_config_performance_counters] ([collect]) 
+		include ([object_name],[instance_name],[counter_name],[base_counter_name]);
 

@@ -21,3 +21,4 @@ SELECT d.[sqlwatch_volume_id]
 	inner join [dbo].[sqlwatch_meta_os_volume] v
 	on v.sql_instance = d.sql_instance
 	and v.sqlwatch_volume_id = d.sqlwatch_volume_id
+	;

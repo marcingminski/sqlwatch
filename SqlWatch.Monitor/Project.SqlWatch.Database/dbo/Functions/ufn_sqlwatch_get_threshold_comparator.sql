@@ -5,32 +5,32 @@
 RETURNS varchar(2) with schemabinding
 AS
 BEGIN
-	declare @return varchar(2)
+	declare @return varchar(2);
 
 	if left(@threshold,2) = '<='
 		begin
-			set @return = '<='
-		end
+			set @return = '<=';
+		end;
 	else if left(@threshold,2) = '>='
 		begin
-			set @return = '>='
-		end
+			set @return = '>=';
+		end;
 	else if left(@threshold,2) = '<>'
 		begin
-			set @return =  '<>'
-		end
+			set @return =  '<>';
+		end;
 	else if left(@threshold,1) = '<'
 		begin
-			set @return = '<'
-		end
+			set @return = '<';
+		end;
 	else if left(@threshold,1) = '>'
 		begin
-			set @return ='>'
-		end
+			set @return ='>';
+		end;
 	else if left(@threshold,1) = '='
 		begin
-			set @return = '='
-		end
+			set @return = '=';
+		end;
 
 		return @return;
 END;

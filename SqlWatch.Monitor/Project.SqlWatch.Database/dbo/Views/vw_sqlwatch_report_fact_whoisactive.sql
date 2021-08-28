@@ -50,3 +50,4 @@ SELECT [sqlwatch_whoisactive_record_id]
 		on  h.snapshot_time = d.[snapshot_time]
 		and h.snapshot_type_id = d.snapshot_type_id
 		and h.sql_instance = d.sql_instance
+        ;

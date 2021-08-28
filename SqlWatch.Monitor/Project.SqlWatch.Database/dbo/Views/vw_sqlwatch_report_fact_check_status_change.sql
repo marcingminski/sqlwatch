@@ -25,3 +25,4 @@ outer apply (
 		and status_change = 0
 ) t
 where l1.status_change = 1
+;

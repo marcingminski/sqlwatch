@@ -42,3 +42,4 @@ union all
 select [table_name] = 'sqlwatch_logger_check_action', [snapshot_type_id] = 18
 union all
 select [table_name] = 'sqlwatch_logger_disk_utilisation_table', [snapshot_type_id] = 22
+;

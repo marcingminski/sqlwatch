@@ -42,5 +42,4 @@ select [sqlwatch_database_id], [sqlwatch_master_file_id]
 		where mf.sqlwatch_master_file_id = d.sqlwatch_master_file_id
 		and mf.sqlwatch_database_id = d.sqlwatch_database_id
 		and mf.sql_instance = d.sql_instance
-		) f
-
+		) f;

@@ -32,4 +32,4 @@ SELECT d.[sqlwatch_database_id]
 
 	inner join [dbo].[sqlwatch_meta_database] db
 	on db.sql_instance = d.sql_instance
-	and db.sqlwatch_database_id = d.sqlwatch_database_id
+	and db.sqlwatch_database_id = d.sqlwatch_database_id;

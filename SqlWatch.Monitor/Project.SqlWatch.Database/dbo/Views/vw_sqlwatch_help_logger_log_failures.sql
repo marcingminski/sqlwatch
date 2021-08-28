@@ -18,4 +18,4 @@ SELECT
 		,[ERROR_LINE]
 		,[ERROR_MESSAGE]
   FROM [dbo].[sqlwatch_app_log]
-  where [process_message_type] = 'ERROR'
+  where [process_message_type] = 'ERROR';

@@ -13,4 +13,4 @@
 
 	constraint fk_sqlwatch_config_check_template_action_check_name foreign key ([check_name])
 		references [dbo].[sqlwatch_config_check_template] ([check_name]) on delete no action
-)
+);

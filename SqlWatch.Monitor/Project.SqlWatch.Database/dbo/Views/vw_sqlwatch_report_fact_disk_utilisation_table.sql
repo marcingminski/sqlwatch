@@ -31,4 +31,4 @@ select mdb.[database_name]
   	inner join dbo.sqlwatch_logger_snapshot_header h
 		on  h.snapshot_time = ut.[snapshot_time]
 		and h.snapshot_type_id = ut.snapshot_type_id
-		and h.sql_instance = ut.sql_instance
+		and h.sql_instance = ut.sql_instance;

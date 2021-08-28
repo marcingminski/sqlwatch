@@ -23,4 +23,4 @@ from dbo.sqlwatch_logger_check d
 
 	inner join [dbo].[sqlwatch_meta_check] c
 		on c.sql_instance = d.sql_instance
-		and c.check_id = d.check_id
+		and c.check_id = d.check_id;

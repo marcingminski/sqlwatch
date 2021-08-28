@@ -119,7 +119,7 @@ else
 				,[check_enabled] = source.[check_enabled]
 				,[ignore_flapping] = source.[ignore_flapping];
 
-			Print 'Check (Id: ' + convert(varchar(10),@check_id) + ') updated.'
+			Print 'Check (Id: ' + convert(varchar(10),@check_id) + ') updated.';
 	end
 
 if @check_action_id is not null

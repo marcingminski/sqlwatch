@@ -64,3 +64,4 @@ cte_database_growth as (
 		, [log_growth_bytes_per_day_formatted] = [dbo].[ufn_sqlwatch_format_bytes] (log_growth_bytes_per_day) + ' / Day'
 
 	from cte_database_growth
+	;

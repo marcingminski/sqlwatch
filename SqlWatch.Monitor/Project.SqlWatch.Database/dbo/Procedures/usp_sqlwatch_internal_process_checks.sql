@@ -9,8 +9,8 @@ AS
 -------------------------------------------------------------------------------------------------------------------
 */
 
-SET NOCOUNT ON 
-SET DATEFORMAT ymd --fix for non EN formats
+SET NOCOUNT ON ;
+SET DATEFORMAT ymd; --fix for non EN formats
 
 declare @check_name nvarchar(100),
 		@check_description nvarchar(2048),
@@ -58,13 +58,13 @@ declare @check_status varchar(50),
 		@deviation_from_default_threshold real,
 		@deviation_from_baseline_threshold real,
 		@deviatoin_from_value_default real,
-		@deviation_from_value_baseline real
+		@deviation_from_value_baseline real;
 
 declare @email_subject nvarchar(255),
 		@email_body nvarchar(4000),
 		@target_attributes nvarchar(255),
 		@recipients nvarchar(255),
-		@msg_payload nvarchar(max)
+		@msg_payload nvarchar(max);
 
 declare @action_id smallint,
 		@subject nvarchar(max),
@@ -74,19 +74,19 @@ declare @action_id smallint,
 		@previous_check_status varchar(50),
 		@check_time datetime,
 		@ignore_flapping bit,
-		@is_flapping bit
+		@is_flapping bit;
 
 
 declare @snapshot_type_id tinyint = 18,
 		@snapshot_type_id_action tinyint = 19,
 		@snapshot_time datetime2(0) = getutcdate(),
-		@snapshot_time_action datetime2(0)
+		@snapshot_time_action datetime2(0);
 
-declare @mail_return_code int
+declare @mail_return_code int;
 
 exec [dbo].[usp_sqlwatch_internal_logger_new_header] 
 	@snapshot_time_new = @snapshot_time OUTPUT,
-	@snapshot_type_id = @snapshot_type_id
+	@snapshot_type_id = @snapshot_type_id;
 
 declare cur_rules cursor LOCAL STATIC for
 select 
@@ -127,23 +127,23 @@ and datediff(minute,isnull(mc.last_check_date,'1970-01-01'),getutcdate()) >=
 		else isnull(mc.[check_frequency_minutes],0)
 		end
 
-order by cc.[check_id]
+order by cc.[check_id];
 
-open cur_rules
+open cur_rules;
   
 fetch next from cur_rules 
 into @check_id, @check_name, @check_description , @check_query, @check_warning_threshold, @check_critical_threshold
-	, @previous_check_date, @previous_check_value, @previous_check_status, @ignore_flapping, @use_baseline, @target_sql_instance
+	, @previous_check_date, @previous_check_value, @previous_check_status, @ignore_flapping, @use_baseline, @target_sql_instance;
 
 
 while @@FETCH_STATUS = 0  
 begin
 	
-	set @check_status = null
-	set @check_value = null
-	set @actions = null
-	set @error_message = ''
-	set @is_flapping = 0
+	set @check_status = null;
+	set @check_value = null;
+	set @actions = null;
+	set @error_message = '';
+	set @is_flapping = 0;
 
 	-------------------------------------------------------------------------------------------------------------------
 	-- execute check and log output in variable:
@@ -158,37 +158,37 @@ SET ANSI_WARNINGS OFF
 ' + replace(@check_query,'{LAST_CHECK_DATE}',convert(varchar(23),@previous_check_date,121))
 		exec sp_executesql @check_query, N'@output decimal(28,5) OUTPUT', @output = @check_value output;
 		set @check_end_time = SYSUTCDATETIME();
-		set @check_exec_time_ms = convert(real,datediff(MICROSECOND,@check_start_time,@check_end_time) / 1000.0 )
+		set @check_exec_time_ms = convert(real,datediff(MICROSECOND,@check_start_time,@check_end_time) / 1000.0 );
 		if @check_value is null
 			begin
-				set @error_message = 'Unable to evaluate thresholds because Check (Id: ' + convert(varchar(10),@check_id) + ') has returned NULL value'
-				raiserror (@error_message, 16, 1)
+				set @error_message = 'Unable to evaluate thresholds because Check (Id: ' + convert(varchar(10),@check_id) + ') has returned NULL value';
+				raiserror (@error_message, 16, 1);
 			end
 	end try
 	begin catch
 
 		if @error_message is null or @error_message = '' 
 			begin 
-				set @error_message = replace(@check_query,'%','%%')
+				set @error_message = replace(@check_query,'%','%%');
 			end
 		else
 			begin
 				set @error_message = @error_message + '
 --- Query -------------------------------------------------
-' + replace(@check_query,'%','%%') + ''
+' + replace(@check_query,'%','%%') + '';
 			end
 
 		if dbo.ufn_sqlwatch_get_config_value(8, null) <> 0
 			begin
-				set @has_errors = 1
+				set @has_errors = 1;
 
-				select FAILED_QUERY = @check_query, ERROR_MESSAGE = ERROR_MESSAGE()				
+				select FAILED_QUERY = @check_query, ERROR_MESSAGE = ERROR_MESSAGE()		;		
 
 				exec [dbo].[usp_sqlwatch_internal_app_log_add_message]
 					@proc_id = @@PROCID,
 					@process_stage = '5980A79A-D6BC-4BA0-8B86-A388E8DB621D',
 					@process_message = @error_message,
-					@process_message_type = 'ERROR'
+					@process_message_type = 'ERROR';
 			end
 		else
 			begin
@@ -206,11 +206,11 @@ SET ANSI_WARNINGS OFF
 		where [check_id] = @check_id
 		and sql_instance = @sql_instance;
 
-		set @error_message = 'CheckID : ' + convert(varchar(10),@check_id)
+		set @error_message = 'CheckID : ' + convert(varchar(10),@check_id);
 						
 		insert into [dbo].[sqlwatch_logger_check] (sql_instance, snapshot_time, snapshot_type_id, check_id, 
 			[check_value], [check_status], check_exec_time_ms)
-		values (@sql_instance, @snapshot_time, @snapshot_type_id, @check_id, null, 'CHECK ERROR', @check_exec_time_ms)
+		values (@sql_instance, @snapshot_time, @snapshot_type_id, @check_id, null, 'CHECK ERROR', @check_exec_time_ms);
 			
 		goto ProcessNextCheck
 	end catch
@@ -237,7 +237,7 @@ SET ANSI_WARNINGS OFF
 							) t
 						) between 0.35 and 0.65
 		begin
-			set @is_flapping = 1
+			set @is_flapping = 1;
 			--warning only:
 			if (dbo.ufn_sqlwatch_get_config_value(11,null) = 1)
 				begin
@@ -246,7 +246,7 @@ SET ANSI_WARNINGS OFF
 							@proc_id = @@PROCID,
 							@process_stage = '040D0A86-83B8-4543-A34C-9F328DAE5488',
 							@process_message = @error_message,
-							@process_message_type = 'WARNING'
+							@process_message_type = 'WARNING';
 				end
 
 		end
@@ -268,11 +268,11 @@ SET ANSI_WARNINGS OFF
 
 		if @check_critical_threshold like '%{LAST_CHECK_VALUE}%' or @check_warning_threshold like '%{LAST_CHECK_VALUE}%' 
 			begin
-				set @check_status =	'OK'  
+				set @check_status =	'OK'  ;
 			end
 		else
 			begin
-				set @error_message = FORMATMESSAGE('Determining @check_status for %s (id: %i).', @check_name,@check_id)
+				set @error_message = FORMATMESSAGE('Determining @check_status for %s (id: %i).', @check_name,@check_id);
 				--The baseline will take precedence over values in [check_threshold_warning] and [check_threshold_critical].
 				if @use_baseline = 1 
 					begin
@@ -289,13 +289,13 @@ SET ANSI_WARNINGS OFF
 							begin
 								set @error_message = @error_message + FORMATMESSAGE(' We have got a baseline value of %s.'
 									,convert(varchar(50),@check_baseline)
-									)
+									);
 
-								select @check_critical_threshold_baseline = left(@check_critical_threshold,patindex('%[0-9]%',@check_critical_threshold)-1)+convert(varchar(50),@check_baseline)
+								select @check_critical_threshold_baseline = left(@check_critical_threshold,patindex('%[0-9]%',@check_critical_threshold)-1)+convert(varchar(50),@check_baseline);
 							end
 						else
 							begin
-								set @error_message = @error_message + FORMATMESSAGE(' We have NOT got any baseline data.')
+								set @error_message = @error_message + FORMATMESSAGE(' We have NOT got any baseline data.');
 							end
 
 						if @check_critical_threshold_baseline is not null
@@ -303,14 +303,14 @@ SET ANSI_WARNINGS OFF
 
 								set @error_message = @error_message + FORMATMESSAGE(' We have set the critical threshold from baseline value of %s.'
 									,@check_critical_threshold_baseline
-									)
+									);
 
 								if dbo.ufn_sqlwatch_get_config_value ( 16, null ) = 1
 									begin
 										set @error_message = @error_message + FORMATMESSAGE(' We are running strict baselining. The check value is %s, and the threshold from the baseline is %s'
 											,convert(varchar(50),@check_value)
 											,@check_critical_threshold_baseline
-											)
+											);
 
 										-- if strict baselining, only compare baseline check with no variance:
 										if [dbo].[ufn_sqlwatch_get_check_status] ( @check_critical_threshold_baseline, @check_value, 1 ) = 1
@@ -326,11 +326,11 @@ SET ANSI_WARNINGS OFF
 									end
 								else
 									begin
-										set @actual_variance_check = null
-										set @actial_variance_check_baseline = null
+										set @actual_variance_check = null;
+										set @actial_variance_check_baseline = null;
 
-										select @actual_variance_check = [dbo].[ufn_sqlwatch_get_threshold_deviation](	@check_critical_threshold,	@check_variance )
-										select @actial_variance_check_baseline = [dbo].[ufn_sqlwatch_get_threshold_deviation](	@check_critical_threshold_baseline,	@check_baseline_variance )
+										select @actual_variance_check = [dbo].[ufn_sqlwatch_get_threshold_deviation](	@check_critical_threshold,	@check_variance );
+										select @actial_variance_check_baseline = [dbo].[ufn_sqlwatch_get_threshold_deviation](	@check_critical_threshold_baseline,	@check_baseline_variance );
 
 										set @error_message = @error_message + 
 										FORMATMESSAGE(' We are running relaxed baselining. We are going to compare against either the baseline threshold or the default threshold. The result will be OK if either returns OK. 
@@ -345,7 +345,7 @@ If the check satisfies either of these thresholds we are going to set the check 
 											,convert(varchar(50),@actial_variance_check_baseline)
 											,[dbo].[ufn_sqlwatch_get_threshold_comparator](@check_critical_threshold)
 											,convert(varchar(50),@actual_variance_check)
-											)
+											);
 
 										-- if relaxed baselining, check both and pick more optimistic value.
 										if [dbo].[ufn_sqlwatch_get_check_status] ( @check_critical_threshold_baseline, @check_value, @check_baseline_variance ) = 0
@@ -359,12 +359,12 @@ If the check satisfies either of these thresholds we are going to set the check 
 												set @error_message = @error_message + FORMATMESSAGE(' Neither the baseline nor the default check has returned OK so setting CRITICAL.');
 												set  @check_status =  'CRITICAL';
 											end
-									end
+									end;
 							end
 					end --@use_baseline = 1 
 				else
 					begin
-						set @error_message = @error_message + FORMATMESSAGE(' We are NOT using baseline data for this check.')
+						set @error_message = @error_message + FORMATMESSAGE(' We are NOT using baseline data for this check.');
 					end
 
 					--if @check_status is still null, it means the baseline based comparison has not set it.
@@ -376,7 +376,7 @@ If the check satisfies either of these thresholds we are going to set the check 
 								,convert(varchar(50),@check_value)
 								,@check_warning_threshold
 								,@check_critical_threshold
-								)
+								);
 
 							if [dbo].[ufn_sqlwatch_get_check_status] ( @check_critical_threshold, @check_value, 1 ) = 1
 								begin
@@ -393,7 +393,7 @@ If the check satisfies either of these thresholds we are going to set the check 
 									set @error_message = @error_message + FORMATMESSAGE(' The final result is OK.')
 									set @check_status =  'OK'
 								end
-						end
+						end;
 
 
 					--we have baseline, use it
@@ -408,7 +408,7 @@ If the check satisfies either of these thresholds we are going to set the check 
 	end try
 	begin catch
 
-		set @has_errors = 1				
+		set @has_errors = 1	;			
 		set @error_message = FORMATMESSAGE('Errors when setting check_status for for Check (Id: %i)
 The parameters were:
 dbo.ufn_sqlwatch_get_config_value ( 16, null ): %i
@@ -429,13 +429,13 @@ dbo.ufn_sqlwatch_get_config_value ( 16, null ): %i
 			,@check_critical_threshold
 			,@check_variance
 			,@check_warning_threshold
-		)
+		);
 
 		exec [dbo].[usp_sqlwatch_internal_app_log_add_message]
 			@proc_id = @@PROCID,
 			@process_stage = 'D17BF7E2-55FC-4B96-ABE3-8BD299924B6B',
 			@process_message = @error_message,
-			@process_message_type = 'ERROR'
+			@process_message_type = 'ERROR';
 
 			goto ProcessNextCheck
 
@@ -462,7 +462,7 @@ dbo.ufn_sqlwatch_get_config_value ( 16, null ): %i
 		case when isnull(@check_status,'') <> isnull(@previous_check_status,'') then 1 else 0 end
 		, @is_flapping 
 		, convert(real,dbo.ufn_sqlwatch_get_threshold_value(@check_critical_threshold_baseline))
-		)
+		);
 		
 	-------------------------------------------------------------------------------------------------------------------
 	-- process any actions for this check but only if status not OK or previous status was not OK (so we can process recovery)
@@ -479,9 +479,9 @@ dbo.ufn_sqlwatch_get_config_value ( 16, null ): %i
 						on cca.action_id = ca.action_id
 				where cca.check_id = @check_id
 				and ca.action_enabled = 1
-				order by cca.check_id
+				order by cca.check_id;
 
-				open cur_actions
+				open cur_actions;
 
 				if @@CURSOR_ROWS <> 0
 					begin
@@ -490,7 +490,7 @@ dbo.ufn_sqlwatch_get_config_value ( 16, null ): %i
 							procedure would have iterated quicker that that causing PK violation on insertion of the subsequent action headers	*/
 							exec [dbo].[usp_sqlwatch_internal_logger_new_header] 
 								@snapshot_time_new = @snapshot_time_action OUTPUT,
-								@snapshot_type_id = @snapshot_type_id_action
+								@snapshot_type_id = @snapshot_type_id_action;
 
 						--Print 'Processing actions for check.'
 					end
@@ -513,27 +513,27 @@ dbo.ufn_sqlwatch_get_config_value ( 16, null ): %i
 								@check_threshold_critical = @check_critical_threshold,
 								@snapshot_time = @snapshot_time_action,
 								@snapshot_type_id = @snapshot_type_id_action,
-								@is_flapping = @is_flapping
+								@is_flapping = @is_flapping;
 						end try
 						begin catch
 							--28B7A898-27D7-44C0-B6EB-5238021FD855
-							set @has_errors = 1				
-							set @error_message = 'Errors when processing Action (Id: ' + convert(varchar(10),@action_id) + ') for Check (Id: ' + convert(varchar(10),@check_id) + ')'
+							set @has_errors = 1				;
+							set @error_message = 'Errors when processing Action (Id: ' + convert(varchar(10),@action_id) + ') for Check (Id: ' + convert(varchar(10),@check_id) + ')';
 							exec [dbo].[usp_sqlwatch_internal_app_log_add_message]
 								@proc_id = @@PROCID,
 								@process_stage = '28B7A898-27D7-44C0-B6EB-5238021FD855',
 								@process_message = @error_message,
-								@process_message_type = 'ERROR'
+								@process_message_type = 'ERROR';
 							GoTo NextAction
 						end catch
 
 						NextAction:
 						fetch next from cur_actions 
-						into @action_id
+						into @action_id;
 					end
 
-			close cur_actions
-			deallocate cur_actions
+			close cur_actions;
+			deallocate cur_actions;
 		end
 
 	-------------------------------------------------------------------------------------------------------------------
@@ -547,23 +547,23 @@ dbo.ufn_sqlwatch_get_config_value ( 16, null ): %i
 		last_check_status = @check_status,
 		last_status_change_date = case when @previous_check_status <> @check_status then getutcdate() else last_status_change_date end
 	where [check_id] = @check_id
-	and sql_instance = @sql_instance
+	and sql_instance = @sql_instance;
 
 	ProcessNextCheck:
 
 	fetch next from cur_rules 
 	into @check_id, @check_name, @check_description , @check_query, @check_warning_threshold, @check_critical_threshold
-		, @previous_check_date, @previous_check_value, @previous_check_status, @ignore_flapping, @use_baseline, @target_sql_instance
+		, @previous_check_date, @previous_check_value, @previous_check_status, @ignore_flapping, @use_baseline, @target_sql_instance;
 	
 end
 
-close cur_rules
-deallocate cur_rules
+close cur_rules;
+deallocate cur_rules;
 
 
 if @has_errors = 1
 	begin
-		set @error_message = 'Errors during execution (' + OBJECT_NAME(@@PROCID) + ')'
+		set @error_message = 'Errors during execution (' + OBJECT_NAME(@@PROCID) + ')';
 		--print all errors and terminate the batch which will also fail the agent job for the attention:
-		raiserror ('%s',16,1,@error_message)
-	end
+		raiserror ('%s',16,1,@error_message);
+	end;

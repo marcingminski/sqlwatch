@@ -17,7 +17,7 @@ if [dbo].[ufn_sqlwatch_get_agent_status]() = 0
 		You can run "exec [dbo].[usp_sqlwatch_config_create_default_agent_jobs]" to create default jobs.
 		If you are running Express Edition you will be able to invoke collection via broker'
 		return;
-	end
+	end;
 
 /* create jobs */
 declare @sql varchar(max),
@@ -25,16 +25,16 @@ declare @sql varchar(max),
 set @server = @@SERVERNAME;
 
 
-set @sql = ''
+set @sql = '';
 if @remove_existing = 1
 	begin
 		select @sql = @sql + 'exec msdb.dbo.sp_delete_job @job_id=N''' + convert(varchar(255),job_id) + ''';' 
 		from msdb.dbo.sysjobs
 where name like 'SQLWATCH-%'
-and name not like 'SQLWATCH-REPOSITORY-%'
-		exec (@sql)
-		Print 'Existing default SQLWATCH jobs deleted'
-	end
+and name not like 'SQLWATCH-REPOSITORY-%';
+		exec (@sql);
+		Print 'Existing default SQLWATCH jobs deleted';
+	end;
 
 set @sql = ''
 create table ##sqlwatch_jobs (
@@ -52,7 +52,7 @@ create table ##sqlwatch_jobs (
 	active_start_time int, 
 	active_end_time int,
 	job_enabled tinyint,
-	)
+	);
 
 
 create table ##sqlwatch_steps (
@@ -61,9 +61,9 @@ create table ##sqlwatch_steps (
 	job_name sysname,
 	step_subsystem sysname,
 	step_command varchar(max)
-	)
+	);
 
-declare @enabled tinyint = 1
+declare @enabled tinyint = 1;
 
 /* job definition must be in the right order as they are executed as part of deployment */
 insert into ##sqlwatch_jobs

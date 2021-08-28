@@ -19,7 +19,7 @@ from [dbo].[sqlwatch_logger_dm_os_wait_stats] d
 	
 	left join dbo.vw_sqlwatch_meta_wait_stats_category m
 		on m.sql_instance = d.sql_instance
-		and m.wait_type_id = d.wait_type_id
+		and m.wait_type_id = d.wait_type_id;
 	
 	-- NO LONGER NEEDED:
 	--left join [dbo].[sqlwatch_config_wait_stats] cw

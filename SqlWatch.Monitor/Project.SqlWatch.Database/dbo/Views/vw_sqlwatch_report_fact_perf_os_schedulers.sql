@@ -25,4 +25,4 @@ SELECT report_time
   	inner join dbo.sqlwatch_logger_snapshot_header h
 		on  h.snapshot_time = d.[snapshot_time]
 		and h.snapshot_type_id = d.snapshot_type_id
-		and h.sql_instance = d.sql_instance
+		and h.sql_instance = d.sql_instance;

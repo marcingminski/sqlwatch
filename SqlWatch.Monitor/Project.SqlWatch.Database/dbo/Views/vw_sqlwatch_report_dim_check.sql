@@ -22,4 +22,4 @@
 		group by sql_instance, check_id
 	) t
 	on t.sql_instance = ma.sql_instance
-	and t.check_id = ma.check_id
+	and t.check_id = ma.check_id;

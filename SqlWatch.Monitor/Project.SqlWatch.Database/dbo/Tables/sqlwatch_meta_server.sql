@@ -17,13 +17,13 @@
 		),
 	constraint fk_sqlwatch_meta_config_sql_instance foreign key ([servername])
 		references dbo.sqlwatch_config_sql_instance ([sql_instance]) on delete cascade
-)
+);
 go
 
-create nonclustered index idx_sqlwatch_meta_server_1 on [dbo].[sqlwatch_meta_server] ([date_updated])
+create nonclustered index idx_sqlwatch_meta_server_1 on [dbo].[sqlwatch_meta_server] ([date_updated]);
 go
 
-create nonclustered index idx_sqlwatch_meta_server_2 on [dbo].[sqlwatch_meta_server] ([sql_instance])
+create nonclustered index idx_sqlwatch_meta_server_2 on [dbo].[sqlwatch_meta_server] ([sql_instance]);
 go
 
 create trigger trg_sqlwatch_meta_server_last_updated
@@ -38,8 +38,8 @@ create trigger trg_sqlwatch_meta_server_last_updated
 		from [dbo].[sqlwatch_meta_server] t
 		inner join inserted i
 			on i.[servername] = t.[servername]
-			and i.[servername] = @@SERVERNAME
-	end
+			and i.[servername] = @@SERVERNAME;
+	end;
 go
 
 -- https://github.com/marcingminski/sqlwatch/issues/153
@@ -54,7 +54,7 @@ create trigger dbo.trg_sqlwatch_meta_server_delete_import_status
 		where [sql_instance] in (
 			select [sql_instance]
 			from deleted
-			)
+			);
 	end
 go
 
@@ -68,14 +68,14 @@ create trigger dbo.trg_sqlwatch_meta_server_delete_header
 
 		declare @rowcount bigint = 1,
 				@rowcounttotal bigint = 0,
-				@message varchar(512) = ''
+				@message varchar(512) = '';
 
 		declare @deleted_instances table (
 			sql_instance varchar(32)
-			)
+			);
 
 		insert into @deleted_instances
-		select [servername] from deleted
+		select [servername] from deleted;
 
 		Print 'Begin batch delete from [dbo].[sqlwatch_logger_snapshot_header]. Terminating this batch may lead to orphaned records being left in child tables.
 If this happens, please re-add sql_instance to the config and meta tables and re-do the deletion.'
@@ -84,13 +84,13 @@ If this happens, please re-add sql_instance to the config and meta tables and re
 				delete top (100) h
 				from [dbo].[sqlwatch_logger_snapshot_header] h
 				inner join @deleted_instances d
-					on h.sql_instance = d.sql_instance
+					on h.sql_instance = d.sql_instance;
 
-				set @rowcount = @@ROWCOUNT
-				set @rowcounttotal = @rowcounttotal + @rowcount
-				set @message = '	Deleted ' + convert(varchar(10),@rowcount) + ' rows in a batch.'
-				raiserror (@message,10,1)
+				set @rowcount = @@ROWCOUNT;
+				set @rowcounttotal = @rowcounttotal + @rowcount;
+				set @message = '	Deleted ' + convert(varchar(10),@rowcount) + ' rows in a batch.';
+				raiserror (@message,10,1);
 			end
-		Print 'End batch delete from [dbo].[sqlwatch_logger_snapshot_header].
-Deleted ' + convert(varchar(10),@rowcounttotal) + ' rows in total.'
-	end
+		Print 'End batch delete from [dbo].[sqlwatch_logger_snapshot_header].;
+Deleted ' + convert(varchar(10),@rowcounttotal) + ' rows in total.';
+	end;

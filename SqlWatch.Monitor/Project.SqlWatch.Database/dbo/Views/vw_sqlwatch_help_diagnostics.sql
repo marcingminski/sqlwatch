@@ -129,4 +129,4 @@ select sqlwatch_diagnostics = (
 		)
 
 	for xml path('diagnostics'), type
-)
+);

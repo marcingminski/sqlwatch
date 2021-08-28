@@ -6,4 +6,4 @@
 	constraint pk_sqlwatch_config_wait_stats primary key (
 		[wait_type]
 		)
-)
+);

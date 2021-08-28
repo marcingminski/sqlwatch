@@ -15,4 +15,4 @@
 		[sql_instance], [sqlwatch_database_id], [table_name]
 		),
 	constraint fk_sqlwatch_meta_table_database foreign key ([sql_instance],[sqlwatch_database_id]) references [dbo].[sqlwatch_meta_database] ([sql_instance],[sqlwatch_database_id]) on delete cascade
-)
+);

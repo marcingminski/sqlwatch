@@ -39,4 +39,4 @@
 		on h.sql_instance = lg.sql_instance
 		and h.[sqlwatch_database_id] = lg.[sqlwatch_database_id]
 		and h.[sqlwatch_master_file_id] = lg.[sqlwatch_master_file_id]
-		and h.last_snapshot_time = lg.snapshot_time
+		and h.last_snapshot_time = lg.snapshot_time;

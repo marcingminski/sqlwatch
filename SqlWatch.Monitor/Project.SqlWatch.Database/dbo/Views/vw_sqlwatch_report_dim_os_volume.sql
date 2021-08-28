@@ -52,4 +52,4 @@
 	, [free_space_formatted] = [dbo].[ufn_sqlwatch_format_bytes] ( [volume_free_space_bytes_current] )
 	, [growth_bytes_per_day_formatted] = [dbo].[ufn_sqlwatch_format_bytes] ( growth_bytes_per_day ) + ' /Day'
 	, [free_space_percentage_formatted] = convert(varchar(50),convert(decimal(10,0),volume_free_space_bytes_current * 1.0 / volume_total_space_bytes_current  * 100.0)) + ' %'
-	from cte_volume_growth
+	from cte_volume_growth;

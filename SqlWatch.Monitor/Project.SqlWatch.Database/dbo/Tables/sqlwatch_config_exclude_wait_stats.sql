@@ -4,7 +4,7 @@
 	constraint pk_sqlwatch_config_exclude_wait_stats primary key (
 		[wait_type]
 	)
-)
+);
 go
 
 create trigger dbo.trg_sqlwatch_config_exclude_wait_stats_sanitise
@@ -16,5 +16,5 @@ create trigger dbo.trg_sqlwatch_config_exclude_wait_stats_sanitise
 			set wait_type = rtrim(ltrim(replace(replace(w.wait_type,char(10),''),char(13),''))) 
 		from [dbo].[sqlwatch_config_exclude_wait_stats] w
 		inner join inserted i
-		on i.wait_type = w.wait_type
-	end
+		on i.wait_type = w.wait_type;
+	end;
