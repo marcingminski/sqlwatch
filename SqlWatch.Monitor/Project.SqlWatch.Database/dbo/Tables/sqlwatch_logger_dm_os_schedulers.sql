@@ -24,7 +24,7 @@
 	),
 	constraint fk_sqlwatch_logger_perf_os_schedulers_server foreign key ([sql_instance])
 		references [dbo].[sqlwatch_meta_server] ([servername]) on delete cascade
-) 
+) ;
 GO
 
 --CREATE NONCLUSTERED INDEX idx_sqlwatch_os_schedulers_001

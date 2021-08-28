@@ -12,10 +12,10 @@
 		),
 	constraint fk_sqlwatch_meta_memory_clerk_server foreign key ([sql_instance])
 		references [dbo].[sqlwatch_meta_server] ([servername]) on delete cascade
-)
+);
 go
 
-create nonclustered index idx_sqlwatch_meta_memory_clerk_1 on [dbo].[sqlwatch_meta_dm_os_memory_clerk] ([date_updated])
+create nonclustered index idx_sqlwatch_meta_memory_clerk_1 on [dbo].[sqlwatch_meta_dm_os_memory_clerk] ([date_updated]);
 go
 
 create trigger trg_sqlwatch_meta_memory_clerk_last_updated
@@ -31,6 +31,6 @@ create trigger trg_sqlwatch_meta_memory_clerk_last_updated
 		inner join inserted i
 			on i.[sql_instance] = t.[sql_instance]
 			and i.[sqlwatch_mem_clerk_id] = t.[sqlwatch_mem_clerk_id]
-			and i.[sql_instance] = @@SERVERNAME
-	end
+			and i.[sql_instance] = @@SERVERNAME;
+	end;
 go

@@ -18,13 +18,13 @@
 		references [dbo].[sqlwatch_meta_agent_job_step] (sql_instance, [sqlwatch_job_id], sqlwatch_job_step_id) on delete cascade,
 	constraint fk_sqlwatch_logger_agent_job_history_snapshot_header foreign key ([snapshot_time], [sql_instance], [snapshot_type_id]) 
 		references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time], [sql_instance], [snapshot_type_id]) on delete cascade on update cascade
-)
+);
 go
 
 create nonclustered index idx_sqlwatch_logger_agent_job_history_run_date
-	on dbo.[sqlwatch_logger_sysjobhistory] (run_date)
+	on dbo.[sqlwatch_logger_sysjobhistory] (run_date);
 go
 
 create nonclustered index idx_sqlwatch_logger_agent_job_history_run_date_utc
-	on dbo.[sqlwatch_logger_sysjobhistory] (run_date_utc)
+	on dbo.[sqlwatch_logger_sysjobhistory] (run_date_utc);
 go

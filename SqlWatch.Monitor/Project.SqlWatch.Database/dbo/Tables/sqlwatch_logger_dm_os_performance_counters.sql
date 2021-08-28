@@ -14,7 +14,7 @@
 	constraint [pk_sql_perf_mon_perf_counters] primary key ([snapshot_time] asc, [snapshot_type_id],[sql_instance], [performance_counter_id] asc, [instance_name] asc),
 	constraint fk_sqlwatch_logger_perf_os_performance_counters_meta foreign key ([sql_instance], [performance_counter_id])
 		references [dbo].[sqlwatch_meta_dm_os_performance_counters] ([sql_instance], [performance_counter_id]) on delete cascade
-)
+);
 go
 
 /* aid filtering by server in central repository */
@@ -29,4 +29,4 @@ go
 
 CREATE NONCLUSTERED INDEX idx_sqlwatch_perf_counters_id_cntrl_values
 ON [dbo].[sqlwatch_logger_dm_os_performance_counters] ([performance_counter_id],[sql_instance])
-INCLUDE ([cntr_value],[cntr_value_calculated])
+INCLUDE ([cntr_value],[cntr_value_calculated]);

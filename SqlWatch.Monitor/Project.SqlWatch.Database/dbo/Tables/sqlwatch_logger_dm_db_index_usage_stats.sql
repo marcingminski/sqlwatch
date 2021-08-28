@@ -36,7 +36,7 @@
 	constraint fk_sqlwatch_logger_index_usage_stats_index foreign key ([sql_instance],[sqlwatch_database_id], [sqlwatch_table_id], [sqlwatch_index_id])
 		references [dbo].[sqlwatch_meta_index] ([sql_instance],[sqlwatch_database_id], [sqlwatch_table_id], [sqlwatch_index_id]) on delete cascade
 
-)
+);
 go
 
 --CREATE NONCLUSTERED INDEX idx_sqlwatch_index_usage_stats_001

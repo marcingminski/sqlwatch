@@ -21,16 +21,16 @@
 		),
 	constraint fk_sqlwatch_logger_perf_os_wait_stats_wait_type_id foreign key ([sql_instance], [wait_type_id]) 
 		references [dbo].[sqlwatch_meta_dm_os_wait_stats] ( [sql_instance], [wait_type_id] ) on delete cascade
-) 
+) ;
 
 go
 
 create nonclustered index idx_sqlwatch_logger_perf_os_wait_stats_waiting_count_delta 
-	on [dbo].[sqlwatch_logger_dm_os_wait_stats] ([waiting_tasks_count_delta]) include ([wait_time_ms_delta])
+	on [dbo].[sqlwatch_logger_dm_os_wait_stats] ([waiting_tasks_count_delta]) include ([wait_time_ms_delta]);
 go
 
 create nonclustered index idx_sqlwatch_logger_perf_os_wait_stats_wait_type_id 
-	on [dbo].[sqlwatch_logger_dm_os_wait_stats] ([sql_instance], [wait_type_id])
+	on [dbo].[sqlwatch_logger_dm_os_wait_stats] ([sql_instance], [wait_type_id]);
 go
 
 /* aid filtering by server in the central repository */

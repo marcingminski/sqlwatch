@@ -33,4 +33,4 @@ inner join [dbo].[sqlwatch_meta_agent_job_step] js
 
 inner join [dbo].[sqlwatch_meta_agent_job] j
 	on j.sql_instance = jh.sql_instance
-	and j.sqlwatch_job_id = jh.sqlwatch_job_id
+	and j.sqlwatch_job_id = jh.sqlwatch_job_id;

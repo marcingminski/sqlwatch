@@ -12,4 +12,4 @@
 	constraint uq_sqlwatch_config_exclude_xes_long_query unique (
 		[statement],[sql_text],[username],[client_hostname],[client_app_name]
 	)
-)
+);

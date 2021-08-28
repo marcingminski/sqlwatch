@@ -18,4 +18,4 @@
 		foreign key ([sql_instance], [query_hash], [sqlwatch_database_id], [sqlwatch_procedure_id])
 		references dbo.sqlwatch_meta_sql_query ([sql_instance], [query_hash], [sqlwatch_database_id], [sqlwatch_procedure_id])
 		on delete cascade
-)
+);

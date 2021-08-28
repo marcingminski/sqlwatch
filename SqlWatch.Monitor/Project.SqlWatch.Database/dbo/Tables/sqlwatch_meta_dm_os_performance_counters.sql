@@ -14,8 +14,8 @@
 	constraint uq_sqlwatch_meta_performance_counter_object unique ([sql_instance], [object_name], [counter_name]),
 	constraint fk_sqlwatch_meta_performance_counter_server foreign key ([sql_instance])
 		references [dbo].[sqlwatch_meta_server] ([servername]) on delete cascade
-)
+);
 go
 
-create nonclustered index idx_sqlwatch_meta_performance_counter_1 on [dbo].[sqlwatch_meta_dm_os_performance_counters] ([date_updated])
+create nonclustered index idx_sqlwatch_meta_performance_counter_1 on [dbo].[sqlwatch_meta_dm_os_performance_counters] ([date_updated]);
 go
