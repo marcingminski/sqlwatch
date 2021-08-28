@@ -12,17 +12,17 @@ BEGIN
 
 	if left(@threshold_comparator,1) = '<' 
 		begin
-			set @return = case when @threshold_value = 0 then ( 0 - ( @variance * 1.0 / 100 ) ) else @threshold_value * ( 1 - ( @variance * 1.0 / 100 ) ) end
+			set @return = case when @threshold_value = 0 then ( 0 - ( @variance * 1.0 / 100 ) ) else @threshold_value * ( 1 - ( @variance * 1.0 / 100 ) ) end;
 		end
 	else if left(@threshold_comparator,1) = '>'
 		begin
-			set @return = case when @threshold_value = 0 then ( 0 + ( @variance * 1.0 / 100 ) ) else @threshold_value * ( 1 + ( @variance * 1.0 / 100 ) ) end 
+			set @return = case when @threshold_value = 0 then ( 0 + ( @variance * 1.0 / 100 ) ) else @threshold_value * ( 1 + ( @variance * 1.0 / 100 ) ) end ;
 		end
 	else
 		--anything else such as = or <> will not no variance
 		begin
-			set @return = @threshold_value
-		end
+			set @return = @threshold_value;
+		end;
 
 
 	return @return;

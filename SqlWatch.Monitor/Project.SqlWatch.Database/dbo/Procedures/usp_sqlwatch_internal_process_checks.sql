@@ -155,10 +155,14 @@ begin
 		set @check_query = 'SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
 SET NOCOUNT ON 
 SET ANSI_WARNINGS OFF
-' + replace(@check_query,'{LAST_CHECK_DATE}',convert(varchar(23),@previous_check_date,121))
+' + replace(@check_query,'{LAST_CHECK_DATE}',convert(varchar(23),@previous_check_date,121));
+
 		exec sp_executesql @check_query, N'@output decimal(28,5) OUTPUT', @output = @check_value output;
+
 		set @check_end_time = SYSUTCDATETIME();
+
 		set @check_exec_time_ms = convert(real,datediff(MICROSECOND,@check_start_time,@check_end_time) / 1000.0 );
+
 		if @check_value is null
 			begin
 				set @error_message = 'Unable to evaluate thresholds because Check (Id: ' + convert(varchar(10),@check_id) + ') has returned NULL value';

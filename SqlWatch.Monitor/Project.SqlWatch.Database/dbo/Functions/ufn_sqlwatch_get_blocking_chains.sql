@@ -161,6 +161,6 @@ BEGIN
 			and bheadt.sql_instance = @sql_instance
 
 
-		) bhead
-	RETURN
-END
+		) bhead;
+	RETURN;
+END;

@@ -2,4 +2,4 @@
 	ON QUEUE [dbo].[sqlwatch_exec]
 	(
 		[DEFAULT]
-	)
+	);

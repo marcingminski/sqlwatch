@@ -18,7 +18,7 @@
 	 --constraint [fk_logger_index_stats_histogram_database] foreign key ([sql_instance], [sqlwatch_database_id]) references [dbo].[sqlwatch_meta_database] ([sql_instance], [sqlwatch_database_id]) on delete cascade on update cascade,
 	 constraint [fk_logger_index_histogram] foreign key ([snapshot_time], [sql_instance], [snapshot_type_id]) 
 		references [dbo].[sqlwatch_logger_snapshot_header]([snapshot_time], [sql_instance], [snapshot_type_id]) on delete cascade on update cascade
-	 )
+	 );
 	 go
 
 --	 CREATE NONCLUSTERED INDEX idx_sqlwatch_index_histogram_001

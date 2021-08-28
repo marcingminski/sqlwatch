@@ -26,7 +26,7 @@ begin
 		sql_instance varchar(32),
 		snapshot_type_id tinyint,
 		primary key ([sql_instance], [snapshot_type_id])
-	)
+	);
 	
 	/*	To account for central repository, we need a list of all possible snapshot types cross joined with servers list
 		and calculate retention times from the type. This cannot be done for retention -1 as for that scenario, 

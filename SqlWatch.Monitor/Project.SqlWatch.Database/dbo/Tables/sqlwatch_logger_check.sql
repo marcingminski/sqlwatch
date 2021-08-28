@@ -22,19 +22,19 @@
 	/*	foreign key to config check to delete any logger records when the check is deleted */
 	constraint fk_sqlwatch_meta_check foreign key ( [sql_instance], [check_id] )
 		references dbo.[sqlwatch_meta_check] ( [sql_instance], [check_id] ) on delete cascade
-)
+);
 go
 
 create nonclustered index idx_sqlwatch_logger_check_1
 	on [dbo].[sqlwatch_logger_check] ([status_change])
-	include ([check_status])
+	include ([check_status]);
 go
 
 create nonclustered index idx_sqlwatch_logger_check_2
 	on [dbo].[sqlwatch_logger_check] ([sql_instance],[check_id])
-	include ([snapshot_time],[snapshot_type_id])
+	include ([snapshot_time],[snapshot_type_id]);
 go
 
 create nonclustered index idx_sqlwatch_logger_check_3
 	on [dbo].[sqlwatch_logger_check] ([check_id])
-	include ([sql_instance],[snapshot_time],[snapshot_type_id],[check_value])
+	include ([sql_instance],[snapshot_time],[snapshot_type_id],[check_value]);

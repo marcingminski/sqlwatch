@@ -42,15 +42,15 @@ begin
 
 	if @job_owner is null
 		begin
-			set @job_owner = (select [name] from syslogins where [sid] = 0x01)
+			set @job_owner = (select [name] from syslogins where [sid] = 0x01);
 		end
 
 	--adding database name to the job name if not standard SQLWATCH for better clarity and to be able to deploy multiple SQLWATCH databases and corresponding jobs.
 	if '$(DatabaseName)' not in ('sqlwatch','SQLWATCH')
 		begin
-			update ##sqlwatch_jobs set job_name = replace(job_name,'SQLWATCH-','SQLWATCH-[' +  '$(DatabaseName)' + ']-')
-			update ##sqlwatch_steps set job_name = replace(job_name,'SQLWATCH-','SQLWATCH-[' +  '$(DatabaseName)' + ']-')
-		end
+			update ##sqlwatch_jobs set job_name = replace(job_name,'SQLWATCH-','SQLWATCH-[' +  '$(DatabaseName)' + ']-');
+			update ##sqlwatch_steps set job_name = replace(job_name,'SQLWATCH-','SQLWATCH-[' +  '$(DatabaseName)' + ']-');
+		end;
 
 	declare cur_jobs cursor fast_forward for
 	select job_name, 
@@ -107,7 +107,7 @@ begin
 					from ##sqlwatch_steps
 					where job_name = @job_name;
 
-					open cur_job_steps
+					open cur_job_steps;
 
 					fetch next from cur_job_steps
 					into @step_name, @step_id, @step_subsystem, @step_command;

@@ -31,9 +31,9 @@
 		foreign key ([sql_instance])
 		references [dbo].[sqlwatch_meta_server] ([servername]) 
 		on delete cascade
-)
+);
 go
 
 create unique nonclustered index idx_sqlwatch_logger_xes_query_problems_1
-	on [dbo].[sqlwatch_logger_xes_query_problems] ([event_time], [event_name], [event_hash], [occurence])
+	on [dbo].[sqlwatch_logger_xes_query_problems] ([event_time], [event_name], [event_hash], [occurence]);
 go

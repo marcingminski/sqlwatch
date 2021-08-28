@@ -199,4 +199,4 @@ select allcolumns = isnull(stuff ((
 		)
 		order by ORDINAL_POSITION
 		for xml path('')),1,1,''),'')
-) allcolumns
+) allcolumns;

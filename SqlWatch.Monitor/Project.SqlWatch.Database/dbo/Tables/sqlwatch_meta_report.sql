@@ -14,10 +14,10 @@
 	),
 	constraint fk_sqlwatch_meta_report_server foreign key ([sql_instance])
 		references dbo.sqlwatch_meta_server ([servername]) on delete cascade
-)
+);
 go
 
-create nonclustered index idx_sqlwatch_meta_report_1 on [dbo].[sqlwatch_meta_report] ([date_updated])
+create nonclustered index idx_sqlwatch_meta_report_1 on [dbo].[sqlwatch_meta_report] ([date_updated]);
 go
 
 create trigger trg_sqlwatch_meta_report_last_updated
@@ -33,6 +33,6 @@ create trigger trg_sqlwatch_meta_report_last_updated
 		inner join inserted i
 			on i.[sql_instance] = t.[sql_instance]
 			and i.[report_id] = t.[report_id]
-			and i.sql_instance = @@SERVERNAME
-	end
+			and i.sql_instance = @@SERVERNAME;
+	end;
 go
