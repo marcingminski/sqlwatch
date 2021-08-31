@@ -10,14 +10,17 @@ BEGIN TRAN
 		and target.job_name = source.name collate database_default
 		and target.job_create_date = source.date_created
 		)
-	when not matched by target then
+	when not matched by target  then
 		insert (sql_instance, job_name, job_create_date)
 		values (@@SERVERNAME, source.name, source.date_created)
 
 	when matched then
 		update set
 			[date_last_seen] = GETUTCDATE()
-
+			
+	when not matched by source and target.sql_instance = @@SERVERNAME then
+		update set
+			[is_record_deleted] = 1			
 	;
 
 	merge [dbo].[sqlwatch_meta_agent_job_step] as target
