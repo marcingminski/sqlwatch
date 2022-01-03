@@ -1,8 +1,7 @@
 # These are supported funding model platforms
 
 github: marcingminski
-patreon: marcingminski
-open_collective: # Replace with a single Open Collective username
+open_collective: sqlwatch
 ko_fi: # Replace with a single Ko-fi username
 tidelift: # Replace with a single Tidelift platform-name/package-name e.g., npm/babel
 community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
