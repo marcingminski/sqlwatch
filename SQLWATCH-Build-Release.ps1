@@ -26,8 +26,8 @@ New-Item -Path $ReleaseFolder -ItemType Directory
 # This time we can build the entire solution including all applications:
 # Restore external packages:
 
-Write-Output "We are about to build the entire solution including C# apps. Before we do that, we have to restore NuGet packages..."
-nuget restore "$PSScriptRoot\SqlWatch.Monitor\SqlWatch.Monitor.sln"
+Write-Output "`nRestoring NuGet packages..." 
+nuget restore "$PSScriptRoot\SqlWatch.Monitor\SqlWatch.Monitor.sln"  -Verbosity quiet
 if ($LASTEXITCODE -ne 0) {
     exit $LASTEXITCODE
 }
