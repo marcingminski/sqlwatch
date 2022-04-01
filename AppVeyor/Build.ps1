@@ -1,7 +1,9 @@
 $job = Start-Job -Name TestSpace -ScriptBlock { 
     cd c:\projects\sqlwatch\SqlWatch.Test
     Start-FileDownload https://testspace-client.s3.amazonaws.com/testspace-windows.zip 
-    7z x -y testspace-windows.zip
+    Write-Output "Extracting archive..."
+    7z x -y testspace-windows.zip -bso0 -bsp0 
+
     }
     
     $ErrorActionPreference = "Stop"
