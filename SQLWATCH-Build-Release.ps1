@@ -36,7 +36,7 @@ if ($LASTEXITCODE -ne 0) {
 # but we can only have SQL 2019 in VS 2019. Previous versions of SQl are available in previous VS builds
 # (we are talking appveyor image builds here)
 if ($env:APPVEYOR_BUILD_WORKER_IMAGE -eq "Visual Studio 2019") {
-    MSBuild.exe /m -v:m -nologo "$PSScriptRoot\SqlWatch.Monitor\SqlWatch.Monitor.sln" /p:Configuration=Release /p:Platform="Any CPU" /p:OutDir="$($ReleaseFolder)"
+    MSBuild.exe /m -v:m -nologo "$PSScriptRoot\SqlWatch.Monitor\SqlWatch.Monitor.sln" /clp:ErrorsOnly /p:Configuration=Release /p:Platform="Any CPU" /p:OutDir="$($ReleaseFolder)"
     if ($LASTEXITCODE -ne 0) {
         exit $LASTEXITCODE
     }
@@ -44,7 +44,7 @@ if ($env:APPVEYOR_BUILD_WORKER_IMAGE -eq "Visual Studio 2019") {
 # for SQL Server versions 2012, 2014, 2016 and 2017 we have to run VS 2015
 # and we should only build DB project now:
 else {
-    MSBuild.exe /m -v:m -nologo "$PSScriptRoot\SqlWatch.Monitor\Project.SqlWatch.Database\SQLWATCH.sqlproj" /p:Configuration=Release /p:Platform=AnyCPU /p:OutDir="$($ReleaseFolder)\SqlWatch.Database"
+    MSBuild.exe /m -v:m -nologo "$PSScriptRoot\SqlWatch.Monitor\Project.SqlWatch.Database\SQLWATCH.sqlproj" /clp:ErrorsOnly /p:Configuration=Release /p:Platform=AnyCPU /p:OutDir="$($ReleaseFolder)\SqlWatch.Database"
     if ($LASTEXITCODE -ne 0) {
         exit $LASTEXITCODE
     }     
