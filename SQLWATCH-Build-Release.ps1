@@ -26,15 +26,28 @@ New-Item -Path $ReleaseFolder -ItemType Directory
 # This time we can build the entire solution including all applications:
 # Restore external packages:
 
-Write-Output "We are about to build the entire solution including C# apps. Before we do that, we have to restore NuGet packages..."
-nuget restore "$PSScriptRoot\SqlWatch.Monitor\SqlWatch.Monitor.sln"
+Write-Output "`nRestoring NuGet packages..." 
+nuget restore "$PSScriptRoot\SqlWatch.Monitor\SqlWatch.Monitor.sln"  -Verbosity quiet
 if ($LASTEXITCODE -ne 0) {
     exit $LASTEXITCODE
 }
 
-MSBuild.exe /m -v:m -nologo "$PSScriptRoot\SqlWatch.Monitor\SqlWatch.Monitor.sln" /p:Configuration=Release /p:Platform="Any CPU" /p:OutDir="$($ReleaseFolder)"
-if ($LASTEXITCODE -ne 0) {
-    exit $LASTEXITCODE
+# We can only build .NET in VS2019 due to C# version. Previous VS versions will fail. 
+# but we can only have SQL 2019 in VS 2019. Previous versions of SQl are available in previous VS builds
+# (we are talking appveyor image builds here)
+if ($env:APPVEYOR_BUILD_WORKER_IMAGE -eq "Visual Studio 2019") {
+    MSBuild.exe /m -v:m -nologo "$PSScriptRoot\SqlWatch.Monitor\SqlWatch.Monitor.sln" /clp:ErrorsOnly /p:Configuration=Release /p:Platform="Any CPU" /p:OutDir="$($ReleaseFolder)"
+    if ($LASTEXITCODE -ne 0) {
+        exit $LASTEXITCODE
+    }
+}
+# for SQL Server versions 2012, 2014, 2016 and 2017 we have to run VS 2015
+# and we should only build DB project now:
+else {
+    MSBuild.exe /m -v:m -nologo "$PSScriptRoot\SqlWatch.Monitor\Project.SqlWatch.Database\SQLWATCH.sqlproj" /clp:ErrorsOnly /p:Configuration=Release /p:Platform=AnyCPU /p:OutDir="$($ReleaseFolder)\SqlWatch.Database"
+    if ($LASTEXITCODE -ne 0) {
+        exit $LASTEXITCODE
+    }     
 }
 
 # Copy Dashboard files:
