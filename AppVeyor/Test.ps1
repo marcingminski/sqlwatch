@@ -48,7 +48,7 @@ if (-Not $TestOnly) {
     foreach ($SqlInstance in $SqlInstances)
     {
         Write-Output "Deploying on $($SqlInstance)"  
-        $dbainstance = Connect-DbaInstance -SqlInstance $SqlInstance -AuthenticationType Auto -ConnectTimeout 10
+        $dbainstance = Connect-DbaInstance -SqlInstance $SqlInstance
     } 
 
     #$PublishResults = Publish-DbaDacPackage -SqlInstance $SqlInstances -Database $Database -Path $($DACPACPath.FullName) -EnableException
