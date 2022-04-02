@@ -18,15 +18,15 @@ Get-ChildItem -Path 'HKLM:\SOFTWARE\Microsoft\Microsoft SQL Server\' |
 # Install Modules
 Write-Output "`nStarting Background Jobs in parallel:"
 Start-Job -Name GetPester -ScriptBlock { Install-Module Pester -RequiredVersion 5.2.0 -Force -SkipPublisherCheck -Scope CurrentUser } | Select Id, Name, State
-Start-Job -Name GetDbaTools -ScriptBlock { Install-Module dbatools -Force -SkipPublisherCheck } | Select Id, Name, State
-Start-Job -Name GetDbaChecks -ScriptBlock { Install-Module dbachecks -Force -SkipPublisherCheck -Scope CurrentUser } | Select Id, Name, State
+Start-Job -Name GetDbaTools -ScriptBlock { Install-Module dbatools -Force -SkipPublisherCheck }
+Start-Job -Name GetDbaChecks -ScriptBlock { Install-Module dbachecks -Force -SkipPublisherCheck -Scope CurrentUser }
 Start-Job -Name GetTestSpace -ScriptBlock { 
     cd c:\projects\sqlwatch\SqlWatch.Test
     Start-FileDownload https://testspace-client.s3.amazonaws.com/testspace-windows.zip 
     Write-Output "Extracting archive..."
     7z x -y testspace-windows.zip -bso0 -bsp0 
-    } | Select Id, Name, State
-Start-Job -Name StartSqlServer -ScriptBlock { Get-Service | Where-Object {$_.DisplayName -like 'SQL Server (*'} | Start-Service } | Select Id, Name, State
+    } 
+Start-Job -Name StartSqlServer -ScriptBlock { Get-Service | Where-Object {$_.DisplayName -like 'SQL Server (*'} | Start-Service }
 
 # Create Release folder to store release files:
 $TmpFolder = "$ProjectFolder\RELEASE\"
@@ -70,7 +70,7 @@ $DacpacFile = Get-ChildItem -Path $ReleaseFolder -Recurse -Filter SQLWATCH.dacpa
 
 # Wait for SQL Server Startup job to finish before we continue with the deployment:
 Write-Output "`nWaiting for StartSqlServer background job to finish..."
-Get-Job -Name StartSqlServer | Wait-Job | Select Id, Name, State
+Get-Job -Name StartSqlServer | Wait-Job
 
 # Get SQL instances
 [string[]]$SqlInstances = (Get-ItemProperty 'HKLM:\Software\Microsoft\Microsoft SQL Server\').InstalledInstances; 
