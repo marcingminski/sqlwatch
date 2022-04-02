@@ -72,6 +72,9 @@ $DacpacFile = Get-ChildItem -Path $ReleaseFolder -Recurse -Filter SQLWATCH.dacpa
 Write-Output "`nWaiting for StartSqlServer background job to finish..."
 Get-Job -Name StartSqlServer | Wait-Job | Select Id, Name, State | Format-Table -AutoSize
 
+Write-Output "`nWaiting for GetDbaTools background job to finish..."
+Get-Job -Name GetDbaTools | Wait-Job | Select Id, Name, State | Format-Table -AutoSize
+
 # Get SQL instances
 [string[]]$SqlInstances = (Get-ItemProperty 'HKLM:\Software\Microsoft\Microsoft SQL Server\').InstalledInstances; 
 $SqlInstances = $SqlInstances | % {'localhost\'+$_}; 
@@ -87,7 +90,8 @@ Foreach ($SqlInstance in $SqlInstances)
             [string]$Database,
             [string]$Dacpac
         )
-        sqlpackage.exe /a:Publish /sf:"$($Dacpac)" /tdn:$($Database) /tsn:$($SqlInstance)
+        $dbainstance = Connect-DbaInstance -SqlInstance $SqlInstance
+        #sqlpackage.exe /a:Publish /sf:"$($Dacpac)" /tdn:$($Database) /tsn:$($SqlInstance)
         exit $LASTEXITCODE
     } -ArgumentList $SqlInstance, SQLWATCH, $($DacpacFile.FullName) | Select Id, Name, State | Format-Table -AutoSize
 }
