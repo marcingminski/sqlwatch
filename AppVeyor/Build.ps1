@@ -3,6 +3,7 @@ $ProjectFolder = "c:\projects\sqlwatch"
 
 # Prepare the environment
 # Set all installed instances of SQL server to dynamic ports
+Write-Output "`n"
 Get-ChildItem -Path 'HKLM:\SOFTWARE\Microsoft\Microsoft SQL Server\' |
     Where-Object {
         $_.Name -imatch 'MSSQL[_\d]+\.SQL.*'
@@ -15,6 +16,7 @@ Get-ChildItem -Path 'HKLM:\SOFTWARE\Microsoft\Microsoft SQL Server\' |
     }
 
 # Install Modules
+Write-Output "`nRunning Background Jobs in parallel..."
 Start-Job -Name GetPester -ScriptBlock { Install-Module Pester -RequiredVersion 5.2.0 -Force -SkipPublisherCheck -Scope CurrentUser }
 Start-Job -Name GetDbaTools -ScriptBlock { Install-Module dbatools -Force -SkipPublisherCheck }
 Start-Job -Name GetDbaChecks -ScriptBlock { Install-Module dbachecks -Force -SkipPublisherCheck -Scope CurrentUser }
@@ -64,7 +66,6 @@ if ($env:APPVEYOR_BUILD_WORKER_IMAGE -eq "Visual Studio 2019")
 }
 
 # Wait for all jobs to finish
-Get-Job | Format-Table
 Write-Output "Waiting for background jobs to finish..."
 Get-Job | Wait-Job | Receive-Job | Format-Table
 Get-Job | Format-Table
