@@ -20,7 +20,7 @@ Write-Output "`nStarting Background Jobs in parallel:"
 Start-Job -Name GetPester -ScriptBlock { Install-Module Pester -RequiredVersion 5.2.0 -Force -SkipPublisherCheck -Scope CurrentUser }
 Start-Job -Name GetDbaTools -ScriptBlock { Install-Module dbatools -Force -SkipPublisherCheck }
 Start-Job -Name GetDbaChecks -ScriptBlock { Install-Module dbachecks -Force -SkipPublisherCheck -Scope CurrentUser }
-Start-Job -Name TestSpace -ScriptBlock { 
+Start-Job -Name GetTestSpace -ScriptBlock { 
     cd c:\projects\sqlwatch\SqlWatch.Test
     Start-FileDownload https://testspace-client.s3.amazonaws.com/testspace-windows.zip 
     Write-Output "Extracting archive..."
