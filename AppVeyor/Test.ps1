@@ -44,7 +44,8 @@ if (-Not $TestOnly) {
 
     $ErrorActionPreference = "Stop"
     $Database = "SQLWATCH"
-    
+    Write-Output "Deploying on {$($SqlInstances)}" 
+
     $PublishResults = Publish-DbaDacPackage -SqlInstance $SqlInstances -Database $Database -Path $($DACPACPath.FullName) -EnableException
  
 }
