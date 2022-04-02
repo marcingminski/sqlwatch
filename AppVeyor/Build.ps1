@@ -14,7 +14,7 @@ if (Test-Path -path $TmpFolder)
 New-Item -Path $ReleaseFolder -ItemType Directory | Out-Null
 
 Write-Output "`nRestoring NuGet packages..." 
-nuget restore "$PSScriptRoot\SqlWatch.Monitor\SqlWatch.Monitor.sln"  -Verbosity quiet
+nuget restore "$ProjectFolder\SqlWatch.Monitor\SqlWatch.Monitor.sln"  -Verbosity quiet
 if ($LASTEXITCODE -ne 0) {
     exit $LASTEXITCODE
 }
