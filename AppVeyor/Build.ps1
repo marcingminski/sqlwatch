@@ -13,16 +13,28 @@ if (Test-Path -path $TmpFolder)
 }
 New-Item -Path $ReleaseFolder -ItemType Directory | Out-Null
 
-Write-Output "Restoring NuGet packages..." 
-nuget restore "$ProjectFolder\SqlWatch.Monitor\SqlWatch.Monitor.sln"  -Verbosity quiet
-if ($LASTEXITCODE -ne 0) 
-{
-    exit $LASTEXITCODE
-}
-
 Write-Output "Building Database Project..."
 MSBuild.exe /m -v:m -nologo "$ProjectFolder\SqlWatch.Monitor\Project.SqlWatch.Database\SQLWATCH.sqlproj" /clp:ErrorsOnly /p:Configuration=Release /p:Platform="Any CPU" /p:OutDir="$($ReleaseFolder)"
 if ($LASTEXITCODE -ne 0) 
 {
     exit $LASTEXITCODE
+}
+
+# Build applications only in VS2019 image:
+if ($env:APPVEYOR_BUILD_WORKER_IMAGE -eq "Visual Studio 2019") 
+{
+    Write-Information "We are going to build applications"
+
+    Write-Output "Restoring NuGet packages..." 
+    nuget restore "$ProjectFolder\SqlWatch.Monitor\SqlWatch.Monitor.sln"  -Verbosity quiet
+    if ($LASTEXITCODE -ne 0) 
+    {
+        exit $LASTEXITCODE
+    }
+    Write-Information "Building applications"
+    MSBuild.exe /m -v:m -nologo "$ProjectFolder\SqlWatch.Monitor\Project.SqlWatchImport\SqlWatchImport.csproj" /clp:ErrorsOnly /p:Configuration=Release /p:Platform="AnyCPU" /p:OutDir="$("$ReleaseFolder\SqlWatch.Import")"
+    if ($LASTEXITCODE -ne 0) 
+    {
+        exit $LASTEXITCODE
+    }
 }
