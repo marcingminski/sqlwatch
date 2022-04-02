@@ -65,6 +65,31 @@ if ($env:APPVEYOR_BUILD_WORKER_IMAGE -eq "Visual Studio 2019")
     }
 }
 
-# Wait for all jobs to finish
+# Get Dacpac
+$DacpacFile = Get-ChildItem -Path $ReleaseFolder -Recurse -Filter SQLWATCH.dacpac | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+
+# Wait for SQL Server Startup job to finish before we continue with the deployment:
+Write-Output "`nWaiting for StartSqlServer background job to finish..."
+Get-Job -Name StartSqlServer | Wait-Job | Format-Table
+
+# Get SQL instances
+[string[]]$SqlInstances = (Get-ItemProperty 'HKLM:\Software\Microsoft\Microsoft SQL Server\').InstalledInstances; 
+$SqlInstances = $SqlInstances | % {'localhost\'+$_}; 
+
+Foreach ($SqlInstance in $SqlInstances)
+{
+    $JobName = "Deploying " + $SqlInstance
+    Start-Job -Name $JobName -ScriptBlock { 
+        #param([string]$arguments)
+        param (
+            [string]$SqlInstance,
+            [string]$Database,
+            [string]$Dacpac
+        )
+        sqlpackage.exe /a:Publish /sf:"$($Dacpac)" /tdn:$($Database) /tsn:$($SqlInstance)
+    } -ArgumentList $SqlInstance, $Database, $($DacpacFile.FullName) | Format-Table
+}
+
+# Wait for jobs to finish:
 Write-Output "`nWaiting for background jobs to finish..."
 Get-Job | Wait-Job | Format-Table
