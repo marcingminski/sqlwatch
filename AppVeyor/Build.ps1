@@ -1,21 +1,20 @@
-$job = Start-Job -Name TestSpace -ScriptBlock { 
-    cd c:\projects\sqlwatch\SqlWatch.Test
-    Start-FileDownload https://testspace-client.s3.amazonaws.com/testspace-windows.zip 
-    Write-Output "Extracting archive..."
-    7z x -y testspace-windows.zip -bso0 -bsp0 
+$ErrorActionPreference = "Stop";
+$ProjectFolder = "c:\projects\sqlwatch"
 
-    }
-    
-    $ErrorActionPreference = "Stop"
-    
-    .\SQLWATCH-Build-Release.ps1
-    if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode)  }
-    
-    Get-Job | Wait-Job | Receive-Job | Format-Table
-    
-    If ((Get-Job | Where-Object {$_.State -eq "Failed"}).Count -gt 0){
-        Get-Job | Foreach-Object {$_.JobStateInfo.Reason}
-        $host.SetShouldExit(1)
-    }
-    
-    Get-Job | Format-Table -Autosize
+#Create Release folder to store release files:
+$TmpFolder = "$ProjectFolder\RELEASE\"
+$ReleaseFolderName = "SQLWATCH Latest"
+$ReleaseFolder = "$TmpFolder\$ReleaseFolderName"
+
+Write-Output "`nCreating the Release folder..."
+if (Test-Path -path $TmpFolder) 
+{
+    Remove-Item -Path $TmpFolder -Force -Confirm:$false -Recurse | Out-Null
+}
+New-Item -Path $ReleaseFolder -ItemType Directory | Out-Null
+
+Write-Output "`nRestoring NuGet packages..." 
+nuget restore "$PSScriptRoot\SqlWatch.Monitor\SqlWatch.Monitor.sln"  -Verbosity quiet
+if ($LASTEXITCODE -ne 0) {
+    exit $LASTEXITCODE
+}
