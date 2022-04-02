@@ -87,7 +87,8 @@ Foreach ($SqlInstance in $SqlInstances)
             [string]$Dacpac
         )
         sqlpackage.exe /a:Publish /sf:"$($Dacpac)" /tdn:$($Database) /tsn:$($SqlInstance)
-    } -ArgumentList $SqlInstance, $Database, $($DacpacFile.FullName)
+        exit $LASTEXITCODE
+    } -ArgumentList $SqlInstance, SQLWATCH, $($DacpacFile.FullName) | Select Id, Name, State
 }
 
 # Wait for jobs to finish:
