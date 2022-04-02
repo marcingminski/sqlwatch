@@ -109,5 +109,10 @@ Foreach ($SqlInstance in $SqlInstances)
 Write-Output "`nWaiting for Database Deployment background jobs to finish..."
 Get-Job | Where-Object {$_.Name.Contains("Deploying")} | Wait-Job | Select Id, Name, State | Format-Table -AutoSize
 
-$FailedJobCount=0
-Get-Job | Where-Object {$_.Name.Contains("Deploying") -and $_.State -eq "Failed"} | ForEach-Object { $_ | Receive-Job; $FailedJobCount+=1 }
+$FailedDeployJobCount=0
+Get-Job | Where-Object {$_.Name.Contains("Deploying") -and $_.State -eq "Failed"} | ForEach-Object { $_ | Receive-Job; $FailedDeployJobCount+=1 }
+
+if ($FailedDeployJobCount -gt 0)
+{
+    throw "Failed to deploy database. Exiting now"
+}
