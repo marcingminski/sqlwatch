@@ -17,8 +17,8 @@ Get-ChildItem -Path 'HKLM:\SOFTWARE\Microsoft\Microsoft SQL Server\' |
 
 # Install Modules
 Write-Output "`nStarting Background Jobs in parallel:"
-Start-Job -Name GetPester -ScriptBlock { Install-Module Pester -RequiredVersion 5.2.0 -Force -SkipPublisherCheck -Scope CurrentUser }
 Start-Job -Name GetDbaTools -ScriptBlock { Install-Module dbatools -Force -SkipPublisherCheck }
+Start-Job -Name GetPester -ScriptBlock { Install-Module Pester -RequiredVersion 5.2.0 -Force -SkipPublisherCheck -Scope CurrentUser }
 Start-Job -Name GetDbaChecks -ScriptBlock { Install-Module dbachecks -Force -SkipPublisherCheck -Scope CurrentUser }
 Start-Job -Name GetTestSpace -ScriptBlock { 
     cd c:\projects\sqlwatch\SqlWatch.Test
@@ -80,6 +80,7 @@ Get-Job -Name GetDbaTools | Wait-Job | Select Id, Name, State | Format-Table -Au
 $SqlInstances = $SqlInstances | % {'localhost\'+$_}; 
 
 $ErrorActionPreference = "Continue"; #so we capture the job output and the entire error. otherwise it will terminate the job
+Write-Output "`nDeploying database..."
 Foreach ($SqlInstance in $SqlInstances)
 {
     $JobName = "Deploying to " + $SqlInstance
@@ -107,4 +108,10 @@ Foreach ($SqlInstance in $SqlInstances)
 # Wait for jobs to finish:
 Write-Output "`nWaiting for Database Deployment background jobs to finish..."
 Get-Job | Where-Object {$_.Name.Contains("Deploying")} | Wait-Job | Select Id, Name, State | Format-Table -AutoSize
-Get-Job | Where-Object {$_.Name.Contains("Deploying")} | Receive-Job | Select Id, Name, State | Format-Table -AutoSize
+
+$FailedJobCount=0
+Get-Job | Where-Object {$_.Name.Contains("Deploying") -and $_.State -eq "Failed"} | ForEach-Object 
+{
+    $_ | Receive-Job
+    $FailedJobCount+=1    
+}
