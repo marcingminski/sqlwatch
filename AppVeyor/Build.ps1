@@ -90,7 +90,7 @@ Foreach ($SqlInstance in $SqlInstances)
             [string]$Database,
             [string]$Dacpac
         )
-        $dbainstance = Connect-DbaInstance -SqlInstance $SqlInstance
+        $PublishResults = Publish-DbaDacPackage -SqlInstance $SqlInstance -Database $Database -Path $Dacpac -EnableException
         #sqlpackage.exe /a:Publish /sf:"$($Dacpac)" /tdn:$($Database) /tsn:$($SqlInstance)
         exit $LASTEXITCODE
     } -ArgumentList $SqlInstance, SQLWATCH, $($DacpacFile.FullName) | Select Id, Name, State | Format-Table -AutoSize
