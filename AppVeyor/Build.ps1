@@ -76,6 +76,7 @@ Get-Job -Name StartSqlServer | Wait-Job | Select Id, Name, State
 [string[]]$SqlInstances = (Get-ItemProperty 'HKLM:\Software\Microsoft\Microsoft SQL Server\').InstalledInstances; 
 $SqlInstances = $SqlInstances | % {'localhost\'+$_}; 
 
+$ErrorActionPreference = "Continue"; #so we capture the job output and the entire error. otherwise it will terminate the job
 Foreach ($SqlInstance in $SqlInstances)
 {
     $JobName = "Deploying to " + $SqlInstance
