@@ -3,20 +3,20 @@ $ProjectFolder = "c:\projects\sqlwatch"
 
 # Prepare the environment
 # Set all installed instances of SQL server to dynamic ports
-Write-Output "`n"
+Write-Output ""
 Get-ChildItem -Path 'HKLM:\SOFTWARE\Microsoft\Microsoft SQL Server\' |
     Where-Object {
         $_.Name -imatch 'MSSQL[_\d]+\.SQL.*'
     } |
     ForEach-Object {
 
-        Write-Host "Setting $((Get-ItemProperty $_.PSPath).'(default)') to dynamic ports"
+        Write-Host "Setting $((Get-ItemProperty $_.PSPath).'(default)') to dynamic ports..."
         Set-ItemProperty (Join-Path $_.PSPath 'mssqlserver\supersocketnetlib\tcp\ipall') -Name TcpDynamicPorts -Value '0'
         Set-ItemProperty (Join-Path $_.PSPath 'mssqlserver\supersocketnetlib\tcp\ipall') -Name TcpPort -Value ([string]::Empty)
     }
 
 # Install Modules
-Write-Output "`nRunning Background Jobs in parallel..."
+Write-Output "`nStarting Background Jobs in parallel:"
 Start-Job -Name GetPester -ScriptBlock { Install-Module Pester -RequiredVersion 5.2.0 -Force -SkipPublisherCheck -Scope CurrentUser }
 Start-Job -Name GetDbaTools -ScriptBlock { Install-Module dbatools -Force -SkipPublisherCheck }
 Start-Job -Name GetDbaChecks -ScriptBlock { Install-Module dbachecks -Force -SkipPublisherCheck -Scope CurrentUser }
