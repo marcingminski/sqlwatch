@@ -67,5 +67,4 @@ if ($env:APPVEYOR_BUILD_WORKER_IMAGE -eq "Visual Studio 2019")
 
 # Wait for all jobs to finish
 Write-Output "`nWaiting for background jobs to finish..."
-Get-Job | Wait-Job | Receive-Job | Format-Table
-Get-Job | Format-Table
+Get-Job | Wait-Job | Format-Table
