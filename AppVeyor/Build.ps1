@@ -87,9 +87,9 @@ Foreach ($SqlInstance in $SqlInstances)
             [string]$Dacpac
         )
         sqlpackage.exe /a:Publish /sf:"$($Dacpac)" /tdn:$($Database) /tsn:$($SqlInstance)
-    } -ArgumentList $SqlInstance, $Database, $($DacpacFile.FullName) | Format-Table
+    } -ArgumentList $SqlInstance, $Database, $($DacpacFile.FullName)
 }
 
 # Wait for jobs to finish:
-Write-Output "`nWaiting for background jobs to finish..."
-Get-Job | Wait-Job | Format-Table
+Write-Output "`nWaiting for Database Deployment background jobs to finish..."
+Get-Job | Where-Object {$_.Name.Contains("Deploying")} | Wait-Job | Receive-Job
