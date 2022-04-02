@@ -23,7 +23,7 @@ if ($LASTEXITCODE -ne 0)
 # Build applications only in VS2019 image:
 if ($env:APPVEYOR_BUILD_WORKER_IMAGE -eq "Visual Studio 2019") 
 {
-    Write-Information "We are going to build applications"
+    Write-Output "We are going to build applications"
 
     Write-Output "Restoring NuGet packages..." 
     nuget restore "$ProjectFolder\SqlWatch.Monitor\SqlWatch.Monitor.sln"  -Verbosity quiet
@@ -31,7 +31,7 @@ if ($env:APPVEYOR_BUILD_WORKER_IMAGE -eq "Visual Studio 2019")
     {
         exit $LASTEXITCODE
     }
-    Write-Information "Building applications"
+    Write-Output "Building applications"
     MSBuild.exe /m -v:m -nologo "$ProjectFolder\SqlWatch.Monitor\Project.SqlWatchImport\SqlWatchImport.csproj" /clp:ErrorsOnly /p:Configuration=Release /p:Platform="AnyCPU" /p:OutDir="$("$ReleaseFolder\SqlWatch.Import")"
     if ($LASTEXITCODE -ne 0) 
     {
