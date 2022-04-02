@@ -90,12 +90,21 @@ Foreach ($SqlInstance in $SqlInstances)
             [string]$Database,
             [string]$Dacpac
         )
-        $PublishResults = Publish-DbaDacPackage -SqlInstance $SqlInstance -Database $Database -Path $Dacpac -EnableException
+        
+        try
+        {
+            $PublishResults = Publish-DbaDacPackage -SqlInstance $SqlInstance -Database $Database -Path $Dacpac -EnableException
+        }
+        catch
+        {
+            throw $_.Exception
+        }
         #sqlpackage.exe /a:Publish /sf:"$($Dacpac)" /tdn:$($Database) /tsn:$($SqlInstance)
-        exit $LASTEXITCODE
+        #exit $LASTEXITCODE
     } -ArgumentList $SqlInstance, SQLWATCH, $($DacpacFile.FullName) | Select Id, Name, State | Format-Table -AutoSize
 }
 
 # Wait for jobs to finish:
 Write-Output "`nWaiting for Database Deployment background jobs to finish..."
-Get-Job | Where-Object {$_.Name.Contains("Deploying")} | Wait-Job | Receive-Job | Select Id, Name, State | Format-Table -AutoSize
+Get-Job | Where-Object {$_.Name.Contains("Deploying")} | Wait-Job | Select Id, Name, State | Format-Table -AutoSize
+Get-Job | Where-Object {$_.Name.Contains("Deploying")} | Receive-Job | Select Id, Name, State | Format-Table -AutoSize
