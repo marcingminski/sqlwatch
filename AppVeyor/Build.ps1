@@ -6,7 +6,7 @@ $TmpFolder = "$ProjectFolder\RELEASE\"
 $ReleaseFolderName = "SQLWATCH Latest"
 $ReleaseFolder = "$TmpFolder\$ReleaseFolderName"
 
-Write-Output "Creating the Release folder..."
+Write-Output "Creating Release folders..."
 if (Test-Path -path $TmpFolder) 
 {
     Remove-Item -Path $TmpFolder -Force -Confirm:$false -Recurse | Out-Null
