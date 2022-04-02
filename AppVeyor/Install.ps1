@@ -19,3 +19,6 @@ Start-Job -Name GetDbaChecks -ScriptBlock { powershell -command Install-Module d
 
 #Start SQL Server
 Get-Service | Where-Object {$_.DisplayName -like 'SQL Server (*'} | Start-Service
+
+#Wait for the jobs to finish
+Get-Job | Wait-Job | Receive-Job | Format-Table
