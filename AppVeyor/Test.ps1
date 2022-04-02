@@ -11,6 +11,7 @@ Set-Location -Path $ProjectFolder
 $TestFolder = "$($ProjectFolder)\SqlWatch.Test"
 $ResultFolder = "$($TestFolder)\Pester.Results"
 $ModulesPath = "$($TestFolder)\*.psm1"
+$DACPACPath = Get-ChildItem -Recurse -Filter SQLWATCH.dacpac | Sort-Object LastWriteTime -Descending | Select-Object -First 1
 
 $SqlWatchDatabase = "SQLWATCH"
 
@@ -42,21 +43,11 @@ Function Format-ResultsFileName{
 if (-Not $TestOnly) {
 
     $ErrorActionPreference = "Stop"
-    Write-Output "Deploying..."
-
-    ## If we are not running test only mode, deploy databases as part of the test to test deployment:
-    ForEach ($SqlInstance in $SqlInstances) {
-        .\SQLWATCH-Deploy.ps1 -Dacpac SQLWATCH.dacpac -Database SQLWATCH -SqlInstance $SqlInstance -RunAsJob;
-    }
-        
-    If ((Get-Job | Where-Object {$_.State -eq "Failed"}).Count -gt 0){
-        Get-Job | Foreach-Object {$_.JobStateInfo.Reason}
-        $host.SetShouldExit(1)
-    }
+    $Database = "SQLWATCH"
+    
+    $PublishResults = Publish-DbaDacPackage -SqlInstance $SqlInstances -Database $Database -Path $($DACPACPath.FullName) -EnableException
+ 
 }
-
-Get-Job | Wait-Job | Receive-Job | Format-Table
-Get-Job | Format-Table
 
 ## Run Test
 Write-Output "Testing..."
