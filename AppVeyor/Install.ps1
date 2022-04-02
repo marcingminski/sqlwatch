@@ -1,3 +1,5 @@
+#AppVeyor Install script gets called right after the repo cloning
+
 #Set all installed instances of SQL server to dynamic ports
 Get-ChildItem -Path 'HKLM:\SOFTWARE\Microsoft\Microsoft SQL Server\' |
     Where-Object {
@@ -14,3 +16,6 @@ Get-ChildItem -Path 'HKLM:\SOFTWARE\Microsoft\Microsoft SQL Server\' |
 Start-Job -Name GetPester -ScriptBlock { powershell -command Install-Module Pester -RequiredVersion 5.2.0 -Force -SkipPublisherCheck -Scope CurrentUser }
 Start-Job -Name GetDbaTools -ScriptBlock { powershell -command Install-Module dbatools -Force -SkipPublisherCheck }
 Start-Job -Name GetDbaChecks -ScriptBlock { powershell -command Install-Module dbachecks -Force -SkipPublisherCheck -Scope CurrentUser }
+
+#Start SQL Server
+Get-Service | Where-Object {$_.DisplayName -like 'SQL Server (*'} | Start-Service
