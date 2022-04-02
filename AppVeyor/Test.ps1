@@ -46,6 +46,7 @@ if (-Not $TestOnly) {
     $Database = "SQLWATCH"
     Write-Output "Deploying on {$($SqlInstances)}" 
 
+    Connect-DbaInstance -SqlInstance $SqlInstances -AuthenticationType Auto 
     $PublishResults = Publish-DbaDacPackage -SqlInstance $SqlInstances -Database $Database -Path $($DACPACPath.FullName) -EnableException
  
 }
