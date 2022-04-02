@@ -25,4 +25,5 @@ Start-Job -Name TestSpace -ScriptBlock {
 Start-Job -Name StartSqlServer -ScriptBlock { Get-Service | Where-Object {$_.DisplayName -like 'SQL Server (*'} | Start-Service }
 
 #Wait for the jobs to finish
-Get-Job | Wait-Job | Receive-Job | Format-Table
+# Get-Job | Wait-Job | Receive-Job | Format-Table
+# We are going to run the build whilst the above are running to speed up the entire process.
