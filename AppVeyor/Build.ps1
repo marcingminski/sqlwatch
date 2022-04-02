@@ -31,7 +31,7 @@ $TmpFolder = "$ProjectFolder\RELEASE\"
 $ReleaseFolderName = "SQLWATCH Latest"
 $ReleaseFolder = "$TmpFolder\$ReleaseFolderName"
 
-Write-Output "Creating Release folders..."
+Write-Output "`nCreating Release folders..."
 if (Test-Path -path $TmpFolder) 
 {
     Remove-Item -Path $TmpFolder -Force -Confirm:$false -Recurse | Out-Null
@@ -48,7 +48,6 @@ if ($LASTEXITCODE -ne 0)
 # Build applications only in VS2019 image:
 if ($env:APPVEYOR_BUILD_WORKER_IMAGE -eq "Visual Studio 2019") 
 {
-    Write-Output "We are going to build applications."
 
     Write-Output "Restoring NuGet packages..." 
     nuget restore "$ProjectFolder\SqlWatch.Monitor\SqlWatch.Monitor.sln"  -Verbosity quiet
@@ -65,6 +64,7 @@ if ($env:APPVEYOR_BUILD_WORKER_IMAGE -eq "Visual Studio 2019")
 }
 
 # Wait for all jobs to finish
-Write-Output "Getting jobs..."
+Get-Job | Format-Table
+Write-Output "Waiting for background jobs to finish..."
 Get-Job | Wait-Job | Receive-Job | Format-Table
 Get-Job | Format-Table
