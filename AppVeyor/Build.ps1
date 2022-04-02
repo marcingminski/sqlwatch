@@ -17,7 +17,7 @@ Get-ChildItem -Path 'HKLM:\SOFTWARE\Microsoft\Microsoft SQL Server\' |
 
 # Install Modules
 Write-Output "`nStarting Background Jobs in parallel:"
-Start-Job -Name GetPester -ScriptBlock { Install-Module Pester -RequiredVersion 5.2.0 -Force -SkipPublisherCheck -Scope CurrentUser } | Select Id, Name, State
+Start-Job -Name GetPester -ScriptBlock { Install-Module Pester -RequiredVersion 5.2.0 -Force -SkipPublisherCheck -Scope CurrentUser }
 Start-Job -Name GetDbaTools -ScriptBlock { Install-Module dbatools -Force -SkipPublisherCheck }
 Start-Job -Name GetDbaChecks -ScriptBlock { Install-Module dbachecks -Force -SkipPublisherCheck -Scope CurrentUser }
 Start-Job -Name GetTestSpace -ScriptBlock { 
@@ -70,7 +70,7 @@ $DacpacFile = Get-ChildItem -Path $ReleaseFolder -Recurse -Filter SQLWATCH.dacpa
 
 # Wait for SQL Server Startup job to finish before we continue with the deployment:
 Write-Output "`nWaiting for StartSqlServer background job to finish..."
-Get-Job -Name StartSqlServer | Wait-Job
+Get-Job -Name StartSqlServer | Wait-Job | Select Id, Name, State | Format-Table -AutoSize
 
 # Get SQL instances
 [string[]]$SqlInstances = (Get-ItemProperty 'HKLM:\Software\Microsoft\Microsoft SQL Server\').InstalledInstances; 
@@ -89,9 +89,9 @@ Foreach ($SqlInstance in $SqlInstances)
         )
         sqlpackage.exe /a:Publish /sf:"$($Dacpac)" /tdn:$($Database) /tsn:$($SqlInstance)
         exit $LASTEXITCODE
-    } -ArgumentList $SqlInstance, SQLWATCH, $($DacpacFile.FullName) | Select Id, Name, State
+    } -ArgumentList $SqlInstance, SQLWATCH, $($DacpacFile.FullName) | Select Id, Name, State | Format-Table -AutoSize
 }
 
 # Wait for jobs to finish:
 Write-Output "`nWaiting for Database Deployment background jobs to finish..."
-Get-Job | Where-Object {$_.Name.Contains("Deploying")} | Wait-Job | Receive-Job
+Get-Job | Where-Object {$_.Name.Contains("Deploying")} | Wait-Job | Receive-Job | Select Id, Name, State | Format-Table -AutoSize
