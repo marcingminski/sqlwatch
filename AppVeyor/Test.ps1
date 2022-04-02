@@ -44,10 +44,14 @@ if (-Not $TestOnly) {
 
     $ErrorActionPreference = "Stop"
     $Database = "SQLWATCH"
-    Write-Output "Deploying on {$($SqlInstances)}" 
+    
+    foreach ($SqlInstance in $SqlInstances)
+    {
+        Write-Output "Deploying on $($SqlInstance)"  
+        $dbainstance = Connect-DbaInstance -SqlInstance $SqlInstance -AuthenticationType Auto -ConnectTimeout 10
+    } 
 
-    Connect-DbaInstance -SqlInstance $SqlInstances -AuthenticationType Auto 
-    $PublishResults = Publish-DbaDacPackage -SqlInstance $SqlInstances -Database $Database -Path $($DACPACPath.FullName) -EnableException
+    #$PublishResults = Publish-DbaDacPackage -SqlInstance $SqlInstances -Database $Database -Path $($DACPACPath.FullName) -EnableException
  
 }
 
