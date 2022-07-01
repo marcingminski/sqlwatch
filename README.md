@@ -56,7 +56,7 @@ Tested on the following SQL Server versions:
 * 2017
 * 2019
 
->>Although Docker and Linux work, the Windows-only WMI basd disk utilisation collector will fail.
+> Although Docker and Linux work, the Windows-only WMI based disk utilisation collector will fail.
 
 # Installation
 The easiest way to install SQLWATCH is to use [dbatools](https://github.com/sqlcollaborative/dbatools):
