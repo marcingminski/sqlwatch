@@ -36,7 +36,7 @@ Detailed charts:
 * Out of the box collection with minimal configuration required to get it up and running.
 * Extensive configuration available for your convenience.
 * Zero maintenance. It has been designed to maintain itself.
-* Unlimited scalability. As each instance monitors itself, you are not constraint by the capacity of the monitoring server.
+* Unlimited scalability. As each instance monitors itself, you are not constrained by the capacity of the monitoring server.
 * Works with all supported SQL Servers (with some limitations on 2008R2)
 
 # Resources
@@ -56,7 +56,7 @@ Tested on the following SQL Server versions:
 * 2017
 * 2019
 
->>Although Docker and Linux work, the Windows-only WMI basd disk utilisation collector will fail.
+> Although Docker and Linux work, the Windows-only WMI based disk utilisation collector will fail.
 
 # Installation
 The easiest way to install SQLWATCH is to use [dbatools](https://github.com/sqlcollaborative/dbatools):
