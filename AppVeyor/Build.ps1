@@ -116,3 +116,26 @@ if ($FailedDeployJobCount -gt 0)
 {
     throw "Failed to deploy database. Exiting now"
 }
+
+ 
+#Get SQLWATCH Version number from the dacpac:
+Copy-Item -Path $ReleaseFolder\SQLWATCH.dacpac -Destination $ReleaseFolder\SQLWATCH.dacpac.zip
+Expand-Archive -LiteralPath $ReleaseFolder\SQLWATCH.dacpac.zip -DestinationPath $ReleaseFolder\SQLWATCH-DACPAC
+
+[xml]$xml = Get-Content -path $ReleaseFolder\SQLWATCH-DACPAC\DacMetadata.xml
+
+$Version = ($xml.DacType.Version).trim()
+
+#Rename folder to now include version number from dacpac:
+$ReleaseFolderName = "SQLWATCH $Version $(get-date -f yyyyMMddHHmmss)"
+
+Remove-item $ReleaseFolder\SQLWATCH-DACPAC -Recurse -Force
+Remove-Item $ReleaseFolder\SQLWATCH.dacpac.zip -Force
+
+Rename-Item -Path "$TmpFolder\SQLWATCH Latest" -NewName $TmpFolder\$ReleaseFolderName
+
+# Create ZIP:
+Compress-Archive -Path $TmpFolder\$ReleaseFolderName -DestinationPath "$TmpFolder\$ReleaseFolderName.zip"
+if ($LASTEXITCODE -ne 0) {
+    exit $LASTEXITCODE
+} 
