@@ -14,10 +14,10 @@
 
 // Version information for an assembly consists of the following four values:
 //
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
+//      Major Version -> SQLWATCH Database Version Major
+//      Minor Version -> SQLWATCH Database Version Minor
+//      Build Number -> N/A
+//      Revision -> Auto Generated
 //
-[assembly: AssemblyVersion("4.*")]
-[assembly: AssemblyFileVersion("4")]
+[assembly: AssemblyVersion("4.3.0.*")]
+[assembly: AssemblyFileVersion("4.0.0.0")]
