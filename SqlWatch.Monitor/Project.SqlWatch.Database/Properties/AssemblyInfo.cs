@@ -19,5 +19,5 @@
 //      Build Number -> N/A
 //      Revision -> Auto Generated
 //
-[assembly: AssemblyVersion("4.3.0.*")]
+[assembly: AssemblyVersion("4.4.0.*")]
 [assembly: AssemblyFileVersion("4.0.0.0")]
