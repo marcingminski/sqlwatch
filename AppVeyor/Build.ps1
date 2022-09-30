@@ -133,6 +133,16 @@ Expand-Archive -LiteralPath $ReleaseFolder\SQLWATCH.dacpac.zip -DestinationPath 
 
 $Version = ($xml.DacType.Version).trim()
 
+#fix 417:
+$predeploysql = Get-Content -Path "$ReleaseFolder\SQLWATCH-DACPAC\predeploy.sql"
+$predeploysql = $predeploysql -replace '\$\(DacVersion\)', $Version
+$predeploysql | Out-File -FilePath "$ReleaseFolder\SQLWATCH-DACPAC\predeploy.sql" -Force
+
+Remove-item -Path "$ReleaseFolder\SQLWATCH.dacpac" -Force
+Remove-item -Path "$ReleaseFolder\SQLWATCH.dacpac.zip" -Force
+Compress-Archive -Path "$ReleaseFolder\SQLWATCH-DACPAC" -DestinationPath "$ReleaseFolder\SQLWATCH.dacpac.zip"
+Rename-item -Path "$ReleaseFolder\SQLWATCH.dacpac.zip" -NewName "$ReleaseFolder\SQLWATCH.dacpac"
+
 #Rename folder to now include version number from dacpac:
 $ReleaseFolderName = "SQLWATCH $Version $(get-date -f yyyyMMddHHmmss)"
 
