@@ -24,9 +24,7 @@
 
 --exec (@sqlstmt)
 
-
-Print 'Getting Dac Version'
-:r .\Scripts\Pre-Deployment\SetDacVersion.sql
+:r SetDacVersion.sql
 
 declare @dacverion varchar(max)
-set @dacverion = '$(DacVersion)'
+set @dacverion = ''

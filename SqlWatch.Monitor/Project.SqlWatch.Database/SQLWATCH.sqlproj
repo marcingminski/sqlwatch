@@ -30,7 +30,7 @@
     <PageVerify>CHECKSUM</PageVerify>
     <AllowSnapshotIsolation>True</AllowSnapshotIsolation>
     <ReadCommittedSnapshot>True</ReadCommittedSnapshot>
-    <DacVersion>3.0.0.0</DacVersion>
+    <DacVersion>$(DacVersion)</DacVersion>
     <DefaultCollation>Latin1_General_CI_AS</DefaultCollation>
     <TargetFrameworkProfile />
     <ServiceBrokerOption>EnableBroker</ServiceBrokerOption>
@@ -238,7 +238,6 @@
     <Build Include="dbo\Procedures\usp_sqlwatch_internal_action_queue_update.sql" />
     <Build Include="dbo\Tables\sqlwatch_config_include_index_histogram.sql" />
     <Build Include="dbo\Tables\sqlwatch_meta_report.sql" />
-    <None Include="Scripts\Pre-Deployment\SetDacVersion.sql" />
     <Build Include="Scripts\Extended Properties\SQLWATCH Version.sql" />
     <Build Include="Scripts\Extended Properties\SQLWATCH Documentation.sql" />
     <Build Include="Scripts\Extended Properties\SQLWATCH License.sql" />
@@ -415,16 +414,7 @@
   <ItemGroup>
     <None Include="SQLWATCH.publish.xml" />
     <None Include="Scripts\Pre-Deployment\DropXES.sql" />
+    <None Include="DbVersion.txt" />
+    <None Include="SetDacVersion.sql" />
   </ItemGroup>
-  <Target Name="SetDacVersionToAssemblyVersion" AfterTargets="CoreCompile">
-    <GetAssemblyIdentity AssemblyFiles="$(IntermediateTargetFullFileName)">
-      <Output TaskParameter="Assemblies" PropertyName="IntermediateTargetAssembly" />
-    </GetAssemblyIdentity>
-    <PropertyGroup>
-      <DacVersion>
-        $(IntermediateTargetAssembly.Split(',')[1].Split('=')[1])
-      </DacVersion>
-    </PropertyGroup>
-    <Message Text="DacVersion set to $(DacVersion)" Importance="high" />
-  </Target>
 </Project>
