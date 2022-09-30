@@ -132,6 +132,12 @@ $ReleaseFolderName = "SQLWATCH $Version $(get-date -f yyyyMMddHHmmss)"
 Remove-item $ReleaseFolder\SQLWATCH-DACPAC -Recurse -Force
 Remove-Item $ReleaseFolder\SQLWATCH.dacpac.zip -Force
 
+# Copy Dashboards to the release folder:
+Copy-Item -Recurse -Path "$ProjectFolder\SqlWatch.Dashboard\" -Destination "$ReleaseFolder" -Container -Exclude *.bak
+if ($LASTEXITCODE -ne 0) {
+    exit $LASTEXITCODE
+}
+
 Rename-Item -Path "$TmpFolder\SQLWATCH Latest" -NewName $TmpFolder\$ReleaseFolderName
 
 # Create ZIP:
