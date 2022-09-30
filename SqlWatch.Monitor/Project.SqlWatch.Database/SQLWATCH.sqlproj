@@ -91,7 +91,6 @@
     <Folder Include="dbo\Queues" />
     <Folder Include="dbo\Services" />
     <Folder Include="dbo\Messages" />
-    <Folder Include="dbo\Functions\CLR" />
     <Folder Include="dbo\Procedures\CLR" />
     <Folder Include="dbo\Types" />
   </ItemGroup>
@@ -390,11 +389,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="dbo\Functions\CLR\ReadPerformanceCounterFormatted.cs" />
-    <Compile Include="dbo\Functions\CLR\ReadPerformanceCounterCategories.cs" />
-    <Compile Include="dbo\Functions\CLR\GetPerformanceCounterData.cs" />
     <Compile Include="dbo\Procedures\CLR\StreamPerformanceCounters.cs" />
-    <Compile Include="dbo\Functions\CLR\ReadWMI.cs" />
   </ItemGroup>
   <ItemGroup>
     <PreDeploy Include="Script.PreDeployment2.sql" />
