@@ -67,3 +67,13 @@ The default brach is "main" and should always contain the most up to date code. 
 It should not happen often but we are going to have to deal with it when it happens. I have not found any way of dealing with this in a Git friendly manner. 
 
 Features branches should follow the naming standard described in the Pull Request Guidelines. For bug fixes, name your branch fix-xx where xx is the issue number. For new features, name your branch feature-xx where xx is the issue id describing new feature. Maintenance category will only apply to `*.MD` files or documentation. 
+
+# Software requirements
+
+The project is developed in **Visual Studio Community 2019** (as of October 2022). You can check which version of the Visual Studio was used in the solution file: `SqlWatch.Monitor.sln`:
+```
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30309.148
+MinimumVisualStudioVersion = 10.0.40219.1
+```
