@@ -51,7 +51,7 @@ select
 	table_name = t.name, 
 	database_name = sdb.name,
 	database_create_date = sdb.create_date,
-	row_count = convert(real,avg(p.rows)),
+	row_count = convert(real,sum(p.rows)),
 	total_pages = convert(real,sum(a.total_pages)),
 	used_pages = convert(real,sum(a.used_pages)),
 	/* only take table compression into account and not index compression.
