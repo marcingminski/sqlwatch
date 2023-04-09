@@ -2926,4 +2926,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="keyword1" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="a9a02302-fe3d-4c3b-84b6-4c5ce1a570fe" ChangeDateTime="04/09/2023 16:53:54">
+    <Property Name="ElementName" Value="[dbo].[sqlwatch_trend_perf_os_performance_counters].[sqlwatch_trend_perf_os_performance_counters_value]" />
+    <Property Name="ElementType" Value="SqlIndex" />
+    <Property Name="ParentElementName" Value="[dbo].[sqlwatch_trend_perf_os_performance_counters]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="idx_sqlwatch_trend_perf_os_performance_counters_value" />
+  </Operation>
 </Operations>
