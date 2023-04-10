@@ -2329,7 +2329,7 @@
       "type": "text"
     },
     {
-      "collapsed": false,
+      "collapsed": true,
       "datasource": {
         "type": "mssql",
         "uid": "EeAYXKY4k"
@@ -2341,7 +2341,236 @@
         "y": 32
       },
       "id": 257,
-      "panels": [],
+      "panels": [
+        {
+          "datasource": {
+            "type": "mssql",
+            "uid": "EeAYXKY4k"
+          },
+          "gridPos": {
+            "h": 6,
+            "w": 24,
+            "x": 0,
+            "y": 33
+          },
+          "id": 159,
+          "options": {
+            "code": {
+              "language": "plaintext",
+              "showLineNumbers": false,
+              "showMiniMap": false
+            },
+            "content": "# SQL Server Blocking Chains\r\n*****\r\nBlocking chains happen when one query is holding back other queries. This happens when poorly written query is holding excessive and exclusive locks on tables. Relational databases are written with ACID properties in mind, \r\nthis means that in order to retain data integrity, only one query at a time can modify the data. To achieve this, a lock is applied so no other queries can even read the data to avoid partially written data being displayed back to the client. When blocking chains happen for long period of time, you will have the impression that the database is slow, even though it isn't. It's just doing its job. It is important to undertand how locking works to avoid blocking chains.\r\n\r\nThese graphs come from data recorded in the Extended Events Session. For this to work, you must enable blocked process monitor: `sp_configure 'blocked process threshold', 5 ; -- set desired value in seconds`",
+            "mode": "markdown"
+          },
+          "pluginVersion": "9.4.7",
+          "targets": [
+            {
+              "datasource": {
+                "type": "mssql",
+                "uid": "EeAYXKY4k"
+              },
+              "queryType": "randomWalk",
+              "refId": "A"
+            }
+          ],
+          "transparent": true,
+          "type": "text"
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": {
+            "uid": "$DataSource"
+          },
+          "decimals": 0,
+          "description": "",
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 6,
+            "w": 24,
+            "x": 0,
+            "y": 39
+          },
+          "hiddenSeries": false,
+          "id": 101,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "9.4.7",
+          "pointradius": 3,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "$$hashKey": "object:1355",
+              "alias": "Blocking Session Count",
+              "color": "#F2495C"
+            }
+          ],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "alias": "",
+              "datasource": {
+                "uid": "$DataSource"
+              },
+              "format": "time_series",
+              "hide": false,
+              "rawSql": "SELECT time = $__timeGroup(h.snapshot_time, $aggregation, previous)\r\n      ,[Blocking Session Count] = count(session_id)\r\n  FROM dbo.sqlwatch_logger_snapshot_header h\r\n  left join [dbo].[ufn_sqlwatch_get_blocking_chains] ($__timeFrom(), $__timeTo(),'$sql_instance') r1\r\n  on h.snapshot_time = r1.snapshot_time\r\n  and h.snapshot_type_id = r1.snapshot_type_id\r\n  and h.sql_instance = r1.sql_instance\r\n  and blocking_session_id is null -- header only  \r\n  where $__timeFilter(h.snapshot_time)\r\n  and h.snapshot_type_id = 9\r\n  group by $__timeGroup(h.snapshot_time, $aggregation, previous), convert(varchar(10),session_id)\r\n \r\n  order by time asc",
+              "refId": "2"
+            }
+          ],
+          "thresholds": [],
+          "timeRegions": [],
+          "title": "Blocking Sessions Count",
+          "tooltip": {
+            "shared": false,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "transformations": [
+            {
+              "id": "seriesToColumns",
+              "options": {
+                "byField": "Time"
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {
+                  "Time": 0,
+                  "max": 3,
+                  "min": 4,
+                  "sql": 2,
+                  "system": 1
+                },
+                "renameByName": {}
+              }
+            }
+          ],
+          "transparent": true,
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "$$hashKey": "object:1165",
+              "decimals": 0,
+              "format": "short",
+              "logBase": 1,
+              "min": "0",
+              "show": true
+            },
+            {
+              "$$hashKey": "object:1166",
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false
+          }
+        },
+        {
+          "datasource": {
+            "type": "mssql",
+            "uid": "EeAYXKY4k"
+          },
+          "gridPos": {
+            "h": 2,
+            "w": 24,
+            "x": 0,
+            "y": 45
+          },
+          "id": 276,
+          "options": {
+            "code": {
+              "language": "plaintext",
+              "showLineNumbers": false,
+              "showMiniMap": false
+            },
+            "content": "The Extended Events Session captures blocking chains according to the time set for the Blocking Process Monitor `select * from sys.configurations where name like 'blocked process threshold%`.\r\nFor example, if the monitor is set to 5 seconds and we have a blocking chain lasting 21 seconds, it will record it 4 times, every 5 seconds. All four occurences will be shown below.",
+            "mode": "markdown"
+          },
+          "pluginVersion": "9.4.7",
+          "targets": [
+            {
+              "datasource": {
+                "type": "mssql",
+                "uid": "EeAYXKY4k"
+              },
+              "queryType": "randomWalk",
+              "refId": "A"
+            }
+          ],
+          "transparent": true,
+          "type": "text"
+        },
+        {
+          "datasource": {
+            "uid": "${DataSource}"
+          },
+          "description": "",
+          "gridPos": {
+            "h": 10,
+            "w": 24,
+            "x": 0,
+            "y": 47
+          },
+          "id": 255,
+          "options": {
+            "dedupStrategy": "none",
+            "enableLogDetails": true,
+            "prettifyLogMessage": false,
+            "showCommonLabels": false,
+            "showLabels": false,
+            "showTime": true,
+            "sortOrder": "Descending",
+            "wrapLogMessage": false
+          },
+          "pluginVersion": "7.4.2",
+          "targets": [
+            {
+              "alias": "",
+              "datasource": {
+                "uid": "${DataSource}"
+              },
+              "format": "table",
+              "queryType": "randomWalk",
+              "rawSql": "select time=x.event_time, blocking_tree + ' (' + isnull(x.appname,'') + '; ' + isnull(x.hostname,'') + ') SQL: ' + isnull(x.sql_text,'') \nfrom [dbo].[ufn_sqlwatch_get_blocking_chains] ($__timeFrom(), $__timeTo(),'$sql_instance') x\n\norder by time",
+              "refId": "Blocking Chains"
+            }
+          ],
+          "title": "Blocking Chains",
+          "transparent": true,
+          "type": "logs"
+        }
+      ],
       "targets": [
         {
           "datasource": {
@@ -2355,234 +2584,6 @@
       "type": "row"
     },
     {
-      "datasource": {
-        "type": "mssql",
-        "uid": "EeAYXKY4k"
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 24,
-        "x": 0,
-        "y": 33
-      },
-      "id": 159,
-      "options": {
-        "code": {
-          "language": "plaintext",
-          "showLineNumbers": false,
-          "showMiniMap": false
-        },
-        "content": "# SQL Server Blocking Chains\r\n*****\r\nBlocking chains happen when one query is holding back other queries. This happens when poorly written query is holding excessive and exclusive locks on tables. Relational databases are written with ACID properties in mind, \r\nthis means that in order to retain data integrity, only one query at a time can modify the data. To achieve this, a lock is applied so no other queries can even read the data to avoid partially written data being displayed back to the client. When blocking chains happen for long period of time, you will have the impression that the database is slow, even though it isn't. It's just doing its job. It is important to undertand how locking works to avoid blocking chains.\r\n\r\nThese graphs come from data recorded in the Extended Events Session. For this to work, you must enable blocked process monitor: `sp_configure 'blocked process threshold', 5 ; -- set desired value in seconds`",
-        "mode": "markdown"
-      },
-      "pluginVersion": "9.4.7",
-      "targets": [
-        {
-          "datasource": {
-            "type": "mssql",
-            "uid": "EeAYXKY4k"
-          },
-          "queryType": "randomWalk",
-          "refId": "A"
-        }
-      ],
-      "transparent": true,
-      "type": "text"
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": {
-        "uid": "$DataSource"
-      },
-      "decimals": 0,
-      "description": "",
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 6,
-        "w": 24,
-        "x": 0,
-        "y": 39
-      },
-      "hiddenSeries": false,
-      "id": 101,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": false,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true
-      },
-      "percentage": false,
-      "pluginVersion": "9.4.7",
-      "pointradius": 3,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "$$hashKey": "object:1355",
-          "alias": "Blocking Session Count",
-          "color": "#F2495C"
-        }
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "alias": "",
-          "datasource": {
-            "uid": "$DataSource"
-          },
-          "format": "time_series",
-          "hide": false,
-          "rawSql": "SELECT time = $__timeGroup(h.snapshot_time, $aggregation, previous)\r\n      ,[Blocking Session Count] = count(session_id)\r\n  FROM dbo.sqlwatch_logger_snapshot_header h\r\n  left join [dbo].[ufn_sqlwatch_get_blocking_chains] ($__timeFrom(), $__timeTo(),'$sql_instance') r1\r\n  on h.snapshot_time = r1.snapshot_time\r\n  and h.snapshot_type_id = r1.snapshot_type_id\r\n  and h.sql_instance = r1.sql_instance\r\n  and blocking_session_id is null -- header only  \r\n  where $__timeFilter(h.snapshot_time)\r\n  and h.snapshot_type_id = 9\r\n  group by $__timeGroup(h.snapshot_time, $aggregation, previous), convert(varchar(10),session_id)\r\n \r\n  order by time asc",
-          "refId": "2"
-        }
-      ],
-      "thresholds": [],
-      "timeRegions": [],
-      "title": "Blocking Sessions Count",
-      "tooltip": {
-        "shared": false,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "transformations": [
-        {
-          "id": "seriesToColumns",
-          "options": {
-            "byField": "Time"
-          }
-        },
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {},
-            "indexByName": {
-              "Time": 0,
-              "max": 3,
-              "min": 4,
-              "sql": 2,
-              "system": 1
-            },
-            "renameByName": {}
-          }
-        }
-      ],
-      "transparent": true,
-      "type": "graph",
-      "xaxis": {
-        "mode": "time",
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:1165",
-          "decimals": 0,
-          "format": "short",
-          "logBase": 1,
-          "min": "0",
-          "show": true
-        },
-        {
-          "$$hashKey": "object:1166",
-          "format": "short",
-          "logBase": 1,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false
-      }
-    },
-    {
-      "datasource": {
-        "type": "mssql",
-        "uid": "EeAYXKY4k"
-      },
-      "gridPos": {
-        "h": 2,
-        "w": 24,
-        "x": 0,
-        "y": 45
-      },
-      "id": 276,
-      "options": {
-        "code": {
-          "language": "plaintext",
-          "showLineNumbers": false,
-          "showMiniMap": false
-        },
-        "content": "The Extended Events Session captures blocking chains according to the time set for the Blocking Process Monitor `select * from sys.configurations where name like 'blocked process threshold%`.\r\nFor example, if the monitor is set to 5 seconds and we have a blocking chain lasting 21 seconds, it will record it 4 times, every 5 seconds. All four occurences will be shown below.",
-        "mode": "markdown"
-      },
-      "pluginVersion": "9.4.7",
-      "targets": [
-        {
-          "datasource": {
-            "type": "mssql",
-            "uid": "EeAYXKY4k"
-          },
-          "queryType": "randomWalk",
-          "refId": "A"
-        }
-      ],
-      "transparent": true,
-      "type": "text"
-    },
-    {
-      "datasource": {
-        "uid": "${DataSource}"
-      },
-      "description": "",
-      "gridPos": {
-        "h": 10,
-        "w": 24,
-        "x": 0,
-        "y": 47
-      },
-      "id": 255,
-      "options": {
-        "dedupStrategy": "none",
-        "enableLogDetails": true,
-        "prettifyLogMessage": false,
-        "showCommonLabels": false,
-        "showLabels": false,
-        "showTime": true,
-        "sortOrder": "Descending",
-        "wrapLogMessage": false
-      },
-      "pluginVersion": "7.4.2",
-      "targets": [
-        {
-          "alias": "",
-          "datasource": {
-            "uid": "${DataSource}"
-          },
-          "format": "table",
-          "queryType": "randomWalk",
-          "rawSql": "select time=x.event_time, blocking_tree + ' (' + isnull(x.appname,'') + '; ' + isnull(x.hostname,'') + ') SQL: ' + isnull(x.sql_text,'') \nfrom [dbo].[ufn_sqlwatch_get_blocking_chains] ($__timeFrom(), $__timeTo(),'$sql_instance') x\n\norder by time",
-          "refId": "Blocking Chains"
-        }
-      ],
-      "title": "Blocking Chains",
-      "transparent": true,
-      "type": "logs"
-    },
-    {
       "collapsed": true,
       "datasource": {
         "type": "mssql",
@@ -2592,7 +2593,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 57
+        "y": 33
       },
       "id": 263,
       "panels": [
@@ -3113,7 +3114,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 58
+        "y": 34
       },
       "id": 187,
       "panels": [
@@ -3126,7 +3127,7 @@
             "h": 5,
             "w": 24,
             "x": 0,
-            "y": 92
+            "y": 35
           },
           "id": 259,
           "options": {
@@ -3173,7 +3174,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 97
+            "y": 40
           },
           "hiddenSeries": false,
           "id": 258,
@@ -3327,7 +3328,7 @@
             "h": 3,
             "w": 24,
             "x": 0,
-            "y": 104
+            "y": 47
           },
           "id": 192,
           "options": {
@@ -3362,7 +3363,7 @@
             "h": 11,
             "w": 24,
             "x": 0,
-            "y": 107
+            "y": 50
           },
           "id": 43,
           "options": {
@@ -3409,7 +3410,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 118
+            "y": 61
           },
           "hiddenSeries": false,
           "id": 231,
@@ -3539,7 +3540,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 125
+            "y": 68
           },
           "hiddenSeries": false,
           "hideTimeOverride": false,
@@ -3626,7 +3627,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 132
+            "y": 75
           },
           "id": 109,
           "options": {
@@ -3674,7 +3675,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 138
+            "y": 81
           },
           "hiddenSeries": false,
           "id": 6,
@@ -3828,7 +3829,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 59
+        "y": 35
       },
       "id": 309,
       "panels": [
@@ -3841,7 +3842,7 @@
             "h": 4,
             "w": 24,
             "x": 0,
-            "y": 93
+            "y": 36
           },
           "id": 110,
           "options": {
@@ -3893,7 +3894,7 @@
             "h": 11,
             "w": 24,
             "x": 0,
-            "y": 97
+            "y": 40
           },
           "hiddenSeries": false,
           "id": 232,
@@ -4018,7 +4019,7 @@
             "h": 5,
             "w": 24,
             "x": 0,
-            "y": 108
+            "y": 51
           },
           "hiddenSeries": false,
           "id": 191,
@@ -4118,7 +4119,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -4206,7 +4208,7 @@
             "h": 5,
             "w": 24,
             "x": 0,
-            "y": 113
+            "y": 56
           },
           "id": 194,
           "links": [
@@ -4296,7 +4298,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 60
+        "y": 36
       },
       "id": 208,
       "panels": [
@@ -4309,7 +4311,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 172
+            "y": 37
           },
           "id": 112,
           "options": {
@@ -4356,7 +4358,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 178
+            "y": 43
           },
           "hiddenSeries": false,
           "id": 12,
@@ -4452,12 +4454,7 @@
           "description": "",
           "fieldConfig": {
             "defaults": {
-              "custom": {},
-              "links": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              }
+              "links": []
             },
             "overrides": []
           },
@@ -4467,7 +4464,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 185
+            "y": 50
           },
           "hiddenSeries": false,
           "id": 206,
@@ -4488,7 +4485,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -4558,24 +4555,23 @@
             "type": "mssql",
             "uid": "EeAYXKY4k"
           },
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
           "gridPos": {
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 191
+            "y": 56
           },
           "id": 108,
           "options": {
+            "code": {
+              "language": "plaintext",
+              "showLineNumbers": false,
+              "showMiniMap": false
+            },
             "content": "<p>\r\n<b>Auto-Param Attempts/sec</b> Number of auto-parameterization attempts per second. Total should be the sum of the failed, safe, and unsafe auto-parameterizations. Auto-parameterization occurs when an instance of SQL Server tries to parameterize a Transact-SQL request by replacing some literals with parameters so that reuse of the resulting cached execution plan across multiple similar-looking requests is possible. Note that auto-parameterizations are also known as simple parameterizations in newer versions of SQL Server. This counter does not include forced parameterizations.\r\n<br>\r\n<b>Failed Auto-Params/sec</b> \tNumber of failed auto-parameterization attempts per second. This should be small. Note that auto-parameterizations are also known as simple parameterizations in later versions of SQL Server.\r\n<br>\r\n<b>Forced Parameterizations/sec</b> Number of successful forced parameterizations per second.\r\n<br>\r\n<b>Safe Auto-Params/sec</b> Number of safe auto-parameterization attempts per second. Safe refers to a determination that a cached execution plan can be shared between different similar-looking Transact-SQL statements. SQL Server makes many auto-parameterization attempts some of which turn out to be safe and others fail. Note that auto-parameterizations are also known as simple parameterizations in later versions of SQL Server. This does not include forced parameterizations.\r\n<br>\r\n<b>Unsafe Auto-Params/sec</b> Number of unsafe auto-parameterization attempts per second. For example, the query has some characteristics that prevent the cached plan from being shared. These are designated as unsafe. This does not count the number of forced parameterizations.\r\n</p>",
             "mode": "html"
           },
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "targets": [
             {
               "datasource": {
@@ -4600,12 +4596,6 @@
           "description": "",
           "fieldConfig": {
             "defaults": {
-              "color": {},
-              "custom": {},
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              },
               "unit": "short"
             },
             "overrides": []
@@ -4616,7 +4606,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 197
+            "y": 62
           },
           "hiddenSeries": false,
           "id": 209,
@@ -4640,7 +4630,7 @@
             "alertThreshold": false
           },
           "percentage": false,
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -4716,24 +4706,23 @@
             "type": "mssql",
             "uid": "EeAYXKY4k"
           },
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
           "gridPos": {
             "h": 4,
             "w": 24,
             "x": 0,
-            "y": 203
+            "y": 68
           },
           "id": 210,
           "options": {
+            "code": {
+              "language": "plaintext",
+              "showLineNumbers": false,
+              "showMiniMap": false
+            },
             "content": "<br><br><h2 id=\"long\">Long Queries</h2>\r\n<p>Long running queries are usually caused by poor queries, trying to process too much data at a time clogging CPU, Memory and oversaturating storage. However, some long running processes are OK, for example sleeping tasks or background processes that do not eaty too much resources.\r\nIf you have a long running query that you are OK with, you can exclude it from collection in <span style=\"font-family:monospace;font-size:12px;background:#3D3D3D;padding:2px 4px 2px 4px;border-radius:2px;\">[dbo].[sqlwatch_config_exclude_xes_long_query]</span></p>\r\n",
             "mode": "html"
           },
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "targets": [
             {
               "datasource": {
@@ -4758,12 +4747,6 @@
           "description": "",
           "fieldConfig": {
             "defaults": {
-              "color": {},
-              "custom": {},
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              },
               "unit": "short"
             },
             "overrides": []
@@ -4774,7 +4757,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 207
+            "y": 72
           },
           "hiddenSeries": false,
           "id": 87,
@@ -4794,7 +4777,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "pointradius": 3,
           "points": false,
           "renderer": "flot",
@@ -4860,24 +4843,23 @@
             "type": "mssql",
             "uid": "EeAYXKY4k"
           },
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
           "gridPos": {
             "h": 4,
             "w": 24,
             "x": 0,
-            "y": 213
+            "y": 78
           },
           "id": 111,
           "options": {
+            "code": {
+              "language": "plaintext",
+              "showLineNumbers": false,
+              "showMiniMap": false
+            },
             "content": "<br><br><h2 id=\"errors\">Errors</h2>\r\n<p>Errors reported by SQL engine, excludes \"User Errors\" and \"Info Errors\". These will likely be relatively serious, such a broken connections, kill connections, database offline errors.</p>",
             "mode": "html"
           },
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "targets": [
             {
               "datasource": {
@@ -4901,23 +4883,13 @@
             "uid": "-- Dashboard --"
           },
           "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {},
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              }
-            },
-            "overrides": []
-          },
           "fill": 1,
           "fillGradient": 1,
           "gridPos": {
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 217
+            "y": 82
           },
           "hiddenSeries": false,
           "id": 9,
@@ -4937,7 +4909,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -5030,7 +5002,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 61
+        "y": 37
       },
       "id": 185,
       "panels": [
@@ -5040,24 +5012,23 @@
             "uid": "EeAYXKY4k"
           },
           "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
           "gridPos": {
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 30
+            "y": 38
           },
           "id": 29,
           "options": {
+            "code": {
+              "language": "plaintext",
+              "showLineNumbers": false,
+              "showMiniMap": false
+            },
             "content": "<br><h1 id=\"locking\">SQL Server Locking</h1>\r\n<p>Locking mechanism is critical part of every relational database. Every time a row is read, inserted or modified SQL Server applies appropriate locks to ensure no one else can access the data whilst it's being read of modified. The locking mechanism ensures data consistency however, excessive locking can lead overal poor performance and even create blocking chains.</p>\r\n<br>\r\n<p><b>Lock Requests / sec</b>: *You want <1000*.  The number of new locks and locks converted per second. This metric’s value should generally correspond to \"Batch Requests/sec\". Values > 1000 may indicate queries are accessing very large numbers of rows and may benefit from tuning.\r\n</p>",
             "mode": "html"
           },
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "targets": [
             {
               "datasource": {
@@ -5068,7 +5039,6 @@
               "refId": "A"
             }
           ],
-          "title": "",
           "transparent": true,
           "type": "text"
         },
@@ -5081,23 +5051,13 @@
             "uid": "$DataSource"
           },
           "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {},
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              }
-            },
-            "overrides": []
-          },
           "fill": 1,
           "fillGradient": 1,
           "gridPos": {
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 36
+            "y": 44
           },
           "hiddenSeries": false,
           "id": 79,
@@ -5117,7 +5077,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -5204,24 +5164,23 @@
             "type": "mssql",
             "uid": "EeAYXKY4k"
           },
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
           "gridPos": {
             "h": 2,
             "w": 24,
             "x": 0,
-            "y": 42
+            "y": 50
           },
           "id": 83,
           "options": {
+            "code": {
+              "language": "plaintext",
+              "showLineNumbers": false,
+              "showMiniMap": false
+            },
             "content": "<br><p><b>Lock Timeouts/ sec</b>: *You want <1*.  Shows the number of lock requests per second that timed out, including internal requests for NOWAIT locks. A value greater than zero might indicate that user queries are not completing. The lower this value is, the better.</p>",
             "mode": "html"
           },
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "targets": [
             {
               "datasource": {
@@ -5232,7 +5191,6 @@
               "refId": "A"
             }
           ],
-          "title": "",
           "transparent": true,
           "type": "text"
         },
@@ -5248,12 +5206,7 @@
           "description": "",
           "fieldConfig": {
             "defaults": {
-              "custom": {},
-              "links": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              }
+              "links": []
             },
             "overrides": []
           },
@@ -5263,7 +5216,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 44
+            "y": 52
           },
           "hiddenSeries": false,
           "id": 82,
@@ -5283,7 +5236,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -5359,24 +5312,23 @@
             "type": "mssql",
             "uid": "EeAYXKY4k"
           },
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
           "gridPos": {
             "h": 3,
             "w": 24,
             "x": 0,
-            "y": 50
+            "y": 58
           },
           "id": 86,
           "options": {
+            "code": {
+              "language": "plaintext",
+              "showLineNumbers": false,
+              "showMiniMap": false
+            },
             "content": "<br>\r\n<p><b>Lock Waits/sec</b>: *You want 0*.  How many times users waited to acquire a lock over the past second. Values greater than zero indicate at least some blocking is occurring, while a value of zero can quickly eliminate blocking as a potential root-cause problem. As with \"Lock Wait Time\", lock waits are not recorded by PerfMon until after the lock event completes.</p>",
             "mode": "html"
           },
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "targets": [
             {
               "datasource": {
@@ -5387,7 +5339,6 @@
               "refId": "A"
             }
           ],
-          "title": "",
           "transparent": true,
           "type": "text"
         },
@@ -5403,12 +5354,7 @@
           "description": "",
           "fieldConfig": {
             "defaults": {
-              "custom": {},
-              "links": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              }
+              "links": []
             },
             "overrides": []
           },
@@ -5418,7 +5364,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 53
+            "y": 61
           },
           "hiddenSeries": false,
           "id": 85,
@@ -5438,7 +5384,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -5514,24 +5460,23 @@
             "type": "mssql",
             "uid": "EeAYXKY4k"
           },
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
           "gridPos": {
             "h": 3,
             "w": 24,
             "x": 0,
-            "y": 59
+            "y": 67
           },
           "id": 150,
           "options": {
+            "code": {
+              "language": "plaintext",
+              "showLineNumbers": false,
+              "showMiniMap": false
+            },
             "content": "<br>\r\n<p>\r\n<b>Avg Wait Time (ms)</b>: *You want <500 *   \r\nThe average wait time, in milliseconds, for each lock request that had to wait. Average wait time longer than 500ms may indicate excessive blocking. This value should generally correlate to \"Lock Waits/sec\" and move up or down with it accordingly.</p>",
             "mode": "html"
           },
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "targets": [
             {
               "datasource": {
@@ -5542,7 +5487,6 @@
               "refId": "A"
             }
           ],
-          "title": "",
           "transparent": true,
           "type": "text"
         },
@@ -5558,12 +5502,7 @@
           "description": "",
           "fieldConfig": {
             "defaults": {
-              "custom": {},
-              "links": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              }
+              "links": []
             },
             "overrides": []
           },
@@ -5573,7 +5512,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 62
+            "y": 70
           },
           "hiddenSeries": false,
           "id": 149,
@@ -5593,7 +5532,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -5678,24 +5617,23 @@
             "type": "mssql",
             "uid": "EeAYXKY4k"
           },
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
           "gridPos": {
             "h": 3,
             "w": 24,
             "x": 0,
-            "y": 68
+            "y": 76
           },
           "id": 113,
           "options": {
+            "code": {
+              "language": "plaintext",
+              "showLineNumbers": false,
+              "showMiniMap": false
+            },
             "content": "<br>\r\n<p><b>Blocking chains</b> Excessive locking can cause blocking chains. Blocking chains happen when two or more queries are trying to access data that is being locked by the first query. In such case, none of the queries can complete until the first query completes first. Blocking chains often indicate bad indexes, excessive scanning, lock escanation and overall bad application design.</p>",
             "mode": "html"
           },
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "targets": [
             {
               "datasource": {
@@ -5706,7 +5644,6 @@
               "refId": "A"
             }
           ],
-          "title": "",
           "transparent": true,
           "type": "text"
         },
@@ -5720,23 +5657,13 @@
             "uid": "-- Dashboard --"
           },
           "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {},
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              }
-            },
-            "overrides": []
-          },
           "fill": 1,
           "fillGradient": 5,
           "gridPos": {
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 71
+            "y": 79
           },
           "hiddenSeries": false,
           "id": 13,
@@ -5756,7 +5683,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -5849,7 +5776,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 62
+        "y": 38
       },
       "id": 183,
       "panels": [
@@ -5858,24 +5785,23 @@
             "type": "mssql",
             "uid": "EeAYXKY4k"
           },
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
           "gridPos": {
             "h": 3,
             "w": 24,
             "x": 0,
-            "y": 37
+            "y": 39
           },
           "id": 77,
           "options": {
+            "code": {
+              "language": "plaintext",
+              "showLineNumbers": false,
+              "showMiniMap": false
+            },
             "content": "<br><h1 id=\"memory\">SQL Server Memory</h2>\r\n<p>The memory section shows the internals of SQL Server memory and its pressure points.</p>",
             "mode": "html"
           },
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "targets": [
             {
               "datasource": {
@@ -5886,7 +5812,6 @@
               "refId": "A"
             }
           ],
-          "title": "",
           "transparent": true,
           "type": "text"
         },
@@ -5901,12 +5826,7 @@
           "description": "",
           "fieldConfig": {
             "defaults": {
-              "custom": {},
-              "links": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              }
+              "links": []
             },
             "overrides": []
           },
@@ -5916,7 +5836,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 40
+            "y": 42
           },
           "hiddenSeries": false,
           "id": 104,
@@ -5936,7 +5856,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -6023,17 +5943,13 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": {
+            "type": "mssql",
             "uid": "$DataSource"
           },
           "description": "",
           "fieldConfig": {
             "defaults": {
-              "custom": {},
-              "links": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              }
+              "links": []
             },
             "overrides": []
           },
@@ -6043,7 +5959,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 47
+            "y": 49
           },
           "hiddenSeries": false,
           "id": 34,
@@ -6064,7 +5980,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -6078,10 +5994,29 @@
               "datasource": {
                 "uid": "$DataSource"
               },
+              "editorMode": "code",
               "format": "time_series",
               "hide": false,
-              "rawSql": "SELECT \n      [time] = $__timeGroup([snapshot_time], $aggregation) \n      --this chart\n      ,'Connection Memory (KB)' = avg(case when counter_name = 'Connection Memory (KB)' then [cntr_value_calculated] else null end)\n      ,'Optimizer Memory (KB)' = avg(case when counter_name = 'Optimizer Memory (KB)' then [cntr_value_calculated] else null end)\n      ,'SQL Cache Memory (KB)' = avg(case when counter_name = 'SQL Cache Memory (KB)' then [cntr_value_calculated] else null end)\n      --other charts\n      ,'Total Server Memory (KB)' = avg(case when counter_name = 'Total Server Memory (KB)' then [cntr_value_calculated] else null end)\n      ,'Stolen Server Memory (KB)' = avg(case when counter_name = 'Stolen Server Memory (KB)' then [cntr_value_calculated] else null end)\n      ,'Target Server Memory (KB)' = avg(case when counter_name = 'Target Server Memory (KB)' then [cntr_value_calculated] else null end)\n      --\n      ,'Memory Grants Outstanding' = avg(case when counter_name = 'Memory Grants Outstanding' then [cntr_value_calculated] else null end)\n      ,'Memory Grants Pending' = avg(case when counter_name = 'Memory Grants Pending' then [cntr_value_calculated] else null end)\n      --\n      ,'Free list stalls/sec' = avg(case when counter_name = 'Free list stalls/sec' then [cntr_value_calculated] else null end)\n      --\n      ,'Page Lookups/sec' = avg(case when counter_name = 'Page Lookups/sec' then [cntr_value_calculated] else null end)\n      ,'Batch Requests/sec' = avg(case when counter_name = 'Batch Requests/sec' then [cntr_value_calculated] else null end)\n      --\n      ,'Page reads/sec' = avg(case when counter_name = 'Page reads/sec' then [cntr_value_calculated] else null end)\n      ,'Page writes/sec' = avg(case when counter_name = 'Page writes/sec' then [cntr_value_calculated] else null end)\n      --\n      ,'Readahead pages/sec' = avg(case when counter_name = 'Readahead pages/sec' then [cntr_value_calculated] else null end)\n      ,'Page reads/sec' = avg(case when counter_name = 'Page reads/sec' then [cntr_value_calculated] else null end)\n      --\n      ,'Checkpoint pages/sec' = avg(case when counter_name = 'Checkpoint pages/sec' then [cntr_value_calculated] else null end)\n      --\n      ,'Lazy writes/sec' = avg(case when counter_name = 'Lazy writes/sec' then [cntr_value_calculated] else null end)\n      --\n      ,'Page life Expectancy'  = avg(case when counter_name = 'Page life Expectancy' then [cntr_value_calculated] else null end)\n      --\n      ,'Buffer cache hit ratio'  = avg(case when counter_name = 'Buffer cache hit ratio' then [cntr_value_calculated] else null end)\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 0\n  AND $__timeFilter(snapshot_time)\n  AND counter_name IN ('Connection Memory (KB)','Optimizer Memory (KB)','SQL Cache Memory (KB)'\n                      ,'Total Server Memory (KB)','Stolen Server Memory (KB)', 'Target Server Memory (KB)'\n                      ,'Memory Grants Outstanding','Memory Grants Pending'\n                      ,'Free list stalls/sec'\n                      ,'Page Lookups/sec','Batch Requests/sec'\n                      ,'Page reads/sec','Page writes/sec'\n                      ,'Readahead pages/sec','Page reads/sec'\n                      ,'Checkpoint pages/sec'\n                      ,'Lazy writes/sec'\n                      ,'Page life Expectancy'\n                      ,'Buffer cache hit ratio'\n                      )\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY $__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
-              "refId": "A"
+              "rawQuery": true,
+              "rawSql": "SELECT \n      [time] = $__timeGroup([snapshot_time], $aggregation) \n      --this chart\n      ,'Connection Memory (KB)' = avg(case when counter_name = 'Connection Memory (KB)' then [cntr_value_calculated] else null end)\n      ,'Optimizer Memory (KB)' = avg(case when counter_name = 'Optimizer Memory (KB)' then [cntr_value_calculated] else null end)\n      ,'SQL Cache Memory (KB)' = avg(case when counter_name = 'SQL Cache Memory (KB)' then [cntr_value_calculated] else null end)\n      --other charts\n      ,'Total Server Memory (KB)' = avg(case when counter_name = 'Total Server Memory (KB)' then [cntr_value_calculated] else null end)\n      ,'Stolen Server Memory (KB)' = avg(case when counter_name = 'Stolen Server Memory (KB)' then [cntr_value_calculated] else null end)\n      ,'Target Server Memory (KB)' = avg(case when counter_name = 'Target Server Memory (KB)' then [cntr_value_calculated] else null end)\n      --\n      ,'Memory Grants Outstanding' = avg(case when counter_name = 'Memory Grants Outstanding' then [cntr_value_calculated] else null end)\n      ,'Memory Grants Pending' = avg(case when counter_name = 'Memory Grants Pending' then [cntr_value_calculated] else null end)\n      --\n      ,'Free list stalls/sec' = avg(case when counter_name = 'Free list stalls/sec' then [cntr_value_calculated] else null end)\n      --\n      ,'Page Lookups/sec' = avg(case when counter_name = 'Page Lookups/sec' then [cntr_value_calculated] else null end)\n      ,'Batch Requests/sec' = avg(case when counter_name = 'Batch Requests/sec' then [cntr_value_calculated] else null end)\n      --\n      ,'Page reads/sec' = avg(case when counter_name = 'Page reads/sec' then [cntr_value_calculated] else null end)\n      ,'Page writes/sec' = avg(case when counter_name = 'Page writes/sec' then [cntr_value_calculated] else null end)\n      --\n      ,'Readahead pages/sec' = avg(case when counter_name = 'Readahead pages/sec' then [cntr_value_calculated] else null end)\n      --\n      ,'Checkpoint pages/sec' = avg(case when counter_name = 'Checkpoint pages/sec' then [cntr_value_calculated] else null end)\n      --\n      ,'Lazy writes/sec' = avg(case when counter_name = 'Lazy writes/sec' then [cntr_value_calculated] else null end)\n      --\n      ,'Page life Expectancy'  = avg(case when counter_name = 'Page life Expectancy' then [cntr_value_calculated] else null end)\n      --\n      ,'Buffer cache hit ratio'  = avg(case when counter_name = 'Buffer cache hit ratio' then [cntr_value_calculated] else null end)\n  FROM [dbo].[vw_sqlwatch_report_fact_perf_os_performance_counters]\n  WHERE [aggregation_interval_minutes] = 0\n  AND $__timeFilter(snapshot_time)\n  AND counter_name IN ('Connection Memory (KB)','Optimizer Memory (KB)','SQL Cache Memory (KB)'\n                      ,'Total Server Memory (KB)','Stolen Server Memory (KB)', 'Target Server Memory (KB)'\n                      ,'Memory Grants Outstanding','Memory Grants Pending'\n                      ,'Free list stalls/sec'\n                      ,'Page Lookups/sec','Batch Requests/sec'\n                      ,'Page reads/sec','Page writes/sec'\n                      ,'Readahead pages/sec','Page reads/sec'\n                      ,'Checkpoint pages/sec'\n                      ,'Lazy writes/sec'\n                      ,'Page life Expectancy'\n                      ,'Buffer cache hit ratio'\n                      )\n  AND [sql_instance] = '$sql_instance'\n  GROUP BY $__timeGroup([snapshot_time], $aggregation) \nORDER BY\n  time ASC\n  \n  ",
+              "refId": "A",
+              "sql": {
+                "columns": [
+                  {
+                    "parameters": [],
+                    "type": "function"
+                  }
+                ],
+                "groupBy": [
+                  {
+                    "property": {
+                      "type": "string"
+                    },
+                    "type": "groupBy"
+                  }
+                ],
+                "limit": 50
+              }
             }
           ],
           "thresholds": [],
@@ -6145,12 +6080,7 @@
           "description": "",
           "fieldConfig": {
             "defaults": {
-              "custom": {},
-              "links": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              }
+              "links": []
             },
             "overrides": []
           },
@@ -6160,7 +6090,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 54
+            "y": 56
           },
           "hiddenSeries": false,
           "id": 8,
@@ -6180,7 +6110,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -6258,12 +6188,7 @@
           "description": "",
           "fieldConfig": {
             "defaults": {
-              "custom": {},
-              "links": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              }
+              "links": []
             },
             "overrides": []
           },
@@ -6273,7 +6198,7 @@
             "h": 9,
             "w": 24,
             "x": 0,
-            "y": 60
+            "y": 62
           },
           "hiddenSeries": false,
           "id": 40,
@@ -6296,7 +6221,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -6355,24 +6280,23 @@
             "type": "mssql",
             "uid": "EeAYXKY4k"
           },
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
           "gridPos": {
             "h": 3,
             "w": 24,
             "x": 0,
-            "y": 69
+            "y": 71
           },
           "id": 55,
           "options": {
+            "code": {
+              "language": "plaintext",
+              "showLineNumbers": false,
+              "showMiniMap": false
+            },
             "content": "<br>\r\n<p><b>Memory Grants Outstanding</b>: The total number of processes per second that have successfully acquired a workspace memory grant.<br>\r\n<b>Memory Grants Pending </b>: *You want 0*  The total number of processes per second waiting for a workspace memory grant. Numbers higher than 0 indicate a lack of memory.</p>",
             "mode": "html"
           },
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "targets": [
             {
               "datasource": {
@@ -6383,7 +6307,6 @@
               "refId": "A"
             }
           ],
-          "title": "",
           "transparent": true,
           "type": "text"
         },
@@ -6399,12 +6322,7 @@
           "description": "",
           "fieldConfig": {
             "defaults": {
-              "custom": {},
-              "links": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              }
+              "links": []
             },
             "overrides": []
           },
@@ -6414,7 +6332,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 72
+            "y": 74
           },
           "hiddenSeries": false,
           "id": 38,
@@ -6434,7 +6352,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -6511,24 +6429,23 @@
             "type": "mssql",
             "uid": "EeAYXKY4k"
           },
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
           "gridPos": {
             "h": 2,
             "w": 24,
             "x": 0,
-            "y": 78
+            "y": 80
           },
           "id": 138,
           "options": {
+            "code": {
+              "language": "plaintext",
+              "showLineNumbers": false,
+              "showMiniMap": false
+            },
             "content": "<br>\r\n<p>\r\n<b>Free List Stalls/sec</b>: *You want < 2*. Monitors the number of requests per second where data requests stall because no buffers are available. Any value above 2 means SQL Server needs more memory.\r\n</p>",
             "mode": "html"
           },
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "targets": [
             {
               "datasource": {
@@ -6539,7 +6456,6 @@
               "refId": "A"
             }
           ],
-          "title": "",
           "transparent": true,
           "type": "text"
         },
@@ -6555,12 +6471,7 @@
           "description": "",
           "fieldConfig": {
             "defaults": {
-              "custom": {},
-              "links": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              }
+              "links": []
             },
             "overrides": []
           },
@@ -6570,7 +6481,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 80
+            "y": 82
           },
           "hiddenSeries": false,
           "id": 137,
@@ -6590,7 +6501,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -6669,24 +6580,23 @@
             "type": "mssql",
             "uid": "EeAYXKY4k"
           },
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
           "gridPos": {
             "h": 2,
             "w": 24,
             "x": 0,
-            "y": 86
+            "y": 88
           },
           "id": 56,
           "options": {
+            "code": {
+              "language": "plaintext",
+              "showLineNumbers": false,
+              "showMiniMap": false
+            },
             "content": "<br>\r\n<p><b>Page lookups Rate</b>: *You want < 100*  The ratio of *Page lookups/ sec* and *Batch Requests/ sec*. The number of requests to find a page in the buffer pool. When the ratio of batch requests to page lookups crests 100, you may have inefficient execution plans or too many adhoc queries.</p>",
             "mode": "html"
           },
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "targets": [
             {
               "datasource": {
@@ -6697,7 +6607,6 @@
               "refId": "A"
             }
           ],
-          "title": "",
           "transparent": true,
           "type": "text"
         },
@@ -6713,12 +6622,7 @@
           "description": "",
           "fieldConfig": {
             "defaults": {
-              "custom": {},
-              "links": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              }
+              "links": []
             },
             "overrides": []
           },
@@ -6728,7 +6632,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 88
+            "y": 90
           },
           "hiddenSeries": false,
           "id": 21,
@@ -6748,7 +6652,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -6841,24 +6745,23 @@
             "type": "mssql",
             "uid": "EeAYXKY4k"
           },
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
           "gridPos": {
             "h": 4,
             "w": 24,
             "x": 0,
-            "y": 94
+            "y": 96
           },
           "id": 156,
           "options": {
+            "code": {
+              "language": "plaintext",
+              "showLineNumbers": false,
+              "showMiniMap": false
+            },
             "content": "<br>\r\n<p>\r\n<b>\r\nPage Reads/sec\r\n</b>:   *You want < 90* The number of physical database page reads issued per second. Normal OLTP workloads support 80 – 90 per second, but higher values may be a yellow flag for poor indexing or insufficient memory.\r\n</p>\r\n\r\n\r\n<p>\r\n<b>Page Writes/sec</b>: *You want < 90* The number of database pages physically written to disk per second. Normal OLTP workloads support 80 – 90 per second. Values over 90 should be crossed checked with \"lazy writer/sec\" and \"checkpoint\" counters. If the other counters are also high, then it may indicate insufficient memory.\r\n</p>",
             "mode": "html"
           },
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "targets": [
             {
               "datasource": {
@@ -6869,7 +6772,6 @@
               "refId": "A"
             }
           ],
-          "title": "",
           "transparent": true,
           "type": "text"
         },
@@ -6885,12 +6787,7 @@
           "description": "",
           "fieldConfig": {
             "defaults": {
-              "custom": {},
-              "links": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              }
+              "links": []
             },
             "overrides": []
           },
@@ -6900,7 +6797,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 98
+            "y": 100
           },
           "hiddenSeries": false,
           "id": 155,
@@ -6920,7 +6817,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -7000,24 +6897,23 @@
             "type": "mssql",
             "uid": "EeAYXKY4k"
           },
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
           "gridPos": {
             "h": 2,
             "w": 24,
             "x": 0,
-            "y": 104
+            "y": 106
           },
           "id": 146,
           "options": {
+            "code": {
+              "language": "plaintext",
+              "showLineNumbers": false,
+              "showMiniMap": false
+            },
             "content": "<br>\r\n<p>\r\n<b>Readahead/sec</b>:  *You want < 20% of Page Reads/ sec*   \r\nThe number of data pages read per second in anticipation of their use. If this value is made up even a sizeable minority of total Page Reads/sec (say, greater than 20% of total page reads), you may have too many physical reads occurring.\r\n</p>",
             "mode": "html"
           },
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "targets": [
             {
               "datasource": {
@@ -7028,7 +6924,6 @@
               "refId": "A"
             }
           ],
-          "title": "",
           "transparent": true,
           "type": "text"
         },
@@ -7044,12 +6939,7 @@
           "description": "",
           "fieldConfig": {
             "defaults": {
-              "custom": {},
-              "links": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              }
+              "links": []
             },
             "overrides": [
               {
@@ -7072,7 +6962,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 106
+            "y": 108
           },
           "hiddenSeries": false,
           "id": 145,
@@ -7092,7 +6982,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -7190,24 +7080,23 @@
             "type": "mssql",
             "uid": "EeAYXKY4k"
           },
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
           "gridPos": {
             "h": 2,
             "w": 24,
             "x": 0,
-            "y": 112
+            "y": 114
           },
           "id": 114,
           "options": {
+            "code": {
+              "language": "plaintext",
+              "showLineNumbers": false,
+              "showMiniMap": false
+            },
             "content": "**Checkpoint Pages/ sec**: Monitors the number of dirty pages, per second, that are flushed to disk when SQL Server invokes the checkpoint process. Checkpoint frequency is influenced by the recovery interval setting in sp_configure. High values for this counter may indicate insufficient memory or that the recovery interval is too high.",
             "mode": "markdown"
           },
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "targets": [
             {
               "datasource": {
@@ -7218,7 +7107,6 @@
               "refId": "A"
             }
           ],
-          "title": "",
           "transparent": true,
           "type": "text"
         },
@@ -7234,12 +7122,7 @@
           "description": "",
           "fieldConfig": {
             "defaults": {
-              "custom": {},
-              "links": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              }
+              "links": []
             },
             "overrides": []
           },
@@ -7249,7 +7132,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 114
+            "y": 116
           },
           "hiddenSeries": false,
           "id": 204,
@@ -7269,7 +7152,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -7346,24 +7229,23 @@
             "type": "mssql",
             "uid": "EeAYXKY4k"
           },
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
           "gridPos": {
             "h": 2,
             "w": 24,
             "x": 0,
-            "y": 120
+            "y": 122
           },
           "id": 205,
           "options": {
+            "code": {
+              "language": "plaintext",
+              "showLineNumbers": false,
+              "showMiniMap": false
+            },
             "content": "<br>\r\n<p><b>Lazy Writes/Sec</b>: *You want< 20*   \r\nMonitors the number of times per second that the Lazy Writer process moves dirty pages from the buffer to disk as it frees up buffer space. Lower is better with zero being ideal. When greater than 20, this counter indicates a need for more memory.</p>",
             "mode": "html"
           },
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "targets": [
             {
               "datasource": {
@@ -7374,7 +7256,6 @@
               "refId": "A"
             }
           ],
-          "title": "",
           "transparent": true,
           "type": "text"
         },
@@ -7390,12 +7271,7 @@
           "description": "",
           "fieldConfig": {
             "defaults": {
-              "custom": {},
-              "links": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              }
+              "links": []
             },
             "overrides": []
           },
@@ -7405,7 +7281,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 122
+            "y": 124
           },
           "hiddenSeries": false,
           "id": 42,
@@ -7425,7 +7301,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -7510,24 +7386,23 @@
             "type": "mssql",
             "uid": "EeAYXKY4k"
           },
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
           "gridPos": {
             "h": 3,
             "w": 24,
             "x": 0,
-            "y": 128
+            "y": 130
           },
           "id": 115,
           "options": {
+            "code": {
+              "language": "plaintext",
+              "showLineNumbers": false,
+              "showMiniMap": false
+            },
             "content": "<br>\r\n<p><b>Page Life Expectancy</b> Tells, on average, how many seconds SQL Server expects a data page to stay in cache. The target on an OLTP system should be at least 300 (5 min). When under 300, this may indicate poor index design (leading to increased disk I/O and less effective use of memory) or, simply, a potential shortage of memory. </p>",
             "mode": "html"
           },
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "targets": [
             {
               "datasource": {
@@ -7538,7 +7413,6 @@
               "refId": "A"
             }
           ],
-          "title": "",
           "transparent": true,
           "type": "text"
         },
@@ -7554,12 +7428,6 @@
           "description": "",
           "fieldConfig": {
             "defaults": {
-              "color": {},
-              "custom": {},
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              },
               "unit": "s"
             },
             "overrides": []
@@ -7570,7 +7438,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 131
+            "y": 133
           },
           "hiddenSeries": false,
           "id": 19,
@@ -7590,7 +7458,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -7658,24 +7526,23 @@
             "type": "mssql",
             "uid": "EeAYXKY4k"
           },
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
           "gridPos": {
             "h": 3,
             "w": 24,
             "x": 0,
-            "y": 137
+            "y": 139
           },
           "id": 116,
           "options": {
+            "code": {
+              "language": "plaintext",
+              "showLineNumbers": false,
+              "showMiniMap": false
+            },
             "content": "<br>\r\n<p><b>Buffer Cache Hit Ratio</b> Long a stalwart counter used by SQL Server DBAs, this counter is no longer very useful. It monitors the percentage of data requests answer from the buffer cache since the last reboot. However, other counters are much better for showing current memory pressure that this one because it blows the curve. For example, PLE (page life expectancy) might suddenly drop from 2000 to 70, while buffer cache hit ration moves only from 98.2 to 98.1. Only be concerned by this counter if it’s value is regularly below 90 (for OLTP) or 80 (for very large OLAP).\r\n</p>",
             "mode": "html"
           },
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "targets": [
             {
               "datasource": {
@@ -7686,7 +7553,6 @@
               "refId": "A"
             }
           ],
-          "title": "",
           "transparent": true,
           "type": "text"
         },
@@ -7702,11 +7568,6 @@
           "description": "",
           "fieldConfig": {
             "defaults": {
-              "custom": {},
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              },
               "unit": "%"
             },
             "overrides": []
@@ -7717,7 +7578,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 140
+            "y": 142
           },
           "hiddenSeries": false,
           "id": 103,
@@ -7737,7 +7598,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -7825,7 +7686,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 63
+        "y": 39
       },
       "id": 181,
       "panels": [
@@ -7834,24 +7695,23 @@
             "type": "mssql",
             "uid": "EeAYXKY4k"
           },
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
           "gridPos": {
             "h": 4,
             "w": 24,
             "x": 0,
-            "y": 8
+            "y": 40
           },
           "id": 31,
           "options": {
+            "code": {
+              "language": "plaintext",
+              "showLineNumbers": false,
+              "showMiniMap": false
+            },
             "content": "<br><h1 id=\"tempdb\">TempDB</h1>\r\n<p>TempDB is a temporary, and very important database in SQL Server. We, users, can use it by creating temporary tables #table or ##table or even physical tables dbo.table. The tempdb is recreated every time SQL Server starts so we must not be storing anything of value there.\r\nSQL Server heavily relies on tempodb for its query execution - sometime it will use tempdb for sorting data or to \"spill\" data if it runs out of memory or if the query is not optimised. So, when we say \"my query does not use tempdb\" this may not be true.</p>",
             "mode": "html"
           },
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "targets": [
             {
               "datasource": {
@@ -7862,7 +7722,6 @@
               "refId": "A"
             }
           ],
-          "title": "",
           "transparent": true,
           "type": "text"
         },
@@ -7877,12 +7736,7 @@
           "description": "",
           "fieldConfig": {
             "defaults": {
-              "custom": {},
-              "links": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              }
+              "links": []
             },
             "overrides": []
           },
@@ -7892,7 +7746,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 12
+            "y": 44
           },
           "hiddenSeries": false,
           "id": 72,
@@ -7912,7 +7766,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -7991,12 +7845,7 @@
           "description": "",
           "fieldConfig": {
             "defaults": {
-              "custom": {},
-              "links": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              }
+              "links": []
             },
             "overrides": []
           },
@@ -8006,7 +7855,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 18
+            "y": 50
           },
           "hiddenSeries": false,
           "id": 202,
@@ -8026,7 +7875,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -8103,12 +7952,7 @@
           "description": "",
           "fieldConfig": {
             "defaults": {
-              "custom": {},
-              "links": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              }
+              "links": []
             },
             "overrides": []
           },
@@ -8118,7 +7962,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 24
+            "y": 56
           },
           "hiddenSeries": false,
           "id": 74,
@@ -8138,7 +7982,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -8226,7 +8070,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 64
+        "y": 40
       },
       "id": 179,
       "panels": [
@@ -8235,24 +8079,23 @@
             "type": "mssql",
             "uid": "EeAYXKY4k"
           },
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
           "gridPos": {
             "h": 5,
             "w": 24,
             "x": 0,
-            "y": 42
+            "y": 41
           },
           "id": 70,
           "options": {
+            "code": {
+              "language": "plaintext",
+              "showLineNumbers": false,
+              "showMiniMap": false
+            },
             "content": "<br><h1 id=\"storage\">SQL Server Storage</h1>\r\n<p>SQL Server is very fast at handling large volumes of data per CPU core. However, that data has to come from the storage so it is critical that the storage is able to deliver the desired throughput.<br>\r\nYou will want to make sure that the storage interfaces are not saturated and if they are, you will have to look at either upgrading or performance tunning your storage devices. Or, tune your queries to pull less data.</p>\r\n<p>This section shows what SQL Server does with the storage, how much data its reading or writing, how it uses indexes etc...</p>",
             "mode": "html"
           },
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "targets": [
             {
               "datasource": {
@@ -8263,7 +8106,6 @@
               "refId": "A"
             }
           ],
-          "title": "",
           "transparent": true,
           "type": "text"
         },
@@ -8278,12 +8120,7 @@
           "description": "",
           "fieldConfig": {
             "defaults": {
-              "custom": {},
               "links": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              },
               "unit": "decbytes"
             },
             "overrides": []
@@ -8294,7 +8131,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 47
+            "y": 46
           },
           "hiddenSeries": false,
           "id": 14,
@@ -8314,7 +8151,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -8407,12 +8244,7 @@
           "description": "",
           "fieldConfig": {
             "defaults": {
-              "custom": {},
               "links": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              },
               "unit": "Bps"
             },
             "overrides": []
@@ -8423,7 +8255,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 53
+            "y": 52
           },
           "hiddenSeries": false,
           "id": 273,
@@ -8443,7 +8275,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -8527,24 +8359,23 @@
             "type": "mssql",
             "uid": "EeAYXKY4k"
           },
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
           "gridPos": {
             "h": 3,
             "w": 24,
             "x": 0,
-            "y": 59
+            "y": 58
           },
           "id": 92,
           "options": {
+            "code": {
+              "language": "plaintext",
+              "showLineNumbers": false,
+              "showMiniMap": false
+            },
             "content": "<br><p><b>Page Splits/sec</b> :  *You want < 20 per 100 Batch Requests/Sec* - Monitors the number of page splits per second which occur due to overflowing index pages and should be as low as possible. To avoid page splits, review table and index design to reduce non-sequential inserts or implement fill factor and pad_index to leave more empty space per page. NOTE: A high value for this counter is not bad in situations where many new pages are being created since it includes new page allocations.</p>",
             "mode": "html"
           },
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "targets": [
             {
               "datasource": {
@@ -8555,7 +8386,6 @@
               "refId": "A"
             }
           ],
-          "title": "",
           "transparent": true,
           "type": "text"
         },
@@ -8570,12 +8400,7 @@
           "description": "",
           "fieldConfig": {
             "defaults": {
-              "custom": {},
-              "links": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              }
+              "links": []
             },
             "overrides": []
           },
@@ -8585,7 +8410,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 62
+            "y": 61
           },
           "hiddenSeries": false,
           "id": 91,
@@ -8605,7 +8430,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -8721,12 +8546,7 @@
           "description": "",
           "fieldConfig": {
             "defaults": {
-              "custom": {},
-              "links": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              }
+              "links": []
             },
             "overrides": []
           },
@@ -8736,7 +8556,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 68
+            "y": 67
           },
           "hiddenSeries": false,
           "id": 16,
@@ -8756,7 +8576,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "pointradius": 4,
           "points": false,
           "renderer": "flot",
@@ -8823,12 +8643,7 @@
           "description": "",
           "fieldConfig": {
             "defaults": {
-              "custom": {},
-              "links": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              }
+              "links": []
             },
             "overrides": []
           },
@@ -8838,7 +8653,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 74
+            "y": 73
           },
           "hiddenSeries": false,
           "id": 274,
@@ -8858,7 +8673,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -8933,24 +8748,23 @@
             "type": "mssql",
             "uid": "EeAYXKY4k"
           },
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
           "gridPos": {
             "h": 2,
             "w": 21,
             "x": 0,
-            "y": 80
+            "y": 79
           },
           "id": 120,
           "options": {
+            "code": {
+              "language": "plaintext",
+              "showLineNumbers": false,
+              "showMiniMap": false
+            },
             "content": "<br>\r\n<p>\r\n<b>Log Flushes/sec</b>: Technically, the number of log pages flushed to the transaction log per second.\r\n</p>",
             "mode": "html"
           },
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "targets": [
             {
               "datasource": {
@@ -8961,7 +8775,6 @@
               "refId": "A"
             }
           ],
-          "title": "",
           "transparent": true,
           "type": "text"
         },
@@ -8977,12 +8790,7 @@
           "description": "",
           "fieldConfig": {
             "defaults": {
-              "custom": {},
-              "links": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              }
+              "links": []
             },
             "overrides": []
           },
@@ -8992,7 +8800,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 82
+            "y": 81
           },
           "hiddenSeries": false,
           "id": 275,
@@ -9012,7 +8820,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -9089,24 +8897,23 @@
             "type": "mssql",
             "uid": "EeAYXKY4k"
           },
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
           "gridPos": {
             "h": 2,
             "w": 24,
             "x": 0,
-            "y": 88
+            "y": 87
           },
           "id": 141,
           "options": {
+            "code": {
+              "language": "plaintext",
+              "showLineNumbers": false,
+              "showMiniMap": false
+            },
             "content": "<p>Making the file physically bigger is an expensive operation for the operating system. If you have a lot of log grows you may consider \"pre-growing\" files manually to a set size.<br>\r\nIn modern OS, you can also look at enablig Instant File Initialization which can grow files at no cost.</p>",
             "mode": "html"
           },
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "targets": [
             {
               "datasource": {
@@ -9117,7 +8924,6 @@
               "refId": "A"
             }
           ],
-          "title": "",
           "transparent": true,
           "type": "text"
         },
@@ -9132,12 +8938,7 @@
           "description": "",
           "fieldConfig": {
             "defaults": {
-              "custom": {},
-              "links": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              }
+              "links": []
             },
             "overrides": []
           },
@@ -9147,7 +8948,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 90
+            "y": 89
           },
           "hiddenSeries": false,
           "id": 69,
@@ -9167,7 +8968,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -9226,24 +9027,23 @@
             "type": "mssql",
             "uid": "EeAYXKY4k"
           },
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
           "gridPos": {
             "h": 3,
             "w": 24,
             "x": 0,
-            "y": 96
+            "y": 95
           },
           "id": 135,
           "options": {
+            "code": {
+              "language": "plaintext",
+              "showLineNumbers": false,
+              "showMiniMap": false
+            },
             "content": "<br>\r\n<p><b>Full Scans/sec</b>: *You want 1 Full Scan/sec per 1000 Index Searches/sec*. Monitors the number of full scans on tables or indexes. Ignore unless high CPU coincides with high scan rates. High scan rates may be caused by missing indexes, very small tables, or requests for too many records. A sudden increase in this value may indicate a statistics threshold has been reached, resulting in an index no longer being used.</p>",
             "mode": "html"
           },
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "targets": [
             {
               "datasource": {
@@ -9254,7 +9054,6 @@
               "refId": "A"
             }
           ],
-          "title": "",
           "transparent": true,
           "type": "text"
         },
@@ -9269,12 +9068,7 @@
           "description": "",
           "fieldConfig": {
             "defaults": {
-              "custom": {},
-              "links": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              }
+              "links": []
             },
             "overrides": []
           },
@@ -9284,7 +9078,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 99
+            "y": 98
           },
           "hiddenSeries": false,
           "id": 130,
@@ -9304,7 +9098,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -9408,7 +9202,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 65
+        "y": 41
       },
       "id": 284,
       "panels": [
@@ -9417,24 +9211,23 @@
             "type": "mssql",
             "uid": "EeAYXKY4k"
           },
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
           "gridPos": {
             "h": 3,
             "w": 24,
             "x": 0,
-            "y": 10
+            "y": 42
           },
           "id": 286,
           "options": {
+            "code": {
+              "language": "plaintext",
+              "showLineNumbers": false,
+              "showMiniMap": false
+            },
             "content": "# Long Queries\r\n\r\nLong queries are captured by the extended event session.\r\nBy default, any query runnig for longer than 5 seconds will be loogged.\r\nYou may want to tweak the the session to exclude certain queries or increase the duration.",
             "mode": "markdown"
           },
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "targets": [
             {
               "datasource": {
@@ -9445,7 +9238,6 @@
               "refId": "A"
             }
           ],
-          "title": "",
           "transparent": true,
           "type": "text"
         },
@@ -9457,19 +9249,13 @@
           "datasource": {
             "uid": "${DataSource}"
           },
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
             "h": 5,
             "w": 24,
             "x": 0,
-            "y": 13
+            "y": 45
           },
           "hiddenSeries": false,
           "id": 282,
@@ -9489,7 +9275,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -9560,14 +9346,20 @@
                 "mode": "thresholds"
               },
               "custom": {
-                "filterable": false
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": false,
+                "inspect": false
               },
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -9608,14 +9400,22 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 18
+            "y": 50
           },
           "id": 285,
           "options": {
+            "footer": {
+              "countRows": false,
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "targets": [
             {
               "alias": "",
@@ -9637,24 +9437,23 @@
             "type": "mssql",
             "uid": "EeAYXKY4k"
           },
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
           "gridPos": {
             "h": 3,
             "w": 24,
             "x": 0,
-            "y": 24
+            "y": 56
           },
           "id": 241,
           "options": {
+            "code": {
+              "language": "plaintext",
+              "showLineNumbers": false,
+              "showMiniMap": false
+            },
             "content": "<br><a href=\"/d/sqlwatch-repository-summary/repository-dashboard?orgId=1&refresh=15s\">Repository Dashboard</a>\r\n<p>Folded panels become inactive and do not query database.</p>",
             "mode": "html"
           },
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "targets": [
             {
               "datasource": {
@@ -9665,7 +9464,6 @@
               "refId": "A"
             }
           ],
-          "title": "",
           "transparent": true,
           "type": "text"
         }
@@ -9692,7 +9490,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 66
+        "y": 42
       },
       "id": 177,
       "panels": [
@@ -9701,24 +9499,23 @@
             "type": "mssql",
             "uid": "EeAYXKY4k"
           },
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
           "gridPos": {
             "h": 4,
             "w": 24,
             "x": 0,
-            "y": 35
+            "y": 43
           },
           "id": 213,
           "options": {
+            "code": {
+              "language": "plaintext",
+              "showLineNumbers": false,
+              "showMiniMap": false
+            },
             "content": "<br><h1 id=\"disks\">OS Disks</h1>\r\n<p>In OLTP systems the ideal latency is below 8ms but anything below 20ms can be acceptable. The latency between 20ms and 50ms could lead to performance problems. Latency above 50ms is likely inadequate if you want a fast database. In the Data Warehouse workload, latencies around 500ms and more are not uncommon. This is becuase in the Data Warehouse we are often reading a lot of data at once and saturate the storage IO whereas in OLTP systems we are making a lot of small writes and reads and therefore storage must be very responsive.</p>",
             "mode": "html"
           },
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "targets": [
             {
               "datasource": {
@@ -9729,7 +9526,6 @@
               "refId": "A"
             }
           ],
-          "title": "",
           "transparent": true,
           "type": "text"
         },
@@ -9744,12 +9540,7 @@
           "description": "",
           "fieldConfig": {
             "defaults": {
-              "custom": {},
-              "links": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              }
+              "links": []
             },
             "overrides": []
           },
@@ -9759,7 +9550,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 39
+            "y": 47
           },
           "hiddenSeries": false,
           "id": 105,
@@ -9779,7 +9570,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -9863,12 +9654,7 @@
           "description": "",
           "fieldConfig": {
             "defaults": {
-              "custom": {},
-              "links": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              }
+              "links": []
             },
             "overrides": []
           },
@@ -9878,7 +9664,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 45
+            "y": 53
           },
           "hiddenSeries": false,
           "id": 61,
@@ -9899,7 +9685,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -10000,12 +9786,7 @@
           "description": "",
           "fieldConfig": {
             "defaults": {
-              "custom": {},
-              "links": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              }
+              "links": []
             },
             "overrides": []
           },
@@ -10015,7 +9796,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 52
+            "y": 60
           },
           "hiddenSeries": false,
           "id": 201,
@@ -10036,7 +9817,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -10137,12 +9918,7 @@
           "description": "",
           "fieldConfig": {
             "defaults": {
-              "custom": {},
-              "links": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              }
+              "links": []
             },
             "overrides": []
           },
@@ -10152,7 +9928,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 59
+            "y": 67
           },
           "hiddenSeries": false,
           "id": 200,
@@ -10173,7 +9949,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -10254,12 +10030,7 @@
           "description": "",
           "fieldConfig": {
             "defaults": {
-              "custom": {},
-              "links": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              }
+              "links": []
             },
             "overrides": []
           },
@@ -10269,7 +10040,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 66
+            "y": 74
           },
           "hiddenSeries": false,
           "id": 63,
@@ -10290,7 +10061,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -10382,7 +10153,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 67
+        "y": 43
       },
       "id": 175,
       "panels": [
@@ -10391,24 +10162,23 @@
             "type": "mssql",
             "uid": "EeAYXKY4k"
           },
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
           "gridPos": {
             "h": 4,
             "w": 24,
             "x": 0,
-            "y": 12
+            "y": 44
           },
           "id": 32,
           "options": {
+            "code": {
+              "language": "plaintext",
+              "showLineNumbers": false,
+              "showMiniMap": false
+            },
             "content": "<br><h1 id=\"network\">OS Network</h1>\r\n<p>Network interfaces exposed to the OS. Any network traffic from and to SQL Server will be going through these.</p>",
             "mode": "markdown"
           },
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "targets": [
             {
               "datasource": {
@@ -10419,7 +10189,6 @@
               "refId": "A"
             }
           ],
-          "title": "",
           "transparent": true,
           "type": "text"
         },
@@ -10434,12 +10203,7 @@
           "description": "",
           "fieldConfig": {
             "defaults": {
-              "custom": {},
               "links": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              },
               "unit": "ms"
             },
             "overrides": []
@@ -10450,7 +10214,7 @@
             "h": 6,
             "w": 24,
             "x": 0,
-            "y": 16
+            "y": 48
           },
           "hiddenSeries": false,
           "id": 17,
@@ -10470,7 +10234,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -10552,7 +10316,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 68
+        "y": 44
       },
       "id": 234,
       "panels": [
@@ -10560,12 +10324,6 @@
           "datasource": {
             "type": "mssql",
             "uid": "EeAYXKY4k"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
           },
           "gridPos": {
             "h": 4,
@@ -10575,10 +10333,15 @@
           },
           "id": 238,
           "options": {
+            "code": {
+              "language": "plaintext",
+              "showLineNumbers": false,
+              "showMiniMap": false
+            },
             "content": "<br><h1 id=\"network\">Availability Group Replicas</h1>\r\n<p><a href=\"https://docs.microsoft.com/en-us/sql/relational-databases/performance-monitor/sql-server-database-replica\">More details about AG related perf counters</a>\r\n</p>\r\n",
             "mode": "markdown"
           },
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "targets": [
             {
               "datasource": {
@@ -10589,7 +10352,6 @@
               "refId": "A"
             }
           ],
-          "title": "",
           "transparent": true,
           "type": "text"
         },
@@ -10603,14 +10365,20 @@
                 "mode": "thresholds"
               },
               "custom": {
-                "filterable": false
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": false,
+                "inspect": false
               },
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -10629,9 +10397,17 @@
           },
           "id": 244,
           "options": {
+            "footer": {
+              "countRows": false,
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
             "showHeader": true
           },
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "targets": [
             {
               "alias": "",
@@ -10658,12 +10434,7 @@
           "description": "",
           "fieldConfig": {
             "defaults": {
-              "custom": {},
               "links": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              },
               "unit": "Bps"
             },
             "overrides": []
@@ -10694,7 +10465,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -10764,12 +10535,7 @@
           "description": "",
           "fieldConfig": {
             "defaults": {
-              "custom": {},
               "links": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              },
               "unit": "Bps"
             },
             "overrides": []
@@ -10801,7 +10567,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -10866,12 +10632,7 @@
           "description": "",
           "fieldConfig": {
             "defaults": {
-              "custom": {},
               "links": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              },
               "unit": "Bps"
             },
             "overrides": []
@@ -10903,7 +10664,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -10995,7 +10756,6 @@
               "refId": "A"
             }
           ],
-          "title": "",
           "transparent": true,
           "type": "text"
         },
@@ -11128,7 +10888,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 69
+        "y": 45
       },
       "id": 220,
       "panels": [
@@ -11141,24 +10901,13 @@
             "uid": "$DataSource"
           },
           "description": "0 - OK\n1 - WARNING\n2 - CRITICAL\n3 - CHECK ERROR",
-          "fieldConfig": {
-            "defaults": {
-              "color": {},
-              "custom": {},
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              }
-            },
-            "overrides": []
-          },
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 44
+            "y": 46
           },
           "hiddenSeries": false,
           "id": 251,
@@ -11181,7 +10930,7 @@
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "pointradius": 2,
           "points": true,
           "renderer": "flot",
@@ -11245,11 +10994,13 @@
           "fieldConfig": {
             "defaults": {
               "custom": {
+                "align": "auto",
                 "cellOptions": {
                   "mode": "gradient",
                   "type": "color-background"
                 },
-                "filterable": true
+                "filterable": true,
+                "inspect": false
               },
               "links": [],
               "mappings": [],
@@ -11257,7 +11008,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "rgba(115, 191, 105, 0)"
+                    "color": "rgba(115, 191, 105, 0)",
+                    "value": null
                   }
                 ]
               }
@@ -11297,7 +11049,8 @@
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "purple"
+                          "color": "purple",
+                          "value": null
                         },
                         {
                           "color": "green",
@@ -11452,10 +11205,18 @@
             "h": 15,
             "w": 24,
             "x": 0,
-            "y": 51
+            "y": 53
           },
           "id": 252,
           "options": {
+            "footer": {
+              "countRows": false,
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
             "showHeader": true,
             "sortBy": [
               {
@@ -11464,7 +11225,7 @@
               }
             ]
           },
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "targets": [
             {
               "alias": "",
@@ -11511,24 +11272,23 @@
             "type": "mssql",
             "uid": "EeAYXKY4k"
           },
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
           "gridPos": {
             "h": 3,
             "w": 24,
             "x": 0,
-            "y": 66
+            "y": 68
           },
           "id": 280,
           "options": {
+            "code": {
+              "language": "plaintext",
+              "showLineNumbers": false,
+              "showMiniMap": false
+            },
             "content": "# Checks Execution Time\nChecks execution time tells us how it takes to execute each check.\nThis is important as the check execution is single threaded and runs every minute. All checks must complete within that minute.\nIf you are writing custom checks you must make sure that they complete within milliseconds.",
             "mode": "markdown"
           },
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "targets": [
             {
               "datasource": {
@@ -11539,7 +11299,6 @@
               "refId": "A"
             }
           ],
-          "title": "",
           "transparent": true,
           "type": "text"
         },
@@ -11554,12 +11313,6 @@
           "description": "",
           "fieldConfig": {
             "defaults": {
-              "color": {},
-              "custom": {},
-              "thresholds": {
-                "mode": "absolute",
-                "steps": []
-              },
               "unit": "ms"
             },
             "overrides": []
@@ -11570,7 +11323,7 @@
             "h": 8,
             "w": 24,
             "x": 0,
-            "y": 69
+            "y": 71
           },
           "hiddenSeries": false,
           "id": 278,
@@ -11593,7 +11346,7 @@
             "alertThreshold": false
           },
           "percentage": false,
-          "pluginVersion": "7.4.2",
+          "pluginVersion": "9.4.7",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -11672,7 +11425,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 70
+        "y": 46
       },
       "id": 304,
       "panels": [
@@ -12600,6 +12353,6 @@
   "timezone": "utc",
   "title": "SQL Instance Overview",
   "uid": "sqlwatch-instance-overview",
-  "version": 2,
+  "version": 3,
   "weekStart": ""
 }
