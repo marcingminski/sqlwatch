@@ -24,7 +24,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": 1,
+  "id": 6,
   "links": [
     {
       "asDropdown": true,
@@ -1905,6 +1905,7 @@
     },
     {
       "datasource": {
+        "type": "mssql",
         "uid": "$DataSource"
       },
       "description": "",
@@ -1979,7 +1980,7 @@
           ],
           "fields": "",
           "limit": 15,
-          "values": true
+          "values": false
         },
         "text": {
           "titleSize": 14,
@@ -1994,35 +1995,38 @@
           "datasource": {
             "uid": "$DataSource"
           },
+          "editorMode": "code",
           "format": "time_series",
           "hide": false,
-          "rawSql": "SELECT  top 15 time=isnull(last_check_date,getutcdate()),[check_name] = CASE WHEN LEN([check_name]) > 28 THEN LEFT(check_name,27) + '...' ELSE [check_name] END\n        ,status = CASE [last_check_status] \n        WHEN 'CRITICAL' THEN 2\n        WHEN 'WARNING' THEN 1\n        WHEN 'OK' THEN 0\n        ELSE 3 END\n  FROM (select last_check_date , check_name = (replace(replace([check_name],'Database',''),' failure count',''))\n    , last_check_status = case when last_check_status is null then 'CHECK ERROR' else last_check_status end\n  from [dbo].[vw_sqlwatch_report_dim_check] with (nolock)\n  WHERE  [target_sql_instance] = '$sql_instance'\n  AND check_enabled = 1\n  ) t\n  --AND last_check_status <> 'ok'\n  --AND $__timeFilter(last_check_date)\n  --AND last_check_status IN ($Status)\n  order by case when last_check_status = 'OK' then dateadd(month,-12,last_check_date) else isnull(last_check_date,getutcdate()) end desc",
-          "refId": "A"
+          "rawQuery": true,
+          "rawSql": "SELECT  top 15 time=isnull(last_check_date,getutcdate()),[check_name] = CASE WHEN LEN([check_name]) > 28 THEN LEFT(check_name,27) + '...' ELSE [check_name] END\n        ,status = CASE [last_check_status] \n        WHEN 'CRITICAL' THEN 2\n        WHEN 'WARNING' THEN 1\n        WHEN 'OK' THEN 0\n        ELSE 3 END\n  FROM (select last_check_date , check_name = (replace(replace([check_name],'Database',''),' failure count',''))\n    , last_check_status = case when last_check_status is null then 'CHECK ERROR' else last_check_status end\n  from [dbo].[vw_sqlwatch_report_dim_check] with (nolock)\n  WHERE  [target_sql_instance] = '$sql_instance'\n  AND check_enabled = 1\n  ) t\n  where last_check_status <> 'ok'\n  --AND $__timeFilter(last_check_date)\n  --AND last_check_status IN ($Status)\n  order by case when last_check_status = 'OK' then dateadd(month,-12,last_check_date) else isnull(last_check_date,getutcdate()) end asc",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
         }
       ],
       "title": "Checks",
       "transformations": [
         {
-          "id": "filterFieldsByName",
-          "options": {}
-        },
-        {
-          "id": "organize",
+          "id": "labelsToFields",
           "options": {
-            "excludeByName": {},
-            "indexByName": {
-              "check_description": 1,
-              "check_name": 0,
-              "last_check_value": 3,
-              "status": 2
-            },
-            "renameByName": {
-              "check_description": "Description",
-              "check_name": "",
-              "last_check_date": "Check Date",
-              "last_check_value": "",
-              "status": ""
-            }
+            "mode": "columns",
+            "valueLabel": "check_name"
           }
         }
       ],
@@ -2325,7 +2329,7 @@
       "type": "text"
     },
     {
-      "collapsed": true,
+      "collapsed": false,
       "datasource": {
         "type": "mssql",
         "uid": "EeAYXKY4k"
@@ -2337,236 +2341,7 @@
         "y": 32
       },
       "id": 257,
-      "panels": [
-        {
-          "datasource": {
-            "type": "mssql",
-            "uid": "EeAYXKY4k"
-          },
-          "gridPos": {
-            "h": 6,
-            "w": 24,
-            "x": 0,
-            "y": 33
-          },
-          "id": 159,
-          "options": {
-            "code": {
-              "language": "plaintext",
-              "showLineNumbers": false,
-              "showMiniMap": false
-            },
-            "content": "# SQL Server Blocking Chains\r\n*****\r\nBlocking chains happen when one query is holding back other queries. This happens when poorly written query is holding excessive and exclusive locks on tables. Relational databases are written with ACID properties in mind, \r\nthis means that in order to retain data integrity, only one query at a time can modify the data. To achieve this, a lock is applied so no other queries can even read the data to avoid partially written data being displayed back to the client. When blocking chains happen for long period of time, you will have the impression that the database is slow, even though it isn't. It's just doing its job. It is important to undertand how locking works to avoid blocking chains.\r\n\r\nThese graphs come from data recorded in the Extended Events Session. For this to work, you must enable blocked process monitor: `sp_configure 'blocked process threshold', 5 ; -- set desired value in seconds`",
-            "mode": "markdown"
-          },
-          "pluginVersion": "9.4.7",
-          "targets": [
-            {
-              "datasource": {
-                "type": "mssql",
-                "uid": "EeAYXKY4k"
-              },
-              "queryType": "randomWalk",
-              "refId": "A"
-            }
-          ],
-          "transparent": true,
-          "type": "text"
-        },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": {
-            "uid": "$DataSource"
-          },
-          "decimals": 0,
-          "description": "",
-          "fill": 1,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 6,
-            "w": 24,
-            "x": 0,
-            "y": 39
-          },
-          "hiddenSeries": false,
-          "id": 101,
-          "legend": {
-            "avg": false,
-            "current": false,
-            "max": false,
-            "min": false,
-            "show": false,
-            "total": false,
-            "values": false
-          },
-          "lines": true,
-          "linewidth": 1,
-          "nullPointMode": "null",
-          "options": {
-            "alertThreshold": true
-          },
-          "percentage": false,
-          "pluginVersion": "9.4.7",
-          "pointradius": 3,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [
-            {
-              "$$hashKey": "object:1355",
-              "alias": "Blocking Session Count",
-              "color": "#F2495C"
-            }
-          ],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "alias": "",
-              "datasource": {
-                "uid": "$DataSource"
-              },
-              "format": "time_series",
-              "hide": false,
-              "rawSql": "SELECT time = $__timeGroup(h.snapshot_time, $aggregation, previous)\r\n      ,[Blocking Session Count] = count(session_id)\r\n  FROM dbo.sqlwatch_logger_snapshot_header h\r\n  left join [dbo].[ufn_sqlwatch_get_blocking_chains] ($__timeFrom(), $__timeTo(),'$sql_instance') r1\r\n  on h.snapshot_time = r1.snapshot_time\r\n  and h.snapshot_type_id = r1.snapshot_type_id\r\n  and h.sql_instance = r1.sql_instance\r\n  and blocking_session_id is null -- header only  \r\n  where $__timeFilter(h.snapshot_time)\r\n  and h.snapshot_type_id = 9\r\n  group by $__timeGroup(h.snapshot_time, $aggregation, previous), convert(varchar(10),session_id)\r\n \r\n  order by time asc",
-              "refId": "2"
-            }
-          ],
-          "thresholds": [],
-          "timeRegions": [],
-          "title": "Blocking Sessions Count",
-          "tooltip": {
-            "shared": false,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "transformations": [
-            {
-              "id": "seriesToColumns",
-              "options": {
-                "byField": "Time"
-              }
-            },
-            {
-              "id": "organize",
-              "options": {
-                "excludeByName": {},
-                "indexByName": {
-                  "Time": 0,
-                  "max": 3,
-                  "min": 4,
-                  "sql": 2,
-                  "system": 1
-                },
-                "renameByName": {}
-              }
-            }
-          ],
-          "transparent": true,
-          "type": "graph",
-          "xaxis": {
-            "mode": "time",
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "$$hashKey": "object:1165",
-              "decimals": 0,
-              "format": "short",
-              "logBase": 1,
-              "min": "0",
-              "show": true
-            },
-            {
-              "$$hashKey": "object:1166",
-              "format": "short",
-              "logBase": 1,
-              "show": true
-            }
-          ],
-          "yaxis": {
-            "align": false
-          }
-        },
-        {
-          "datasource": {
-            "type": "mssql",
-            "uid": "EeAYXKY4k"
-          },
-          "gridPos": {
-            "h": 2,
-            "w": 24,
-            "x": 0,
-            "y": 45
-          },
-          "id": 276,
-          "options": {
-            "code": {
-              "language": "plaintext",
-              "showLineNumbers": false,
-              "showMiniMap": false
-            },
-            "content": "The Extended Events Session captures blocking chains according to the time set for the Blocking Process Monitor `select * from sys.configurations where name like 'blocked process threshold%`.\r\nFor example, if the monitor is set to 5 seconds and we have a blocking chain lasting 21 seconds, it will record it 4 times, every 5 seconds. All four occurences will be shown below.",
-            "mode": "markdown"
-          },
-          "pluginVersion": "9.4.7",
-          "targets": [
-            {
-              "datasource": {
-                "type": "mssql",
-                "uid": "EeAYXKY4k"
-              },
-              "queryType": "randomWalk",
-              "refId": "A"
-            }
-          ],
-          "transparent": true,
-          "type": "text"
-        },
-        {
-          "datasource": {
-            "uid": "${DataSource}"
-          },
-          "description": "",
-          "gridPos": {
-            "h": 10,
-            "w": 24,
-            "x": 0,
-            "y": 47
-          },
-          "id": 255,
-          "options": {
-            "dedupStrategy": "none",
-            "enableLogDetails": true,
-            "prettifyLogMessage": false,
-            "showCommonLabels": false,
-            "showLabels": false,
-            "showTime": true,
-            "sortOrder": "Descending",
-            "wrapLogMessage": false
-          },
-          "pluginVersion": "7.4.2",
-          "targets": [
-            {
-              "alias": "",
-              "datasource": {
-                "uid": "${DataSource}"
-              },
-              "format": "table",
-              "queryType": "randomWalk",
-              "rawSql": "select time=x.event_time, blocking_tree + ' (' + isnull(x.appname,'') + '; ' + isnull(x.hostname,'') + ') SQL: ' + isnull(x.sql_text,'') \nfrom [dbo].[ufn_sqlwatch_get_blocking_chains] ($__timeFrom(), $__timeTo(),'$sql_instance') x\n\norder by time",
-              "refId": "Blocking Chains"
-            }
-          ],
-          "title": "Blocking Chains",
-          "transparent": true,
-          "type": "logs"
-        }
-      ],
+      "panels": [],
       "targets": [
         {
           "datasource": {
@@ -2580,6 +2355,234 @@
       "type": "row"
     },
     {
+      "datasource": {
+        "type": "mssql",
+        "uid": "EeAYXKY4k"
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 33
+      },
+      "id": 159,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "# SQL Server Blocking Chains\r\n*****\r\nBlocking chains happen when one query is holding back other queries. This happens when poorly written query is holding excessive and exclusive locks on tables. Relational databases are written with ACID properties in mind, \r\nthis means that in order to retain data integrity, only one query at a time can modify the data. To achieve this, a lock is applied so no other queries can even read the data to avoid partially written data being displayed back to the client. When blocking chains happen for long period of time, you will have the impression that the database is slow, even though it isn't. It's just doing its job. It is important to undertand how locking works to avoid blocking chains.\r\n\r\nThese graphs come from data recorded in the Extended Events Session. For this to work, you must enable blocked process monitor: `sp_configure 'blocked process threshold', 5 ; -- set desired value in seconds`",
+        "mode": "markdown"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mssql",
+            "uid": "EeAYXKY4k"
+          },
+          "queryType": "randomWalk",
+          "refId": "A"
+        }
+      ],
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "uid": "$DataSource"
+      },
+      "decimals": 0,
+      "description": "",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 39
+      },
+      "hiddenSeries": false,
+      "id": 101,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "9.4.7",
+      "pointradius": 3,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "$$hashKey": "object:1355",
+          "alias": "Blocking Session Count",
+          "color": "#F2495C"
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "",
+          "datasource": {
+            "uid": "$DataSource"
+          },
+          "format": "time_series",
+          "hide": false,
+          "rawSql": "SELECT time = $__timeGroup(h.snapshot_time, $aggregation, previous)\r\n      ,[Blocking Session Count] = count(session_id)\r\n  FROM dbo.sqlwatch_logger_snapshot_header h\r\n  left join [dbo].[ufn_sqlwatch_get_blocking_chains] ($__timeFrom(), $__timeTo(),'$sql_instance') r1\r\n  on h.snapshot_time = r1.snapshot_time\r\n  and h.snapshot_type_id = r1.snapshot_type_id\r\n  and h.sql_instance = r1.sql_instance\r\n  and blocking_session_id is null -- header only  \r\n  where $__timeFilter(h.snapshot_time)\r\n  and h.snapshot_type_id = 9\r\n  group by $__timeGroup(h.snapshot_time, $aggregation, previous), convert(varchar(10),session_id)\r\n \r\n  order by time asc",
+          "refId": "2"
+        }
+      ],
+      "thresholds": [],
+      "timeRegions": [],
+      "title": "Blocking Sessions Count",
+      "tooltip": {
+        "shared": false,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "transformations": [
+        {
+          "id": "seriesToColumns",
+          "options": {
+            "byField": "Time"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {
+              "Time": 0,
+              "max": 3,
+              "min": 4,
+              "sql": 2,
+              "system": 1
+            },
+            "renameByName": {}
+          }
+        }
+      ],
+      "transparent": true,
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:1165",
+          "decimals": 0,
+          "format": "short",
+          "logBase": 1,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:1166",
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
+    },
+    {
+      "datasource": {
+        "type": "mssql",
+        "uid": "EeAYXKY4k"
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 24,
+        "x": 0,
+        "y": 45
+      },
+      "id": 276,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "The Extended Events Session captures blocking chains according to the time set for the Blocking Process Monitor `select * from sys.configurations where name like 'blocked process threshold%`.\r\nFor example, if the monitor is set to 5 seconds and we have a blocking chain lasting 21 seconds, it will record it 4 times, every 5 seconds. All four occurences will be shown below.",
+        "mode": "markdown"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "mssql",
+            "uid": "EeAYXKY4k"
+          },
+          "queryType": "randomWalk",
+          "refId": "A"
+        }
+      ],
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "uid": "${DataSource}"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 47
+      },
+      "id": 255,
+      "options": {
+        "dedupStrategy": "none",
+        "enableLogDetails": true,
+        "prettifyLogMessage": false,
+        "showCommonLabels": false,
+        "showLabels": false,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": false
+      },
+      "pluginVersion": "7.4.2",
+      "targets": [
+        {
+          "alias": "",
+          "datasource": {
+            "uid": "${DataSource}"
+          },
+          "format": "table",
+          "queryType": "randomWalk",
+          "rawSql": "select time=x.event_time, blocking_tree + ' (' + isnull(x.appname,'') + '; ' + isnull(x.hostname,'') + ') SQL: ' + isnull(x.sql_text,'') \nfrom [dbo].[ufn_sqlwatch_get_blocking_chains] ($__timeFrom(), $__timeTo(),'$sql_instance') x\n\norder by time",
+          "refId": "Blocking Chains"
+        }
+      ],
+      "title": "Blocking Chains",
+      "transparent": true,
+      "type": "logs"
+    },
+    {
       "collapsed": true,
       "datasource": {
         "type": "mssql",
@@ -2589,7 +2592,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 33
+        "y": 57
       },
       "id": 263,
       "panels": [
@@ -3110,7 +3113,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 34
+        "y": 58
       },
       "id": 187,
       "panels": [
@@ -3825,7 +3828,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 35
+        "y": 59
       },
       "id": 309,
       "panels": [
@@ -4115,8 +4118,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -4294,7 +4296,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 36
+        "y": 60
       },
       "id": 208,
       "panels": [
@@ -5028,7 +5030,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 37
+        "y": 61
       },
       "id": 185,
       "panels": [
@@ -5847,7 +5849,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 38
+        "y": 62
       },
       "id": 183,
       "panels": [
@@ -7823,7 +7825,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 39
+        "y": 63
       },
       "id": 181,
       "panels": [
@@ -8224,7 +8226,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 40
+        "y": 64
       },
       "id": 179,
       "panels": [
@@ -9406,7 +9408,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 41
+        "y": 65
       },
       "id": 284,
       "panels": [
@@ -9690,7 +9692,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 42
+        "y": 66
       },
       "id": 177,
       "panels": [
@@ -10380,7 +10382,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 43
+        "y": 67
       },
       "id": 175,
       "panels": [
@@ -10550,7 +10552,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 44
+        "y": 68
       },
       "id": 234,
       "panels": [
@@ -11126,7 +11128,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 45
+        "y": 69
       },
       "id": 220,
       "panels": [
@@ -11670,7 +11672,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 46
+        "y": 70
       },
       "id": 304,
       "panels": [
@@ -12598,6 +12600,6 @@
   "timezone": "utc",
   "title": "SQL Instance Overview",
   "uid": "sqlwatch-instance-overview",
-  "version": 3,
+  "version": 2,
   "weekStart": ""
 }
