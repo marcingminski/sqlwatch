@@ -5,7 +5,7 @@ set nocount on;
 set xact_abort on;
 
 declare @execution_count bigint = 0,
-		@session_name nvarchar(64) = 'SQLWATCH_Blockers',
+		@session_name nvarchar(64) = 'SQLWATCH_blockers',
 		@snapshot_time datetime,
 		@snapshot_type_id tinyint = 9,
 		@filename varchar(8000),
