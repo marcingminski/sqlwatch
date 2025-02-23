@@ -15,7 +15,7 @@ There are several options that allow to configure data collection behavior.
 
 ## Collection schedules
 
-You may adjust collection schedules to your liking, however, it is not recommended to change the frequency of the `SQLWATCH-LOGGER-PERFORMANCE`. It has been optimised to run every minute. Apart from reducing [collection granulatiry](https://sqlwatch.io/blog/impact-of-aggregation-on-granularity-and-observability/) it may cause some dashboard to return null data for some aggregation. The collector also offloads data from XE sessions and if not run frequently, sessions will start rolling over and overwriting collected data.
+You may adjust collection schedules to your liking, however, it is not recommended to change the frequency of the `SQLWATCH-LOGGER-PERFORMANCE`. It has been optimised to run every minute. Apart from reducing [collection granularity](https://sqlwatch.io/blog/impact-of-aggregation-on-granularity-and-observability/) it may cause some dashboard to return null data for some aggregation. The collector also offloads data from XE sessions and if not run frequently, sessions will start rolling over and overwriting collected data.
 
 ## Collection exclusion and inclusion
 
