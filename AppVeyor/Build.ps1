@@ -101,6 +101,7 @@ Foreach ($SqlInstance in $SqlInstances)
         
         try
         {
+            Set-DbatoolsInsecureConnection -SessionOnly
             $PublishResults = Publish-DbaDacPackage -SqlInstance $SqlInstance -Database $Database -Path $Dacpac -EnableException
         }
         catch
