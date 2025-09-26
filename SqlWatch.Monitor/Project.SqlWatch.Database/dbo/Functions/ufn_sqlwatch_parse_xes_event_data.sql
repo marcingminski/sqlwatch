@@ -1,13 +1,13 @@
 ﻿CREATE FUNCTION [dbo].[ufn_sqlwatch_parse_xes_event_data](@event_data xml) 
 RETURNS @retEventData TABLE
 (
-	duration int,
-	cpu_time int,
-	physical_reads int,
-	logical_reads int,
-	writes int,
-	row_count int,
-	last_row_count int,
+	duration bigint,
+	cpu_time bigint,
+	physical_reads bigint,
+	logical_reads bigint,
+	writes bigint,
+	row_count bigint,
+	last_row_count bigint,
 	line_number int,
 	offset int,
 	offset_end int,
@@ -24,13 +24,13 @@ AS
 BEGIN
 	insert @retEventData
 	select 
-		@event_data.value('(event/data[@name="duration"]/value)[1]', 'int') as Duration,
-		@event_data.value('(event/data[@name="cpu_time"]/value)[1]', 'int') as cpu_time,
-		@event_data.value('(event/data[@name="physical_reads"]/value)[1]', 'int') as physical_reads,
-		@event_data.value('(event/data[@name="logical_reads"]/value)[1]', 'int') as logical_reads,
-		@event_data.value('(event/data[@name="writes"]/value)[1]', 'int') as writes,
-		@event_data.value('(event/data[@name="row_count"]/value)[1]', 'int') as row_count,
-		@event_data.value('(event/data[@name="last_row_count"]/value)[1]', 'int') as last_row_count,
+		@event_data.value('(event/data[@name="duration"]/value)[1]', 'bigint') as Duration,
+		@event_data.value('(event/data[@name="cpu_time"]/value)[1]', 'bigint') as cpu_time,
+		@event_data.value('(event/data[@name="physical_reads"]/value)[1]', 'bigint') as physical_reads,
+		@event_data.value('(event/data[@name="logical_reads"]/value)[1]', 'bigint') as logical_reads,
+		@event_data.value('(event/data[@name="writes"]/value)[1]', 'bigint') as writes,
+		@event_data.value('(event/data[@name="row_count"]/value)[1]', 'bigint') as row_count,
+		@event_data.value('(event/data[@name="last_row_count"]/value)[1]', 'bigint') as last_row_count,
 		@event_data.value('(event/data[@name="line_number"]/value)[1]', 'int') as line_number,
 		@event_data.value('(event/data[@name="offset"]/value)[1]', 'int') as offset,
 		@event_data.value('(event/data[@name="offset_end"]/value)[1]', 'int') as offset_end,
