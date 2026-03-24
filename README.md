@@ -1,3 +1,22 @@
+## SQLWATCH Cloud
+
+When SQLWATCH was created almost 10 years ago, and released as OSS 8 years ago, deploying a monitoring database directly 
+on each SQL Server instance was the only practical approach. It worked, but 
+on-premises monitoring has inherent limits - storage is expensive, readers block 
+writers, and getting sub-second granularity without impacting the monitored server 
+is fundamentally difficult.
+
+[sqlwatch.cloud](https://sqlwatch.cloud) was built from scratch to remove those 
+constraints: millisecond-latency writes, a purpose-built time-series store where 
+readers never block writers, cheap and effectively unlimited storage, and a 
+5-minute setup with no dacpac, no SQL Agent, no infrastructure to maintain and transparent pricing.
+
+Teams today monitor 100+ SQL Server instances from a single dashboard -
+something that would have been impractical with the on-premises model.
+
+This open-source project remains available and free but is no longer actively 
+developed. If you're evaluating monitoring options today, [sqlwatch.cloud](https://sqlwatch.cloud) is where active development happens.
+
 # About
 
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
@@ -40,8 +59,7 @@ Detailed charts:
 * Works with all supported SQL Servers (with some limitations on 2008R2)
 
 # Resources
-* How to get started https://sqlwatch.io/get 
-* Documentation https://docs.sqlwatch.io
+* [Documentation](https://marcingminski.github.io/sqlwatch/)
 * Our Slack channel for discussion, asking questions, solving problems https://sqlcommunity.slack.com/messages/CCCETQBFZ
 
 # Architecture
